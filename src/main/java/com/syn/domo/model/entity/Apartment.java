@@ -1,0 +1,54 @@
+package com.syn.domo.model.entity;
+
+import javax.persistence.*;
+import java.util.Set;
+
+@Entity
+@Table(name = "apartments")
+public class Apartment extends BaseEntity {
+
+    private String number;
+    private Integer floor;
+    private int pets;
+
+    private Set<Resident> residents;
+
+    public Apartment() {
+    }
+
+    @Column(nullable = false, unique = true)
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    @Column(nullable = false)
+    public Integer getFloor() {
+        return floor;
+    }
+
+    public void setFloor(Integer floor) {
+        this.floor = floor;
+    }
+
+    @Column
+    public int getPets() {
+        return pets;
+    }
+
+    public void setPets(int pets) {
+        this.pets = pets;
+    }
+
+    @OneToMany(mappedBy = "apartment", fetch = FetchType.EAGER)
+    public Set<Resident> getResidents() {
+        return residents;
+    }
+
+    public void setResidents(Set<Resident> residents) {
+        this.residents = residents;
+    }
+}

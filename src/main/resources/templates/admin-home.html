@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:include="~{/fragments/head}"></th:block>
+</head>
+
+<body>
+<main>
+    <h1>Administration Area</h1>
+    <p><a href="/apartments/add">Add Apartment</a></p>
+    <p><a href="/residents/add">Add Resident</a></p>
+    <p><a href="/staff/add">Add Staff</a></p>
+
+    <p><a href="/fee/generate">Generate Fee</a> </p>
+</main>
+<footer>
+    <th:block th:include="~{/fragments/footer}"></th:block>
+</footer>
+</body>
+
+</html>

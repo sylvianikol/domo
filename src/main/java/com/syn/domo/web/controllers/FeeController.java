@@ -37,8 +37,10 @@ public class FeeController {
 
         List<FeeViewModel> feeViewModels =
                     this.feeService.generateMonthlyFees();
+        modelAndView.addObject("notEmpty", !feeViewModels.isEmpty());
         modelAndView.addObject("fees", feeViewModels);
-        modelAndView.setViewName("redirect:/fees/generate");
+        modelAndView.addObject("pageTitle", GENERATED_FEES_TITLE);
+        modelAndView.setViewName("generate-fees");
         return modelAndView;
     }
 }

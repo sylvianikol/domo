@@ -10,6 +10,7 @@ public class FeeViewModel {
     private LocalDate dueDate;
     private boolean isPaid;
     private boolean isOverdue;
+    private ApartmentViewModel apartment;
 
     public FeeViewModel() {
     }
@@ -52,5 +53,13 @@ public class FeeViewModel {
 
     public void setOverdue(boolean overdue) {
         isOverdue = overdue;
+    }
+
+    public ApartmentViewModel getApartment() {
+        return apartment;
+    }
+
+    public void setApartment(ApartmentViewModel apartment) {
+        this.apartment = apartment;
     }
 }

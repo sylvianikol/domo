@@ -7,13 +7,28 @@
 
 <body>
 <main>
+    <div th:unless="${notEmpty}">
     <h1 th:text="${pageTitle}"></h1>
     <hr/>
-    <form th:action="@{/fees/generate}" th:method="post">
+        <form th:action="@{/fees/generate}" th:method="post">
 
-        <button type="submit">Generate</button>
+            <button type="submit">Generate</button>
 
-    </form>
+        </form>
+    </div>
+    <div th:if="${notEmpty}">
+        <h1 th:text="${pageTitle}"></h1>
+        <hr/>
+        <ul th:each="fee : ${fees}">
+            <li>
+                <p>Apartment No: <span th:text="${fee.apartment.number}"></span>
+                    - <span th:text="| fee: ${fee.getTotal()} |"></span>
+                </p>
+            </li>
+        </ul>
+    </div>
+    <hr/>
+    <div><a href="/">Back to Home</a> </div>
 </main>
 <hr/>
 <footer>

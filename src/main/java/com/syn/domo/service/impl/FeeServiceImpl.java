@@ -40,10 +40,16 @@ public class FeeServiceImpl implements FeeService  {
         List<FeeViewModel> feeViewModels = new ArrayList<>();
 
         for (ApartmentServiceModel apartment : apartments) {
+            if (this.feeRepository.findByStartDateAndApartment_Number(
+                    LocalDate.now(), apartment.getNumber()) != null) {
+                continue;
+            }
+
             Fee fee = new Fee();
             fee.setStartDate(LocalDate.now());
-            fee.setDueDate(LocalDate.now().plusMonths(1));
             fee.setApartment(this.apartmentService.getByNumber(apartment.getNumber()));
+
+            fee.setDueDate(LocalDate.now().plusMonths(1));
             fee.setPaid(false);
 
             BigDecimal total = new BigDecimal(BASE_FEE);

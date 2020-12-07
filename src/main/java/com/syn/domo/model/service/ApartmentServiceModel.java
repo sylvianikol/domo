@@ -1,11 +1,13 @@
 package com.syn.domo.model.service;
 
+import java.util.Set;
+
 public class ApartmentServiceModel extends BaseServiceModel {
 
     private String number;
     private Integer floor;
     private int pets;
-    private int residents;
+    private Set<ResidentServiceModel> residents;
 
     public ApartmentServiceModel() {
     }
@@ -35,11 +37,11 @@ public class ApartmentServiceModel extends BaseServiceModel {
         this.pets = pets;
     }
 
-    public int getResidents() {
+    public Set<ResidentServiceModel> getResidents() {
         return residents;
     }
 
-    public void setResidents(int residents) {
+    public void setResidents(Set<ResidentServiceModel> residents) {
         this.residents = residents;
     }
 }

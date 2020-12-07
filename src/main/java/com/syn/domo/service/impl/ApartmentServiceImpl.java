@@ -9,6 +9,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,12 +42,7 @@ public class ApartmentServiceImpl implements ApartmentService {
     @Override
     public Set<ApartmentServiceModel> getAllApartments() {
         return this.apartmentRepository.findAll().stream()
-                .map(apartment -> {
-                    ApartmentServiceModel apartmentServiceModel =
-                            this.modelMapper.map(apartment, ApartmentServiceModel.class);
-                    apartmentServiceModel.setResidents(apartment.getResidents().size());
-                    return apartmentServiceModel;
-                })
+                .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
                 .collect(Collectors.toSet());
     }
 

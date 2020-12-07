@@ -18,6 +18,7 @@ import java.util.Set;
 
 @Service
 public class FeeServiceImpl implements FeeService  {
+    private static final String BASE_FEE = "5";
 
     private final FeeRepository feeRepository;
     private final ApartmentService apartmentService;
@@ -45,19 +46,21 @@ public class FeeServiceImpl implements FeeService  {
             fee.setApartment(this.apartmentService.getByNumber(apartment.getNumber()));
             fee.setPaid(false);
 
-            BigDecimal base = new BigDecimal(5);
-            BigDecimal total = new BigDecimal(0);
+            BigDecimal total = new BigDecimal(BASE_FEE);
 
-            total = base.multiply(BigDecimal.valueOf(apartment.getResidents()));
+            int residentsCount = apartment.getResidents().size();
+
+            if (residentsCount > 0) {
+                total = total.multiply(BigDecimal.valueOf(residentsCount));
+            }
 
             if (apartment.getPets() > 0) {
-                total = total.add(base.multiply(BigDecimal.valueOf(apartment.getPets())));
+                total = total.add(total.multiply(BigDecimal.valueOf(apartment.getPets())));
             }
 
             fee.setTotal(total);
 
-            System.out.println();
-//            this.feeRepository.saveAndFlush(fee);
+            this.feeRepository.saveAndFlush(fee);
 
             FeeViewModel feeViewModel = this.modelMapper.map(fee, FeeViewModel.class);
             feeViewModels.add(feeViewModel);

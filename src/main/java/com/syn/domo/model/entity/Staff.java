@@ -1,54 +1,43 @@
 package com.syn.domo.model.entity;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "staff")
 public class Staff extends BaseUser {
 
-    private BigDecimal salary;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private JobRole jobRole;
+    private LocalDate hiredOn;
+    private LocalDate dismissedOn;
+    private Job job;
 
     public Staff() {
     }
 
-    @Column
-    public BigDecimal getSalary() {
-        return salary;
+    @Column(name = "hired_on")
+    public LocalDate getHiredOn() {
+        return hiredOn;
     }
 
-    public void setSalary(BigDecimal salary) {
-        this.salary = salary;
+    public void setHiredOn(LocalDate hiredDate) {
+        this.hiredOn = hiredDate;
     }
 
-    @Column(name = "start_date")
-    public LocalDate getStartDate() {
-        return startDate;
+    @Column(name = "dismissed_on")
+    public LocalDate getDismissedOn() {
+        return dismissedOn;
     }
 
-    public void setStartDate(LocalDate hiredDate) {
-        this.startDate = hiredDate;
+    public void setDismissedOn(LocalDate releasedDate) {
+        this.dismissedOn = releasedDate;
     }
 
-    @Column(name = "end_date")
-    public LocalDate getEndDate() {
-        return endDate;
+    @ManyToOne
+    public Job getJob() {
+        return job;
     }
 
-    public void setEndDate(LocalDate releasedDate) {
-        this.endDate = releasedDate;
-    }
-
-    @Enumerated(EnumType.STRING)
-    public JobRole getJobType() {
-        return jobRole;
-    }
-
-    public void setJobType(JobRole jobRole) {
-        this.jobRole = jobRole;
+    public void setJob(Job job) {
+        this.job = job;
     }
 }

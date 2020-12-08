@@ -12,6 +12,7 @@ public class Apartment extends BaseEntity {
     private int pets;
 
     private Set<Resident> residents;
+    private Set<Child> children;
 
     public Apartment() {
     }
@@ -50,5 +51,14 @@ public class Apartment extends BaseEntity {
 
     public void setResidents(Set<Resident> residents) {
         this.residents = residents;
+    }
+
+    @OneToMany(mappedBy = "apartment", fetch = FetchType.EAGER)
+    public Set<Child> getChildren() {
+        return children;
+    }
+
+    public void setChildren(Set<Child> children) {
+        this.children = children;
     }
 }

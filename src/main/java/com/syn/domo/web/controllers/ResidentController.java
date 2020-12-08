@@ -55,7 +55,7 @@ public class ResidentController {
     }
 
     @PostMapping("/add")
-    public ModelAndView add(@Valid @ModelAttribute("residentAddBindingModel")
+    public ModelAndView addPost(@Valid @ModelAttribute("residentAddBindingModel")
                                                  ResidentAddBindingModel residentAddBindingModel,
                             BindingResult bindingResult, ModelAndView modelAndView) {
 

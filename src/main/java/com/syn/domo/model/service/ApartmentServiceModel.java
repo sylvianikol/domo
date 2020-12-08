@@ -8,6 +8,7 @@ public class ApartmentServiceModel extends BaseServiceModel {
     private Integer floor;
     private int pets;
     private Set<ResidentServiceModel> residents;
+    private Set<ChildServiceModel> children;
 
     public ApartmentServiceModel() {
     }
@@ -43,5 +44,13 @@ public class ApartmentServiceModel extends BaseServiceModel {
 
     public void setResidents(Set<ResidentServiceModel> residents) {
         this.residents = residents;
+    }
+
+    public Set<ChildServiceModel> getChildren() {
+        return children;
+    }
+
+    public void setChildren(Set<ChildServiceModel> children) {
+        this.children = children;
     }
 }

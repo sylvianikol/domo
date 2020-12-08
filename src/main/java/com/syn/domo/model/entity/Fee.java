@@ -8,6 +8,7 @@ import java.time.LocalDate;
 @Table(name = "fees")
 public class Fee extends BaseEntity {
 
+    private BigDecimal base;
     private BigDecimal total;
     private LocalDate startDate;
     private LocalDate dueDate;
@@ -16,6 +17,15 @@ public class Fee extends BaseEntity {
     private Apartment apartment;
 
     public Fee() {
+    }
+
+    @Column(nullable = false)
+    public BigDecimal getBase() {
+        return base;
+    }
+
+    public void setBase(BigDecimal base) {
+        this.base = base;
     }
 
     @Column(nullable = false)

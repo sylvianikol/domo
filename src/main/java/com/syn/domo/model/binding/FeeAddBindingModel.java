@@ -1,47 +1,24 @@
 package com.syn.domo.model.binding;
 
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class FeeAddBindingModel {
 
-    private BigDecimal total;
-    private LocalDate startDate;
-    private LocalDate dueDate;
-    private String apartmentNumber;
+    private BigDecimal base;
 
     public FeeAddBindingModel() {
     }
 
-    public BigDecimal getTotal() {
-        return total;
+    @NotNull
+    @DecimalMin("0")
+    public BigDecimal getBase() {
+        return base;
     }
 
-    public void setTotal(BigDecimal total) {
-        this.total = total;
-    }
-
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    public LocalDate getDueDate() {
-        return dueDate;
-    }
-
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
-    }
-
-    public String getApartmentNumber() {
-        return apartmentNumber;
-    }
-
-    public void setApartmentNumber(String apartmentNumber) {
-        this.apartmentNumber = apartmentNumber;
+    public void setBase(BigDecimal base) {
+        this.base = base;
     }
 }

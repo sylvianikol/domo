@@ -1,5 +1,6 @@
 package com.syn.domo.service.impl;
 
+import com.syn.domo.model.binding.FeeAddBindingModel;
 import com.syn.domo.model.entity.Fee;
 import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.model.view.FeeViewModel;
@@ -18,7 +19,6 @@ import java.util.Set;
 
 @Service
 public class FeeServiceImpl implements FeeService  {
-    private static final String BASE_FEE = "5";
 
     private final FeeRepository feeRepository;
     private final ApartmentService apartmentService;
@@ -32,7 +32,7 @@ public class FeeServiceImpl implements FeeService  {
     }
 
     @Override
-    public List<FeeViewModel> generateMonthlyFees() {
+    public List<FeeViewModel> generateMonthlyFees(FeeAddBindingModel feeAddBindingModel) {
 
         Set<ApartmentServiceModel> apartments =
                 this.apartmentService.getAllApartments();
@@ -45,26 +45,33 @@ public class FeeServiceImpl implements FeeService  {
                 continue;
             }
 
-            Fee fee = new Fee();
+            Fee fee = this.modelMapper.map(feeAddBindingModel, Fee.class);
             fee.setStartDate(LocalDate.now());
             fee.setApartment(this.apartmentService.getByNumber(apartment.getNumber()));
 
             fee.setDueDate(LocalDate.now().plusMonths(1));
             fee.setPaid(false);
 
-            BigDecimal total = new BigDecimal(BASE_FEE);
+            BigDecimal total = new BigDecimal(0);
 
             int residentsCount = apartment.getResidents().size();
+            BigDecimal baseFee = fee.getBase();
 
             if (residentsCount > 0) {
-                total = total.multiply(BigDecimal.valueOf(residentsCount));
+                total = total.add(baseFee.multiply(BigDecimal.valueOf(residentsCount)));
+            }
+
+            int childrenCount = apartment.getChildren().size();
+
+            if (childrenCount > 0) {
+                total = total.add(baseFee.multiply(BigDecimal.valueOf(childrenCount)));
             }
 
             if (apartment.getPets() > 0) {
                 total = total.add(total.multiply(BigDecimal.valueOf(apartment.getPets())));
             }
 
-            fee.setTotal(total);
+            fee.setTotal(total.add(baseFee));
 
             this.feeRepository.saveAndFlush(fee);
 

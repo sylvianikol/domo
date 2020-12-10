@@ -11,5 +11,5 @@ public interface ApartmentService {
 
     Set<ApartmentServiceModel> getAllApartments();
 
-    Apartment getByNumber(String apartmentNumber);
+    ApartmentServiceModel getByNumber(String apartmentNumber);
 }

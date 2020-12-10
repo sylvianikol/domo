@@ -5,13 +5,23 @@ import java.time.LocalDate;
 
 public class FeeServiceModel extends BaseServiceModel {
 
+    private BigDecimal base;
     private BigDecimal total;
     private LocalDate startDate;
     private LocalDate dueDate;
     private boolean isPaid;
-    private String ApartmentNumber;
+    private boolean isOverdue;
+    private ApartmentServiceModel apartment;
 
     public FeeServiceModel() {
+    }
+
+    public BigDecimal getBase() {
+        return base;
+    }
+
+    public void setBase(BigDecimal base) {
+        this.base = base;
     }
 
     public BigDecimal getTotal() {
@@ -46,11 +56,19 @@ public class FeeServiceModel extends BaseServiceModel {
         isPaid = paid;
     }
 
-    public String getApartmentNumber() {
-        return ApartmentNumber;
+    public boolean isOverdue() {
+        return isOverdue;
     }
 
-    public void setApartmentNumber(String apartmentNumber) {
-        ApartmentNumber = apartmentNumber;
+    public void setOverdue(boolean overdue) {
+        isOverdue = overdue;
+    }
+
+    public ApartmentServiceModel getApartment() {
+        return apartment;
+    }
+
+    public void setApartment(ApartmentServiceModel apartment) {
+        this.apartment = apartment;
     }
 }

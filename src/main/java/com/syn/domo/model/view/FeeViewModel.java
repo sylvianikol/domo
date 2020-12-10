@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 public class FeeViewModel {
 
+    private BigDecimal base;
     private BigDecimal total;
     private LocalDate startDate;
     private LocalDate dueDate;
@@ -13,6 +14,14 @@ public class FeeViewModel {
     private ApartmentViewModel apartment;
 
     public FeeViewModel() {
+    }
+
+    public BigDecimal getBase() {
+        return base;
+    }
+
+    public void setBase(BigDecimal base) {
+        this.base = base;
     }
 
     public BigDecimal getTotal() {

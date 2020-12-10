@@ -5,7 +5,7 @@ import java.util.Set;
 public class ApartmentServiceModel extends BaseServiceModel {
 
     private String number;
-    private Integer floor;
+    private Integer floorNumber;
     private int pets;
     private Set<ResidentServiceModel> residents;
     private Set<ChildServiceModel> children;
@@ -21,12 +21,12 @@ public class ApartmentServiceModel extends BaseServiceModel {
         this.number = number;
     }
 
-    public Integer getFloor() {
-        return floor;
+    public Integer getFloorNumber() {
+        return floorNumber;
     }
 
-    public void setFloor(Integer floor) {
-        this.floor = floor;
+    public void setFloorNumber(Integer floorNumber) {
+        this.floorNumber = floorNumber;
     }
 
 

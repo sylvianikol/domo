@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:include="~{/fragments/head}"></th:block>
+</head>
+<body>
+<main>
+    <h1 th:text="${pageTitle}"></h1>
+    <th:block th:unless="${isBuilt}">
+        <form th:action="@{/building/add}" th:method="post">
+            <label for="floorsNumber">
+                <input name="floorsNumber" type="number" id="floorsNumber" placeholder="Enter number of floors">
+            </label>
+
+            <label for="apartmentsPerFloor">
+                <input name="apartmentsPerFloor" type="number" id="apartmentsPerFloor" placeholder="Enter apartments per floor">
+            </label>
+
+            <button type="submit">Construct building</button>
+
+        </form>
+    </th:block>
+    <th:block th:if="${isBuilt}">
+        <p th:text="| Building has ${building.getFloors()} floors
+            with total of ${building.getTotalApartments()} apartments!|"></p>
+    </th:block>
+</main>
+
+<footer>
+    <th:block th:include="~{/fragments/footer}"></th:block>
+</footer>
+</body>
+</html>

@@ -10,7 +10,7 @@ import static com.syn.domo.common.ValidationErrorMessages.*;
 public class ApartmentAddBindingModel {
 
     private String number;
-    private Integer floor;
+    private Integer floorNumber;
 
     public ApartmentAddBindingModel() {
     }
@@ -30,11 +30,11 @@ public class ApartmentAddBindingModel {
     @NotNull(message = FLOOR_NULL)
     @Min(value = -3, message = FLOOR_MIN_INVALID)
     @Max(value = 100, message = FLOOR_MAX_INVALID)
-    public Integer getFloor() {
-        return floor;
+    public Integer getFloorNumber() {
+        return floorNumber;
     }
 
-    public void setFloor(Integer floor) {
-        this.floor = floor;
+    public void setFloorNumber(Integer floorNumber) {
+        this.floorNumber = floorNumber;
     }
 }

@@ -8,7 +8,7 @@ import java.util.Set;
 public class Apartment extends BaseEntity {
 
     private String number;
-    private Integer floor;
+    private Floor floor;
     private int pets;
 
     private Set<Resident> residents;
@@ -26,12 +26,12 @@ public class Apartment extends BaseEntity {
         this.number = number;
     }
 
-    @Column(nullable = false)
-    public Integer getFloor() {
+    @ManyToOne
+    public Floor getFloor() {
         return floor;
     }
 
-    public void setFloor(Integer floor) {
+    public void setFloor(Floor floor) {
         this.floor = floor;
     }
 

@@ -8,6 +8,12 @@
 <body>
 <main>
     <h1>Administration Area</h1>
+    <p>
+        <a href="/building/manage">
+            <th:block th:if="${isBuilt}">Building Details</th:block>
+            <th:block th:unless="${isBuilt}">Construct Building</th:block>
+        </a>
+    </p>
     <p><a href="/apartments/add">Add Apartment</a></p>
     <p><a href="/residents/add">Add Resident</a></p>
     <p><a href="/staff/add">Add Staff</a></p>

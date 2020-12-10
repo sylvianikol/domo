@@ -28,11 +28,13 @@ public class ApartmentServiceImpl implements ApartmentService {
 
     @Override
     public ApartmentServiceModel add(ApartmentServiceModel apartmentServiceModel) {
-        Apartment apartment = this.modelMapper.map(apartmentServiceModel, Apartment.class);
 
-        if (this.apartmentRepository.findByNumber(apartmentServiceModel.getNumber()) != null) {
+        if (this.apartmentRepository.findByNumber(apartmentServiceModel.getNumber()).isPresent()) {
+            // TODO: Already exists
             return apartmentServiceModel;
         }
+
+        Apartment apartment = this.modelMapper.map(apartmentServiceModel, Apartment.class);
 
         this.apartmentRepository.saveAndFlush(apartment);
 
@@ -47,7 +49,10 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
-    public Apartment getByNumber(String apartmentNumber) {
-        return this.apartmentRepository.findByNumber(apartmentNumber);
+    public ApartmentServiceModel getByNumber(String apartmentNumber) {
+        return this.apartmentRepository.findByNumber(apartmentNumber)
+                .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
+                .orElse(null);
+
     }
 }

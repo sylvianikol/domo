@@ -6,19 +6,24 @@
 </head>
 <body>
 <main>
-    <h1>Add Apartment</h1>
+    <h1 th:text="${pageTitle}"></h1>
+
     <form th:action="@{/apartments/add}" th:method="post">
         <label for="number">
             <input name="number" type="text" id="number" placeholder="Enter apartment number">
         </label>
 
-        <label for="floor">
-            <input name="floor" type="number" id="floor" placeholder="Enter floor number">
+        <label for="floorNumber">
+            <input name="floorNumber" type="number" id="floorNumber" placeholder="Enter floor number">
         </label>
 
         <button type="submit">Add</button>
 
     </form>
+
+    <div th:if="${alreadyExists}">
+        <p th:text="| Apartment No.${apartment.number} already exists!|"></p>
+    </div>
 </main>
 <hr/>
 <footer>

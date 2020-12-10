@@ -7,13 +7,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 @Controller
@@ -31,29 +28,31 @@ public class ApartmentController {
     }
 
     @GetMapping("/add")
-    public ModelAndView add(ModelAndView modelAndView) {
+    public ModelAndView add(@ModelAttribute("apartment")
+                                        ApartmentServiceModel apartment,
+                            ModelAndView modelAndView) {
+
         modelAndView.addObject("pageTitle", ADD_APARTMENT_TITLE);
         modelAndView.setViewName("add-apartment");
+
         return modelAndView;
     }
 
     @PostMapping("/add")
     public ModelAndView addPost(@Valid @ModelAttribute("apartmentAddBindingModel")
                                             ApartmentAddBindingModel apartmentAddBindingModel,
-                                BindingResult bindingResult, ModelAndView modelAndView, HttpSession httpSession) {
+                                BindingResult bindingResult, ModelAndView modelAndView,
+                                RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
             modelAndView.setViewName("redirect:/apartments/add");
         } else {
-            ApartmentServiceModel serviceModel =
+            ApartmentServiceModel apartment =
                     this.apartmentService.add(
                             this.modelMapper.map(apartmentAddBindingModel, ApartmentServiceModel.class));
-
-            if (serviceModel.getId() == null) {
-                modelAndView.setViewName("redirect:/apartments/add");
-            } else {
-                modelAndView.setViewName("redirect:/");
-            }
+            redirectAttributes.addFlashAttribute("apartment", apartment);
+            redirectAttributes.addFlashAttribute("alreadyExists",apartment.getId() == null);
+            modelAndView.setViewName("redirect:/apartments/add");
         }
 
         return modelAndView;

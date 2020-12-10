@@ -3,6 +3,7 @@ package com.syn.domo.service.impl;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Resident;
 import com.syn.domo.model.entity.UserRole;
+import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.model.service.ResidentServiceModel;
 import com.syn.domo.repository.ResidentRepository;
 import com.syn.domo.service.ApartmentService;
@@ -33,9 +34,10 @@ public class ResidentServiceImpl implements ResidentService {
 
         resident.setRole(UserRole.USER);
 
-        Apartment apartment = this.apartmentService.getByNumber(residentServiceModel.getApartmentNumber());
+        ApartmentServiceModel apartmentServiceModel =
+                this.apartmentService.getByNumber(residentServiceModel.getApartmentNumber());
 
-        resident.setApartment(apartment);
+        resident.setApartment(this.modelMapper.map(apartmentServiceModel, Apartment.class));
 
         this.residentRepository.saveAndFlush(resident);
 

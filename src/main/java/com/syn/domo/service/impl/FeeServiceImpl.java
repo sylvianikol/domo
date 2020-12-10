@@ -1,8 +1,10 @@
 package com.syn.domo.service.impl;
 
 import com.syn.domo.model.binding.FeeAddBindingModel;
+import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Fee;
 import com.syn.domo.model.service.ApartmentServiceModel;
+import com.syn.domo.model.service.FeeServiceModel;
 import com.syn.domo.model.view.FeeViewModel;
 import com.syn.domo.repository.FeeRepository;
 import com.syn.domo.service.ApartmentService;
@@ -32,12 +34,12 @@ public class FeeServiceImpl implements FeeService  {
     }
 
     @Override
-    public List<FeeViewModel> generateMonthlyFees(FeeAddBindingModel feeAddBindingModel) {
+    public List<FeeServiceModel> generateMonthlyFees(FeeAddBindingModel feeAddBindingModel) {
 
         Set<ApartmentServiceModel> apartments =
                 this.apartmentService.getAllApartments();
 
-        List<FeeViewModel> feeViewModels = new ArrayList<>();
+        List<FeeServiceModel> feeServiceModels = new ArrayList<>();
 
         for (ApartmentServiceModel apartment : apartments) {
             if (this.feeRepository.findByStartDateAndApartment_Number(
@@ -47,7 +49,11 @@ public class FeeServiceImpl implements FeeService  {
 
             Fee fee = this.modelMapper.map(feeAddBindingModel, Fee.class);
             fee.setStartDate(LocalDate.now());
-            fee.setApartment(this.apartmentService.getByNumber(apartment.getNumber()));
+
+            ApartmentServiceModel apartmentServiceModel =
+                    this.apartmentService.getByNumber(apartment.getNumber());
+
+            fee.setApartment(this.modelMapper.map(apartmentServiceModel, Apartment.class));
 
             fee.setDueDate(LocalDate.now().plusMonths(1));
             fee.setPaid(false);
@@ -75,10 +81,10 @@ public class FeeServiceImpl implements FeeService  {
 
             this.feeRepository.saveAndFlush(fee);
 
-            FeeViewModel feeViewModel = this.modelMapper.map(fee, FeeViewModel.class);
-            feeViewModels.add(feeViewModel);
+            FeeServiceModel feeServiceModel = this.modelMapper.map(fee, FeeServiceModel.class);
+            feeServiceModels.add(feeServiceModel);
         }
 
-        return feeViewModels;
+        return feeServiceModels;
     }
 }

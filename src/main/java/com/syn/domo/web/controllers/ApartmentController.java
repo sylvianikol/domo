@@ -43,7 +43,6 @@ public class ApartmentController {
                                             ApartmentAddBindingModel apartmentAddBindingModel,
                                 BindingResult bindingResult, ModelAndView modelAndView,
                                 RedirectAttributes redirectAttributes) {
-
         if (bindingResult.hasErrors()) {
             modelAndView.setViewName("redirect:/apartments/add");
         } else {

@@ -31,12 +31,11 @@ public class ApartmentServiceImpl implements ApartmentService {
     @Override
     public ApartmentServiceModel add(ApartmentServiceModel apartmentServiceModel) {
         // TODO: validation
-        if (this.apartmentRepository.findByNumber(apartmentServiceModel.getNumber()).isPresent()) {
-            return apartmentServiceModel;
-        }
 
+        int floorNumber = apartmentServiceModel.getFloorNumber();
+        FloorServiceModel floorServiceModel = this.floorService.getByNumber(floorNumber);
         Apartment apartment = this.modelMapper.map(apartmentServiceModel, Apartment.class);
-        FloorServiceModel floorServiceModel = this.floorService.getByNumber(apartmentServiceModel.getFloorNumber());
+
         apartment.setFloor(this.modelMapper.map(floorServiceModel, Floor.class));
         this.apartmentRepository.saveAndFlush(apartment);
 

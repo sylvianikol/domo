@@ -4,6 +4,8 @@ import com.syn.domo.model.binding.BuildingConstructModel;
 import com.syn.domo.model.service.FloorServiceModel;
 import com.syn.domo.model.view.BuildingViewModel;
 
+import java.util.List;
+
 public interface FloorService {
 
     FloorServiceModel getByNumber(int number);
@@ -13,4 +15,8 @@ public interface FloorService {
     BuildingViewModel getBuildingDetails();
 
     boolean isBuilt();
+
+    List<Integer> getAllFloorNumbers();
+
+    boolean hasCapacity(int floorNumber);
 }

@@ -13,17 +13,26 @@
             <input name="number" type="text" id="number" placeholder="Enter apartment number">
         </label>
 
+<!--        <label for="floorNumber">-->
+<!--            <input name="floorNumber" type="number" id="floorNumber" placeholder="Enter floor number">-->
+<!--        </label>-->
+
         <label for="floorNumber">
-            <input name="floorNumber" type="number" id="floorNumber" placeholder="Enter floor number">
+        <select id="floorNumber" name="floorNumber">
+            <option selected disabled>Select floor...</option>
+            <option th:each="number : ${floorNumbers}" th:value="${number}" th:text="${number}"></option>
+        </select>
         </label>
 
         <button type="submit">Add</button>
 
     </form>
+    <th:block>
+        <p th:if="${alreadyExists}" th:text="| Apartment No.${apartmentNumber} already exists!|"></p>
+        <p th:if="${noCapacity}" th:text="| Floor No.${floorNumber} has no more capacity!|"></p>
+        <p th:if="${success}" th:text="| Apartment No.${apartmentNumber} added on Floor No.${floorNumber} |"></p>
+    </th:block>
 
-    <div th:if="${alreadyExists}">
-        <p th:text="| Apartment No.${apartment.number} already exists!|"></p>
-    </div>
 </main>
 <hr/>
 <footer>

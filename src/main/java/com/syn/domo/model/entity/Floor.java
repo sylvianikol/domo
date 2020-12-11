@@ -1,8 +1,7 @@
 package com.syn.domo.model.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "floors")
@@ -10,6 +9,8 @@ public class Floor extends BaseEntity {
 
     private int number;
     private int apartmentsPerFloor;
+
+    Set<Apartment> apartments;
 
     public Floor() {
     }
@@ -30,5 +31,14 @@ public class Floor extends BaseEntity {
 
     public void setApartmentsPerFloor(int apartmentsNumber) {
         this.apartmentsPerFloor = apartmentsNumber;
+    }
+
+    @OneToMany(mappedBy = "floor", fetch = FetchType.EAGER)
+    public Set<Apartment> getApartments() {
+        return apartments;
+    }
+
+    public void setApartments(Set<Apartment> apartments) {
+        this.apartments = apartments;
     }
 }

@@ -38,11 +38,8 @@ public class FloorServiceImpl implements FloorService {
             floor.setApartmentsPerFloor(buildingConstructModel.getApartmentsPerFloor());
             this.floorRepository.saveAndFlush(floor);
         }
-        int apartmentsCount = buildingConstructModel.getApartmentsPerFloor() * buildingConstructModel.getFloorsNumber();
-        BuildingViewModel buildingViewModel = new BuildingViewModel();
-        buildingViewModel.setFloors(buildingConstructModel.getFloorsNumber());
-        buildingViewModel.setTotalApartments(apartmentsCount);
-        return buildingViewModel;
+
+        return this.getBuildingDetails();
     }
 
     @Override

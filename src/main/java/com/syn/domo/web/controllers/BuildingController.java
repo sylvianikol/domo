@@ -3,6 +3,7 @@ package com.syn.domo.web.controllers;
 import com.syn.domo.model.binding.BuildingConstructModel;
 import com.syn.domo.model.view.BuildingViewModel;
 import com.syn.domo.service.FloorService;
+import com.syn.domo.web.controllers.namespace.BuildingNamespace;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -16,8 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 
 @Controller
-@RequestMapping("/building")
-public class BuildingController {
+public class BuildingController implements BuildingNamespace {
     private static final String CONSTRUCT_BUILDING = "Construct building";
     private static final String BUILDING_DETAILS = "Building Details";
 

@@ -69,4 +69,13 @@ public class FloorServiceImpl implements FloorService {
                 .findByNumber(floorNumber)
                 .getHasCapacity();
     }
+
+    @Override
+    public boolean isBuildingFull() {
+        return this.floorRepository.findAll()
+                .stream()
+                .filter(Floor::getHasCapacity)
+                .findFirst().isEmpty();
+
+    }
 }

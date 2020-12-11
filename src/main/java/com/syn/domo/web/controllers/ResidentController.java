@@ -43,8 +43,9 @@ public class ResidentController {
 
     @GetMapping("/add")
     public ModelAndView add(ModelAndView modelAndView) {
-        Set<ApartmentViewModel> apartmentViewModels = this.apartmentService.getAllApartments().stream()
+        Set<String> apartmentViewModels = this.apartmentService.getAllApartments().stream()
                 .map(apartmentServiceModel -> this.modelMapper.map(apartmentServiceModel, ApartmentViewModel.class))
+                .map(ApartmentViewModel::getNumber)
                 .collect(Collectors.toSet());
 
         modelAndView.addObject("apartmentNumbers", apartmentViewModels);

@@ -19,4 +19,6 @@ public interface FloorService {
     List<Integer> getAllFloorNumbers();
 
     boolean hasCapacity(int floorNumber);
+
+    boolean isBuildingFull();
 }

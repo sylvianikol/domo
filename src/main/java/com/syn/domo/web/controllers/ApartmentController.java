@@ -4,6 +4,7 @@ import com.syn.domo.model.binding.ApartmentAddBindingModel;
 import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.FloorService;
+import com.syn.domo.web.controllers.namespace.ApartmentNamespace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,8 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 
 @Controller
-@RequestMapping("/apartments")
-public class ApartmentController {
+public class ApartmentController implements ApartmentNamespace {
     private static final String MANAGE_APARTMENTS_TITLE = "Manage Apartments";
     private static final String ADD_APARTMENTS_TITLE = "Add Apartments";
     private static final String EDIT_APARTMENTS_TITLE = "Edit Apartments";

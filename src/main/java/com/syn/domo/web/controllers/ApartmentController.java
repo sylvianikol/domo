@@ -88,6 +88,7 @@ public class ApartmentController implements ApartmentNamespace {
                 this.modelMapper.map(this.apartmentService.getByNumber(number), ApartmentViewModel.class);
         modelAndView.addObject("apartment", apartment);
         modelAndView.addObject("pageTitle", APARTMENT_DETAILS);
+
         modelAndView.setViewName("details-apartment");
         return modelAndView;
     }

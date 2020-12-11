@@ -6,12 +6,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface FloorRepository extends JpaRepository<Floor, String> {
 
-    Optional<Floor> findByNumber(Integer number);
+    Floor findByNumber(int number);
 
     @Query("SELECT sum(f.apartmentsPerFloor) FROM Floor f ")
     int sumTotalApartments();

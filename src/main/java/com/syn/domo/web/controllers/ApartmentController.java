@@ -4,6 +4,7 @@ import com.syn.domo.model.binding.ApartmentAddBindingModel;
 import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.FloorService;
+import org.hibernate.TransactionException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,12 +13,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.persistence.PersistenceException;
 import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/apartments")
 public class ApartmentController {
     private static final String ADD_APARTMENT_TITLE = "Add New Apartment";
+    private static final String ERROR_TITLE = "An error occurred!";
 
     private final ApartmentService apartmentService;
     private final FloorService floorService;

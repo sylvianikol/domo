@@ -9,6 +9,7 @@ public class Floor extends BaseEntity {
 
     private int number;
     private int apartmentsPerFloor;
+    private boolean hasCapacity;
 
     Set<Apartment> apartments;
 
@@ -31,6 +32,15 @@ public class Floor extends BaseEntity {
 
     public void setApartmentsPerFloor(int apartmentsNumber) {
         this.apartmentsPerFloor = apartmentsNumber;
+    }
+
+    @Transient
+    public boolean getHasCapacity() {
+        return this.getApartments().size() < this.getApartmentsPerFloor();
+    }
+
+    public void setHasCapacity(boolean hasCapacity) {
+        this.hasCapacity = hasCapacity;
     }
 
     @OneToMany(mappedBy = "floor", fetch = FetchType.EAGER)

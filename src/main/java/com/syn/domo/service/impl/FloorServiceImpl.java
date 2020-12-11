@@ -10,9 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,9 +27,7 @@ public class FloorServiceImpl implements FloorService {
 
     @Override
     public FloorServiceModel getByNumber(int number) {
-        return this.floorRepository.findByNumber(number)
-                .map(floor -> this.modelMapper.map(floor, FloorServiceModel.class))
-                .orElse(null);
+        return this.modelMapper.map(this.floorRepository.findByNumber(number), FloorServiceModel.class);
     }
 
     @Override
@@ -69,11 +65,8 @@ public class FloorServiceImpl implements FloorService {
 
     @Override
     public boolean hasCapacity(int floorNumber) {
-        // TODO: add FloorNotFoundException
-        Floor floor = this.floorRepository.findByNumber(floorNumber).orElseThrow(
-                () -> new EntityNotFoundException("Floor not found")
-        );
-
-        return floor.getApartments().size() < floor.getApartmentsPerFloor();
+        return this.floorRepository
+                .findByNumber(floorNumber)
+                .getHasCapacity();
     }
 }

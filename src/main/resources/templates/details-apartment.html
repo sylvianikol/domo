@@ -7,9 +7,10 @@
 <body>
     <main>
         <h1 th:text="${pageTitle}"></h1>
-        <p th:text="| Error: ${message}|"></p>
+        <th:block th:object="${apartment}">
+            <p th:text="| Apartment No:*{number} |"></p>
+        </th:block>
     </main>
-    <hr/>
     <footer>
         <th:block th:include="~{/fragments/footer}"></th:block>
     </footer>

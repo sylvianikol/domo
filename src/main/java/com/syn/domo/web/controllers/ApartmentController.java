@@ -2,6 +2,7 @@ package com.syn.domo.web.controllers;
 
 import com.syn.domo.model.binding.ApartmentAddBindingModel;
 import com.syn.domo.model.service.ApartmentServiceModel;
+import com.syn.domo.model.view.ApartmentViewModel;
 import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.FloorService;
 import com.syn.domo.web.controllers.namespace.ApartmentNamespace;
@@ -20,6 +21,7 @@ public class ApartmentController implements ApartmentNamespace {
     private static final String MANAGE_APARTMENTS_TITLE = "Manage Apartments";
     private static final String ADD_APARTMENTS_TITLE = "Add Apartments";
     private static final String EDIT_APARTMENTS_TITLE = "Edit Apartments";
+    private static final String APARTMENT_DETAILS = "Apartment Details";
 
     private final ApartmentService apartmentService;
     private final FloorService floorService;
@@ -75,6 +77,18 @@ public class ApartmentController implements ApartmentNamespace {
             modelAndView.setViewName("redirect:/apartments/manage");
         }
 
+        return modelAndView;
+    }
+
+    @GetMapping("/details/{apartmentNumber}")
+    public ModelAndView getAuthor(@PathVariable(value = "apartmentNumber") String number,
+                                  ModelAndView modelAndView) {
+       // TODO: ApartmentNotFoundException
+        ApartmentViewModel apartment =
+                this.modelMapper.map(this.apartmentService.getByNumber(number), ApartmentViewModel.class);
+        modelAndView.addObject("apartment", apartment);
+        modelAndView.addObject("pageTitle", APARTMENT_DETAILS);
+        modelAndView.setViewName("details-apartment");
         return modelAndView;
     }
 }

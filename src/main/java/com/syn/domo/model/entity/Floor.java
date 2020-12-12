@@ -8,8 +8,9 @@ import java.util.Set;
 public class Floor extends BaseEntity {
 
     private int number;
-    private int apartmentsPerFloor;
+    private int capacity;
     private boolean hasCapacity;
+    private Building building;
 
     Set<Apartment> apartments;
 
@@ -25,18 +26,18 @@ public class Floor extends BaseEntity {
         this.number = number;
     }
 
-    @Column(name = "apartments_per_floor", nullable = false)
-    public int getApartmentsPerFloor() {
-        return apartmentsPerFloor;
+    @Column(nullable = false)
+    public int getCapacity() {
+        return capacity;
     }
 
-    public void setApartmentsPerFloor(int apartmentsNumber) {
-        this.apartmentsPerFloor = apartmentsNumber;
+    public void setCapacity(int apartmentsNumber) {
+        this.capacity = apartmentsNumber;
     }
 
     @Transient
     public boolean getHasCapacity() {
-        return this.getApartments().size() < this.getApartmentsPerFloor();
+        return this.getApartments().size() < this.getCapacity();
     }
 
     public void setHasCapacity(boolean hasCapacity) {
@@ -51,4 +52,15 @@ public class Floor extends BaseEntity {
     public void setApartments(Set<Apartment> apartments) {
         this.apartments = apartments;
     }
+
+    @ManyToOne(cascade = CascadeType.MERGE)
+    public Building getBuilding() {
+        return building;
+    }
+
+    public void setBuilding(Building building) {
+        this.building = building;
+    }
+
+
 }

@@ -3,7 +3,8 @@ package com.syn.domo.model.service;
 public class FloorServiceModel extends BaseServiceModel {
 
     private int number;
-    private int apartmentsPerFloor;
+    private int capacity;
+    private BuildingServiceModel building;
 
     public FloorServiceModel() {
     }
@@ -16,11 +17,19 @@ public class FloorServiceModel extends BaseServiceModel {
         this.number = number;
     }
 
-    public int getApartmentsPerFloor() {
-        return apartmentsPerFloor;
+    public int getCapacity() {
+        return capacity;
     }
 
-    public void setApartmentsPerFloor(int apartmentsPerFloor) {
-        this.apartmentsPerFloor = apartmentsPerFloor;
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public BuildingServiceModel getBuilding() {
+        return building;
+    }
+
+    public void setBuilding(BuildingServiceModel building) {
+        this.building = building;
     }
 }

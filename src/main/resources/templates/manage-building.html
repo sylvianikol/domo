@@ -9,6 +9,10 @@
     <h1 th:text="${pageTitle}"></h1>
     <th:block th:unless="${isBuilt}">
         <form th:action="@{/building/add}" th:method="post">
+            <label for="address">
+                <input name="address" type="text" id="address" placeholder="Enter building's address">
+            </label>
+
             <label for="floorsNumber">
                 <input name="floorsNumber" type="number" id="floorsNumber" placeholder="Enter number of floors">
             </label>
@@ -22,8 +26,9 @@
         </form>
     </th:block>
     <th:block th:if="${isBuilt}">
-        <p th:text="| Building has ${building.getFloors()} floors
-            with total of ${building.getTotalApartments()} apartments!|"></p>
+        <p th:text="| Building (address: ${building.getAddress()}) |"></p>
+        <p th:text="| Floors: ${building.getFloors()} |"></p>
+        <p th:text="| Added ${building.getAddedApartments()} of ${building.getTotalCapacity()} apartments |"></p>
     </th:block>
 </main>
 

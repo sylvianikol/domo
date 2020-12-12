@@ -1,12 +1,21 @@
-package com.syn.domo.model.binding;
+package com.syn.domo.model.service;
 
-public class BuildingConstructModel {
+public class BuildingServiceModel {
 
+    private Long id;
     private String address;
     private int floorsNumber;
     private int apartmentsPerFloor;
 
-    public BuildingConstructModel() {
+    public BuildingServiceModel() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getAddress() {
@@ -32,5 +41,4 @@ public class BuildingConstructModel {
     public void setApartmentsPerFloor(int apartmentsPerFloor) {
         this.apartmentsPerFloor = apartmentsPerFloor;
     }
-
 }

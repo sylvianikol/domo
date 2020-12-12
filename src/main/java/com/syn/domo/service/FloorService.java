@@ -1,24 +1,30 @@
 package com.syn.domo.service;
 
 import com.syn.domo.model.binding.BuildingConstructModel;
+import com.syn.domo.model.entity.Building;
+import com.syn.domo.model.entity.Floor;
+import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.model.service.FloorServiceModel;
 import com.syn.domo.model.view.BuildingViewModel;
 
 import java.util.List;
+import java.util.Set;
 
 public interface FloorService {
 
     FloorServiceModel getByNumber(int number);
 
-    BuildingViewModel constructBuilding(BuildingConstructModel buildingConstructModel);
+    void createFloors(int floorsNumber, int capacity, Long buildingId);
 
-    BuildingViewModel getBuildingDetails();
+    Set<Floor> getAllByBuildingId(Long id);
 
-    boolean isBuilt();
+    boolean hasFloors();
 
     List<Integer> getAllFloorNumbers();
 
     boolean hasCapacity(int floorNumber);
 
-    boolean isBuildingFull();
+    boolean isOverCapacity();
+
+    int countFloors();
 }

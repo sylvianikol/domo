@@ -2,10 +2,20 @@ package com.syn.domo.model.view;
 
 public class BuildingViewModel {
 
+    private String address;
     private int floors;
-    private int totalApartments;
+    private int totalCapacity;
+    private int addedApartments;
 
     public BuildingViewModel() {
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public int getFloors() {
@@ -16,11 +26,19 @@ public class BuildingViewModel {
         this.floors = floors;
     }
 
-    public int getTotalApartments() {
-        return totalApartments;
+    public int getTotalCapacity() {
+        return totalCapacity;
     }
 
-    public void setTotalApartments(int totalApartments) {
-        this.totalApartments = totalApartments;
+    public void setTotalCapacity(int totalCapacity) {
+        this.totalCapacity = totalCapacity;
+    }
+
+    public int getAddedApartments() {
+        return addedApartments;
+    }
+
+    public void setAddedApartments(int addedApartments) {
+        this.addedApartments = addedApartments;
     }
 }

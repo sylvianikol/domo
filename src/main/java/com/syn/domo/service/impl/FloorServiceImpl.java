@@ -1,27 +1,37 @@
 package com.syn.domo.service.impl;
 
-import com.syn.domo.model.binding.BuildingConstructModel;
+import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.entity.Floor;
+import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.model.service.FloorServiceModel;
-import com.syn.domo.model.view.BuildingViewModel;
 import com.syn.domo.repository.FloorRepository;
+import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.FloorService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class FloorServiceImpl implements FloorService {
 
     private final FloorRepository floorRepository;
+    private final BuildingService buildingService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public FloorServiceImpl(FloorRepository floorRepository, ModelMapper modelMapper) {
+    public FloorServiceImpl(FloorRepository floorRepository,
+                            @Lazy BuildingService buildingService,
+                            ModelMapper modelMapper) {
         this.floorRepository = floorRepository;
+        this.buildingService = buildingService;
         this.modelMapper = modelMapper;
     }
 
@@ -31,28 +41,27 @@ public class FloorServiceImpl implements FloorService {
     }
 
     @Override
-    public BuildingViewModel constructBuilding(BuildingConstructModel buildingConstructModel) {
-        // TODO: validation
-        for (int number = 1; number <= buildingConstructModel.getFloorsNumber(); number++) {
+    public void createFloors(int floorsNumber, int capacity, Long buildingId) {
+        Building building = this.buildingService.getById(buildingId);
+
+        for (int number = 1; number <= floorsNumber; number++) {
             Floor floor = new Floor();
             floor.setNumber(number);
-            floor.setApartmentsPerFloor(buildingConstructModel.getApartmentsPerFloor());
+            floor.setCapacity(capacity);
+            floor.setBuilding(building);
             this.floorRepository.saveAndFlush(floor);
+            building.getFloors().add(floor);
+            this.buildingService.saveBuilding(building);
         }
-
-        return this.getBuildingDetails();
     }
 
     @Override
-    public BuildingViewModel getBuildingDetails() {
-        BuildingViewModel buildingViewModel = new BuildingViewModel();
-        buildingViewModel.setFloors((int) this.floorRepository.count());
-        buildingViewModel.setTotalApartments(this.floorRepository.sumTotalApartments());
-        return buildingViewModel;
+    public Set<Floor> getAllByBuildingId(Long id) {
+        return new LinkedHashSet<>(this.floorRepository.findAllByBuilding_Id(id));
     }
 
     @Override
-    public boolean isBuilt() {
+    public boolean hasFloors() {
         return this.floorRepository.count() > 0;
     }
 
@@ -71,11 +80,16 @@ public class FloorServiceImpl implements FloorService {
     }
 
     @Override
-    public boolean isBuildingFull() {
+    public boolean isOverCapacity() {
         return this.floorRepository.findAll()
                 .stream()
                 .filter(Floor::getHasCapacity)
                 .findFirst().isEmpty();
 
+    }
+
+    @Override
+    public int countFloors() {
+        return (int) this.floorRepository.count();
     }
 }

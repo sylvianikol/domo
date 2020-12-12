@@ -36,7 +36,7 @@ public class ApartmentController implements ApartmentNamespace {
 
     @GetMapping("/manage")
     public ModelAndView manage(ModelAndView modelAndView) {
-        if (this.floorService.isBuildingFull()) {
+        if (this.floorService.isOverCapacity()) {
             modelAndView.addObject("buildingFull", true);
             modelAndView.addObject("pageSubTitle", EDIT_APARTMENTS_TITLE);
             modelAndView.addObject("apartments", this.apartmentService.getAllApartments());

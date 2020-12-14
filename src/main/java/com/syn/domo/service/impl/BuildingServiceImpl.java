@@ -51,8 +51,6 @@ public class BuildingServiceImpl implements BuildingService {
         if (building != null) {
             buildingViewModel.setAddress(building.getAddress());
             buildingViewModel.setFloors(building.getFloorsNumber());
-            int totalCapacity = building.getFloorsNumber() * building.getApartmentsPerFloor();
-            buildingViewModel.setTotalCapacity(totalCapacity);
             int addedApartments = this.apartmentService.getAllApartments().size();
             buildingViewModel.setAddedApartments(addedApartments);
         }
@@ -67,8 +65,7 @@ public class BuildingServiceImpl implements BuildingService {
         this.buildingRepository.saveAndFlush(building);
         Long buildingId = building.getId();
 
-        this.floorService.createFloors(buildingConstructModel.getFloorsNumber(),
-                        buildingConstructModel.getApartmentsPerFloor(), buildingId);
+        this.floorService.createFloors(buildingConstructModel.getFloorsNumber(), buildingId);
 
         return this.getBuildingDetails(buildingId);
     }

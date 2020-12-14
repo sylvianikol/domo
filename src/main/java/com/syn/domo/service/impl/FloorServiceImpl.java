@@ -41,13 +41,12 @@ public class FloorServiceImpl implements FloorService {
     }
 
     @Override
-    public void createFloors(int floorsNumber, int capacity, Long buildingId) {
+    public void createFloors(int floorsNumber, Long buildingId) {
         Building building = this.buildingService.getById(buildingId);
 
         for (int number = 1; number <= floorsNumber; number++) {
             Floor floor = new Floor();
             floor.setNumber(number);
-            floor.setCapacity(capacity);
             floor.setBuilding(building);
             this.floorRepository.saveAndFlush(floor);
             building.getFloors().add(floor);
@@ -70,22 +69,6 @@ public class FloorServiceImpl implements FloorService {
         return this.floorRepository.findAllByOrderByNumber().stream()
                 .map(Floor::getNumber)
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public boolean hasCapacity(int floorNumber) {
-        return this.floorRepository
-                .findByNumber(floorNumber)
-                .getHasCapacity();
-    }
-
-    @Override
-    public boolean isOverCapacity() {
-        return this.floorRepository.findAll()
-                .stream()
-                .filter(Floor::getHasCapacity)
-                .findFirst().isEmpty();
-
     }
 
     @Override

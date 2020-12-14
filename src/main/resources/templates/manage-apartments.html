@@ -8,36 +8,39 @@
 <main>
     <h1 th:text="${pageTitle}"></h1>
     <hr/>
-    <th:block th:unless="${buildingFull}">
-        <h2 th:text="${pageSubTitle}"></h2>
-        <form th:action="@{/apartments/add}" th:method="post">
-            <label for="number">
-                <input name="number" type="text" id="number" placeholder="Enter apartment number">
-            </label>
+    <h2 th:text="${pageH2Title}"></h2>
+    <form th:action="@{/apartments/add}" th:method="post">
+        <label for="number">
+            <input name="number" type="text" id="number" placeholder="Enter apartment number">
+        </label>
 
-            <label for="floorNumber">
-            <select id="floorNumber" name="floorNumber">
-                <option selected disabled>Select floor...</option>
-                <option th:each="number : ${floorNumbers}" th:value="${number}" th:text="${number}"></option>
-            </select>
-            </label>
+        <label for="floorNumber">
+        <select id="floorNumber" name="floorNumber">
+            <option selected disabled>Select floor...</option>
+            <option th:each="number : ${floorNumbers}" th:value="${number}" th:text="${number}"></option>
+        </select>
+        </label>
 
-            <button type="submit">Add</button>
-        </form>
+        <button type="submit">Add</button>
+    </form>
 
-        <p th:if="${alreadyExists}" th:text="| Apartment No.${apartmentNumber} already exists!|"></p>
-        <p th:if="${noCapacity}" th:text="| Floor No.${floorNumber} has no more capacity!|"></p>
-        <p th:if="${success}" th:text="| Apartment No.${apartmentNumber} added on Floor No.${floorNumber} |"></p>
-    </th:block>
+    <p th:if="${alreadyExists}" th:text="| Apartment No.${apartmentNumber} already exists!|"></p>
+    <p th:if="${success}" th:text="| Apartment No.${apartmentNumber} added on Floor No.${floorNumber} |"></p>
 
-    <div>
-        <h3>Edit Apartments</h3>
+
+    <th:block th:if="${hasApartments}" th:object="${apartments}">
+        <h3 th:text="${pageH3Title}"></h3>
         <!-- show apartments list -->
         <!-- |  Apartment No  |  Floor No  |  Manage Residents  |  Add/Remove Pets  |  -->
         <ul>
-            <li></li>
+            <li th:each="a : ${apartments}" th:text="|
+            Apartment No. ${a.number},
+            Floor: ${a.floorNumber},
+            Residents: ${a.residents.size() + a.children.size()},
+            Pets: ${a.pets}
+            |"></li>
         </ul>
-    </div>
+    </th:block>
 </main>
 <hr/>
 <footer>

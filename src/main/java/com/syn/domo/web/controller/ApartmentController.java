@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.Set;
 
 @Controller
 public class ApartmentController implements ApartmentNamespace {
@@ -36,14 +37,14 @@ public class ApartmentController implements ApartmentNamespace {
 
     @GetMapping("/manage")
     public ModelAndView manage(ModelAndView modelAndView) {
-        if (this.floorService.isOverCapacity()) {
-            modelAndView.addObject("buildingFull", true);
-            modelAndView.addObject("pageSubTitle", EDIT_APARTMENTS_TITLE);
-            modelAndView.addObject("apartments", this.apartmentService.getAllApartments());
-        } else {
-            modelAndView.addObject("buildingFull", false);
-            modelAndView.addObject("pageSubTitle", ADD_APARTMENTS_TITLE);
+        Set<ApartmentServiceModel> apartments = this.apartmentService.getAllApartments();
+        if (apartments.size() > 0) {
+            modelAndView.addObject("hasApartments", true);
+            modelAndView.addObject("pageH3Title", EDIT_APARTMENTS_TITLE);
+            modelAndView.addObject("apartments", apartments);
         }
+
+        modelAndView.addObject("pageH2Title", ADD_APARTMENTS_TITLE);
         modelAndView.addObject("floorNumbers", this.floorService.getAllFloorNumbers());
         modelAndView.addObject("pageTitle", MANAGE_APARTMENTS_TITLE);
         modelAndView.setViewName("manage-apartments");
@@ -52,7 +53,7 @@ public class ApartmentController implements ApartmentNamespace {
     }
 
     @PostMapping("/add")
-    public ModelAndView add(@Valid @ModelAttribute("apartmentAddBindingModel")
+    public ModelAndView addPost(@Valid @ModelAttribute("apartmentAddBindingModel")
                                             ApartmentAddBindingModel apartmentAddBindingModel,
                                 BindingResult bindingResult, ModelAndView modelAndView,
                                 RedirectAttributes redirectAttributes) {
@@ -62,9 +63,7 @@ public class ApartmentController implements ApartmentNamespace {
             String apartmentNumber = apartmentAddBindingModel.getNumber();
             Integer floorNumber = apartmentAddBindingModel.getFloorNumber();
 
-            if (!this.floorService.hasCapacity(floorNumber)) {
-                redirectAttributes.addFlashAttribute("noCapacity", true);
-            } else if (this.apartmentService.getByNumber(apartmentNumber) != null) {
+            if (this.apartmentService.getByNumber(apartmentNumber) != null) {
                 redirectAttributes.addFlashAttribute("alreadyExists",true);
             } else {
                 this.apartmentService.add(this.modelMapper
@@ -77,19 +76,6 @@ public class ApartmentController implements ApartmentNamespace {
             modelAndView.setViewName("redirect:/apartments/manage");
         }
 
-        return modelAndView;
-    }
-
-    @GetMapping("/details/{apartmentNumber}")
-    public ModelAndView getAuthor(@PathVariable(value = "apartmentNumber") String number,
-                                  ModelAndView modelAndView) {
-       // TODO: ApartmentNotFoundException
-        ApartmentViewModel apartment =
-                this.modelMapper.map(this.apartmentService.getByNumber(number), ApartmentViewModel.class);
-        modelAndView.addObject("apartment", apartment);
-        modelAndView.addObject("pageTitle", APARTMENT_DETAILS);
-
-        modelAndView.setViewName("details-apartment");
         return modelAndView;
     }
 }

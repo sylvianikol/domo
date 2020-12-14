@@ -14,17 +14,13 @@ public interface FloorService {
 
     FloorServiceModel getByNumber(int number);
 
-    void createFloors(int floorsNumber, int capacity, Long buildingId);
+    void createFloors(int floorsNumber, Long buildingId);
 
     Set<Floor> getAllByBuildingId(Long id);
 
     boolean hasFloors();
 
     List<Integer> getAllFloorNumbers();
-
-    boolean hasCapacity(int floorNumber);
-
-    boolean isOverCapacity();
 
     int countFloors();
 }

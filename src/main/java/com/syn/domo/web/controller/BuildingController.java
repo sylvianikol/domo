@@ -28,7 +28,7 @@ public class BuildingController implements BuildingNamespace {
     }
 
     @GetMapping("/manage")
-    public ModelAndView add(RedirectAttributes redirectAttributes, ModelAndView modelAndView) {
+    public ModelAndView add(ModelAndView modelAndView) {
         if (this.buildingService.isBuilt()) {
             modelAndView.addObject("isBuilt", true);
             modelAndView.addObject("pageTitle", BUILDING_DETAILS);

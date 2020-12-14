@@ -8,8 +8,6 @@ import java.util.Set;
 public class Floor extends BaseEntity {
 
     private int number;
-    private int capacity;
-    private boolean hasCapacity;
     private Building building;
 
     Set<Apartment> apartments;
@@ -24,24 +22,6 @@ public class Floor extends BaseEntity {
 
     public void setNumber(int number) {
         this.number = number;
-    }
-
-    @Column(nullable = false)
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(int apartmentsNumber) {
-        this.capacity = apartmentsNumber;
-    }
-
-    @Transient
-    public boolean getHasCapacity() {
-        return this.getApartments().size() < this.getCapacity();
-    }
-
-    public void setHasCapacity(boolean hasCapacity) {
-        this.hasCapacity = hasCapacity;
     }
 
     @OneToMany(mappedBy = "floor", fetch = FetchType.EAGER)

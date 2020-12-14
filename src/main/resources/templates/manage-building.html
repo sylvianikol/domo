@@ -17,10 +17,6 @@
                 <input name="floorsNumber" type="number" id="floorsNumber" placeholder="Enter number of floors">
             </label>
 
-            <label for="apartmentsPerFloor">
-                <input name="apartmentsPerFloor" type="number" id="apartmentsPerFloor" placeholder="Enter apartments per floor">
-            </label>
-
             <button type="submit">Construct building</button>
 
         </form>
@@ -28,7 +24,7 @@
     <th:block th:if="${isBuilt}">
         <p th:text="| Building (address: ${building.getAddress()}) |"></p>
         <p th:text="| Floors: ${building.getFloors()} |"></p>
-        <p th:text="| Added ${building.getAddedApartments()} of ${building.getTotalCapacity()} apartments |"></p>
+        <p th:text="| Added ${building.getAddedApartments()} apartments |"></p>
     </th:block>
 </main>
 

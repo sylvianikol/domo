@@ -3,7 +3,6 @@ package com.syn.domo.model.service;
 public class FloorServiceModel extends BaseServiceModel {
 
     private int number;
-    private int capacity;
     private BuildingServiceModel building;
 
     public FloorServiceModel() {
@@ -15,14 +14,6 @@ public class FloorServiceModel extends BaseServiceModel {
 
     public void setNumber(int number) {
         this.number = number;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
     }
 
     public BuildingServiceModel getBuilding() {

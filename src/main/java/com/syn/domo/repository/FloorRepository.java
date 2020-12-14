@@ -13,8 +13,8 @@ public interface FloorRepository extends JpaRepository<Floor, String> {
 
     Floor findByNumber(int number);
 
-    @Query("SELECT sum(f.capacity) FROM Floor f ")
-    int sumTotalApartments();
+//    @Query("SELECT sum(f.capacity) FROM Floor f ")
+//    int sumTotalApartments();
 
     List<Floor> findAllByOrderByNumber();
 

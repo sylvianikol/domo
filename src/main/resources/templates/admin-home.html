@@ -8,10 +8,17 @@
 <body>
 <main>
     <h1>Administration Area</h1>
+    <th:block th:if="${hasBuildings}" th:object="${buildings}">
+        <ul>
+            <li th:each="b : ${buildings}" th:text="|
+            Building (address: ${b.address})
+            |"></li>
+        </ul>
+    </th:block>
     <p>
         <a href="/building/manage">
-            <th:block th:if="${isBuilt}">Building Details</th:block>
-            <th:block th:unless="${isBuilt}">Construct Building</th:block>
+            <th:block th:if="${hasBuildings}">Building Details</th:block>
+            <th:block th:unless="${hasBuildings}">Construct Building</th:block>
         </a>
     </p>
     <p><a href="/apartments/manage">Manage Apartments</a></p>

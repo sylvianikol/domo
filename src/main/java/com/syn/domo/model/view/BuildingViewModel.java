@@ -4,7 +4,6 @@ public class BuildingViewModel {
 
     private String address;
     private int floors;
-    private int totalCapacity;
     private int addedApartments;
 
     public BuildingViewModel() {
@@ -24,14 +23,6 @@ public class BuildingViewModel {
 
     public void setFloors(int floors) {
         this.floors = floors;
-    }
-
-    public int getTotalCapacity() {
-        return totalCapacity;
-    }
-
-    public void setTotalCapacity(int totalCapacity) {
-        this.totalCapacity = totalCapacity;
     }
 
     public int getAddedApartments() {

@@ -9,6 +9,10 @@
     <h1 th:text="${pageTitle}"></h1>
     <th:block th:unless="${isBuilt}">
         <form th:action="@{/building/add}" th:method="post">
+            <label for="name">
+                <input name="name" type="text" id="name" placeholder="Enter building's name">
+            </label>
+
             <label for="address">
                 <input name="address" type="text" id="address" placeholder="Enter building's address">
             </label>

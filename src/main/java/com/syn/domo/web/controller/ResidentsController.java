@@ -84,12 +84,12 @@ public class ResidentsController implements ResidentsNamespace {
                             BindingResult bindingResult, ModelAndView modelAndView) {
 
         if (bindingResult.hasErrors()) {
-            modelAndView.setViewName("redirect:/residents/add");
+            modelAndView.setViewName("redirect:/residents/manage");
         } else {
             this.residentService.register(
                     this.modelMapper.map(residentAddBindingModel, ResidentServiceModel.class));
 
-            modelAndView.setViewName("redirect:/residents/add");
+            modelAndView.setViewName("redirect:/residents/manage");
         }
 
         return modelAndView;

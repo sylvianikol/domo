@@ -5,7 +5,6 @@ public class BuildingServiceModel {
     private Long id;
     private String address;
     private int floorsNumber;
-    private int apartmentsPerFloor;
 
     public BuildingServiceModel() {
     }
@@ -34,11 +33,4 @@ public class BuildingServiceModel {
         this.floorsNumber = floorsNumber;
     }
 
-    public int getApartmentsPerFloor() {
-        return apartmentsPerFloor;
-    }
-
-    public void setApartmentsPerFloor(int apartmentsPerFloor) {
-        this.apartmentsPerFloor = apartmentsPerFloor;
-    }
 }

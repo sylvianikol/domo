@@ -5,27 +5,24 @@ import java.util.Set;
 
 @Entity
 @Table(name = "buildings")
-public class Building {
+public class Building extends BaseEntity{
 
-    private Long id;
+    private String name;
     private String address;
     private int floorsNumber;
-    private int apartmentsPerFloor;
 
     private Set<Floor> floors;
 
     public Building() {
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, updatable = false, unique = true)
-    public Long getId() {
-        return id;
+    @Column(nullable = false, unique = true)
+    public String getName() {
+        return name;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Column(nullable = false)
@@ -46,16 +43,7 @@ public class Building {
         this.floorsNumber = floorsCount;
     }
 
-    @Column(name = "apartments_per_floor", nullable = false)
-    public int getApartmentsPerFloor() {
-        return apartmentsPerFloor;
-    }
-
-    public void setApartmentsPerFloor(int apartmentsPerFloor) {
-        this.apartmentsPerFloor = apartmentsPerFloor;
-    }
-
-    @OneToMany(mappedBy = "building", fetch = FetchType.EAGER)
+   @OneToMany(mappedBy = "building", fetch = FetchType.EAGER)
     public Set<Floor> getFloors() {
         return floors;
     }

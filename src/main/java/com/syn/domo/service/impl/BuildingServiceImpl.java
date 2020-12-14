@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class BuildingServiceImpl implements BuildingService {
@@ -73,6 +74,18 @@ public class BuildingServiceImpl implements BuildingService {
     @Override
     public void saveBuilding(Building building) {
         this.buildingRepository.saveAndFlush(building);
+    }
+
+    @Override
+    public boolean hasBuildings() {
+        return this.buildingRepository.count() > 0;
+    }
+
+    @Override
+    public Set<BuildingServiceModel> getAllBuildings() {
+        return this.buildingRepository.findAll().stream()
+                .map(building -> this.modelMapper.map(building, BuildingServiceModel.class))
+                .collect(Collectors.toSet());
     }
 
 }

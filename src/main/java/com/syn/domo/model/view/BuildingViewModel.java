@@ -2,6 +2,7 @@ package com.syn.domo.model.view;
 
 public class BuildingViewModel {
 
+    private String name;
     private String address;
     private int floors;
     private int addedApartments;

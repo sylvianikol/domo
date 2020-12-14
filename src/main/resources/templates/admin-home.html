@@ -8,19 +8,16 @@
 <body>
 <main>
     <h1>Administration Area</h1>
-    <th:block th:if="${hasBuildings}" th:object="${buildings}">
-        <ul>
-            <li th:each="b : ${buildings}" th:text="|
-            Building (address: ${b.address})
-            |"></li>
-        </ul>
-    </th:block>
-    <p>
+    <th:block th:object="${buildingsCount}">
+        <p th:text="|You have ${buildingsCount} building(s) |"></p>
+
         <a href="/building/manage">
-            <th:block th:if="${hasBuildings}">Building Details</th:block>
-            <th:block th:unless="${hasBuildings}">Construct Building</th:block>
-        </a>
-    </p>
+            <span th:if="hasBuildings">Manage</span>
+            <span th:unless="hasBuildings">Add </span>
+            buildings</a>
+    </th:block>
+
+    <hr/>
     <p><a href="/apartments/manage">Manage Apartments</a></p>
     <p><a href="/residents/manage">Manage Residents</a></p>
     <p><a href="/staff/add">Manage Staff</a></p>

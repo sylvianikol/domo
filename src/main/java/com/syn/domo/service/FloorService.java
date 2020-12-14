@@ -14,7 +14,7 @@ public interface FloorService {
 
     FloorServiceModel getByNumber(int number);
 
-    void createFloors(int floorsNumber, Long buildingId);
+    void createFloors(int floorsNumber, String buildingId);
 
     Set<Floor> getAllByBuildingId(Long id);
 

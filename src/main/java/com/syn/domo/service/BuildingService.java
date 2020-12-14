@@ -9,17 +9,15 @@ import java.util.Set;
 
 public interface BuildingService {
 
-    boolean isBuilt();
+    Building getById(String id);
 
-    Building getById(Long id);
-
-    BuildingViewModel getBuildingDetails(Long id);
-
-    BuildingViewModel constructBuilding(BuildingConstructModel buildingConstructModel);
+    BuildingServiceModel constructBuilding(BuildingConstructModel buildingConstructModel);
 
     void saveBuilding(Building building);
 
     boolean hasBuildings();
 
     Set<BuildingServiceModel> getAllBuildings();
+
+    int getCount();
 }

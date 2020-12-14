@@ -1,20 +1,20 @@
 package com.syn.domo.model.service;
 
-public class BuildingServiceModel {
+public class BuildingServiceModel extends BaseServiceModel {
 
-    private Long id;
+    private String name;
     private String address;
     private int floorsNumber;
 
     public BuildingServiceModel() {
     }
 
-    public Long getId() {
-        return id;
+    public String getName() {
+        return name;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getAddress() {

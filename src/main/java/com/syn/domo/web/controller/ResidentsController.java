@@ -69,7 +69,6 @@ public class ResidentsController implements ResidentsNamespace {
                 .collect(Collectors.toSet());
 
 
-        modelAndView.addObject("buildingAddress", this.buildingService.getBuildingDetails(1L).getAddress());
         modelAndView.addObject("residents", residents);
         modelAndView.addObject("apartmentNumbers", apartmentNumbers);
         modelAndView.addObject("pageTitle", MANAGE_RESIDENTS_TITLE);

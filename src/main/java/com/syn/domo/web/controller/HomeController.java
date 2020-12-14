@@ -17,27 +17,23 @@ public class HomeController {
 
     private static final String HOME_TITLE = "Administration Area";
     private final BuildingService buildingService;
-    private final FloorService floorService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public HomeController(BuildingService buildingService, FloorService floorService, ModelMapper modelMapper) {
+    public HomeController(BuildingService buildingService, ModelMapper modelMapper) {
         this.buildingService = buildingService;
-        this.floorService = floorService;
         this.modelMapper = modelMapper;
     }
 
     @GetMapping("/")
     public ModelAndView home(ModelAndView modelAndView) {
-        if (this.buildingService.hasBuildings()) {
-            Set<BuildingViewModel> buildings = this.buildingService.getAllBuildings().stream()
-                    .map(buildingServiceModel -> this.modelMapper.map(buildingServiceModel, BuildingViewModel.class))
-                    .collect(Collectors.toSet());
 
+        int buildingsCount = this.buildingService.getCount();
+        if (buildingsCount > 0) {
             modelAndView.addObject("hasBuildings", true);
-            modelAndView.addObject("buildings", buildings);
         }
 
+        modelAndView.addObject("buildingsCount", buildingsCount);
         modelAndView.addObject("pageTitle", HOME_TITLE);
         modelAndView.setViewName("admin-home");
         return modelAndView;

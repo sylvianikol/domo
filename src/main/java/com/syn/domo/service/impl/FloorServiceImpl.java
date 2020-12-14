@@ -41,7 +41,7 @@ public class FloorServiceImpl implements FloorService {
     }
 
     @Override
-    public void createFloors(int floorsNumber, Long buildingId) {
+    public void createFloors(int floorsNumber, String buildingId) {
         Building building = this.buildingService.getById(buildingId);
 
         for (int number = 1; number <= floorsNumber; number++) {

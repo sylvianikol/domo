@@ -1,4 +1,4 @@
-package com.syn.domo.web.controllers;
+package com.syn.domo.web.controller;
 
 import com.syn.domo.model.binding.FeeAddBindingModel;
 import com.syn.domo.model.view.FeeViewModel;

@@ -1,4 +1,4 @@
-package com.syn.domo.web.controllers.namespace;
+package com.syn.domo.web.controller.namespace;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 

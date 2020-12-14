@@ -1,9 +1,9 @@
-package com.syn.domo.web.controllers;
+package com.syn.domo.web.controller;
 
 import com.syn.domo.model.binding.BuildingConstructModel;
 import com.syn.domo.model.view.BuildingViewModel;
 import com.syn.domo.service.BuildingService;
-import com.syn.domo.web.controllers.namespace.BuildingNamespace;
+import com.syn.domo.web.controller.namespace.BuildingNamespace;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -30,15 +30,15 @@ public class BuildingController implements BuildingNamespace {
     @GetMapping("/manage")
     public ModelAndView add(RedirectAttributes redirectAttributes, ModelAndView modelAndView) {
         if (this.buildingService.isBuilt()) {
-            redirectAttributes.addFlashAttribute("isBuilt", true);
-            // TODO: change to getBuildingDetails(Staff loggedAdminId)
-            redirectAttributes.addFlashAttribute("building", this.buildingService.getBuildingDetails(1L));
-            modelAndView.setViewName("redirect:/building/details");
+            modelAndView.addObject("isBuilt", true);
+            modelAndView.addObject("pageTitle", BUILDING_DETAILS);
+            // TODO: change to getBuildingDetails(loggedAdminId)
+            modelAndView.addObject("building", this.buildingService.getBuildingDetails(1L));
         } else {
             modelAndView.addObject("pageTitle", CONSTRUCT_BUILDING);
-            modelAndView.setViewName("manage-building");
         }
 
+        modelAndView.setViewName("manage-building");
         return modelAndView;
     }
 
@@ -56,17 +56,9 @@ public class BuildingController implements BuildingNamespace {
                 redirectAttributes.addFlashAttribute("building", building);
                 redirectAttributes.addFlashAttribute("isBuilt", true);
             }
-            modelAndView.setViewName("redirect:/building/details");
         }
-        return modelAndView;
-    }
 
-    @GetMapping("/details")
-    public ModelAndView details(@ModelAttribute("building")
-                                                BuildingViewModel building,
-                                    ModelAndView modelAndView) {
-        modelAndView.addObject("pageTitle", BUILDING_DETAILS);
-        modelAndView.setViewName("manage-building");
+        modelAndView.setViewName("redirect:/building/manage");
         return modelAndView;
     }
 }

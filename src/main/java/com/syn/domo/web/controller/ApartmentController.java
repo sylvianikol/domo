@@ -1,11 +1,11 @@
-package com.syn.domo.web.controllers;
+package com.syn.domo.web.controller;
 
 import com.syn.domo.model.binding.ApartmentAddBindingModel;
 import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.model.view.ApartmentViewModel;
 import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.FloorService;
-import com.syn.domo.web.controllers.namespace.ApartmentNamespace;
+import com.syn.domo.web.controller.namespace.ApartmentNamespace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

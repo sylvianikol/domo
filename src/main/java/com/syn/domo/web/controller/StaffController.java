@@ -1,4 +1,4 @@
-package com.syn.domo.web.controllers;
+package com.syn.domo.web.controller;
 
 import com.syn.domo.service.JobService;
 import org.springframework.stereotype.Controller;

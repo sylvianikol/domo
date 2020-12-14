@@ -5,9 +5,16 @@ public class BuildingViewModel {
     private String name;
     private String address;
     private int floors;
-    private int addedApartments;
 
     public BuildingViewModel() {
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getAddress() {
@@ -26,11 +33,9 @@ public class BuildingViewModel {
         this.floors = floors;
     }
 
-    public int getAddedApartments() {
-        return addedApartments;
-    }
-
-    public void setAddedApartments(int addedApartments) {
-        this.addedApartments = addedApartments;
+    @Override
+    public String toString() {
+        return String.format("%s, located at %s",
+                this.getName(), this.getAddress());
     }
 }

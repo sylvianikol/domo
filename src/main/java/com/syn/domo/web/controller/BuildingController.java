@@ -20,8 +20,9 @@ import java.util.stream.Collectors;
 
 @Controller
 public class BuildingController implements BuildingNamespace {
-    private static final String MANAGE_BUILDINGS = "Manage buildings";
-    private static final String BUILDING_DETAILS = "Building Details";
+    private static final String MANAGE_BUILDINGS = "Manage Buildings";
+    private static final String ADD_BUILDING = "Add Building";
+    private static final String BUILDINGS_DETAILS = "Buildings Details";
 
     private final BuildingService buildingService;
     private final ModelMapper modelMapper;
@@ -40,11 +41,12 @@ public class BuildingController implements BuildingNamespace {
 
         if (this.buildingService.hasBuildings()) {
             modelAndView.addObject("hasBuildings", true);
+            modelAndView.addObject("pageH3Title", BUILDINGS_DETAILS);
         }
 
         modelAndView.addObject("buildings", buildings);
-
         modelAndView.addObject("pageTitle", MANAGE_BUILDINGS);
+        modelAndView.addObject("pageH2Title", ADD_BUILDING);
         modelAndView.setViewName("manage-building");
         return modelAndView;
     }
@@ -56,12 +58,12 @@ public class BuildingController implements BuildingNamespace {
                                 RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
-            modelAndView.setViewName("redirect:/building/manage");
+            redirectAttributes.addFlashAttribute("error", "Something went wrong");
         } else {
 
-            BuildingViewModel building =
+            BuildingViewModel buildingDetails =
                     this.modelMapper.map(this.buildingService.constructBuilding(buildingConstructModel), BuildingViewModel.class);
-            redirectAttributes.addFlashAttribute("building", building);
+            redirectAttributes.addFlashAttribute("addedBuilding", buildingDetails.toString());
         }
 
         modelAndView.setViewName("redirect:/building/manage");

@@ -7,8 +7,9 @@
 <body>
 <main>
     <h1 th:text="${pageTitle}"></h1>
+    <hr/>
     <th:block th:object="${buildings}">
-
+        <h2 th:text="${pageH2Title}"></h2>
         <form th:action="@{/building/add}" th:method="post">
             <label for="name">
                 <input name="name" type="text" id="name" placeholder="Enter building's name">
@@ -22,15 +23,18 @@
                 <input name="floorsNumber" type="number" id="floorsNumber" placeholder="Enter number of floors">
             </label>
 
-            <button type="submit">Construct building</button>
+            <button type="submit">Add building</button>
 
+            <p th:if="${addedBuilding}" th:text="|Successfully added building ${addedBuilding}|"></p>
+            <p th:if="${error}" th:text="${error}"></p>
         </form>
-
+        <hr/>
         <th:block th:if="${hasBuildings}">
-            <p th:text="|You manage ${buildings.size()} buildings |"></p>
+            <h3 th:text="${pageH3Title}"></h3>
+            <p th:text="|You manage ${buildings.size()} building(s) |"></p>
             <ul>
-                <li th:each="b : ${buildings}" th:text="|
-                ${b.name} (address: ${b.getAddress()}) |"><a href="#">Manage</a></li>
+                <li th:each="b : ${buildings}">
+                    <a href="#" th:text="|${b.name} (address: ${b.getAddress()}) |"></a></li>
             </ul>
         </th:block>
 

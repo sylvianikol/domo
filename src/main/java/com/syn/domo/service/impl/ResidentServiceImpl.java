@@ -12,6 +12,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Service
 public class ResidentServiceImpl implements ResidentService {
 
@@ -42,5 +47,15 @@ public class ResidentServiceImpl implements ResidentService {
         this.residentRepository.saveAndFlush(resident);
 
         return residentServiceModel;
+    }
+
+    @Override
+    public Set<ResidentServiceModel> getAllResidents() {
+        Set<ResidentServiceModel> residentServiceModels =
+                this.residentRepository.findAllByOrderByApartment_Number().stream()
+                .map(resident -> this.modelMapper.map(resident, ResidentServiceModel.class))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return Collections.unmodifiableSet(residentServiceModels);
     }
 }

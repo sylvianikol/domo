@@ -1,8 +1,7 @@
-package com.syn.domo.model.service;
+package com.syn.domo.model.view;
 
-public abstract class BaseUserServiceModel extends BaseServiceModel {
+public abstract class BaseUserViewModel {
 
-    //    private String password;
     private String email;
     private String firstName;
     private String lastName;
@@ -10,7 +9,7 @@ public abstract class BaseUserServiceModel extends BaseServiceModel {
     private String phoneNumber;
     private String userRole;
 
-    public BaseUserServiceModel() {
+    public BaseUserViewModel() {
     }
 
     public String getEmail() {

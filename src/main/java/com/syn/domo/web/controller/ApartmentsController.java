@@ -2,10 +2,9 @@ package com.syn.domo.web.controller;
 
 import com.syn.domo.model.binding.ApartmentAddBindingModel;
 import com.syn.domo.model.service.ApartmentServiceModel;
-import com.syn.domo.model.view.ApartmentViewModel;
 import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.FloorService;
-import com.syn.domo.web.controller.namespace.ApartmentNamespace;
+import com.syn.domo.web.controller.namespace.ApartmentsNamespace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,18 +17,17 @@ import javax.validation.Valid;
 import java.util.Set;
 
 @Controller
-public class ApartmentController implements ApartmentNamespace {
+public class ApartmentsController implements ApartmentsNamespace {
     private static final String MANAGE_APARTMENTS_TITLE = "Manage Apartments";
     private static final String ADD_APARTMENTS_TITLE = "Add Apartments";
     private static final String EDIT_APARTMENTS_TITLE = "Edit Apartments";
-    private static final String APARTMENT_DETAILS = "Apartment Details";
 
     private final ApartmentService apartmentService;
     private final FloorService floorService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ApartmentController(ApartmentService apartmentService, FloorService floorService, ModelMapper modelMapper) {
+    public ApartmentsController(ApartmentService apartmentService, FloorService floorService, ModelMapper modelMapper) {
         this.apartmentService = apartmentService;
         this.floorService = floorService;
         this.modelMapper = modelMapper;

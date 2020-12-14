@@ -8,6 +8,9 @@
 <body>
 <main>
     <h1 th:text="${pageTitle}"></h1>
+    <p th:text="|Building (address: ${buildingAddress}) has ${residents.size()} residents|"></p>
+    <hr/>
+    <h2 th:text="${pageH2Title}"></h2>
     <form th:action="@{/residents/add}" th:method="post">
         <label for="firstName">
             <input name="firstName" type="text" id="firstName" placeholder="Enter first name">
@@ -27,9 +30,9 @@
 
         <label for="apartmentNumber">
             <select name="apartmentNumber" id="apartmentNumber">
-                <option th:each="apartment : ${apartmentNumbers}"
-                        th:value="${apartment.number}"
-                        th:text="${apartment.number}">
+                <option th:each="number : ${apartmentNumbers}"
+                        th:value="${number}"
+                        th:text="${number}">
                 </option>
             </select>
         </label>
@@ -37,6 +40,15 @@
         <button type="submit">Add Resident</button>
 
     </form>
+    <th:block th:if="${hasResidents}" th:object="${residents}">
+        <hr/>
+        <h3 th:text="${pageH3Title}"></h3>
+        <ul>
+            <li th:each="r : ${residents}" th:text="|
+                ${r.apartmentNumber}: ${r.firstName} ${r.lastName} - ${r.email} ${r.phoneNumber}
+            |"></li>
+        </ul>
+    </th:block>
 </main>
 <hr/>
 <footer>

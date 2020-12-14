@@ -11,6 +11,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -44,9 +46,12 @@ public class ApartmentServiceImpl implements ApartmentService {
 
     @Override
     public Set<ApartmentServiceModel> getAllApartments() {
-        return this.apartmentRepository.findAll().stream()
+        Set<ApartmentServiceModel> apartmentServiceModels =
+                this.apartmentRepository.findAllByOrderByNumber().stream()
                 .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return Collections.unmodifiableSet(apartmentServiceModels);
     }
 
     @Override

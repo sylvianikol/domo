@@ -1,6 +1,7 @@
 package com.syn.domo.model.entity;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -10,6 +11,8 @@ public class Building extends BaseEntity{
     private String name;
     private String address;
     private int floorsNumber;
+    private LocalDate addedOn;
+    private LocalDate removedOn;
 
     private Set<Floor> floors;
 
@@ -50,5 +53,23 @@ public class Building extends BaseEntity{
 
     public void setFloors(Set<Floor> floors) {
         this.floors = floors;
+    }
+
+    @Column(name = "added_on", nullable = false)
+    public LocalDate getAddedOn() {
+        return addedOn;
+    }
+
+    public void setAddedOn(LocalDate addedOn) {
+        this.addedOn = addedOn;
+    }
+
+    @Column(name = "removed_on")
+    public LocalDate getRemovedOn() {
+        return removedOn;
+    }
+
+    public void setRemovedOn(LocalDate removedOn) {
+        this.removedOn = removedOn;
     }
 }

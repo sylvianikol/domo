@@ -12,7 +12,7 @@ public interface BuildingService {
 
     BuildingServiceModel addBuilding(BuildingAddBindingModel buildingAddBindingModel);
 
-    void saveBuilding(Building building);
+    void saveBuilding(BuildingServiceModel buildingServiceModel);
 
     boolean hasBuildings();
 

@@ -1,6 +1,7 @@
 package com.syn.domo.model.service;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 public class BuildingServiceModel extends BaseServiceModel {
 
@@ -9,6 +10,8 @@ public class BuildingServiceModel extends BaseServiceModel {
     private int floorsNumber;
     private LocalDate addedOn;
     private LocalDate removedOn;
+
+    Set<FloorServiceModel> floors;
 
     public BuildingServiceModel() {
     }
@@ -51,5 +54,13 @@ public class BuildingServiceModel extends BaseServiceModel {
 
     public void setRemovedOn(LocalDate removedOn) {
         this.removedOn = removedOn;
+    }
+
+    public Set<FloorServiceModel> getFloors() {
+        return floors;
+    }
+
+    public void setFloors(Set<FloorServiceModel> floors) {
+        this.floors = floors;
     }
 }

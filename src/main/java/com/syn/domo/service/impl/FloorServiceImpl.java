@@ -50,7 +50,9 @@ public class FloorServiceImpl implements FloorService {
             floor.setBuilding(building);
             this.floorRepository.saveAndFlush(floor);
             building.getFloors().add(floor);
-            this.buildingService.saveBuilding(building);
+            BuildingServiceModel buildingServiceModel =
+                    this.modelMapper.map(building, BuildingServiceModel.class);
+            this.buildingService.saveBuilding(buildingServiceModel);
         }
     }
 

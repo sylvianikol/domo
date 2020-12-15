@@ -10,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,6 +37,7 @@ public class BuildingServiceImpl implements BuildingService {
     public BuildingServiceModel addBuilding(BuildingAddBindingModel buildingAddBindingModel) {
         // TODO: validation
         Building building = this.modelMapper.map(buildingAddBindingModel, Building.class);
+        building.setAddedOn(LocalDate.now());
         this.buildingRepository.saveAndFlush(building);
         String buildingId = building.getId();
 

@@ -55,24 +55,9 @@ public class FloorServiceImpl implements FloorService {
     }
 
     @Override
-    public Set<Floor> getAllByBuildingId(Long id) {
-        return new LinkedHashSet<>(this.floorRepository.findAllByBuilding_Id(id));
-    }
-
-    @Override
-    public boolean hasFloors() {
-        return this.floorRepository.count() > 0;
-    }
-
-    @Override
     public List<Integer> getAllFloorNumbers() {
         return this.floorRepository.findAllByOrderByNumber().stream()
                 .map(Floor::getNumber)
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public int countFloors() {
-        return (int) this.floorRepository.count();
     }
 }

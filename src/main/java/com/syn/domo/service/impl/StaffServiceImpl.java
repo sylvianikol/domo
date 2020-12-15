@@ -11,6 +11,8 @@ import com.syn.domo.service.StaffService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Service
 public class StaffServiceImpl implements StaffService {
 
@@ -31,6 +33,7 @@ public class StaffServiceImpl implements StaffService {
             Staff admin = new Staff();
             admin.setEmail("admin@domo.bg");
             admin.setPassword("123");
+            admin.setAddedOn(LocalDate.now());
             admin.setUserRole(UserRole.ADMIN);
 
             JobServiceModel jobServiceModel =

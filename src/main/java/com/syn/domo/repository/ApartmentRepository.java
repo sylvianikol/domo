@@ -13,4 +13,5 @@ public interface ApartmentRepository extends JpaRepository<Apartment, String> {
     Optional<Apartment> findByNumber(String apartmentNumber);
 
     Set<Apartment> findAllByOrderByNumber();
+
 }

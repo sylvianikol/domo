@@ -9,6 +9,7 @@ public class Apartment extends BaseEntity {
 
     private String number;
     private Floor floor;
+    private Building building;
     private int pets;
 
     private Set<Resident> residents;
@@ -33,6 +34,15 @@ public class Apartment extends BaseEntity {
 
     public void setFloor(Floor floor) {
         this.floor = floor;
+    }
+
+    @ManyToOne
+    public Building getBuilding() {
+        return building;
+    }
+
+    public void setBuilding(Building building) {
+        this.building = building;
     }
 
     @Column

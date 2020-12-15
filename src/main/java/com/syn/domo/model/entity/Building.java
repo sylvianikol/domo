@@ -15,6 +15,7 @@ public class Building extends BaseEntity{
     private LocalDate removedOn;
 
     private Set<Floor> floors;
+    private Set<Apartment> apartments;
 
     public Building() {
     }
@@ -37,6 +38,25 @@ public class Building extends BaseEntity{
         this.address = address;
     }
 
+    @Column(name = "added_on", nullable = false)
+    public LocalDate getAddedOn() {
+        return addedOn;
+    }
+
+    public void setAddedOn(LocalDate addedOn) {
+        this.addedOn = addedOn;
+    }
+
+    @Column(name = "removed_on")
+    public LocalDate getRemovedOn() {
+        return removedOn;
+    }
+
+    public void setRemovedOn(LocalDate removedOn) {
+        this.removedOn = removedOn;
+    }
+
+
     @Column(name = "floors_count", nullable = false)
     public int getFloorsNumber() {
         return floorsNumber;
@@ -55,21 +75,12 @@ public class Building extends BaseEntity{
         this.floors = floors;
     }
 
-    @Column(name = "added_on", nullable = false)
-    public LocalDate getAddedOn() {
-        return addedOn;
+    @OneToMany(mappedBy = "building", fetch = FetchType.EAGER)
+    public Set<Apartment> getApartments() {
+        return apartments;
     }
 
-    public void setAddedOn(LocalDate addedOn) {
-        this.addedOn = addedOn;
-    }
-
-    @Column(name = "removed_on")
-    public LocalDate getRemovedOn() {
-        return removedOn;
-    }
-
-    public void setRemovedOn(LocalDate removedOn) {
-        this.removedOn = removedOn;
+    public void setApartments(Set<Apartment> apartments) {
+        this.apartments = apartments;
     }
 }

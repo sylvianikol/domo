@@ -15,7 +15,7 @@ public class Floor extends BaseEntity {
     public Floor() {
     }
 
-    @Column(nullable = false, unique = true, updatable = false)
+    @Column(nullable = false)
     public int getNumber() {
         return number;
     }

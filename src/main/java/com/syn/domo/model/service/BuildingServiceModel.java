@@ -12,6 +12,7 @@ public class BuildingServiceModel extends BaseServiceModel {
     private LocalDate removedOn;
 
     Set<FloorServiceModel> floors;
+    Set<ApartmentServiceModel> apartments;
 
     public BuildingServiceModel() {
     }
@@ -62,5 +63,13 @@ public class BuildingServiceModel extends BaseServiceModel {
 
     public void setFloors(Set<FloorServiceModel> floors) {
         this.floors = floors;
+    }
+
+    public Set<ApartmentServiceModel> getApartments() {
+        return apartments;
+    }
+
+    public void setApartments(Set<ApartmentServiceModel> apartments) {
+        this.apartments = apartments;
     }
 }

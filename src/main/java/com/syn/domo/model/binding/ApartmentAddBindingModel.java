@@ -11,6 +11,7 @@ public class ApartmentAddBindingModel {
 
     private String number;
     private Integer floorNumber;
+    // TODO: private String buildingName;
 
     public ApartmentAddBindingModel() {
     }

@@ -34,7 +34,8 @@ public class ApartmentsController implements ApartmentsNamespace {
     }
 
     @GetMapping("/manage")
-    public ModelAndView manage(ModelAndView modelAndView) {
+    public ModelAndView manage(@PathVariable(value = "buildingId") String buildingId, ModelAndView modelAndView) {
+        // TODO: getAllApartmentByBuildingId(buildingId)
         Set<ApartmentServiceModel> apartments = this.apartmentService.getAllApartments();
         if (apartments.size() > 0) {
             modelAndView.addObject("hasApartments", true);

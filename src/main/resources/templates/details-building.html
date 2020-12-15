@@ -8,12 +8,13 @@
 <main>
     <h1 th:text="${pageTitle}"></h1>
     <hr/>
-    <th:block th:object="${building}">
-        <p th:text="${building.toString}"></p>
-        <h2 th:text="${pageH2Title}"></h2>
-        <hr/>
+    <p th:text="${building.toString}"></p>
+    <a th:href="@{/apartments/manage/{buildingId}(buildingId=${building.getId()})}">
+        <span th:if="${hasApartments}">Manage Apartments</span>
+        <span th:unless="${hasApartments}">Add Apartments</span>
+    </a>
+    <hr/>
 
-    </th:block>
 </main>
 
 <footer>

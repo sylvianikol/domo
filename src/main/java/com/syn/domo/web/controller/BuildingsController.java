@@ -75,10 +75,16 @@ public class BuildingsController implements BuildingsNamespace {
         return modelAndView;
     }
 
-    @GetMapping("/manage/{id}")
-    public ModelAndView manageBuilding(@PathVariable(value = "id") String id, ModelAndView modelAndView) {
+    @GetMapping("/manage/{buildingId}")
+    public ModelAndView manageBuilding(@PathVariable(value = "buildingId") String buildingId, ModelAndView modelAndView) {
         BuildingViewModel building = this.modelMapper.map(
-                this.buildingService.getById(id), BuildingViewModel.class);
+                this.buildingService.getById(buildingId), BuildingViewModel.class);
+
+        if (building.getApartments().size() > 0) {
+            modelAndView.addObject("hasApartments", true);
+        }
+
+        modelAndView.addObject("buildingId", buildingId);
         modelAndView.addObject("building", building);
         modelAndView.addObject("pageTitle", BUILDING_DETAILS);
         modelAndView.setViewName("details-building.html");

@@ -1,11 +1,15 @@
 package com.syn.domo.model.view;
 
+import java.util.Set;
+
 public class BuildingViewModel {
 
     private String id;
     private String name;
     private String address;
     private int floors;
+
+    private Set<ApartmentViewModel> apartments;
 
     public BuildingViewModel() {
     }
@@ -42,9 +46,17 @@ public class BuildingViewModel {
         this.floors = floors;
     }
 
+    public Set<ApartmentViewModel> getApartments() {
+        return apartments;
+    }
+
+    public void setApartments(Set<ApartmentViewModel> apartments) {
+        this.apartments = apartments;
+    }
+
     @Override
     public String toString() {
-        return String.format("%s with %d floors, located at \"%s\".",
-                this.getName(), this.getFloors(), this.getAddress());
+        return String.format("%s with %d floors, %d apartments, located at \"%s\".",
+                this.getName(), this.getFloors(), this.getApartments().size(), this.getAddress());
     }
 }

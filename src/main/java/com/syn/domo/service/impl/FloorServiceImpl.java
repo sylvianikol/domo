@@ -42,7 +42,9 @@ public class FloorServiceImpl implements FloorService {
 
     @Override
     public void createFloors(int floorsNumber, String buildingId) {
-        Building building = this.buildingService.getById(buildingId);
+
+        Building building = this.modelMapper.map(
+                this.buildingService.getById(buildingId), Building.class);
 
         for (int number = 1; number <= floorsNumber; number++) {
             Floor floor = new Floor();
@@ -50,9 +52,9 @@ public class FloorServiceImpl implements FloorService {
             floor.setBuilding(building);
             this.floorRepository.saveAndFlush(floor);
             building.getFloors().add(floor);
-            BuildingServiceModel buildingServiceModel =
-                    this.modelMapper.map(building, BuildingServiceModel.class);
-            this.buildingService.saveBuilding(buildingServiceModel);
+
+            this.buildingService.saveBuilding(this.modelMapper.map(
+                    building, BuildingServiceModel.class));
         }
     }
 

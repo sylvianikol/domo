@@ -29,8 +29,10 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public Building getById(String id) {
-        return this.buildingRepository.findById(id).orElse(null);
+    public BuildingServiceModel getById(String id) {
+        // TODO: BuildingNotFoundException
+        Building building = this.buildingRepository.findById(id).orElse(null);
+        return this.modelMapper.map(building, BuildingServiceModel.class);
     }
 
     @Override

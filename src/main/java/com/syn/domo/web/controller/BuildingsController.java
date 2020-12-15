@@ -2,6 +2,7 @@ package com.syn.domo.web.controller;
 
 import com.syn.domo.model.binding.BuildingAddBindingModel;
 import com.syn.domo.model.entity.Building;
+import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.model.view.BuildingViewModel;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.web.controller.namespace.BuildingsNamespace;
@@ -69,7 +70,7 @@ public class BuildingsController implements BuildingsNamespace {
             redirectAttributes.addFlashAttribute("addedBuilding", buildingDetails.toString());
         }
 
-        modelAndView.setViewName("redirect:/building/manage");
+        modelAndView.setViewName("redirect:/buildings/manage");
         return modelAndView;
     }
 

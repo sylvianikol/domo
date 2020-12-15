@@ -8,36 +8,34 @@
 <main>
     <h1 th:text="${pageTitle}"></h1>
     <hr/>
-    <th:block th:object="${buildings}">
-        <h2 th:text="${pageH2Title}"></h2>
-        <form th:action="@{/buildings/add}" th:method="post">
-            <label for="name">
-                <input name="name" type="text" id="name" placeholder="Enter building's name">
-            </label>
+    <h2 th:text="${pageH2Title}"></h2>
+    <form th:action="@{/buildings/add}" th:method="post">
+        <label for="name">
+            <input name="name" type="text" id="name" placeholder="Enter building's name">
+        </label>
 
-            <label for="address">
-                <input name="address" type="text" id="address" placeholder="Enter building's address">
-            </label>
+        <label for="address">
+            <input name="address" type="text" id="address" placeholder="Enter building's address">
+        </label>
 
-            <label for="floorsNumber">
-                <input name="floorsNumber" type="number" id="floorsNumber" placeholder="Enter number of floors">
-            </label>
+        <label for="floorsNumber">
+            <input name="floorsNumber" type="number" id="floorsNumber" placeholder="Enter number of floors">
+        </label>
 
-            <button type="submit">Add building</button>
+        <button type="submit">Add building</button>
 
-            <p th:if="${addedBuilding}" th:text="|Successfully added building ${addedBuilding}|"></p>
-            <p th:if="${error}" th:text="${error}"></p>
-        </form>
-        <hr/>
-        <th:block th:if="${hasBuildings}">
-            <h3 th:text="${pageH3Title}"></h3>
-            <p th:text="|You manage ${buildings.size()} building(s) |"></p>
-            <ul>
-                <li th:each="b : ${buildings}">
-                    <a th:href="@{/buildings/manage/{id}(id=${b.getId})}"
-                       th:text="|${b.name} (address: ${b.getAddress()}) |"></a></li>
-            </ul>
-        </th:block>
+        <p th:if="${addedBuilding}" th:text="|Successfully added building ${addedBuilding}|"></p>
+        <p th:if="${error}" th:text="${error}"></p>
+    </form>
+    <hr/>
+    <th:block th:if="${hasBuildings}">
+        <h3 th:text="${pageH3Title}"></h3>
+        <p th:text="|You manage ${buildings.size()} building(s) |"></p>
+        <ul>
+            <li th:each="b : ${buildings}">
+                <a th:href="@{/buildings/manage/{id}(id=${b.getId()})}"
+                   th:text="|${b.name} (address: ${b.getAddress()}) |"></a></li>
+        </ul>
     </th:block>
 </main>
 

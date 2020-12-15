@@ -3,7 +3,7 @@ package com.syn.domo.web.controller;
 import com.syn.domo.model.binding.BuildingAddBindingModel;
 import com.syn.domo.model.view.BuildingViewModel;
 import com.syn.domo.service.BuildingService;
-import com.syn.domo.web.controller.namespace.BuildingNamespace;
+import com.syn.domo.web.controller.namespace.BuildingsNamespace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
-public class BuildingController implements BuildingNamespace {
+public class BuildingsController implements BuildingsNamespace {
     private static final String MANAGE_BUILDINGS = "Manage Buildings";
     private static final String ADD_BUILDING = "Add Building";
     private static final String BUILDINGS_DETAILS = "Buildings Details";
@@ -28,7 +28,7 @@ public class BuildingController implements BuildingNamespace {
     private final ModelMapper modelMapper;
 
     @Autowired
-    public BuildingController(BuildingService buildingService, ModelMapper modelMapper) {
+    public BuildingsController(BuildingService buildingService, ModelMapper modelMapper) {
         this.buildingService = buildingService;
         this.modelMapper = modelMapper;
     }

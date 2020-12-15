@@ -34,12 +34,10 @@
             <p th:text="|You manage ${buildings.size()} building(s) |"></p>
             <ul>
                 <li th:each="b : ${buildings}">
-                    <a th:href="@{/buildings/id}" th:text="|${b.name} (address: ${b.getAddress()}) |"></a></li>
-
-                <a th:href="@{/buildings/manage/{id}(id=${b.getId})}"></a>
+                    <a th:href="@{/buildings/manage/{id}(id=${b.getId})}"
+                       th:text="|${b.name} (address: ${b.getAddress()}) |"></a></li>
             </ul>
         </th:block>
-
     </th:block>
 </main>
 

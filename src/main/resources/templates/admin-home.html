@@ -11,7 +11,7 @@
     <th:block th:object="${buildingsCount}">
         <p th:text="|You have ${buildingsCount} building(s) |"></p>
 
-        <a href="/building/manage">
+        <a href="/buildings/manage">
             <span th:if="hasBuildings">Manage</span>
             <span th:unless="hasBuildings">Add </span>
             buildings</a>

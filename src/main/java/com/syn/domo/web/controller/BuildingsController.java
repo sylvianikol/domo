@@ -1,6 +1,7 @@
 package com.syn.domo.web.controller;
 
 import com.syn.domo.model.binding.BuildingAddBindingModel;
+import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.view.BuildingViewModel;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.web.controller.namespace.BuildingsNamespace;

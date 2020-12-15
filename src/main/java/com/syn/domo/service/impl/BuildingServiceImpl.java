@@ -1,20 +1,15 @@
 package com.syn.domo.service.impl;
 
-import com.syn.domo.model.binding.BuildingConstructModel;
+import com.syn.domo.model.binding.BuildingAddBindingModel;
 import com.syn.domo.model.entity.Building;
-import com.syn.domo.model.entity.Floor;
 import com.syn.domo.model.service.BuildingServiceModel;
-import com.syn.domo.model.view.BuildingViewModel;
 import com.syn.domo.repository.BuildingRepository;
-import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.FloorService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -38,13 +33,13 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public BuildingServiceModel constructBuilding(BuildingConstructModel buildingConstructModel) {
+    public BuildingServiceModel constructBuilding(BuildingAddBindingModel buildingAddBindingModel) {
         // TODO: validation
-        Building building = this.modelMapper.map(buildingConstructModel, Building.class);
+        Building building = this.modelMapper.map(buildingAddBindingModel, Building.class);
         this.buildingRepository.saveAndFlush(building);
         String buildingId = building.getId();
 
-        this.floorService.createFloors(buildingConstructModel.getFloorsNumber(), buildingId);
+        this.floorService.createFloors(buildingAddBindingModel.getFloorsNumber(), buildingId);
 
         return this.modelMapper.map(building, BuildingServiceModel.class);
     }

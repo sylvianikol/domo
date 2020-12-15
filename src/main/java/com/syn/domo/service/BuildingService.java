@@ -1,9 +1,8 @@
 package com.syn.domo.service;
 
-import com.syn.domo.model.binding.BuildingConstructModel;
+import com.syn.domo.model.binding.BuildingAddBindingModel;
 import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.service.BuildingServiceModel;
-import com.syn.domo.model.view.BuildingViewModel;
 
 import java.util.Set;
 
@@ -11,7 +10,7 @@ public interface BuildingService {
 
     Building getById(String id);
 
-    BuildingServiceModel constructBuilding(BuildingConstructModel buildingConstructModel);
+    BuildingServiceModel constructBuilding(BuildingAddBindingModel buildingAddBindingModel);
 
     void saveBuilding(Building building);
 

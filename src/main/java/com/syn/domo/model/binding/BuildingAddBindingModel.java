@@ -1,12 +1,12 @@
 package com.syn.domo.model.binding;
 
-public class BuildingConstructModel {
+public class BuildingAddBindingModel {
 
     private String name;
     private String address;
     private int floorsNumber;
 
-    public BuildingConstructModel() {
+    public BuildingAddBindingModel() {
     }
 
     public String getName() {

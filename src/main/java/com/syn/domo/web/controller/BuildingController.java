@@ -1,6 +1,6 @@
 package com.syn.domo.web.controller;
 
-import com.syn.domo.model.binding.BuildingConstructModel;
+import com.syn.domo.model.binding.BuildingAddBindingModel;
 import com.syn.domo.model.view.BuildingViewModel;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.web.controller.namespace.BuildingNamespace;
@@ -53,7 +53,7 @@ public class BuildingController implements BuildingNamespace {
 
     @PostMapping("/add")
     public ModelAndView addPost(@Valid @ModelAttribute("buildingConstructModel")
-                                            BuildingConstructModel buildingConstructModel,
+                                            BuildingAddBindingModel buildingAddBindingModel,
                           BindingResult bindingResult, ModelAndView modelAndView,
                                 RedirectAttributes redirectAttributes) {
 
@@ -62,7 +62,7 @@ public class BuildingController implements BuildingNamespace {
         } else {
 
             BuildingViewModel buildingDetails =
-                    this.modelMapper.map(this.buildingService.constructBuilding(buildingConstructModel), BuildingViewModel.class);
+                    this.modelMapper.map(this.buildingService.constructBuilding(buildingAddBindingModel), BuildingViewModel.class);
             redirectAttributes.addFlashAttribute("addedBuilding", buildingDetails.toString());
         }
 

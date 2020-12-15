@@ -4,6 +4,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import java.time.LocalDate;
+
 import static com.syn.domo.common.ValidationErrorMessages.*;
 import static com.syn.domo.common.ValidationErrorMessages.EMAIL_INVALID;
 
@@ -16,6 +18,8 @@ public abstract class BaseUserAddBindingModel {
     private String idCardNumber;
     private String phoneNumber;
     private String userRole;
+    private LocalDate addedOn;
+    private LocalDate removedOn;
 
     public BaseUserAddBindingModel() {
     }
@@ -80,5 +84,21 @@ public abstract class BaseUserAddBindingModel {
 
     public void setUserRole(String userRole) {
         this.userRole = userRole;
+    }
+
+    public LocalDate getAddedOn() {
+        return addedOn;
+    }
+
+    public void setAddedOn(LocalDate addedOn) {
+        this.addedOn = addedOn;
+    }
+
+    public LocalDate getRemovedOn() {
+        return removedOn;
+    }
+
+    public void setRemovedOn(LocalDate removedOn) {
+        this.removedOn = removedOn;
     }
 }

@@ -1,5 +1,7 @@
 package com.syn.domo.model.service;
 
+import java.time.LocalDate;
+
 public abstract class BaseUserServiceModel extends BaseServiceModel {
 
     //    private String password;
@@ -9,6 +11,9 @@ public abstract class BaseUserServiceModel extends BaseServiceModel {
     private String idCardNumber;
     private String phoneNumber;
     private String userRole;
+    private LocalDate addedOn;
+    private LocalDate removedOn;
+
 
     public BaseUserServiceModel() {
     }
@@ -59,5 +64,21 @@ public abstract class BaseUserServiceModel extends BaseServiceModel {
 
     public void setUserRole(String userRole) {
         this.userRole = userRole;
+    }
+
+    public LocalDate getAddedOn() {
+        return addedOn;
+    }
+
+    public void setAddedOn(LocalDate addedOn) {
+        this.addedOn = addedOn;
+    }
+
+    public LocalDate getRemovedOn() {
+        return removedOn;
+    }
+
+    public void setRemovedOn(LocalDate removedOn) {
+        this.removedOn = removedOn;
     }
 }

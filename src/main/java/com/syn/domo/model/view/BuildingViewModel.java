@@ -35,7 +35,7 @@ public class BuildingViewModel {
 
     @Override
     public String toString() {
-        return String.format("%s, located at %s",
-                this.getName(), this.getAddress());
+        return String.format("%s, located at %s, floors: %d",
+                this.getName(), this.getAddress(), this.getFloors());
     }
 }

@@ -7,29 +7,9 @@ import java.time.LocalDate;
 @Table(name = "staff")
 public class Staff extends BaseUser {
 
-    private LocalDate hiredOn;
-    private LocalDate dismissedOn;
     private Job job;
 
     public Staff() {
-    }
-
-    @Column(name = "hired_on")
-    public LocalDate getHiredOn() {
-        return hiredOn;
-    }
-
-    public void setHiredOn(LocalDate hiredDate) {
-        this.hiredOn = hiredDate;
-    }
-
-    @Column(name = "dismissed_on")
-    public LocalDate getDismissedOn() {
-        return dismissedOn;
-    }
-
-    public void setDismissedOn(LocalDate releasedDate) {
-        this.dismissedOn = releasedDate;
     }
 
     @ManyToOne

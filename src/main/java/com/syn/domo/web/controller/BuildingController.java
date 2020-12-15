@@ -52,17 +52,18 @@ public class BuildingController implements BuildingNamespace {
     }
 
     @PostMapping("/add")
-    public ModelAndView addPost(@Valid @ModelAttribute("buildingConstructModel")
+    public ModelAndView add(@Valid @ModelAttribute("buildingConstructModel")
                                             BuildingAddBindingModel buildingAddBindingModel,
-                          BindingResult bindingResult, ModelAndView modelAndView,
-                                RedirectAttributes redirectAttributes) {
+                            BindingResult bindingResult, ModelAndView modelAndView,
+                            RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("error", "Something went wrong");
         } else {
 
-            BuildingViewModel buildingDetails =
-                    this.modelMapper.map(this.buildingService.constructBuilding(buildingAddBindingModel), BuildingViewModel.class);
+            BuildingViewModel buildingDetails = this.modelMapper.map(
+                    this.buildingService.addBuilding(buildingAddBindingModel),
+                    BuildingViewModel.class);
             redirectAttributes.addFlashAttribute("addedBuilding", buildingDetails.toString());
         }
 

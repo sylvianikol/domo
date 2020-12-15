@@ -1,6 +1,7 @@
 package com.syn.domo.model.entity;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @MappedSuperclass
 public abstract class BaseUser extends BaseEntity {
@@ -12,6 +13,8 @@ public abstract class BaseUser extends BaseEntity {
     private String idCardNumber;
     private String phoneNumber;
     private UserRole userRole;
+    private LocalDate addedOn;
+    private LocalDate removedOn;
 
     public BaseUser() {
     }
@@ -71,11 +74,29 @@ public abstract class BaseUser extends BaseEntity {
     }
 
     @Enumerated(EnumType.STRING)
-    public UserRole getRole() {
+    public UserRole getUserRole() {
         return userRole;
     }
 
-    public void setRole(UserRole userRole) {
+    public void setUserRole(UserRole userRole) {
         this.userRole = userRole;
+    }
+
+    @Column(name = "added_on", nullable = false)
+    public LocalDate getAddedOn() {
+        return addedOn;
+    }
+
+    public void setAddedOn(LocalDate addedOn) {
+        this.addedOn = addedOn;
+    }
+
+    @Column(name = "removed_on")
+    public LocalDate getRemovedOn() {
+        return removedOn;
+    }
+
+    public void setRemovedOn(LocalDate removedOn) {
+        this.removedOn = removedOn;
     }
 }

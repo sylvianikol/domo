@@ -1,10 +1,14 @@
 package com.syn.domo.model.binding;
 
+import java.time.LocalDate;
+
 public class BuildingAddBindingModel {
 
     private String name;
     private String address;
     private int floorsNumber;
+    private LocalDate addedOn;
+    private LocalDate removedOn;
 
     public BuildingAddBindingModel() {
     }
@@ -31,5 +35,21 @@ public class BuildingAddBindingModel {
 
     public void setFloorsNumber(int floorsNumber) {
         this.floorsNumber = floorsNumber;
+    }
+
+    public LocalDate getAddedOn() {
+        return addedOn;
+    }
+
+    public void setAddedOn(LocalDate addedOn) {
+        this.addedOn = addedOn;
+    }
+
+    public LocalDate getRemovedOn() {
+        return removedOn;
+    }
+
+    public void setRemovedOn(LocalDate removedOn) {
+        this.removedOn = removedOn;
     }
 }

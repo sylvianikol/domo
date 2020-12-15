@@ -33,7 +33,7 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public BuildingServiceModel constructBuilding(BuildingAddBindingModel buildingAddBindingModel) {
+    public BuildingServiceModel addBuilding(BuildingAddBindingModel buildingAddBindingModel) {
         // TODO: validation
         Building building = this.modelMapper.map(buildingAddBindingModel, Building.class);
         this.buildingRepository.saveAndFlush(building);

@@ -31,7 +31,7 @@ public class StaffServiceImpl implements StaffService {
             Staff admin = new Staff();
             admin.setEmail("admin@domo.bg");
             admin.setPassword("123");
-            admin.setRole(UserRole.ADMIN);
+            admin.setUserRole(UserRole.ADMIN);
 
             JobServiceModel jobServiceModel =
                      this.jobService.findByJobRole(InitJobRoles.SUPER.toString());

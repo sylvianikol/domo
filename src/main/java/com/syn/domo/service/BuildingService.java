@@ -10,7 +10,7 @@ public interface BuildingService {
 
     Building getById(String id);
 
-    BuildingServiceModel constructBuilding(BuildingAddBindingModel buildingAddBindingModel);
+    BuildingServiceModel addBuilding(BuildingAddBindingModel buildingAddBindingModel);
 
     void saveBuilding(Building building);
 

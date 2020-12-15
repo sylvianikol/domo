@@ -12,8 +12,6 @@ public class Child extends BaseEntity {
 
     private String firstName;
     private String lastName;
-    private LocalDate movedIn;
-    private LocalDate movedOut;
     private Apartment apartment;
 
     public Child() {
@@ -35,24 +33,6 @@ public class Child extends BaseEntity {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    @Column(name = "moved_in", nullable = false)
-    public LocalDate getMovedIn() {
-        return movedIn;
-    }
-
-    public void setMovedIn(LocalDate movedIn) {
-        this.movedIn = movedIn;
-    }
-
-    @Column(name = "moved_out")
-    public LocalDate getMovedOut() {
-        return movedOut;
-    }
-
-    public void setMovedOut(LocalDate movedOut) {
-        this.movedOut = movedOut;
     }
 
     @ManyToOne

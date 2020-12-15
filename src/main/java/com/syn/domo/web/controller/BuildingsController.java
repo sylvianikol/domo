@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -47,7 +48,7 @@ public class BuildingsController implements BuildingsNamespace {
         modelAndView.addObject("buildings", buildings);
         modelAndView.addObject("pageTitle", MANAGE_BUILDINGS);
         modelAndView.addObject("pageH2Title", ADD_BUILDING);
-        modelAndView.setViewName("manage-building");
+        modelAndView.setViewName("manage-buildings");
         return modelAndView;
     }
 
@@ -68,6 +69,12 @@ public class BuildingsController implements BuildingsNamespace {
         }
 
         modelAndView.setViewName("redirect:/building/manage");
+        return modelAndView;
+    }
+
+    @GetMapping("/manage/{id}")
+    public ModelAndView manageBuilding(@PathVariable(value = "id") String id, ModelAndView modelAndView) {
+
         return modelAndView;
     }
 }

@@ -10,7 +10,7 @@
     <hr/>
     <th:block th:object="${buildings}">
         <h2 th:text="${pageH2Title}"></h2>
-        <form th:action="@{/building/add}" th:method="post">
+        <form th:action="@{/buildings/add}" th:method="post">
             <label for="name">
                 <input name="name" type="text" id="name" placeholder="Enter building's name">
             </label>
@@ -34,7 +34,9 @@
             <p th:text="|You manage ${buildings.size()} building(s) |"></p>
             <ul>
                 <li th:each="b : ${buildings}">
-                    <a href="#" th:text="|${b.name} (address: ${b.getAddress()}) |"></a></li>
+                    <a th:href="@{/buildings/id}" th:text="|${b.name} (address: ${b.getAddress()}) |"></a></li>
+
+                <a th:href="@{/buildings/manage/{id}(id=${b.getId})}"></a>
             </ul>
         </th:block>
 

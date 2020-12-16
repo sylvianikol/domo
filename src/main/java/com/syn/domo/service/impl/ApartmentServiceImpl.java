@@ -78,4 +78,11 @@ public class ApartmentServiceImpl implements ApartmentService {
                 .orElse(null);
 
     }
+
+    @Override
+    public ApartmentServiceModel getByIdAndBuildingId(String apartmentId, String buildingId) {
+        return this.apartmentRepository.findByIdAndBuildingId(apartmentId, buildingId)
+                .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
+                .orElse(null);
+    }
 }

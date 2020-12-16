@@ -13,4 +13,6 @@ public interface ApartmentService {
     boolean alreadyExists(String apartmentNumber, String buildingId);
 
     ApartmentServiceModel getByNumberAndBuildingId(String apartmentNumber, String buildingId);
+
+    ApartmentServiceModel getByIdAndBuildingId(String apartmentId, String buildingId);
 }

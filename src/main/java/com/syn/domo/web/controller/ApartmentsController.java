@@ -2,6 +2,7 @@ package com.syn.domo.web.controller;
 
 import com.syn.domo.model.binding.ApartmentAddBindingModel;
 import com.syn.domo.model.service.ApartmentServiceModel;
+import com.syn.domo.model.view.ApartmentViewModel;
 import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.FloorService;
@@ -22,6 +23,7 @@ public class ApartmentsController implements BuildingsNamespace {
     private static final String MANAGE_APARTMENTS_TITLE = "Manage Apartments";
     private static final String ADD_APARTMENTS_TITLE = "Add Apartment";
     private static final String ALL_APARTMENTS = "All Apartments in ";
+    private static final String APARTMENT_DETAILS = "Apartment Details";
 
     private final ApartmentService apartmentService;
     private final BuildingService buildingService;
@@ -65,7 +67,7 @@ public class ApartmentsController implements BuildingsNamespace {
                                             ApartmentAddBindingModel apartmentAddBindingModel,
                             BindingResult bindingResult, ModelAndView modelAndView,
                             RedirectAttributes redirectAttributes) {
-        System.out.println();
+
         if (bindingResult.hasErrors()) {
             modelAndView.setViewName("redirect:/buildings/" + buildingId + "/apartments/");
         } else {
@@ -87,6 +89,19 @@ public class ApartmentsController implements BuildingsNamespace {
             modelAndView.setViewName("redirect:/buildings/" + buildingId + "/apartments/");
         }
 
+        return modelAndView;
+    }
+
+    @GetMapping("/{buildingId}/apartments/{apartmentId}")
+    public ModelAndView details(@PathVariable(value = "buildingId") String buildingId,
+                                @PathVariable(value = "apartmentId") String apartmentId,
+                                ModelAndView modelAndView) {
+
+        ApartmentViewModel apartment = this.modelMapper.map(this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId), ApartmentViewModel.class);
+        modelAndView.addObject("buildingName", this.buildingService.getBuildingName(buildingId));
+        modelAndView.addObject("apartment", apartment);
+        modelAndView.addObject("pageTitle", APARTMENT_DETAILS);
+        modelAndView.setViewName("details-apartment");
         return modelAndView;
     }
 }

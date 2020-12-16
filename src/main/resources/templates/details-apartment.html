@@ -8,10 +8,10 @@
     <main>
         <h1 th:text="${pageTitle}"></h1>
         <th:block th:object="${apartment}">
-            <p th:text="| Apartment No:*{number},
-            Floor:  No:*{floorNumber},
-            Number of Pets:  No:*{pets},
-            Residents: |"></p>
+            <p th:text="| Building: ${buildingName}, Apartment No:*{number},
+            Floor: *{floorNumber},
+            Pets: *{pets},
+            Residents: *{residents.size()}|"></p>
         </th:block>
     </main>
     <footer>

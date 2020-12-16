@@ -33,10 +33,10 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public BuildingServiceModel getByName(String name) {
+    public BuildingServiceModel getById(String id) {
         // TODO: BuildingNotFoundException
         Building building = this.buildingRepository
-                .findByName(name)
+                .findById(id)
                 .orElseThrow(() -> {
             throw new EntityNotFoundException("Building not found");
         });
@@ -78,6 +78,11 @@ public class BuildingServiceImpl implements BuildingService {
     @Override
     public int getCount() {
         return (int) this.buildingRepository.count();
+    }
+
+    @Override
+    public String getBuildingName(String id) {
+        return this.getById(id).getName();
     }
 
 }

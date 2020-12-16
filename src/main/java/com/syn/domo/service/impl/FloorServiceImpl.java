@@ -40,7 +40,7 @@ public class FloorServiceImpl implements FloorService {
     public void createFloors(int floorsNumber, String buildingId) {
 
         Building building = this.modelMapper.map(
-                this.buildingService.getByName(buildingId), Building.class);
+                this.buildingService.getById(buildingId), Building.class);
 
         for (int number = 1; number <= floorsNumber; number++) {
             Floor floor = new Floor();

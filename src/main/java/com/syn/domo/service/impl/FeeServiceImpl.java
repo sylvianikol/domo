@@ -5,7 +5,6 @@ import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Fee;
 import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.model.service.FeeServiceModel;
-import com.syn.domo.model.view.FeeViewModel;
 import com.syn.domo.repository.FeeRepository;
 import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.FeeService;
@@ -37,7 +36,7 @@ public class FeeServiceImpl implements FeeService  {
     public List<FeeServiceModel> generateMonthlyFees(FeeAddBindingModel feeAddBindingModel) {
 
         Set<ApartmentServiceModel> apartments =
-                this.apartmentService.getAllApartments();
+                this.apartmentService.getAllApartmentsByBuildingId();
 
         List<FeeServiceModel> feeServiceModels = new ArrayList<>();
 

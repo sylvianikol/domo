@@ -10,8 +10,8 @@ import java.util.Set;
 @Repository
 public interface ApartmentRepository extends JpaRepository<Apartment, String> {
 
-    Optional<Apartment> findByNumber(String apartmentNumber);
+    Optional<Apartment> findByNumberAndBuildingId(String apartmentNumber, String id);
 
-    Set<Apartment> findAllByOrderByNumber();
+    Set<Apartment> findAllByBuildingIdOrderByNumber(String id);
 
 }

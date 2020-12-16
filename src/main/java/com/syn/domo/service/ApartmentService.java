@@ -7,9 +7,9 @@ import java.util.Set;
 
 public interface ApartmentService {
 
-    ApartmentServiceModel add(ApartmentServiceModel addServiceModel);
+    ApartmentServiceModel add(ApartmentServiceModel addServiceModel, String buildingId);
 
-    Set<ApartmentServiceModel> getAllApartments();
+    Set<ApartmentServiceModel> getAllApartmentsByBuildingId(String buildingId);
 
-    ApartmentServiceModel getByNumber(String apartmentNumber);
+    ApartmentServiceModel getByNumberAndBuildingId(String apartmentNumber, String buildingId);
 }

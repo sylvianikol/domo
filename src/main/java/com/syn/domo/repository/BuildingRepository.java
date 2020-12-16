@@ -10,7 +10,7 @@ import java.util.Set;
 @Repository
 public interface BuildingRepository extends JpaRepository<Building, String> {
 
-    Optional<Building> findByName(String name);
+    Optional<Building> findById(String id);
 
     Set<Building> findAllByOrderByName();
 }

@@ -7,7 +7,7 @@ public class ApartmentServiceModel extends BaseServiceModel {
     private String number;
     private int floorNumber;
     private int pets;
-    //TODO: private String buildingName;
+
     private Set<ResidentServiceModel> residents;
     private Set<ChildServiceModel> children;
 

@@ -1,14 +1,13 @@
 package com.syn.domo.service;
 
 import com.syn.domo.model.binding.BuildingAddBindingModel;
-import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.service.BuildingServiceModel;
 
 import java.util.Set;
 
 public interface BuildingService {
 
-    BuildingServiceModel getByName(String name);
+    BuildingServiceModel getById(String id);
 
     BuildingServiceModel addBuilding(BuildingAddBindingModel buildingAddBindingModel);
 
@@ -19,4 +18,6 @@ public interface BuildingService {
     Set<BuildingServiceModel> getAllBuildings();
 
     int getCount();
+
+    String getBuildingName(String id);
 }

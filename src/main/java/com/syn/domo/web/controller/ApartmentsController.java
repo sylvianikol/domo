@@ -21,7 +21,7 @@ import java.util.Set;
 public class ApartmentsController implements BuildingsNamespace {
     private static final String MANAGE_APARTMENTS_TITLE = "Manage Apartments";
     private static final String ADD_APARTMENTS_TITLE = "Add Apartment";
-    private static final String ALL_APARTMENTS = "All Apartments";
+    private static final String ALL_APARTMENTS = "All Apartments in ";
 
     private final ApartmentService apartmentService;
     private final BuildingService buildingService;
@@ -39,13 +39,13 @@ public class ApartmentsController implements BuildingsNamespace {
     @GetMapping("/{buildingId}/apartments/")
     public ModelAndView manage(@PathVariable(value = "buildingId") String buildingId,
                                ModelAndView modelAndView) {
-
+        String buildingName = this.buildingService.getBuildingName(buildingId);
         Set<ApartmentServiceModel> apartments =
                 this.apartmentService.getAllApartmentsByBuildingId(buildingId);
 
         if (apartments.size() > 0) {
             modelAndView.addObject("hasApartments", true);
-            modelAndView.addObject("pageH3Title", ALL_APARTMENTS);
+            modelAndView.addObject("pageH3Title", ALL_APARTMENTS + buildingName);
             modelAndView.addObject("apartments", apartments);
         }
 
@@ -53,8 +53,7 @@ public class ApartmentsController implements BuildingsNamespace {
         modelAndView.addObject("floorNumbers", this.floorService.getAllFloorNumbers());
         modelAndView.addObject("buildingId", buildingId);
         modelAndView.addObject("pageTitle",
-                this.buildingService.getBuildingName(buildingId)
-                        + ": " + MANAGE_APARTMENTS_TITLE);
+                buildingName + ": " + MANAGE_APARTMENTS_TITLE);
         modelAndView.setViewName("manage-apartments");
 
         return modelAndView;

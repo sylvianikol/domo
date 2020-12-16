@@ -20,8 +20,8 @@ import java.util.Set;
 @Controller
 public class ApartmentsController implements BuildingsNamespace {
     private static final String MANAGE_APARTMENTS_TITLE = "Manage Apartments";
-    private static final String ADD_APARTMENTS_TITLE = "Add Apartments";
-    private static final String EDIT_APARTMENTS_TITLE = "Edit Apartments";
+    private static final String ADD_APARTMENTS_TITLE = "Add Apartment";
+    private static final String ALL_APARTMENTS = "All Apartments";
 
     private final ApartmentService apartmentService;
     private final BuildingService buildingService;
@@ -45,7 +45,7 @@ public class ApartmentsController implements BuildingsNamespace {
 
         if (apartments.size() > 0) {
             modelAndView.addObject("hasApartments", true);
-            modelAndView.addObject("pageH3Title", EDIT_APARTMENTS_TITLE);
+            modelAndView.addObject("pageH3Title", ALL_APARTMENTS);
             modelAndView.addObject("apartments", apartments);
         }
 

@@ -76,4 +76,13 @@ public class ValidationErrorMessages {
 
     public static final String END_DATE_INVALID =
             "End date can not be in the future!";
+
+    public static final String PETS_NULL =
+            "Pets can not be null!";
+
+    public static final String PETS_MIN =
+            "Pets' count can not be a negative number!";
+
+    public static final String PETS_MAX =
+            "Maximum number of pets per apartment is 3!";
 }

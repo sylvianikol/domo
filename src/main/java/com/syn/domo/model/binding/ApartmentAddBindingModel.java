@@ -11,6 +11,7 @@ public class ApartmentAddBindingModel {
 
     private String number;
     private Integer floorNumber;
+    private int pets;
 
     public ApartmentAddBindingModel() {
     }
@@ -36,5 +37,16 @@ public class ApartmentAddBindingModel {
 
     public void setFloorNumber(Integer floorNumber) {
         this.floorNumber = floorNumber;
+    }
+
+    @NotNull(message = PETS_NULL)
+    @Min(value = 0, message = PETS_MIN)
+    @Max(value = 3, message = PETS_MAX)
+    public int getPets() {
+        return pets;
+    }
+
+    public void setPets(int pets) {
+        this.pets = pets;
     }
 }

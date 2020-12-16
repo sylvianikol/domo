@@ -33,8 +33,8 @@ public class ApartmentsController implements ApartmentsNamespace {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping("/manage")
-    public ModelAndView manage(@PathVariable(value = "buildingId") String buildingId, ModelAndView modelAndView) {
+    @GetMapping("/")
+    public ModelAndView manage(ModelAndView modelAndView) {
         // TODO: getAllApartmentByBuildingId(buildingId)
         Set<ApartmentServiceModel> apartments = this.apartmentService.getAllApartments();
         if (apartments.size() > 0) {
@@ -51,13 +51,13 @@ public class ApartmentsController implements ApartmentsNamespace {
         return modelAndView;
     }
 
-    @PostMapping("/add")
+    @PostMapping("/")
     public ModelAndView addPost(@Valid @ModelAttribute("apartmentAddBindingModel")
                                             ApartmentAddBindingModel apartmentAddBindingModel,
                                 BindingResult bindingResult, ModelAndView modelAndView,
                                 RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            modelAndView.setViewName("redirect:/apartments/manage");
+            modelAndView.setViewName("redirect:/apartments");
         } else {
             String apartmentNumber = apartmentAddBindingModel.getNumber();
             Integer floorNumber = apartmentAddBindingModel.getFloorNumber();
@@ -72,7 +72,7 @@ public class ApartmentsController implements ApartmentsNamespace {
 
             redirectAttributes.addFlashAttribute("floorNumber", floorNumber);
             redirectAttributes.addFlashAttribute("apartmentNumber", apartmentNumber);
-            modelAndView.setViewName("redirect:/apartments/manage");
+            modelAndView.setViewName("redirect:/apartments");
         }
 
         return modelAndView;

@@ -8,7 +8,7 @@ import java.util.Set;
 
 public interface BuildingService {
 
-    BuildingServiceModel getById(String id);
+    BuildingServiceModel getByName(String name);
 
     BuildingServiceModel addBuilding(BuildingAddBindingModel buildingAddBindingModel);
 

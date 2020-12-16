@@ -1,16 +1,11 @@
 package com.syn.domo.web.controller;
 
-import com.syn.domo.model.view.BuildingViewModel;
 import com.syn.domo.service.BuildingService;
-import com.syn.domo.service.FloorService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Controller
 public class HomeController {

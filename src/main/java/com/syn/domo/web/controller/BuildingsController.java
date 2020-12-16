@@ -1,7 +1,6 @@
 package com.syn.domo.web.controller;
 
 import com.syn.domo.model.binding.BuildingAddBindingModel;
-import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.model.view.BuildingViewModel;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.web.controller.namespace.BuildingsNamespace;
@@ -37,7 +36,7 @@ public class BuildingsController implements BuildingsNamespace {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping("/manage")
+    @GetMapping("/")
     public ModelAndView manage(ModelAndView modelAndView) {
 
         if (this.buildingService.hasBuildings()) {
@@ -55,7 +54,7 @@ public class BuildingsController implements BuildingsNamespace {
         return modelAndView;
     }
 
-    @PostMapping("/add")
+    @PostMapping("/")
     public ModelAndView add(@Valid @ModelAttribute("buildingConstructModel")
                                             BuildingAddBindingModel buildingAddBindingModel,
                             BindingResult bindingResult, ModelAndView modelAndView,
@@ -71,20 +70,20 @@ public class BuildingsController implements BuildingsNamespace {
             redirectAttributes.addFlashAttribute("addedBuilding", buildingDetails.toString());
         }
 
-        modelAndView.setViewName("redirect:/buildings/manage");
+        modelAndView.setViewName("redirect:/buildings/");
         return modelAndView;
     }
 
-    @GetMapping("/manage/{buildingId}")
-    public ModelAndView manageBuilding(@PathVariable(value = "buildingId") String buildingId, ModelAndView modelAndView) {
+    @GetMapping("/{buildingName}")
+    public ModelAndView manageBuilding(@PathVariable(value = "buildingName") String buildingName, ModelAndView modelAndView) {
         BuildingViewModel building = this.modelMapper.map(
-                this.buildingService.getById(buildingId), BuildingViewModel.class);
+                this.buildingService.getByName(buildingName), BuildingViewModel.class);
 
         if (building.getApartments().size() > 0) {
             modelAndView.addObject("hasApartments", true);
         }
 
-        modelAndView.addObject("buildingId", buildingId);
+//        modelAndView.addObject("buildingName", buildingName);
         modelAndView.addObject("building", building);
         modelAndView.addObject("pageTitle", BUILDING_DETAILS);
         modelAndView.setViewName("details-building.html");

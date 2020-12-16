@@ -11,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -32,9 +33,13 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public BuildingServiceModel getById(String id) {
+    public BuildingServiceModel getByName(String name) {
         // TODO: BuildingNotFoundException
-        Building building = this.buildingRepository.findById(id).orElse(null);
+        Building building = this.buildingRepository
+                .findByName(name)
+                .orElseThrow(() -> {
+            throw new EntityNotFoundException("Building not found");
+        });
         return this.modelMapper.map(building, BuildingServiceModel.class);
     }
 

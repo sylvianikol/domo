@@ -9,7 +9,7 @@
     <h1 th:text="${pageTitle}"></h1>
     <hr/>
     <p th:text="${building.toString}"></p>
-    <a th:href="@{/apartments/manage/{buildingId}(buildingId=${building.getId()})}">
+    <a th:href="@{/buildings/{buildingName}/apartments/(buildingName=${building.getName()})}">
         <span th:if="${hasApartments}">Manage Apartments</span>
         <span th:unless="${hasApartments}">Add Apartments</span>
     </a>

@@ -9,7 +9,7 @@
     <h1 th:text="${pageTitle}"></h1>
     <hr/>
     <h2 th:text="${pageH2Title}"></h2>
-    <form th:action="@{/buildings/add}" th:method="post">
+    <form th:action="@{/buildings/}" th:method="post">
         <label for="name">
             <input name="name" type="text" id="name" placeholder="Enter building's name">
         </label>
@@ -33,7 +33,7 @@
         <p th:text="|You manage ${buildings.size()} building(s) |"></p>
         <ul>
             <li th:each="b : ${buildings}">
-                <a th:href="@{/buildings/manage/{id}(id=${b.getId()})}"
+                <a th:href="@{/buildings/{buildingName}(buildingName=${b.getName()})}"
                    th:text="|${b.name} (address: ${b.getAddress()}) |"></a></li>
         </ul>
     </th:block>

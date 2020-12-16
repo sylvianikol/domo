@@ -12,11 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,7 +40,7 @@ public class FloorServiceImpl implements FloorService {
     public void createFloors(int floorsNumber, String buildingId) {
 
         Building building = this.modelMapper.map(
-                this.buildingService.getById(buildingId), Building.class);
+                this.buildingService.getByName(buildingId), Building.class);
 
         for (int number = 1; number <= floorsNumber; number++) {
             Floor floor = new Floor();

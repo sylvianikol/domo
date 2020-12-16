@@ -37,9 +37,11 @@ public class ApartmentsController implements BuildingsNamespace {
     }
 
     @GetMapping("/{buildingId}/apartments/")
-    public ModelAndView manage(@PathVariable(value = "buildingId") String buildingId, ModelAndView modelAndView) {
+    public ModelAndView manage(@PathVariable(value = "buildingId") String buildingId,
+                               ModelAndView modelAndView) {
 
-        Set<ApartmentServiceModel> apartments = this.apartmentService.getAllApartmentsByBuildingId(buildingId);
+        Set<ApartmentServiceModel> apartments =
+                this.apartmentService.getAllApartmentsByBuildingId(buildingId);
 
         if (apartments.size() > 0) {
             modelAndView.addObject("hasApartments", true);
@@ -49,26 +51,29 @@ public class ApartmentsController implements BuildingsNamespace {
 
         modelAndView.addObject("pageH2Title", ADD_APARTMENTS_TITLE);
         modelAndView.addObject("floorNumbers", this.floorService.getAllFloorNumbers());
+        modelAndView.addObject("buildingId", buildingId);
         modelAndView.addObject("pageTitle",
-                this.buildingService.getBuildingName(buildingId) + ": " + MANAGE_APARTMENTS_TITLE);
+                this.buildingService.getBuildingName(buildingId)
+                        + ": " + MANAGE_APARTMENTS_TITLE);
         modelAndView.setViewName("manage-apartments");
 
         return modelAndView;
     }
 
     @PostMapping("/{buildingId}/apartments/")
-    public ModelAndView addPost(@PathVariable(value = "buildingId") String buildingId,
-                                @Valid @ModelAttribute("apartmentAddBindingModel")
+    public ModelAndView add(@PathVariable(value = "buildingId") String buildingId,
+                            @Valid @ModelAttribute("apartmentAddBindingModel")
                                             ApartmentAddBindingModel apartmentAddBindingModel,
-                                BindingResult bindingResult, ModelAndView modelAndView,
-                                RedirectAttributes redirectAttributes) {
+                            BindingResult bindingResult, ModelAndView modelAndView,
+                            RedirectAttributes redirectAttributes) {
+        System.out.println();
         if (bindingResult.hasErrors()) {
-            modelAndView.setViewName("redirect:/{buildingId}/apartments/");
+            modelAndView.setViewName("redirect:/buildings/" + buildingId + "/apartments/");
         } else {
             String apartmentNumber = apartmentAddBindingModel.getNumber();
             Integer floorNumber = apartmentAddBindingModel.getFloorNumber();
 
-            if (this.apartmentService.getByNumberAndBuildingId(apartmentNumber, buildingId) != null) {
+            if (this.apartmentService.alreadyExists(apartmentNumber, buildingId)) {
                 redirectAttributes.addFlashAttribute("alreadyExists",true);
             } else {
                 this.apartmentService.add(
@@ -80,7 +85,7 @@ public class ApartmentsController implements BuildingsNamespace {
 
             redirectAttributes.addFlashAttribute("floorNumber", floorNumber);
             redirectAttributes.addFlashAttribute("apartmentNumber", apartmentNumber);
-            modelAndView.setViewName("redirect:/{buildingId}/apartments/");
+            modelAndView.setViewName("redirect:/buildings/" + buildingId + "/apartments/");
         }
 
         return modelAndView;

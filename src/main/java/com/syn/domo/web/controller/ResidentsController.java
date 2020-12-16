@@ -63,7 +63,7 @@ public class ResidentsController implements ResidentsNamespace {
         }
 
         Set<String> apartmentNumbers =
-                this.apartmentService.getAllApartmentsByBuildingId().stream()
+                this.apartmentService.getAllApartmentsByBuildingId("id").stream()
                 .map(apartmentServiceModel -> this.modelMapper.map(apartmentServiceModel, ApartmentViewModel.class))
                 .map(ApartmentViewModel::getNumber)
                 .collect(Collectors.toSet());

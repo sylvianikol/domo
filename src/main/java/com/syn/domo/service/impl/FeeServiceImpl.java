@@ -36,7 +36,7 @@ public class FeeServiceImpl implements FeeService  {
     public List<FeeServiceModel> generateMonthlyFees(FeeAddBindingModel feeAddBindingModel) {
 
         Set<ApartmentServiceModel> apartments =
-                this.apartmentService.getAllApartmentsByBuildingId();
+                this.apartmentService.getAllApartmentsByBuildingId("buildingId");
 
         List<FeeServiceModel> feeServiceModels = new ArrayList<>();
 
@@ -50,7 +50,7 @@ public class FeeServiceImpl implements FeeService  {
             fee.setStartDate(LocalDate.now());
 
             ApartmentServiceModel apartmentServiceModel =
-                    this.apartmentService.getByNumber(apartment.getNumber());
+                    this.apartmentService.getByNumberAndBuildingId(apartment.getNumber(), "buildingId");
 
             fee.setApartment(this.modelMapper.map(apartmentServiceModel, Apartment.class));
 

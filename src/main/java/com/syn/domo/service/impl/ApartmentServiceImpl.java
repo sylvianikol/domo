@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -65,13 +66,16 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
+    public boolean alreadyExists(String apartmentNumber, String buildingId) {
+        return this.apartmentRepository.findByNumberAndBuildingId(apartmentNumber, buildingId).isPresent();
+
+    }
+
+    @Override
     public ApartmentServiceModel getByNumberAndBuildingId(String apartmentNumber, String buildingId) {
-        // TODO: ApartmentNotFoundException
         return this.apartmentRepository.findByNumberAndBuildingId(apartmentNumber, buildingId)
                 .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
-                .orElseThrow(() -> {
-                    throw new EntityNotFoundException("Apartment not found!");
-                });
+                .orElse(null);
 
     }
 }

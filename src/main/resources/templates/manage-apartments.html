@@ -9,7 +9,7 @@
     <h1 th:text="${pageTitle}"></h1>
     <hr/>
     <h2 th:text="${pageH2Title}"></h2>
-    <form th:action="@{/apartments}" th:method="post">
+    <form th:action="@{/buildings/{buildingId}/apartments/(buildingId=${buildingId})}" th:method="post">
         <label for="number">
             <input name="number" type="text" id="number" placeholder="Enter apartment number">
         </label>

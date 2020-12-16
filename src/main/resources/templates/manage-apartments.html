@@ -29,20 +29,23 @@
     </form>
 
     <p th:if="${alreadyExists}" th:text="| Apartment No.${apartmentNumber} already exists!|"></p>
-    <p th:if="${success}" th:text="| Apartment No.${apartmentNumber} added on Floor No.${floorNumber} |"></p>
+    <p th:if="${success}" th:text="| Apartment No.${apartmentNumber} added on Floor ${floorNumber} |"></p>
 
 
     <th:block th:if="${hasApartments}" th:object="${apartments}">
         <h3 th:text="${pageH3Title}"></h3>
-        <!-- show apartments list -->
-        <!-- |  Apartment No  |  Floor No  |  Manage Residents  |  Add/Remove Pets  |  -->
         <ul>
-            <li th:each="a : ${apartments}" th:text="|
-            Apartment No. ${a.number},
-            Floor: ${a.floorNumber},
-            Residents: ${a.residents.size() + a.children.size()},
-            Pets: ${a.pets}
-            |"></li>
+            <li th:each="a : ${apartments}">
+                <a th:href="@{/buildings/{buildingId}/apartments/{apartmentId}(buildingId=${buildingId}, apartmentId=${a.getId()})}"
+                   th:text="|
+                        Apartment No. ${a.number},
+                        Floor: ${a.floorNumber},
+                        Residents: ${a.residents.size() + a.children.size()},
+                        Pets: ${a.pets}
+                        |">
+                </a>
+            </li>
+
         </ul>
     </th:block>
 </main>

@@ -2,13 +2,10 @@ package com.syn.domo.web.controller;
 
 import com.syn.domo.model.binding.ApartmentAddBindingModel;
 import com.syn.domo.model.service.ApartmentServiceModel;
-import com.syn.domo.model.service.ResidentServiceModel;
 import com.syn.domo.model.view.ApartmentViewModel;
-import com.syn.domo.model.view.ResidentViewModel;
 import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.FloorService;
-import com.syn.domo.service.ResidentService;
 import com.syn.domo.web.controller.namespace.BuildingsNamespace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +17,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Controller
 public class ApartmentsController implements BuildingsNamespace {
@@ -31,15 +27,13 @@ public class ApartmentsController implements BuildingsNamespace {
 
     private final ApartmentService apartmentService;
     private final BuildingService buildingService;
-    private final ResidentService residentService;
     private final FloorService floorService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ApartmentsController(ApartmentService apartmentService, BuildingService buildingService, ResidentService residentService, FloorService floorService, ModelMapper modelMapper) {
+    public ApartmentsController(ApartmentService apartmentService, BuildingService buildingService, FloorService floorService, ModelMapper modelMapper) {
         this.apartmentService = apartmentService;
         this.buildingService = buildingService;
-        this.residentService = residentService;
         this.floorService = floorService;
         this.modelMapper = modelMapper;
     }
@@ -58,7 +52,9 @@ public class ApartmentsController implements BuildingsNamespace {
         }
 
         modelAndView.addObject("pageH2Title", ADD_APARTMENTS_TITLE);
-        modelAndView.addObject("floorNumbers", this.floorService.getAllFloorNumbers());
+        modelAndView.addObject("floorNumbers",
+                this.floorService.getAllFloorNumbersByBuildingId(buildingId));
+
         modelAndView.addObject("buildingId", buildingId);
         modelAndView.addObject("pageTitle",
                 buildingName + ": " + MANAGE_APARTMENTS_TITLE);

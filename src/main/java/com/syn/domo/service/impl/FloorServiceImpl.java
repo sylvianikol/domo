@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -58,9 +59,12 @@ public class FloorServiceImpl implements FloorService {
     }
 
     @Override
-    public List<Integer> getAllFloorNumbers() {
-        return this.floorRepository.findAllByOrderByNumber().stream()
+    public Set<Integer> getAllFloorNumbersByBuildingId(String buildingId) {
+        Set<Integer> floorNumbers =
+                this.floorRepository.findAllByBuilding_IdOrderByNumber(buildingId).stream()
                 .map(Floor::getNumber)
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return Collections.unmodifiableSet(floorNumbers);
     }
 }

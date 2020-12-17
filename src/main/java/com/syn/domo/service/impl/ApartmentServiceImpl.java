@@ -14,7 +14,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,7 +38,8 @@ public class ApartmentServiceImpl implements ApartmentService {
         // TODO: validation
 
         int floorNumber = apartmentServiceModel.getFloorNumber();
-        FloorServiceModel floorServiceModel = this.floorService.getByNumber(floorNumber);
+        FloorServiceModel floorServiceModel =
+                this.floorService.getByNumberAndBuildingId(floorNumber, buildingId);
         BuildingServiceModel buildingServiceModel = this.buildingService.getById(buildingId);
 
         Apartment apartment = this.modelMapper.map(apartmentServiceModel, Apartment.class);

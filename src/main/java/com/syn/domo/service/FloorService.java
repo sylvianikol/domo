@@ -6,7 +6,7 @@ import java.util.Set;
 
 public interface FloorService {
 
-    FloorServiceModel getByNumber(int number);
+    FloorServiceModel getByNumberAndBuildingId(int number, String buildingId);
 
     Set<FloorServiceModel> createFloors(int floorsNumber, String buildingId);
 

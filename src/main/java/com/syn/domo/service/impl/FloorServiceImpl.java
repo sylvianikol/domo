@@ -2,7 +2,6 @@ package com.syn.domo.service.impl;
 
 import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.entity.Floor;
-import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.model.service.FloorServiceModel;
 import com.syn.domo.repository.FloorRepository;
 import com.syn.domo.service.BuildingService;
@@ -12,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,8 +34,13 @@ public class FloorServiceImpl implements FloorService {
     }
 
     @Override
-    public FloorServiceModel getByNumber(int number) {
-        return this.modelMapper.map(this.floorRepository.findByNumber(number), FloorServiceModel.class);
+    public FloorServiceModel getByNumberAndBuildingId(int number, String buildingId) {
+        // TODO: FloorNotFoundException
+        return this.floorRepository.findByNumberAndBuilding_Id(number, buildingId)
+                .map(floor -> this.modelMapper.map(floor, FloorServiceModel.class))
+                .orElseThrow(() -> {
+                    throw new EntityNotFoundException("Floor not found");
+                });
     }
 
     @Override

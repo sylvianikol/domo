@@ -68,12 +68,6 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public void saveBuilding(BuildingServiceModel buildingServiceModel) {
-        Building building = this.modelMapper.map(buildingServiceModel, Building.class);
-        this.buildingRepository.saveAndFlush(building);
-    }
-
-    @Override
     public boolean hasBuildings() {
         return this.buildingRepository.count() > 0;
     }

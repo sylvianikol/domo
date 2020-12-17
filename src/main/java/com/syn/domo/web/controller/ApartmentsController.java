@@ -100,9 +100,7 @@ public class ApartmentsController implements BuildingsNamespace {
                                 ModelAndView modelAndView) {
 
         ApartmentViewModel apartment =
-                this.modelMapper.map(this.apartmentService
-                        .getByIdAndBuildingId(apartmentId, buildingId),
-                        ApartmentViewModel.class);
+                this.modelMapper.map(this.apartmentService.getById(apartmentId), ApartmentViewModel.class);
 
         if (this.apartmentService.hasResidents(apartmentId)) {
             modelAndView.addObject("hasResidents", true);

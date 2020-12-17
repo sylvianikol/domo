@@ -16,8 +16,6 @@ public interface ApartmentService {
 
     ApartmentServiceModel getByNumberAndBuildingId(String apartmentNumber, String buildingId);
 
-    ApartmentServiceModel getByIdAndBuildingId(String apartmentId, String buildingId);
-
     ApartmentServiceModel getById(String apartmentId);
 
     boolean hasResidents(String apartmentId);

@@ -33,7 +33,7 @@ public class ResidentServiceImpl implements ResidentService {
 
 
     @Override
-    public ResidentServiceModel register(ResidentServiceModel residentServiceModel, String apartmentId) {
+    public ResidentServiceModel add(ResidentServiceModel residentServiceModel, String apartmentId) {
 
         Resident resident = this.modelMapper.map(residentServiceModel, Resident.class);
 

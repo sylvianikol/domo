@@ -14,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -64,7 +65,7 @@ public class ApartmentServiceImpl implements ApartmentService {
 
     @Override
     public Set<String> getAllApartmentNumbersByBuildingId(String buildingId) {
-        LinkedHashSet<String> apartmentNumbers = this.getAllApartmentsByBuildingId(buildingId).stream()
+        Set<String> apartmentNumbers = this.getAllApartmentsByBuildingId(buildingId).stream()
                 .map(ApartmentServiceModel::getNumber)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
@@ -86,24 +87,19 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
-    public ApartmentServiceModel getByIdAndBuildingId(String apartmentId, String buildingId) {
-        return this.apartmentRepository.findByIdAndBuildingId(apartmentId, buildingId)
-                .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
-                .orElse(null);
-    }
-
-    @Override
     public ApartmentServiceModel getById(String apartmentId) {
+        // TODO: ApartmentNotFoundException
         return this.apartmentRepository.findById(apartmentId)
                 .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
-                .orElse(null);
+                .orElseThrow(() -> {
+                    throw new EntityNotFoundException("Apartment not found");
+                });
     }
 
     @Override
     public boolean hasResidents(String apartmentId) {
-        // TODO: ApartmentNotFoundException
-        Apartment apartment = this.apartmentRepository.findById(apartmentId).orElseThrow();
-        return apartment.getResidents().size() > 0;
+        return this.getById(apartmentId).getResidents().size() > 0;
     }
+
 
 }

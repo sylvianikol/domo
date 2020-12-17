@@ -11,8 +11,6 @@ public interface BuildingService {
 
     BuildingServiceModel addBuilding(BuildingServiceModel buildingServiceModel);
 
-    void saveBuilding(BuildingServiceModel buildingServiceModel);
-
     boolean hasBuildings();
 
     Set<BuildingServiceModel> getAllBuildings();

@@ -2,13 +2,11 @@ package com.syn.domo.web.controller;
 
 import com.syn.domo.model.binding.ResidentAddBindingModel;
 import com.syn.domo.model.service.ResidentServiceModel;
-import com.syn.domo.model.view.ApartmentViewModel;
 import com.syn.domo.model.view.ResidentViewModel;
 import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.ResidentService;
 import com.syn.domo.web.controller.namespace.BuildingsNamespace;
-import com.syn.domo.web.controller.namespace.ResidentsNamespace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -55,12 +53,13 @@ public class ResidentsController implements BuildingsNamespace {
                         .map(residentServiceModel -> this.modelMapper.map(residentServiceModel, ResidentViewModel.class))
                         .collect(Collectors.toCollection(LinkedHashSet::new))));
 
+
         if (residents.size() > 0) {
             modelAndView.addObject("hasResidents", true);
             modelAndView.addObject("pageH3Title", EDIT_RESIDENTS_TITLE);
         }
 
-
+        modelAndView.addObject("buildingName", this.buildingService.getBuildingName(buildingId));
         modelAndView.addObject("residents", residents);
         modelAndView.addObject("pageTitle", MANAGE_RESIDENTS_TITLE);
         modelAndView.addObject("pageH2Title", ADD_RESIDENT_TITLE);
@@ -75,12 +74,11 @@ public class ResidentsController implements BuildingsNamespace {
                                                  ResidentAddBindingModel residentAddBindingModel,
                             BindingResult bindingResult, ModelAndView modelAndView) {
 
-        System.out.println();
         if (bindingResult.hasErrors()) {
             modelAndView.setViewName("redirect:/buildings/" + buildingId +
                     "/apartments/" + apartmentId + "/residents/");
         } else {
-            this.residentService.register(
+            this.residentService.add(
                     this.modelMapper.map(residentAddBindingModel, ResidentServiceModel.class),
                     apartmentId);
 

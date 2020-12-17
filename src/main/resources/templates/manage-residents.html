@@ -11,7 +11,7 @@
     <p th:text="|Building (address: ${buildingAddress}) has ${residents.size()} residents|"></p>
     <hr/>
     <h2 th:text="${pageH2Title}"></h2>
-    <form th:action="@{/residents/add}" th:method="post">
+    <form th:action="@{/buildings/{buildingId}/apartments/{apartmentId}/residents/(buildingId=${buildingId}, apartmentId=${apartmentId})}" th:method="post">
         <label for="firstName">
             <input name="firstName" type="text" id="firstName" placeholder="Enter first name">
         </label>
@@ -27,10 +27,6 @@
         <label for="phoneNumber">
             <input name="phoneNumber" type="text" id="phoneNumber" placeholder="Enter phone number">
         </label>
-
-<!--        <label for="password">-->
-<!--            <input name="password" type="password" id="password" placeholder="Enter password">-->
-<!--        </label>-->
 
         <label for="apartmentNumber">
             <select name="apartmentNumber" id="apartmentNumber">

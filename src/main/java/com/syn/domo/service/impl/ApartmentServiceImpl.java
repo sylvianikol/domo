@@ -86,4 +86,11 @@ public class ApartmentServiceImpl implements ApartmentService {
                 .orElse(null);
     }
 
+    @Override
+    public boolean hasResidents(String apartmentId) {
+        // TODO: ApartmentNotFoundException
+        Apartment apartment = this.apartmentRepository.findById(apartmentId).orElseThrow();
+        return apartment.getResidents().size() > 0;
+    }
+
 }

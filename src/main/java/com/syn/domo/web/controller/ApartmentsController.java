@@ -108,16 +108,10 @@ public class ApartmentsController implements BuildingsNamespace {
                         .getByIdAndBuildingId(apartmentId, buildingId),
                         ApartmentViewModel.class);
 
-        if (apartment.getResidents().size() > 0) {
-
-            Set<ResidentServiceModel> residentServiceModels = this.residentService.getAllResidentsByApartmentId(apartmentId);
-            Set<ResidentViewModel> residents = residentServiceModels.stream()
-                    .map(residentServiceModel -> this.modelMapper.map(residentServiceModel, ResidentViewModel.class))
-                    .collect(Collectors.toSet());
-
+        if (this.apartmentService.hasResidents(apartmentId)) {
             modelAndView.addObject("hasResidents", true);
-            modelAndView.addObject("residents", residents);
         }
+
         modelAndView.addObject("buildingName", this.buildingService.getBuildingName(buildingId));
         modelAndView.addObject("apartment", apartment);
         modelAndView.addObject("pageTitle", APARTMENT_DETAILS);

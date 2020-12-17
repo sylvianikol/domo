@@ -7,6 +7,7 @@ import com.syn.domo.model.view.ResidentViewModel;
 import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.ResidentService;
+import com.syn.domo.web.controller.namespace.BuildingsNamespace;
 import com.syn.domo.web.controller.namespace.ResidentsNamespace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -24,7 +26,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
-public class ResidentsController implements ResidentsNamespace {
+public class ResidentsController implements BuildingsNamespace {
 
     private static final String MANAGE_RESIDENTS_TITLE = "Manage Residents";
     private static final String ADD_RESIDENT_TITLE = "Add New Resident";
@@ -43,16 +45,13 @@ public class ResidentsController implements ResidentsNamespace {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
-
-    @GetMapping("/manage")
-    public ModelAndView manage(ModelAndView modelAndView) {
+    @GetMapping("/{buildingId}/apartments/{apartmentId}/residents/")
+    public ModelAndView manage(@PathVariable(value = "buildingId") String buildingId,
+                               @PathVariable(value = "apartmentId") String apartmentId,
+                               ModelAndView modelAndView) {
         Set<ResidentViewModel> residents =
                 new LinkedHashSet<>(Collections.unmodifiableCollection(
-                        this.residentService.getAllResidents().stream()
+                        this.residentService.getAllResidentsByApartmentId(apartmentId).stream()
                         .map(residentServiceModel -> this.modelMapper.map(residentServiceModel, ResidentViewModel.class))
                         .collect(Collectors.toCollection(LinkedHashSet::new))));
 
@@ -63,7 +62,7 @@ public class ResidentsController implements ResidentsNamespace {
         }
 
         Set<String> apartmentNumbers =
-                this.apartmentService.getAllApartmentsByBuildingId("id").stream()
+                this.apartmentService.getAllApartmentsByBuildingId("buildingId").stream()
                 .map(apartmentServiceModel -> this.modelMapper.map(apartmentServiceModel, ApartmentViewModel.class))
                 .map(ApartmentViewModel::getNumber)
                 .collect(Collectors.toSet());
@@ -77,18 +76,22 @@ public class ResidentsController implements ResidentsNamespace {
         return modelAndView;
     }
 
-    @PostMapping("/add")
-    public ModelAndView addPost(@Valid @ModelAttribute("residentAddBindingModel")
+    @PostMapping("/{buildingId}/apartments/{apartmentId}/residents/")
+    public ModelAndView add(@PathVariable(value = "buildingId") String buildingId,
+                            @PathVariable(value = "apartmentId") String apartmentId,
+                            @Valid @ModelAttribute("residentAddBindingModel")
                                                  ResidentAddBindingModel residentAddBindingModel,
                             BindingResult bindingResult, ModelAndView modelAndView) {
 
         if (bindingResult.hasErrors()) {
-            modelAndView.setViewName("redirect:/residents/manage");
+            modelAndView.setViewName("redirect:/buildings/" + buildingId +
+                    "/apartments/" + apartmentId + "/residents/");
         } else {
             this.residentService.register(
                     this.modelMapper.map(residentAddBindingModel, ResidentServiceModel.class));
 
-            modelAndView.setViewName("redirect:/residents/manage");
+            modelAndView.setViewName("redirect:/buildings/" + buildingId +
+                    "/apartments/" + apartmentId + "/residents/");
         }
 
         return modelAndView;

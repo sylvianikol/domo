@@ -74,16 +74,18 @@ public class ApartmentServiceImpl implements ApartmentService {
 
     @Override
     public boolean alreadyExists(String apartmentNumber, String buildingId) {
-        return this.apartmentRepository.findByNumberAndBuildingId(apartmentNumber, buildingId).isPresent();
+        return this.apartmentRepository.findByNumberAndBuilding_Id(apartmentNumber, buildingId).isPresent();
 
     }
 
     @Override
     public ApartmentServiceModel getByNumberAndBuildingId(String apartmentNumber, String buildingId) {
-        return this.apartmentRepository.findByNumberAndBuildingId(apartmentNumber, buildingId)
+        // TODO: ApartmentNotFoundException
+        return this.apartmentRepository.findByNumberAndBuilding_Id(apartmentNumber, buildingId)
                 .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
-                .orElse(null);
-
+                .orElseThrow(() -> {
+                    throw new EntityNotFoundException("Apartment not found");
+                });
     }
 
     @Override

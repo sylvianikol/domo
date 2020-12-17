@@ -2,10 +2,13 @@ package com.syn.domo.web.controller;
 
 import com.syn.domo.model.binding.ApartmentAddBindingModel;
 import com.syn.domo.model.service.ApartmentServiceModel;
+import com.syn.domo.model.service.ResidentServiceModel;
 import com.syn.domo.model.view.ApartmentViewModel;
+import com.syn.domo.model.view.ResidentViewModel;
 import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.FloorService;
+import com.syn.domo.service.ResidentService;
 import com.syn.domo.web.controller.namespace.BuildingsNamespace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 public class ApartmentsController implements BuildingsNamespace {
@@ -27,13 +31,15 @@ public class ApartmentsController implements BuildingsNamespace {
 
     private final ApartmentService apartmentService;
     private final BuildingService buildingService;
+    private final ResidentService residentService;
     private final FloorService floorService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ApartmentsController(ApartmentService apartmentService, BuildingService buildingService, FloorService floorService, ModelMapper modelMapper) {
+    public ApartmentsController(ApartmentService apartmentService, BuildingService buildingService, ResidentService residentService, FloorService floorService, ModelMapper modelMapper) {
         this.apartmentService = apartmentService;
         this.buildingService = buildingService;
+        this.residentService = residentService;
         this.floorService = floorService;
         this.modelMapper = modelMapper;
     }
@@ -97,10 +103,26 @@ public class ApartmentsController implements BuildingsNamespace {
                                 @PathVariable(value = "apartmentId") String apartmentId,
                                 ModelAndView modelAndView) {
 
-        ApartmentViewModel apartment = this.modelMapper.map(this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId), ApartmentViewModel.class);
+        ApartmentViewModel apartment =
+                this.modelMapper.map(this.apartmentService
+                        .getByIdAndBuildingId(apartmentId, buildingId),
+                        ApartmentViewModel.class);
+
+        if (apartment.getResidents().size() > 0) {
+
+            Set<ResidentServiceModel> residentServiceModels = this.residentService.getAllResidentsByApartmentId(apartmentId);
+            Set<ResidentViewModel> residents = residentServiceModels.stream()
+                    .map(residentServiceModel -> this.modelMapper.map(residentServiceModel, ResidentViewModel.class))
+                    .collect(Collectors.toSet());
+
+            modelAndView.addObject("hasResidents", true);
+            modelAndView.addObject("residents", residents);
+        }
         modelAndView.addObject("buildingName", this.buildingService.getBuildingName(buildingId));
         modelAndView.addObject("apartment", apartment);
         modelAndView.addObject("pageTitle", APARTMENT_DETAILS);
+
+
         modelAndView.setViewName("details-apartment");
         return modelAndView;
     }

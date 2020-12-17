@@ -9,4 +9,6 @@ public interface ResidentService {
     ResidentServiceModel register(ResidentServiceModel residentServiceModel);
 
     Set<ResidentServiceModel> getAllResidents();
+
+    Set<ResidentServiceModel> getAllResidentsByApartmentId(String apartmentId);
 }

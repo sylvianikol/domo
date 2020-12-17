@@ -10,4 +10,6 @@ import java.util.Set;
 public interface ResidentRepository extends JpaRepository<Resident, String> {
 
     Set<Resident> findAllByOrderByApartment_Number();
+
+    Set<Resident> findAllByApartment_Id(String apartmentId);
 }

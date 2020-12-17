@@ -85,4 +85,5 @@ public class ApartmentServiceImpl implements ApartmentService {
                 .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
                 .orElse(null);
     }
+
 }

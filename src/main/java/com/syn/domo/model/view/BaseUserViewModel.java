@@ -2,6 +2,7 @@ package com.syn.domo.model.view;
 
 public abstract class BaseUserViewModel {
 
+    private String id;
     private String email;
     private String firstName;
     private String lastName;
@@ -10,6 +11,14 @@ public abstract class BaseUserViewModel {
     private String userRole;
 
     public BaseUserViewModel() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getEmail() {
@@ -58,5 +67,10 @@ public abstract class BaseUserViewModel {
 
     public void setUserRole(String userRole) {
         this.userRole = userRole;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s", this.getFirstName(), this.getLastName());
     }
 }

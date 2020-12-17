@@ -30,7 +30,7 @@
     <hr/>
     <th:block th:if="${hasBuildings}">
         <h3 th:text="${pageH3Title}"></h3>
-        <p th:text="|You manage ${buildings.size()} building(s) |"></p>
+        <p th:text="|${buildings.size()} building(s) |"></p>
         <ul>
             <li th:each="b : ${buildings}">
                 <a th:href="@{/buildings/{buildingId}(buildingId=${b.getId()})}"

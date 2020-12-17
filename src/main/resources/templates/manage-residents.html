@@ -8,7 +8,7 @@
 <body>
 <main>
     <h1 th:text="${pageTitle}"></h1>
-    <p th:text="|${buildingName}) has ${residents.size()} residents|"></p>
+    <p th:text="|Apartment No.${apartmentNumber} in ${buildingName} has ${residents.size()} residents |"></p>
     <hr/>
     <h2 th:text="${pageH2Title}"></h2>
     <form th:action="@{/buildings/{buildingId}/apartments/{apartmentId}/residents/(buildingId=${buildingId}, apartmentId=${apartmentId})}" th:method="post">

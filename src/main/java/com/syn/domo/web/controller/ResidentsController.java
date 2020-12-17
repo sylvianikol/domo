@@ -60,6 +60,7 @@ public class ResidentsController implements BuildingsNamespace {
         }
 
         modelAndView.addObject("buildingName", this.buildingService.getBuildingName(buildingId));
+        modelAndView.addObject("apartmentNumber", this.apartmentService.getById(apartmentId).getNumber());
         modelAndView.addObject("residents", residents);
         modelAndView.addObject("pageTitle", MANAGE_RESIDENTS_TITLE);
         modelAndView.addObject("pageH2Title", ADD_RESIDENT_TITLE);

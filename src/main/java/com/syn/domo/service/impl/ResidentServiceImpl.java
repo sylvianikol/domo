@@ -12,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -36,7 +37,7 @@ public class ResidentServiceImpl implements ResidentService {
     public ResidentServiceModel add(ResidentServiceModel residentServiceModel, String apartmentId) {
 
         Resident resident = this.modelMapper.map(residentServiceModel, Resident.class);
-
+        resident.setAddedOn(LocalDate.now());
         resident.setUserRole(UserRole.USER);
 
         ApartmentServiceModel apartmentServiceModel =
@@ -46,7 +47,7 @@ public class ResidentServiceImpl implements ResidentService {
 
         this.residentRepository.saveAndFlush(resident);
 
-        return residentServiceModel;
+        return this.modelMapper.map(resident, ResidentServiceModel.class);
     }
 
     @Override

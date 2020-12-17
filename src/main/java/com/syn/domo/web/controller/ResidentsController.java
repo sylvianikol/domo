@@ -55,21 +55,13 @@ public class ResidentsController implements BuildingsNamespace {
                         .map(residentServiceModel -> this.modelMapper.map(residentServiceModel, ResidentViewModel.class))
                         .collect(Collectors.toCollection(LinkedHashSet::new))));
 
-
         if (residents.size() > 0) {
             modelAndView.addObject("hasResidents", true);
             modelAndView.addObject("pageH3Title", EDIT_RESIDENTS_TITLE);
         }
 
-        Set<String> apartmentNumbers =
-                this.apartmentService.getAllApartmentsByBuildingId("buildingId").stream()
-                .map(apartmentServiceModel -> this.modelMapper.map(apartmentServiceModel, ApartmentViewModel.class))
-                .map(ApartmentViewModel::getNumber)
-                .collect(Collectors.toSet());
-
 
         modelAndView.addObject("residents", residents);
-        modelAndView.addObject("apartmentNumbers", apartmentNumbers);
         modelAndView.addObject("pageTitle", MANAGE_RESIDENTS_TITLE);
         modelAndView.addObject("pageH2Title", ADD_RESIDENT_TITLE);
         modelAndView.setViewName("manage-residents");
@@ -83,12 +75,14 @@ public class ResidentsController implements BuildingsNamespace {
                                                  ResidentAddBindingModel residentAddBindingModel,
                             BindingResult bindingResult, ModelAndView modelAndView) {
 
+        System.out.println();
         if (bindingResult.hasErrors()) {
             modelAndView.setViewName("redirect:/buildings/" + buildingId +
                     "/apartments/" + apartmentId + "/residents/");
         } else {
             this.residentService.register(
-                    this.modelMapper.map(residentAddBindingModel, ResidentServiceModel.class));
+                    this.modelMapper.map(residentAddBindingModel, ResidentServiceModel.class),
+                    apartmentId);
 
             modelAndView.setViewName("redirect:/buildings/" + buildingId +
                     "/apartments/" + apartmentId + "/residents/");

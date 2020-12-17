@@ -10,11 +10,15 @@ public interface ApartmentService {
 
     Set<ApartmentServiceModel> getAllApartmentsByBuildingId(String buildingId);
 
+    Set<String> getAllApartmentNumbersByBuildingId(String buildingId);
+
     boolean alreadyExists(String apartmentNumber, String buildingId);
 
     ApartmentServiceModel getByNumberAndBuildingId(String apartmentNumber, String buildingId);
 
     ApartmentServiceModel getByIdAndBuildingId(String apartmentId, String buildingId);
+
+    ApartmentServiceModel getById(String apartmentId);
 
     boolean hasResidents(String apartmentId);
 }

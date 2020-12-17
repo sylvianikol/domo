@@ -15,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,6 +63,15 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
+    public Set<String> getAllApartmentNumbersByBuildingId(String buildingId) {
+        LinkedHashSet<String> apartmentNumbers = this.getAllApartmentsByBuildingId(buildingId).stream()
+                .map(ApartmentServiceModel::getNumber)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return Collections.unmodifiableSet(apartmentNumbers);
+    }
+
+    @Override
     public boolean alreadyExists(String apartmentNumber, String buildingId) {
         return this.apartmentRepository.findByNumberAndBuildingId(apartmentNumber, buildingId).isPresent();
 
@@ -82,6 +88,13 @@ public class ApartmentServiceImpl implements ApartmentService {
     @Override
     public ApartmentServiceModel getByIdAndBuildingId(String apartmentId, String buildingId) {
         return this.apartmentRepository.findByIdAndBuildingId(apartmentId, buildingId)
+                .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
+                .orElse(null);
+    }
+
+    @Override
+    public ApartmentServiceModel getById(String apartmentId) {
+        return this.apartmentRepository.findById(apartmentId)
                 .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
                 .orElse(null);
     }

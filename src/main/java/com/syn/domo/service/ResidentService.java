@@ -6,7 +6,7 @@ import java.util.Set;
 
 public interface ResidentService {
 
-    ResidentServiceModel register(ResidentServiceModel residentServiceModel);
+    ResidentServiceModel register(ResidentServiceModel residentServiceModel, String apartment);
 
     Set<ResidentServiceModel> getAllResidents();
 

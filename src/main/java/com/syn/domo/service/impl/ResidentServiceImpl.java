@@ -33,14 +33,14 @@ public class ResidentServiceImpl implements ResidentService {
 
 
     @Override
-    public ResidentServiceModel register(ResidentServiceModel residentServiceModel) {
+    public ResidentServiceModel register(ResidentServiceModel residentServiceModel, String apartmentId) {
 
         Resident resident = this.modelMapper.map(residentServiceModel, Resident.class);
 
         resident.setUserRole(UserRole.USER);
 
         ApartmentServiceModel apartmentServiceModel =
-                this.apartmentService.getByNumberAndBuildingId(residentServiceModel.getApartmentNumber(), "buildingId");
+                this.apartmentService.getById(residentServiceModel.getApartment());
 
         resident.setApartment(this.modelMapper.map(apartmentServiceModel, Apartment.class));
 

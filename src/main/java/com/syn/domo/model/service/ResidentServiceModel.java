@@ -2,16 +2,16 @@ package com.syn.domo.model.service;
 
 public class ResidentServiceModel extends BaseUserServiceModel {
 
-    private String apartmentNumber;
+    private String apartment;
 
     public ResidentServiceModel() {
     }
 
-    public String getApartmentNumber() {
-        return apartmentNumber;
+    public String getApartment() {
+        return apartment;
     }
 
-    public void setApartmentNumber(String apartmentNumber) {
-        this.apartmentNumber = apartmentNumber;
+    public void setApartment(String apartment) {
+        this.apartment = apartment;
     }
 }

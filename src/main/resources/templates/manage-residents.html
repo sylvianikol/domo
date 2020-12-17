@@ -28,13 +28,8 @@
             <input name="phoneNumber" type="text" id="phoneNumber" placeholder="Enter phone number">
         </label>
 
-        <label for="apartmentNumber">
-            <select name="apartmentNumber" id="apartmentNumber">
-                <option th:each="number : ${apartmentNumbers}"
-                        th:value="${number}"
-                        th:text="${number}">
-                </option>
-            </select>
+        <label for="apartment">
+            <input name="apartment" type="hidden" id="apartment" th:value="${apartmentId}">
         </label>
 
         <button type="submit">Add Resident</button>

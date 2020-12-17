@@ -2,16 +2,16 @@ package com.syn.domo.model.binding;
 
 public class ResidentAddBindingModel extends BaseUserAddBindingModel {
 
-    private String apartmentNumber;
+    private String apartment;
 
     public ResidentAddBindingModel() {
     }
 
-    public String getApartmentNumber() {
-        return apartmentNumber;
+    public String getApartment() {
+        return apartment;
     }
 
-    public void setApartmentNumber(String apartmentNumber) {
-        this.apartmentNumber = apartmentNumber;
+    public void setApartment(String apartment) {
+        this.apartment = apartment;
     }
 }

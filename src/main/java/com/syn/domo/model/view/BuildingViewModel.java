@@ -7,7 +7,7 @@ public class BuildingViewModel {
     private String id;
     private String name;
     private String address;
-    private int floors;
+    private Set<FloorViewModel> floors;
 
     private Set<ApartmentViewModel> apartments;
 
@@ -38,11 +38,11 @@ public class BuildingViewModel {
         this.address = address;
     }
 
-    public int getFloors() {
+    public Set<FloorViewModel> getFloors() {
         return floors;
     }
 
-    public void setFloors(int floors) {
+    public void setFloors(Set<FloorViewModel> floors) {
         this.floors = floors;
     }
 
@@ -57,6 +57,6 @@ public class BuildingViewModel {
     @Override
     public String toString() {
         return String.format("%s (\"%s\") - Floors: %d, Managed apartments: %d.",
-                this.getName(), this.getAddress(), this.getFloors(), this.getApartments().size());
+                this.getName(), this.getAddress(), this.getFloors().size(), this.getApartments().size());
     }
 }

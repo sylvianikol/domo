@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,21 +39,22 @@ public class FloorServiceImpl implements FloorService {
     }
 
     @Override
-    public void createFloors(int floorsNumber, String buildingId) {
+    public Set<FloorServiceModel> createFloors(int floorsNumber, String buildingId) {
 
         Building building = this.modelMapper.map(
                 this.buildingService.getById(buildingId), Building.class);
+
+        Set<FloorServiceModel> floorServiceModels = new LinkedHashSet<>();
 
         for (int number = 1; number <= floorsNumber; number++) {
             Floor floor = new Floor();
             floor.setNumber(number);
             floor.setBuilding(building);
             this.floorRepository.saveAndFlush(floor);
-            building.getFloors().add(floor);
-
-            this.buildingService.saveBuilding(this.modelMapper.map(
-                    building, BuildingServiceModel.class));
+            floorServiceModels.add(this.modelMapper.map(floor, FloorServiceModel.class));
         }
+
+        return floorServiceModels;
     }
 
     @Override

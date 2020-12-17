@@ -10,7 +10,7 @@ public abstract class BaseUser extends BaseEntity {
     private String email;
     private String firstName;
     private String lastName;
-    private String idCardNumber;
+    private String identityCardNumber;
     private String phoneNumber;
     private UserRole userRole;
     private LocalDate addedOn;
@@ -56,12 +56,12 @@ public abstract class BaseUser extends BaseEntity {
     }
 
     @Column(name = "id_card_number", unique = true)
-    public String getIdCardNumber() {
-        return idCardNumber;
+    public String getIdentityCardNumber() {
+        return identityCardNumber;
     }
 
-    public void setIdCardNumber(String idCardNumber) {
-        this.idCardNumber = idCardNumber;
+    public void setIdentityCardNumber(String idCardNumber) {
+        this.identityCardNumber = idCardNumber;
     }
 
     @Column(name = "phone_number", unique = true)

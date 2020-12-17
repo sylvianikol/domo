@@ -24,7 +24,7 @@
 
         <button type="submit">Add building</button>
 
-        <p th:if="${addedBuilding}" th:text="|Successfully added building ${addedBuilding}|"></p>
+        <p th:if="${buildingDetails}" th:text="|Successfully added building ${buildingDetails}|"></p>
         <p th:if="${error}" th:text="${error}"></p>
     </form>
     <hr/>

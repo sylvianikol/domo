@@ -4,8 +4,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import java.time.LocalDate;
-
 import static com.syn.domo.common.ValidationErrorMessages.*;
 import static com.syn.domo.common.ValidationErrorMessages.EMAIL_INVALID;
 
@@ -15,11 +13,8 @@ public abstract class BaseUserAddBindingModel {
     private String email;
     private String firstName;
     private String lastName;
-    private String idCardNumber;
+    private String identityCardNumber;
     private String phoneNumber;
-    private String userRole;
-    private LocalDate addedOn;
-    private LocalDate removedOn;
 
     public BaseUserAddBindingModel() {
     }
@@ -62,12 +57,12 @@ public abstract class BaseUserAddBindingModel {
         this.lastName = lastName;
     }
 
-    public String getIdCardNumber() {
-        return idCardNumber;
+    public String getIdentityCardNumber() {
+        return identityCardNumber;
     }
 
-    public void setIdCardNumber(String idCardNumber) {
-        this.idCardNumber = idCardNumber;
+    public void setIdentityCardNumber(String identityCardNumber) {
+        this.identityCardNumber = identityCardNumber;
     }
 
     public String getPhoneNumber() {
@@ -78,27 +73,4 @@ public abstract class BaseUserAddBindingModel {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getUserRole() {
-        return userRole;
-    }
-
-    public void setUserRole(String userRole) {
-        this.userRole = userRole;
-    }
-
-    public LocalDate getAddedOn() {
-        return addedOn;
-    }
-
-    public void setAddedOn(LocalDate addedOn) {
-        this.addedOn = addedOn;
-    }
-
-    public LocalDate getRemovedOn() {
-        return removedOn;
-    }
-
-    public void setRemovedOn(LocalDate removedOn) {
-        this.removedOn = removedOn;
-    }
 }

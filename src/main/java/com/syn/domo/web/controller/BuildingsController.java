@@ -1,6 +1,7 @@
 package com.syn.domo.web.controller;
 
 import com.syn.domo.model.binding.BuildingAddBindingModel;
+import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.model.view.BuildingViewModel;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.web.controller.namespace.BuildingsNamespace;
@@ -63,11 +64,12 @@ public class BuildingsController implements BuildingsNamespace {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("error", "Something went wrong");
         } else {
-
             BuildingViewModel buildingDetails = this.modelMapper.map(
-                    this.buildingService.addBuilding(buildingAddBindingModel),
+                    this.buildingService.addBuilding(
+                            this.modelMapper.map(buildingAddBindingModel, BuildingServiceModel.class)),
                     BuildingViewModel.class);
-            redirectAttributes.addFlashAttribute("addedBuilding", buildingDetails.toString());
+
+            redirectAttributes.addFlashAttribute("buildingDetails", buildingDetails.toString());
         }
 
         modelAndView.setViewName("redirect:/buildings/");

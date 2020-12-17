@@ -9,7 +9,7 @@ public interface BuildingService {
 
     BuildingServiceModel getById(String id);
 
-    BuildingServiceModel addBuilding(BuildingAddBindingModel buildingAddBindingModel);
+    BuildingServiceModel addBuilding(BuildingServiceModel buildingServiceModel);
 
     void saveBuilding(BuildingServiceModel buildingServiceModel);
 

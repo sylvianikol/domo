@@ -10,7 +10,6 @@ public class Building extends BaseEntity{
 
     private String name;
     private String address;
-    private int floorsNumber;
     private LocalDate addedOn;
     private LocalDate removedOn;
 
@@ -54,16 +53,6 @@ public class Building extends BaseEntity{
 
     public void setRemovedOn(LocalDate removedOn) {
         this.removedOn = removedOn;
-    }
-
-
-    @Column(name = "floors_count", nullable = false)
-    public int getFloorsNumber() {
-        return floorsNumber;
-    }
-
-    public void setFloorsNumber(int floorsCount) {
-        this.floorsNumber = floorsCount;
     }
 
    @OneToMany(mappedBy = "building", fetch = FetchType.EAGER)

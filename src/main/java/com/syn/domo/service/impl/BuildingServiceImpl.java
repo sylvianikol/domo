@@ -2,8 +2,10 @@ package com.syn.domo.service.impl;
 
 import com.syn.domo.model.binding.BuildingAddBindingModel;
 import com.syn.domo.model.entity.Building;
+import com.syn.domo.model.entity.Floor;
 import com.syn.domo.model.service.BaseServiceModel;
 import com.syn.domo.model.service.BuildingServiceModel;
+import com.syn.domo.model.service.FloorServiceModel;
 import com.syn.domo.repository.BuildingRepository;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.FloorService;
@@ -44,14 +46,23 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public BuildingServiceModel addBuilding(BuildingAddBindingModel buildingAddBindingModel) {
+    public BuildingServiceModel addBuilding(BuildingServiceModel buildingServiceModel) {
         // TODO: validation
-        Building building = this.modelMapper.map(buildingAddBindingModel, Building.class);
+        Building building = this.modelMapper.map(buildingServiceModel, Building.class);
         building.setAddedOn(LocalDate.now());
         this.buildingRepository.saveAndFlush(building);
-        String buildingId = building.getId();
 
-        this.floorService.createFloors(buildingAddBindingModel.getFloorsNumber(), buildingId);
+        String buildingId = building.getId();
+        Set<FloorServiceModel> floorServiceModels =
+                this.floorService.createFloors(buildingServiceModel.getFloorsNumber(), buildingId);
+
+        Set<Floor> floors = floorServiceModels.stream()
+                .map(floorServiceModel -> this.modelMapper.map(floorServiceModel, Floor.class))
+                .collect(Collectors.toSet());
+
+        building.setFloors(floors);
+        building.setApartments(new LinkedHashSet<>());
+        this.buildingRepository.saveAndFlush(building);
 
         return this.modelMapper.map(building, BuildingServiceModel.class);
     }

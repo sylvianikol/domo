@@ -37,12 +37,11 @@ public class BuildingServiceImpl implements BuildingService {
     @Override
     public BuildingServiceModel getById(String id) {
         // TODO: BuildingNotFoundException
-        Building building = this.buildingRepository
-                .findById(id)
+        return this.buildingRepository.findById(id)
+                .map(building -> this.modelMapper.map(building, BuildingServiceModel.class))
                 .orElseThrow(() -> {
             throw new EntityNotFoundException("Building not found");
         });
-        return this.modelMapper.map(building, BuildingServiceModel.class);
     }
 
     @Override

@@ -47,6 +47,7 @@ public class ResidentsController implements BuildingsNamespace {
     public ModelAndView manage(@PathVariable(value = "buildingId") String buildingId,
                                @PathVariable(value = "apartmentId") String apartmentId,
                                ModelAndView modelAndView) {
+
         Set<ResidentViewModel> residents =
                 new LinkedHashSet<>(Collections.unmodifiableCollection(
                         this.residentService.getAllResidentsByApartmentId(apartmentId).stream()

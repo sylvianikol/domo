@@ -11,14 +11,17 @@
             <p th:text="| Apartment No: *{number} in ${buildingName},
             Floor: *{floorNumber},
             Pets: *{pets}|"></p>
-
             <p th:text="|Total residents: *{residents.size()}|"></p>
-
-            <a th:href="@{/buildings/{buildingId}/apartments/{apartmentId}/residents/(buildingId=${buildingId}, apartmentId=${apartmentId})}">
-                <span th:if="${hasResidents}">Manage Residents</span>
-                <span th:unless="${hasResidents}">Add Residents</span>
-            </a>
         </th:block>
+
+        <th:block th:if="${hasResidents}">
+            <a th:href="@{/buildings/{buildingId}/apartments/{apartmentId}/residents/(buildingId=${buildingId}, apartmentId=${apartmentId})}">
+                Manage Residents</a>
+            <a th:href="@{/buildings/{buildingId}/apartments/{apartmentId}/children/(buildingId=${buildingId}, apartmentId=${apartmentId})}">
+                Add Children</a>
+        </th:block>
+        <a th:unless="${hasResidents}" th:href="@{/buildings/{buildingId}/apartments/{apartmentId}/residents/(buildingId=${buildingId}, apartmentId=${apartmentId})}">
+            Add Residents</a>
     </main>
     <hr/>
     <footer>

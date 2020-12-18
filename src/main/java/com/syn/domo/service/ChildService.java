@@ -7,4 +7,6 @@ import java.util.Set;
 public interface ChildService {
 
     Set<ChildServiceModel> getAllChildrenByApartmentId(String apartmentId);
+
+    ChildServiceModel add(ChildServiceModel childServiceModel, String apartmentId);
 }

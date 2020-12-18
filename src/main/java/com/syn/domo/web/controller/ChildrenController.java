@@ -1,6 +1,7 @@
 package com.syn.domo.web.controller;
 
 import com.syn.domo.model.binding.ChildAddBindingModel;
+import com.syn.domo.model.service.ChildServiceModel;
 import com.syn.domo.model.view.ChildViewModel;
 import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.BuildingService;
@@ -81,6 +82,10 @@ public class ChildrenController implements BuildingsNamespace {
                     "/apartments/" + apartmentId + "/children/");
         } else {
             // TODO: add child
+            ChildServiceModel childServiceModel =
+                    this.childService.add(
+                            this.modelMapper.map(childAddBindingModel, ChildServiceModel.class),
+                            apartmentId);
 
             modelAndView.setViewName("redirect:/buildings/" + buildingId +
                     "/apartments/" + apartmentId + "/children/");

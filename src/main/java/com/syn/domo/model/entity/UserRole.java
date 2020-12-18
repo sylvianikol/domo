@@ -1,5 +1,5 @@
 package com.syn.domo.model.entity;
 
 public enum UserRole {
-    ADMIN, USER, STAFF
+    ADMIN, MANAGER, RESIDENT, STAFF
 }

@@ -1,6 +1,6 @@
 package com.syn.domo.model.service;
 
-public class ResidentServiceModel extends BaseUserServiceModel {
+public class ResidentServiceModel extends UserEntityServiceModel {
 
     private String apartment;
 

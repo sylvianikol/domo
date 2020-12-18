@@ -1,11 +1,10 @@
 package com.syn.domo.model.entity;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 
 @Entity
 @Table(name = "staff")
-public class Staff extends BaseUser {
+public class Staff extends UserEntity {
 
     private Job job;
 

@@ -38,7 +38,7 @@ public class ResidentServiceImpl implements ResidentService {
 
         Resident resident = this.modelMapper.map(residentServiceModel, Resident.class);
         resident.setAddedOn(LocalDate.now());
-        resident.setUserRole(UserRole.USER);
+        resident.setUserRole(UserRole.RESIDENT);
 
         ApartmentServiceModel apartmentServiceModel =
                 this.apartmentService.getById(residentServiceModel.getApartment());

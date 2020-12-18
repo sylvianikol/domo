@@ -1,22 +1,20 @@
 package com.syn.domo.model.entity;
 
-import javax.persistence.*;
-import java.time.LocalDate;
+import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
-public abstract class BaseUser extends BaseEntity {
+public abstract class UserEntity extends BaseUserEntity {
 
     private String password;
     private String email;
-    private String firstName;
-    private String lastName;
     private String identityCardNumber;
     private String phoneNumber;
     private UserRole userRole;
-    private LocalDate addedOn;
-    private LocalDate removedOn;
 
-    public BaseUser() {
+    public UserEntity() {
     }
 
     @Column
@@ -35,24 +33,6 @@ public abstract class BaseUser extends BaseEntity {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    @Column(name = "first_name")
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    @Column(name = "last_name")
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 
     @Column(name = "id_card_number", unique = true)
@@ -80,23 +60,5 @@ public abstract class BaseUser extends BaseEntity {
 
     public void setUserRole(UserRole userRole) {
         this.userRole = userRole;
-    }
-
-    @Column(name = "added_on", nullable = false)
-    public LocalDate getAddedOn() {
-        return addedOn;
-    }
-
-    public void setAddedOn(LocalDate addedOn) {
-        this.addedOn = addedOn;
-    }
-
-    @Column(name = "removed_on")
-    public LocalDate getRemovedOn() {
-        return removedOn;
-    }
-
-    public void setRemovedOn(LocalDate removedOn) {
-        this.removedOn = removedOn;
     }
 }

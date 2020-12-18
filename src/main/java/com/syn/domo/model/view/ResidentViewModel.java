@@ -1,6 +1,6 @@
 package com.syn.domo.model.view;
 
-public class ResidentViewModel extends BaseUserViewModel {
+public class ResidentViewModel extends UserEntityViewModel {
 
     private String apartmentNumber;
 

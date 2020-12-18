@@ -1,24 +1,13 @@
 package com.syn.domo.model.view;
 
-public abstract class BaseUserViewModel {
+public abstract class UserEntityViewModel extends BaseUserEntityViewModel {
 
-    private String id;
     private String email;
-    private String firstName;
-    private String lastName;
     private String idCardNumber;
     private String phoneNumber;
     private String userRole;
 
-    public BaseUserViewModel() {
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+    public UserEntityViewModel() {
     }
 
     public String getEmail() {
@@ -27,22 +16,6 @@ public abstract class BaseUserViewModel {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 
     public String getIdCardNumber() {

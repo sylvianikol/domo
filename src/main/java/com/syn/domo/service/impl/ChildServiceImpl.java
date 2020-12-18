@@ -11,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -43,6 +44,7 @@ public class ChildServiceImpl implements ChildService {
     public ChildServiceModel add(ChildServiceModel childServiceModel, String apartmentId) {
         // TODO: validation
         Child child = this.modelMapper.map(childServiceModel, Child.class);
+        child.setAddedOn(LocalDate.now());
 
         ApartmentServiceModel apartmentServiceModel =
                 this.apartmentService.getById(childServiceModel.getApartment());

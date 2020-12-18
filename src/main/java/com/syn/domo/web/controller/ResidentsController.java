@@ -1,6 +1,6 @@
 package com.syn.domo.web.controller;
 
-import com.syn.domo.model.binding.ResidentAddBindingModel;
+import com.syn.domo.model.binding.ResidentEntityAddBindingModel;
 import com.syn.domo.model.service.ResidentServiceModel;
 import com.syn.domo.model.view.ResidentViewModel;
 import com.syn.domo.service.ApartmentService;
@@ -74,7 +74,7 @@ public class ResidentsController implements BuildingsNamespace {
     public ModelAndView add(@PathVariable(value = "buildingId") String buildingId,
                             @PathVariable(value = "apartmentId") String apartmentId,
                             @Valid @ModelAttribute("residentAddBindingModel")
-                                                 ResidentAddBindingModel residentAddBindingModel,
+                                        ResidentEntityAddBindingModel residentAddBindingModel,
                             BindingResult bindingResult, ModelAndView modelAndView) {
 
         if (bindingResult.hasErrors()) {

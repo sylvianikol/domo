@@ -1,12 +1,10 @@
 package com.syn.domo.model.binding;
 
-import static com.syn.domo.common.ValidationErrorMessages.*;
-
-public class StaffAddBindingModel extends BaseUserAddBindingModel {
+public class StaffEntityAddBindingModel extends UserEntityAddBindingModel {
 
     private String job;
 
-    public StaffAddBindingModel() {
+    public StaffEntityAddBindingModel() {
     }
 
     public String getJob() {

@@ -1,28 +1,10 @@
 package com.syn.domo.model.binding;
 
-public class ChildAddBindingModel {
+public class ChildAddBindingModel extends BaseUserEntityAddBindingModel {
 
-    private String firstName;
-    private String lastName;
     private String apartment;
 
     public ChildAddBindingModel() {
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 
     public String getApartment() {

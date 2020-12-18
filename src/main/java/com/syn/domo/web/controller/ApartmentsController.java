@@ -6,6 +6,7 @@ import com.syn.domo.model.view.ApartmentViewModel;
 import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.FloorService;
+import com.syn.domo.web.controller.namespace.ApartmentsNamespace;
 import com.syn.domo.web.controller.namespace.BuildingsNamespace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ import javax.validation.Valid;
 import java.util.Set;
 
 @Controller
-public class ApartmentsController implements BuildingsNamespace {
+public class ApartmentsController implements ApartmentsNamespace {
     private static final String MANAGE_APARTMENTS_TITLE = "Manage Apartments";
     private static final String ADD_APARTMENTS_TITLE = "Add Apartment";
     private static final String ALL_APARTMENTS = "All Apartments in ";
@@ -38,7 +39,7 @@ public class ApartmentsController implements BuildingsNamespace {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping("/{buildingId}/apartments/")
+    @GetMapping("/")
     public ModelAndView manage(@PathVariable(value = "buildingId") String buildingId,
                                ModelAndView modelAndView) {
         String buildingName = this.buildingService.getBuildingName(buildingId);
@@ -63,7 +64,7 @@ public class ApartmentsController implements BuildingsNamespace {
         return modelAndView;
     }
 
-    @PostMapping("/{buildingId}/apartments/")
+    @PostMapping("/")
     public ModelAndView add(@PathVariable(value = "buildingId") String buildingId,
                             @Valid @ModelAttribute("apartmentAddBindingModel")
                                             ApartmentAddBindingModel apartmentAddBindingModel,
@@ -94,7 +95,7 @@ public class ApartmentsController implements BuildingsNamespace {
         return modelAndView;
     }
 
-    @GetMapping("/{buildingId}/apartments/{apartmentId}")
+    @GetMapping("/{apartmentId}")
     public ModelAndView details(@PathVariable(value = "buildingId") String buildingId,
                                 @PathVariable(value = "apartmentId") String apartmentId,
                                 ModelAndView modelAndView) {

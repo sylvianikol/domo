@@ -7,6 +7,7 @@ import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.ResidentService;
 import com.syn.domo.web.controller.namespace.BuildingsNamespace;
+import com.syn.domo.web.controller.namespace.ResidentsNamespace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,7 +25,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
-public class ResidentsController implements BuildingsNamespace {
+public class ResidentsController implements ResidentsNamespace {
 
     private static final String MANAGE_RESIDENTS_TITLE = "Manage Residents";
     private static final String ADD_RESIDENT_TITLE = "Add New Resident";
@@ -43,7 +44,7 @@ public class ResidentsController implements BuildingsNamespace {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping("/{buildingId}/apartments/{apartmentId}/residents/")
+    @GetMapping("/")
     public ModelAndView manage(@PathVariable(value = "buildingId") String buildingId,
                                @PathVariable(value = "apartmentId") String apartmentId,
                                ModelAndView modelAndView) {
@@ -70,7 +71,7 @@ public class ResidentsController implements BuildingsNamespace {
         return modelAndView;
     }
 
-    @PostMapping("/{buildingId}/apartments/{apartmentId}/residents/")
+    @PostMapping("/")
     public ModelAndView add(@PathVariable(value = "buildingId") String buildingId,
                             @PathVariable(value = "apartmentId") String apartmentId,
                             @Valid @ModelAttribute("residentAddBindingModel")

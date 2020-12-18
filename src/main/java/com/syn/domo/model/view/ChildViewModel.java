@@ -1,12 +1,12 @@
-package com.syn.domo.model.service;
+package com.syn.domo.model.view;
 
-public class ChildServiceModel extends BaseServiceModel {
+public class ChildViewModel {
 
     private String firstName;
     private String lastName;
     private String apartment;
 
-    public ChildServiceModel() {
+    public ChildViewModel() {
     }
 
     public String getFirstName() {
@@ -31,5 +31,10 @@ public class ChildServiceModel extends BaseServiceModel {
 
     public void setApartment(String apartment) {
         this.apartment = apartment;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s", this.getFirstName(), this.getLastName());
     }
 }

@@ -1,12 +1,12 @@
-package com.syn.domo.model.service;
+package com.syn.domo.model.binding;
 
-public class ChildServiceModel extends BaseServiceModel {
+public class ChildAddBindingModel {
 
     private String firstName;
     private String lastName;
     private String apartment;
 
-    public ChildServiceModel() {
+    public ChildAddBindingModel() {
     }
 
     public String getFirstName() {

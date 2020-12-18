@@ -54,9 +54,10 @@ public class ResidentsController implements BuildingsNamespace {
                         .map(residentServiceModel -> this.modelMapper.map(residentServiceModel, ResidentViewModel.class))
                         .collect(Collectors.toCollection(LinkedHashSet::new))));
 
+        boolean hasResidents = residents.size() > 0;
+        modelAndView.addObject("hasResidents", hasResidents);
 
-        if (residents.size() > 0) {
-            modelAndView.addObject("hasResidents", true);
+        if (hasResidents) {
             modelAndView.addObject("pageH3Title", EDIT_RESIDENTS_TITLE);
         }
 

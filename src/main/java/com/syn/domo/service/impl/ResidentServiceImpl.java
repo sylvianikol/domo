@@ -62,7 +62,8 @@ public class ResidentServiceImpl implements ResidentService {
 
     @Override
     public Set<ResidentServiceModel> getAllResidentsByApartmentId(String apartmentId) {
-        Set<ResidentServiceModel> residentServiceModels = this.residentRepository.findAllByApartment_Id(apartmentId)
+        Set<ResidentServiceModel> residentServiceModels =
+                this.residentRepository.findAllByApartment_Id(apartmentId)
                 .stream()
                 .map(resident -> this.modelMapper.map(resident, ResidentServiceModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));

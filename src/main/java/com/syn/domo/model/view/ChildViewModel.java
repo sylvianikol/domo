@@ -2,11 +2,20 @@ package com.syn.domo.model.view;
 
 public class ChildViewModel {
 
+    private String id;
     private String firstName;
     private String lastName;
     private String apartment;
 
     public ChildViewModel() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getFirstName() {

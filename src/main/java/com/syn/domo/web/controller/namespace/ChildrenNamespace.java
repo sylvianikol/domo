@@ -3,10 +3,10 @@ package com.syn.domo.web.controller.namespace;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @SuppressWarnings("all")
-@RequestMapping(ResidentsNamespace.URI_RESIDENTS)
-public interface ResidentsNamespace {
+@RequestMapping(ChildrenNamespace.URI_CHILDREN)
+public interface ChildrenNamespace {
 
-    String URI_RESIDENTS =
+    String URI_CHILDREN =
             ApartmentsNamespace.URI_APARTMENTS +
-            "/{apartmentId}/residents";
+            "/{apartmentId}/children";
 }

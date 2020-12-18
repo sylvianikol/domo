@@ -7,6 +7,7 @@ import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.ChildService;
 import com.syn.domo.web.controller.namespace.BuildingsNamespace;
+import com.syn.domo.web.controller.namespace.ChildrenNamespace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,7 +25,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
-public class ChildrenController implements BuildingsNamespace {
+public class ChildrenController implements ChildrenNamespace {
 
     private static final String MANAGE_CHILDREN_TITLE = "Manage Children";
     private static final String ADD_CHILD_TITLE = "Add Child";
@@ -43,7 +44,7 @@ public class ChildrenController implements BuildingsNamespace {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping("/{buildingId}/apartments/{apartmentId}/children/")
+    @GetMapping("/")
     public ModelAndView manage(@PathVariable(value = "buildingId") String buildingId,
                                @PathVariable(value = "apartmentId") String apartmentId,
                                ModelAndView modelAndView) {
@@ -70,7 +71,7 @@ public class ChildrenController implements BuildingsNamespace {
         return modelAndView;
     }
 
-    @PostMapping("/{buildingId}/apartments/{apartmentId}/children/")
+    @PostMapping("/")
     public ModelAndView add(@PathVariable(value = "buildingId") String buildingId,
                             @PathVariable(value = "apartmentId") String apartmentId,
                             @Valid @ModelAttribute("childAddBindingModel")

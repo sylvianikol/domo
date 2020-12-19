@@ -42,7 +42,7 @@ public class ChildServiceImpl implements ChildService {
     }
 
     @Override
-    public ChildServiceModel add(ChildServiceModel childServiceModel, String apartmentId) {
+    public ChildServiceModel add(ChildServiceModel childServiceModel) {
         // TODO: validation
         Child child = this.modelMapper.map(childServiceModel, Child.class);
         child.setAddedOn(LocalDate.now());

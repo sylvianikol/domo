@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.Collections;
@@ -56,18 +57,19 @@ public class ChildrenController implements ChildrenNamespace {
                                 .collect(Collectors.toCollection(LinkedHashSet::new))));
 
         boolean hasChildren = children.size() > 0;
-        modelAndView.addObject("hasChildren", hasChildren);
 
         if (hasChildren) {
             modelAndView.addObject("pageH3Title", EDIT_CHILDREN_TITLE);
         }
 
-        modelAndView.addObject("buildingName", this.buildingService.getBuildingName(buildingId));
-        modelAndView.addObject("apartmentNumber", this.apartmentService.getById(apartmentId).getNumber());
-        modelAndView.addObject("children", children);
-        modelAndView.addObject("pageTitle", MANAGE_CHILDREN_TITLE);
-        modelAndView.addObject("pageH2Title", ADD_CHILD_TITLE);
-        modelAndView.setViewName("manage-children");
+        modelAndView.addObject("hasChildren", children.size() > 0)
+                .addObject("buildingName", this.buildingService.getBuildingName(buildingId))
+                .addObject("apartmentNumber", this.apartmentService.getById(apartmentId).getNumber())
+                .addObject("children", children)
+                .addObject("pageTitle", MANAGE_CHILDREN_TITLE)
+                .addObject("pageH2Title", ADD_CHILD_TITLE)
+                .setViewName("manage-children");
+
         return modelAndView;
     }
 
@@ -76,20 +78,20 @@ public class ChildrenController implements ChildrenNamespace {
                             @PathVariable(value = "apartmentId") String apartmentId,
                             @Valid @ModelAttribute("childAddBindingModel")
                                         ChildAddBindingModel childAddBindingModel,
-                            BindingResult bindingResult, ModelAndView modelAndView) {
+                            BindingResult bindingResult,
+                            RedirectAttributes redirectAttributes,
+                            ModelAndView modelAndView) {
 
         if (bindingResult.hasErrors()) {
-            modelAndView.setViewName("redirect:/buildings/" + buildingId +
-                    "/apartments/" + apartmentId + "/children/");
+            // TODO: return errors
+            redirectAttributes.addFlashAttribute("childAddBindingModel", childAddBindingModel);
         } else {
-            // TODO: add child
             this.childService.add(
-                            this.modelMapper.map(childAddBindingModel, ChildServiceModel.class),
-                            apartmentId);
+                            this.modelMapper.map(childAddBindingModel, ChildServiceModel.class));
 
-            modelAndView.setViewName("redirect:/buildings/" + buildingId +
-                    "/apartments/" + apartmentId + "/children/");
         }
+        modelAndView.setViewName("redirect:/buildings/" + buildingId +
+                "/apartments/" + apartmentId + "/children/");
 
         return modelAndView;
     }
@@ -102,11 +104,12 @@ public class ChildrenController implements ChildrenNamespace {
 
         ChildViewModel child =
                 this.modelMapper.map(this.childService.getById(childId), ChildViewModel.class);
-        modelAndView.addObject("child", child);
-        modelAndView.addObject("buildingName",
-                this.buildingService.getBuildingName(buildingId));
-        modelAndView.addObject("pageTitle", CHILD_DETAILS);
-        modelAndView.setViewName("details-child");
+
+        modelAndView.addObject("child", child)
+            .addObject("buildingName", this.buildingService.getBuildingName(buildingId))
+            .addObject("pageTitle", CHILD_DETAILS)
+            .setViewName("details-child");
+
         return modelAndView;
     }
 }

@@ -2,16 +2,16 @@ package com.syn.domo.model.binding;
 
 public class ChildAddBindingModel extends BaseUserEntityAddBindingModel {
 
-    private String apartment;
+    private String apartmentId;
 
     public ChildAddBindingModel() {
     }
 
-    public String getApartment() {
-        return apartment;
+    public String getApartmentId() {
+        return apartmentId;
     }
 
-    public void setApartment(String apartment) {
-        this.apartment = apartment;
+    public void setApartmentId(String apartmentId) {
+        this.apartmentId = apartmentId;
     }
 }

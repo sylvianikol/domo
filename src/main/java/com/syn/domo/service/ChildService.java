@@ -8,7 +8,7 @@ public interface ChildService {
 
     Set<ChildServiceModel> getAllChildrenByApartmentId(String apartmentId);
 
-    ChildServiceModel add(ChildServiceModel childServiceModel, String apartmentId);
+    ChildServiceModel add(ChildServiceModel childServiceModel);
 
     ChildServiceModel getById(String childId);
 }

@@ -12,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.Collections;
@@ -50,10 +51,11 @@ public class BuildingServiceImpl implements BuildingService {
                 .findByName(buildingServiceModel.getName()).orElse(null);
 
         if (building != null) {
-            if (building.getRemovedOn() != null) {
-                // TODO: do you want to activate building?
+            if (building.getRemovedOn() == null) {
+                throw new EntityExistsException("Building already exists");
             } else {
-                // TODO: building already exists
+                // TODO: building already exists but is not active. do you want to activate building?
+                return this.modelMapper.map(building, BuildingServiceModel.class);
             }
         } else {
             building = this.modelMapper.map(buildingServiceModel, Building.class);

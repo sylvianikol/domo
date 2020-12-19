@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public interface ChildrenNamespace {
 
     String URI_CHILDREN =
+            BuildingsNamespace.URI_BUILDING +
             ApartmentsNamespace.URI_APARTMENTS +
             "/{apartmentId}/children";
 }

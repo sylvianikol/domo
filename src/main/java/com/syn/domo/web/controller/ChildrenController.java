@@ -6,7 +6,6 @@ import com.syn.domo.model.view.ChildViewModel;
 import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.ChildService;
-import com.syn.domo.web.controller.namespace.BuildingsNamespace;
 import com.syn.domo.web.controller.namespace.ChildrenNamespace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +29,7 @@ public class ChildrenController implements ChildrenNamespace {
     private static final String MANAGE_CHILDREN_TITLE = "Manage Children";
     private static final String ADD_CHILD_TITLE = "Add Child";
     private static final String EDIT_CHILDREN_TITLE = "Edit Children";
+    private static final String CHILD_DETAILS = "Child Details";
 
     private final ChildService childService;
     private final BuildingService buildingService;
@@ -91,6 +91,22 @@ public class ChildrenController implements ChildrenNamespace {
                     "/apartments/" + apartmentId + "/children/");
         }
 
+        return modelAndView;
+    }
+
+    @GetMapping("/{childId}")
+    public ModelAndView details(@PathVariable(value = "buildingId") String buildingId,
+                                @PathVariable(value = "apartmentId") String apartmentId,
+                                @PathVariable(value = "childId") String childId,
+                                ModelAndView modelAndView) {
+
+        ChildViewModel child =
+                this.modelMapper.map(this.childService.getById(childId), ChildViewModel.class);
+        modelAndView.addObject("child", child);
+        modelAndView.addObject("buildingName",
+                this.buildingService.getBuildingName(buildingId));
+        modelAndView.addObject("pageTitle", CHILD_DETAILS);
+        modelAndView.setViewName("details-child");
         return modelAndView;
     }
 }

@@ -2,17 +2,17 @@ package com.syn.domo.model.view;
 
 public class ChildViewModel extends BaseUserEntityViewModel {
 
-    private String apartment;
+    private String apartmentNumber;
 
     public ChildViewModel() {
     }
 
-    public String getApartment() {
-        return apartment;
+    public String getApartmentNumber() {
+        return apartmentNumber;
     }
 
-    public void setApartment(String apartment) {
-        this.apartment = apartment;
+    public void setApartmentNumber(String apartmentNumber) {
+        this.apartmentNumber = apartmentNumber;
     }
 
     @Override

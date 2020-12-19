@@ -11,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -47,12 +48,22 @@ public class ChildServiceImpl implements ChildService {
         child.setAddedOn(LocalDate.now());
 
         ApartmentServiceModel apartmentServiceModel =
-                this.apartmentService.getById(childServiceModel.getApartment());
+                this.apartmentService.getById(childServiceModel.getApartment().getId());
 
         child.setApartment(this.modelMapper.map(apartmentServiceModel, Apartment.class));
 
         this.childRepository.saveAndFlush(child);
 
         return this.modelMapper.map(child, ChildServiceModel.class);
+    }
+
+    @Override
+    public ChildServiceModel getById(String childId) {
+        // TODO: ChildNotFoundException
+        return this.childRepository.findById(childId)
+                .map(child -> this.modelMapper.map(child, ChildServiceModel.class))
+                .orElseThrow(() -> {
+                    throw new EntityNotFoundException("Child not found!");
+                });
     }
 }

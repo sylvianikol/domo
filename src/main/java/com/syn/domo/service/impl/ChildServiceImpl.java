@@ -66,4 +66,13 @@ public class ChildServiceImpl implements ChildService {
                     throw new EntityNotFoundException("Child not found!");
                 });
     }
+
+    @Override
+    public void removeAllByApartmentId(String apartmentId) {
+        this.childRepository.findAllByApartment_Id(apartmentId)
+                .forEach(child -> {
+                    child.setRemovedOn(LocalDate.now());
+                    this.childRepository.saveAndFlush(child);
+                });
+    }
 }

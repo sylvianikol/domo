@@ -12,5 +12,7 @@ public interface BuildingRepository extends JpaRepository<Building, String> {
 
     Optional<Building> findById(String id);
 
-    Set<Building> findAllByOrderByName();
+    Set<Building> findAllByRemovedOnNullOrderByName();
+
+    Optional<Building> findByName(String name);
 }

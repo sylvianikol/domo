@@ -53,6 +53,7 @@ public class FloorServiceImpl implements FloorService {
 
         for (int number = 1; number <= floorsNumber; number++) {
             Floor floor = new Floor();
+            floor.setActive(true);
             floor.setNumber(number);
             floor.setBuilding(building);
             this.floorRepository.saveAndFlush(floor);
@@ -70,5 +71,14 @@ public class FloorServiceImpl implements FloorService {
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
         return Collections.unmodifiableSet(floorNumbers);
+    }
+
+    @Override
+    public void removeAllByBuildingId(String buildingId) {
+        this.floorRepository.findAllByBuilding_IdOrderByNumber(buildingId)
+                .forEach(floor -> {
+                   floor.setActive(false);
+                   this.floorRepository.saveAndFlush(floor);
+                });
     }
 }

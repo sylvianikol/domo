@@ -8,21 +8,13 @@
 <body>
 <main>
     <h1>Administration Area</h1>
-    <th:block th:object="${buildingsCount}">
-        <p th:text="|You have ${buildingsCount} building(s) |"></p>
+    <th:block>
+        <p th:text="|You manage ${buildingsCount} building(s) |"></p>
 
-        <a href="/buildings/">
-            <span th:if="hasBuildings">Manage</span>
-            <span th:unless="hasBuildings">Add </span>
-            buildings</a>
+        <a href="/buildings/">Manage buildings</a>
     </th:block>
 
     <hr/>
-
-    <p><a href="/residents/manage">Manage Residents</a></p>
-    <p><a href="/staff/add">Manage Staff</a></p>
-
-    <p><a href="/fees/generate">Generate Monthly Fees</a> </p>
 </main>
 <footer>
     <th:block th:include="~{/fragments/footer}"></th:block>

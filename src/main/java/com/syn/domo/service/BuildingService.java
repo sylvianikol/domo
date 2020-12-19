@@ -9,7 +9,7 @@ public interface BuildingService {
 
     BuildingServiceModel getById(String id);
 
-    BuildingServiceModel addBuilding(BuildingServiceModel buildingServiceModel);
+    BuildingServiceModel add(BuildingServiceModel buildingServiceModel);
 
     boolean hasBuildings();
 
@@ -18,4 +18,6 @@ public interface BuildingService {
     int getCount();
 
     String getBuildingName(String id);
+
+    BuildingServiceModel remove(String buildingId);
 }

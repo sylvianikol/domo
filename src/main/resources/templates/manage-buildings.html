@@ -34,7 +34,12 @@
         <ul>
             <li th:each="b : ${buildings}">
                 <a th:href="@{/buildings/{buildingId}(buildingId=${b.getId()})}"
-                   th:text="|${b.name} (address: ${b.getAddress()}) |"></a></li>
+                   th:text="|${b.name} (address: ${b.getAddress()}) |"></a>
+                <form th:action="@{/buildings/{buildingId}(buildingId=${b.getId()})}" th:method="post">
+                    <button type="submit">remove</button>
+                </form>
+
+            </li>
         </ul>
     </th:block>
 </main>

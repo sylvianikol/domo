@@ -9,10 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -39,19 +36,22 @@ public class BuildingsController implements BuildingsNamespace {
 
     @GetMapping("/")
     public ModelAndView manage(ModelAndView modelAndView) {
+        boolean hasBuildings = this.buildingService.hasBuildings();
+        modelAndView.addObject("hasBuildings", hasBuildings);
 
-        if (this.buildingService.hasBuildings()) {
-            modelAndView.addObject("hasBuildings", true);
-            modelAndView.addObject("pageH3Title", ALL_BUILDINGS_DETAILS);
+        if (hasBuildings) {
+
             Set<BuildingViewModel> buildings = this.buildingService.getAllBuildings().stream()
                     .map(buildingServiceModel -> this.modelMapper.map(buildingServiceModel, BuildingViewModel.class))
                     .collect(Collectors.toCollection(LinkedHashSet::new));
-            modelAndView.addObject("buildings", buildings);
+
+            modelAndView.addObject("buildings", buildings)
+                    .addObject("pageH3Title", ALL_BUILDINGS_DETAILS);
         }
 
-        modelAndView.addObject("pageTitle", MANAGE_BUILDINGS);
-        modelAndView.addObject("pageH2Title", ADD_BUILDING);
-        modelAndView.setViewName("manage-buildings");
+        modelAndView.addObject("pageTitle", MANAGE_BUILDINGS)
+                .addObject("pageH2Title", ADD_BUILDING)
+                .setViewName("manage-buildings");
         return modelAndView;
     }
 
@@ -65,7 +65,7 @@ public class BuildingsController implements BuildingsNamespace {
             redirectAttributes.addFlashAttribute("error", "Something went wrong");
         } else {
             BuildingViewModel buildingDetails = this.modelMapper.map(
-                    this.buildingService.addBuilding(
+                    this.buildingService.add(
                             this.modelMapper.map(buildingAddBindingModel, BuildingServiceModel.class)),
                     BuildingViewModel.class);
 
@@ -88,6 +88,16 @@ public class BuildingsController implements BuildingsNamespace {
         modelAndView.addObject("building", building);
         modelAndView.addObject("pageTitle", BUILDING_DETAILS);
         modelAndView.setViewName("details-building.html");
+        return modelAndView;
+    }
+
+    @PostMapping("/{buildingId}")
+    public ModelAndView remove(@PathVariable(value = "buildingId") String buildingId,
+                               ModelAndView modelAndView) {
+        BuildingViewModel removed =
+                this.modelMapper.map(this.buildingService.remove(buildingId), BuildingViewModel.class);
+
+        modelAndView.setViewName("redirect:/buildings/");
         return modelAndView;
     }
 }

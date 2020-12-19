@@ -13,4 +13,6 @@ public interface ResidentService {
     Set<ResidentServiceModel> getAllResidentsByApartmentId(String apartmentId);
 
     ResidentServiceModel getById(String residentId);
+
+    void removeAllByApartmentId(String apartmentId);
 }

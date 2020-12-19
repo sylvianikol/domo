@@ -85,4 +85,13 @@ public class ResidentServiceImpl implements ResidentService {
 //                    throw new EntityNotFoundException("Resident not found!");
 //                });
     }
+
+    @Override
+    public void removeAllByApartmentId(String apartmentId) {
+        this.residentRepository.findAllByApartment_Id(apartmentId)
+                .forEach(resident -> {
+                    resident.setRemovedOn(LocalDate.now());
+                    this.residentRepository.saveAndFlush(resident);
+                });
+    }
 }

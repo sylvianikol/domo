@@ -1,6 +1,7 @@
 package com.syn.domo.model.entity;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -8,6 +9,7 @@ import java.util.Set;
 public class Floor extends BaseEntity {
 
     private int number;
+    private boolean isActive;
     private Building building;
 
     Set<Apartment> apartments;
@@ -22,6 +24,15 @@ public class Floor extends BaseEntity {
 
     public void setNumber(int number) {
         this.number = number;
+    }
+
+    @Column
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 
     @OneToMany(mappedBy = "floor", fetch = FetchType.EAGER)

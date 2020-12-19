@@ -7,14 +7,14 @@ import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.model.service.FloorServiceModel;
 import com.syn.domo.repository.ApartmentRepository;
-import com.syn.domo.service.ApartmentService;
-import com.syn.domo.service.BuildingService;
-import com.syn.domo.service.FloorService;
+import com.syn.domo.service.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,13 +24,22 @@ public class ApartmentServiceImpl implements ApartmentService {
     private final ApartmentRepository apartmentRepository;
     private final BuildingService buildingService;
     private final FloorService floorService;
+    private final ResidentService residentService;
+    private final ChildService childService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ApartmentServiceImpl(ApartmentRepository apartmentRepository, BuildingService buildingService, FloorService floorService, ModelMapper modelMapper) {
+    public ApartmentServiceImpl(ApartmentRepository apartmentRepository,
+                                @Lazy BuildingService buildingService,
+                                FloorService floorService,
+                                @Lazy ResidentService residentService,
+                                @Lazy ChildService childService,
+                                ModelMapper modelMapper) {
         this.apartmentRepository = apartmentRepository;
         this.buildingService = buildingService;
         this.floorService = floorService;
+        this.residentService = residentService;
+        this.childService = childService;
         this.modelMapper = modelMapper;
     }
 
@@ -44,7 +53,7 @@ public class ApartmentServiceImpl implements ApartmentService {
         BuildingServiceModel buildingServiceModel = this.buildingService.getById(buildingId);
 
         Apartment apartment = this.modelMapper.map(apartmentServiceModel, Apartment.class);
-
+        apartment.setAddedOn(LocalDate.now());
         apartment.setFloor(this.modelMapper.map(floorServiceModel, Floor.class));
         apartment.setBuilding(this.modelMapper.map(buildingServiceModel, Building.class));
 
@@ -56,7 +65,7 @@ public class ApartmentServiceImpl implements ApartmentService {
     @Override
     public Set<ApartmentServiceModel> getAllApartmentsByBuildingId(String buildingId) {
         Set<ApartmentServiceModel> apartmentServiceModels =
-                this.apartmentRepository.findAllByBuildingIdOrderByNumber(buildingId).stream()
+                this.apartmentRepository.findAllByBuilding_IdOrderByNumber(buildingId).stream()
                 .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
@@ -101,6 +110,17 @@ public class ApartmentServiceImpl implements ApartmentService {
     @Override
     public boolean hasResidents(String apartmentId) {
         return this.getById(apartmentId).getResidents().size() > 0;
+    }
+
+    @Override
+    public void removeAllByBuildingId(String buildingId) {
+        this.apartmentRepository.findAllByBuilding_IdOrderByNumber(buildingId)
+                .forEach(apartment -> {
+                    apartment.setRemovedOn(LocalDate.now());
+                    this.apartmentRepository.saveAndFlush(apartment);
+                    this.residentService.removeAllByApartmentId(apartment.getId());
+                    this.childService.removeAllByApartmentId(apartment.getId());
+                });
     }
 
 

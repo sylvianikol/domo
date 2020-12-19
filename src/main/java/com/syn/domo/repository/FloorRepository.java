@@ -14,7 +14,5 @@ public interface FloorRepository extends JpaRepository<Floor, String> {
 
     Optional<Floor> findByNumberAndBuilding_Id(int number, String buildingId);
 
-    List<Floor> findAllByOrderByNumber();
-
     Set<Floor> findAllByBuilding_IdOrderByNumber(String buildingId);
 }

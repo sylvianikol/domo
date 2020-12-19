@@ -11,4 +11,6 @@ public interface FloorService {
     Set<FloorServiceModel> createFloors(int floorsNumber, String buildingId);
 
     Set<Integer> getAllFloorNumbersByBuildingId(String buildingId);
+
+    void removeAllByBuildingId(String buildingId);
 }

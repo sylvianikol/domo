@@ -12,25 +12,20 @@ public class HomeController {
 
     private static final String HOME_TITLE = "Administration Area";
     private final BuildingService buildingService;
-    private final ModelMapper modelMapper;
 
     @Autowired
-    public HomeController(BuildingService buildingService, ModelMapper modelMapper) {
+    public HomeController(BuildingService buildingService) {
         this.buildingService = buildingService;
-        this.modelMapper = modelMapper;
     }
 
     @GetMapping("/")
     public ModelAndView home(ModelAndView modelAndView) {
 
-        int buildingsCount = this.buildingService.getCount();
-        if (buildingsCount > 0) {
-            modelAndView.addObject("hasBuildings", true);
-        }
+        modelAndView.addObject("hasBuildings", this.buildingService.hasBuildings())
+            .addObject("buildingsCount", this.buildingService.getCount())
+            .addObject("pageTitle", HOME_TITLE)
+            .setViewName("admin-home");
 
-        modelAndView.addObject("buildingsCount", buildingsCount);
-        modelAndView.addObject("pageTitle", HOME_TITLE);
-        modelAndView.setViewName("admin-home");
         return modelAndView;
     }
 }

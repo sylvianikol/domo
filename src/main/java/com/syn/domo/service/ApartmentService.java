@@ -19,4 +19,6 @@ public interface ApartmentService {
     ApartmentServiceModel getById(String apartmentId);
 
     boolean hasResidents(String apartmentId);
+
+    void removeAllByBuildingId(String buildingId);
 }

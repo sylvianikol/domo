@@ -45,7 +45,8 @@
         <h3 th:text="${pageH3Title}"></h3>
         <ul>
             <li th:each="r : ${residents}">
-                <a th:href="@{/buildings/{buildingId}/apartments/{apartmentId}/residents/{residentId}(buildingId=${buildingId}, apartmentId=${apartmentId}, residentId=${r.getId()})}" th:text="${r.toString()}"></a>
+                <a th:href="@{/buildings/{buildingId}/apartments/{apartmentId}/residents/{residentId}(buildingId=${buildingId}, apartmentId=${apartmentId}, residentId=${r.getId()})}"
+                   th:text="|${r.firstName} ${r.lastName}|"></a>
             </li>
         </ul>
     </th:block>

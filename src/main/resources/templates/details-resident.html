@@ -8,7 +8,12 @@
 <main>
     <h1 th:text="${pageTitle}"></h1>
     <th:block th:object="${resident}">
-        <p th:text="|Resident ${resident.toString}, building: ${buildingName}|"></p>
+        <p th:text="| *{firstName} *{lastName} - Apartment No: *{apartmentNumber}, ${buildingName} |"></p>
+        <p th:text="| Email: *{email}|"></p>
+        <p th:text="| ID Card No: *{identityCardNumber} |"></p>
+        <p th:text="| Phone: *{phoneNumber} |"></p>
+        <p th:text="| Added on: *{addedOn} |"></p>
+        <p th:if="*{removedOn}" th:text="| Removed on: *{removedOn} |"></p>
     </th:block>
 </main>
 <hr/>

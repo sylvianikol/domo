@@ -52,17 +52,4 @@ public abstract class BaseUserEntityViewModel {
     public void setRemovedOn(LocalDate removedOn) {
         this.removedOn = removedOn;
     }
-
-    @Override
-    public String toString() {
-        String removedOn = this.getRemovedOn() == null
-                ? "n/a"
-                : this.getRemovedOn().toString();
-
-        return String.format("%s %s, added on: %s, removed on: %s",
-                this.getFirstName(),
-                this.getLastName(),
-                this.getAddedOn(),
-                removedOn);
-    }
 }

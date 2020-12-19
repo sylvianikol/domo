@@ -42,14 +42,4 @@ public abstract class UserEntityViewModel extends BaseUserEntityViewModel {
         this.userRole = userRole;
     }
 
-    @Override
-    public String toString() {
-        return String.format("%s, email: %s, ID Card: %s, phone: %s",
-                super.toString(),
-                this.getEmail(),
-                this.getIdentityCardNumber(),
-                this.getPhoneNumber());
-    }
-
-
 }

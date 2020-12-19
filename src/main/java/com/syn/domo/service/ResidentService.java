@@ -6,9 +6,11 @@ import java.util.Set;
 
 public interface ResidentService {
 
-    ResidentServiceModel add(ResidentServiceModel residentServiceModel, String apartment);
+    ResidentServiceModel add(ResidentServiceModel residentServiceModel);
 
     Set<ResidentServiceModel> getAllResidents();
 
     Set<ResidentServiceModel> getAllResidentsByApartmentId(String apartmentId);
+
+    ResidentServiceModel getById(String residentId);
 }

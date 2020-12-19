@@ -15,4 +15,8 @@ public class ResidentViewModel extends UserEntityViewModel {
         this.apartmentNumber = apartmentNumber;
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s, apartment No: %s", super.toString(), this.getApartmentNumber());
+    }
 }

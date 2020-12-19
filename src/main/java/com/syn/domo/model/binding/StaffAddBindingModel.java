@@ -1,10 +1,10 @@
 package com.syn.domo.model.binding;
 
-public class StaffEntityAddBindingModel extends UserEntityAddBindingModel {
+public class StaffAddBindingModel extends UserEntityAddBindingModel {
 
     private String job;
 
-    public StaffEntityAddBindingModel() {
+    public StaffAddBindingModel() {
     }
 
     public String getJob() {

@@ -3,7 +3,7 @@ package com.syn.domo.model.view;
 public abstract class UserEntityViewModel extends BaseUserEntityViewModel {
 
     private String email;
-    private String idCardNumber;
+    private String identityCardNumber;
     private String phoneNumber;
     private String userRole;
 
@@ -18,12 +18,12 @@ public abstract class UserEntityViewModel extends BaseUserEntityViewModel {
         this.email = email;
     }
 
-    public String getIdCardNumber() {
-        return idCardNumber;
+    public String getIdentityCardNumber() {
+        return identityCardNumber;
     }
 
-    public void setIdCardNumber(String idCardNumber) {
-        this.idCardNumber = idCardNumber;
+    public void setIdentityCardNumber(String identityCardNumber) {
+        this.identityCardNumber = identityCardNumber;
     }
 
     public String getPhoneNumber() {
@@ -44,6 +44,12 @@ public abstract class UserEntityViewModel extends BaseUserEntityViewModel {
 
     @Override
     public String toString() {
-        return String.format("%s %s", this.getFirstName(), this.getLastName());
+        return String.format("%s, email: %s, ID Card: %s, phone: %s",
+                super.toString(),
+                this.getEmail(),
+                this.getIdentityCardNumber(),
+                this.getPhoneNumber());
     }
+
+
 }

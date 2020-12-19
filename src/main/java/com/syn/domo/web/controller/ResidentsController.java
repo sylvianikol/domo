@@ -1,12 +1,11 @@
 package com.syn.domo.web.controller;
 
-import com.syn.domo.model.binding.ResidentEntityAddBindingModel;
+import com.syn.domo.model.binding.ResidentAddBindingModel;
 import com.syn.domo.model.service.ResidentServiceModel;
 import com.syn.domo.model.view.ResidentViewModel;
 import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.ResidentService;
-import com.syn.domo.web.controller.namespace.BuildingsNamespace;
 import com.syn.domo.web.controller.namespace.ResidentsNamespace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +29,7 @@ public class ResidentsController implements ResidentsNamespace {
     private static final String MANAGE_RESIDENTS_TITLE = "Manage Residents";
     private static final String ADD_RESIDENT_TITLE = "Add New Resident";
     private static final String EDIT_RESIDENTS_TITLE = "Edit Residents";
+    private static final String RESIDENT_DETAILS = "Resident Details";
 
     private final ResidentService residentService;
     private final ApartmentService apartmentService;
@@ -75,7 +75,7 @@ public class ResidentsController implements ResidentsNamespace {
     public ModelAndView add(@PathVariable(value = "buildingId") String buildingId,
                             @PathVariable(value = "apartmentId") String apartmentId,
                             @Valid @ModelAttribute("residentAddBindingModel")
-                                        ResidentEntityAddBindingModel residentAddBindingModel,
+                                        ResidentAddBindingModel residentAddBindingModel,
                             BindingResult bindingResult, ModelAndView modelAndView) {
 
         if (bindingResult.hasErrors()) {
@@ -83,13 +83,28 @@ public class ResidentsController implements ResidentsNamespace {
                     "/apartments/" + apartmentId + "/residents/");
         } else {
             this.residentService.add(
-                    this.modelMapper.map(residentAddBindingModel, ResidentServiceModel.class),
-                    apartmentId);
+                    this.modelMapper.map(residentAddBindingModel, ResidentServiceModel.class));
 
             modelAndView.setViewName("redirect:/buildings/" + buildingId +
                     "/apartments/" + apartmentId + "/residents/");
         }
 
+        return modelAndView;
+    }
+
+    @GetMapping("/{residentId}")
+    public ModelAndView details(@PathVariable(value = "buildingId") String buildingId,
+                                @PathVariable(value = "apartmentId") String apartmentId,
+                                @PathVariable(value = "residentId") String residentId,
+                                ModelAndView modelAndView) {
+        ResidentViewModel resident =
+                this.modelMapper.map(this.residentService.getById(residentId), ResidentViewModel.class);
+
+        modelAndView.addObject("resident", resident);
+        modelAndView.addObject("buildingName",
+                this.buildingService.getBuildingName(buildingId));
+        modelAndView.addObject("pageTitle", RESIDENT_DETAILS);
+        modelAndView.setViewName("details-resident");
         return modelAndView;
     }
 

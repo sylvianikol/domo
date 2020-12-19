@@ -12,9 +12,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -32,16 +34,15 @@ public class ResidentServiceImpl implements ResidentService {
         this.modelMapper = modelMapper;
     }
 
-
     @Override
-    public ResidentServiceModel add(ResidentServiceModel residentServiceModel, String apartmentId) {
+    public ResidentServiceModel add(ResidentServiceModel residentServiceModel) {
 
         Resident resident = this.modelMapper.map(residentServiceModel, Resident.class);
         resident.setAddedOn(LocalDate.now());
         resident.setUserRole(UserRole.RESIDENT);
 
         ApartmentServiceModel apartmentServiceModel =
-                this.apartmentService.getById(residentServiceModel.getApartment());
+                this.apartmentService.getById(residentServiceModel.getApartment().getId());
 
         resident.setApartment(this.modelMapper.map(apartmentServiceModel, Apartment.class));
 
@@ -69,5 +70,19 @@ public class ResidentServiceImpl implements ResidentService {
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
         return Collections.unmodifiableSet(residentServiceModels);
+    }
+
+    @Override
+    public ResidentServiceModel getById(String residentId) {
+        // TODO: ResidentNotFoundException
+        Resident resident = this.residentRepository.findById(residentId).orElse(null);
+        ResidentServiceModel residentServiceModel = this.modelMapper.map(resident, ResidentServiceModel.class);
+        System.out.println();
+        return residentServiceModel;
+//        return this.residentRepository.findById(residentId)
+//                .map(resident -> this.modelMapper.map(resident, ResidentServiceModel.class))
+//                .orElseThrow(() -> {
+//                    throw new EntityNotFoundException("Resident not found!");
+//                });
     }
 }

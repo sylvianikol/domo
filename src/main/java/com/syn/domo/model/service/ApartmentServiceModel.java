@@ -6,6 +6,7 @@ public class ApartmentServiceModel extends BaseServiceModel {
 
     private String number;
     private int floorNumber;
+    private BuildingServiceModel building;
     private int pets;
 
     private Set<ResidentServiceModel> residents;
@@ -30,6 +31,13 @@ public class ApartmentServiceModel extends BaseServiceModel {
         this.floorNumber = floorNumber;
     }
 
+    public BuildingServiceModel getBuilding() {
+        return building;
+    }
+
+    public void setBuilding(BuildingServiceModel building) {
+        this.building = building;
+    }
 
     public int getPets() {
         return pets;

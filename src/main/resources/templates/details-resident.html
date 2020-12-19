@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:include="~{/fragments/head}"></th:block>
+</head>
+<body>
+<main>
+    <h1 th:text="${pageTitle}"></h1>
+    <th:block th:object="${resident}">
+        <p th:text="|Resident ${resident.toString}, building: ${buildingName}|"></p>
+    </th:block>
+</main>
+<hr/>
+<footer>
+    <th:block th:include="~{/fragments/footer}"></th:block>
+</footer>
+</body>
+</html>

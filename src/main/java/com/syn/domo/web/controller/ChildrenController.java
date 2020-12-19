@@ -83,8 +83,7 @@ public class ChildrenController implements ChildrenNamespace {
                     "/apartments/" + apartmentId + "/children/");
         } else {
             // TODO: add child
-            ChildServiceModel childServiceModel =
-                    this.childService.add(
+            this.childService.add(
                             this.modelMapper.map(childAddBindingModel, ChildServiceModel.class),
                             apartmentId);
 

@@ -17,7 +17,6 @@ import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -47,33 +46,22 @@ public class BuildingServiceImpl implements BuildingService {
     @Override
     public BuildingServiceModel add(BuildingServiceModel buildingServiceModel) {
         // TODO: validation
-        Building building = this.buildingRepository
-                .findByName(buildingServiceModel.getName()).orElse(null);
 
-        if (building != null) {
-            if (building.getRemovedOn() == null) {
-                throw new EntityExistsException("Building already exists");
-            } else {
-                // TODO: building already exists but is not active. do you want to activate building?
-                return this.modelMapper.map(building, BuildingServiceModel.class);
-            }
-        } else {
-            building = this.modelMapper.map(buildingServiceModel, Building.class);
-            building.setAddedOn(LocalDate.now());
-            this.buildingRepository.saveAndFlush(building);
+        Building building = this.modelMapper.map(buildingServiceModel, Building.class);
+        building.setAddedOn(LocalDate.now());
+        this.buildingRepository.saveAndFlush(building);
 
-            String buildingId = building.getId();
-            Set<FloorServiceModel> floorServiceModels =
-                    this.floorService.createFloors(buildingServiceModel.getFloorsNumber(), buildingId);
+        String buildingId = building.getId();
+        Set<FloorServiceModel> floorServiceModels =
+                this.floorService.createFloors(buildingServiceModel.getFloorsNumber(), buildingId);
 
-            Set<Floor> floors = floorServiceModels.stream()
-                    .map(floorServiceModel -> this.modelMapper.map(floorServiceModel, Floor.class))
-                    .collect(Collectors.toSet());
+        Set<Floor> floors = floorServiceModels.stream()
+                .map(floorServiceModel -> this.modelMapper.map(floorServiceModel, Floor.class))
+                .collect(Collectors.toSet());
 
-            building.setFloors(floors);
-            building.setApartments(new LinkedHashSet<>());
-            this.buildingRepository.saveAndFlush(building);
-        }
+        building.setFloors(floors);
+        building.setApartments(new LinkedHashSet<>());
+        this.buildingRepository.saveAndFlush(building);
 
         return this.modelMapper.map(building, BuildingServiceModel.class);
     }
@@ -86,7 +74,7 @@ public class BuildingServiceImpl implements BuildingService {
     @Override
     public Set<BuildingServiceModel> getAllBuildings() {
         Set<BuildingServiceModel> buildingServiceModels =
-                this.buildingRepository.findAllByRemovedOnNullOrderByName().stream()
+                this.buildingRepository.findAllByArchivedOnNullOrderByName().stream()
                 .map(building -> this.modelMapper.map(building, BuildingServiceModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         return Collections.unmodifiableSet(buildingServiceModels);
@@ -103,13 +91,25 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public BuildingServiceModel remove(String buildingId) {
+    public BuildingServiceModel archive(String buildingId) {
         Building building = getBuildingByIdOrThrow(buildingId);
-        building.setRemovedOn(LocalDate.now());
+        building.setArchivedOn(LocalDate.now());
         this.buildingRepository.saveAndFlush(building);
         this.floorService.removeAllByBuildingId(buildingId);
         this.apartmentService.removeAllByBuildingId(buildingId);
         return this.modelMapper.map(building, BuildingServiceModel.class);
+    }
+
+    @Override
+    public boolean exists(String buildingName) {
+        return this.buildingRepository
+                .findByNameAndArchivedOnNull(buildingName).isPresent();
+    }
+
+    @Override
+    public boolean isArchived(String buildingName) {
+        return this.buildingRepository
+                .findByNameAndArchivedOnNotNull(buildingName).isPresent();
     }
 
     private Building getBuildingByIdOrThrow(String buildingId) {

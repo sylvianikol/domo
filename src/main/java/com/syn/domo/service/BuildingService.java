@@ -19,5 +19,9 @@ public interface BuildingService {
 
     String getBuildingName(String id);
 
-    BuildingServiceModel remove(String buildingId);
+    BuildingServiceModel archive(String buildingId);
+
+    boolean exists(String buildingName);
+
+    boolean isArchived(String buildingName);
 }

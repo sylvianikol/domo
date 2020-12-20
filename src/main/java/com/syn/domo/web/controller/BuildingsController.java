@@ -61,18 +61,30 @@ public class BuildingsController implements BuildingsNamespace {
                             BindingResult bindingResult, ModelAndView modelAndView,
                             RedirectAttributes redirectAttributes) {
 
+        modelAndView.setViewName("redirect:/buildings/");
+
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("error", "Something went wrong");
-        } else {
-            BuildingViewModel buildingDetails = this.modelMapper.map(
-                    this.buildingService.add(
-                            this.modelMapper.map(buildingAddBindingModel, BuildingServiceModel.class)),
-                    BuildingViewModel.class);
-
-            redirectAttributes.addFlashAttribute("buildingDetails", buildingDetails.toString());
+            return modelAndView;
         }
 
-        modelAndView.setViewName("redirect:/buildings/");
+        boolean alreadyExists = this.buildingService.exists(buildingAddBindingModel.getName());
+        redirectAttributes.addFlashAttribute("alreadyExists", alreadyExists);
+
+        boolean isArchived = this.buildingService.isArchived(buildingAddBindingModel.getName());
+        redirectAttributes.addFlashAttribute("isArchived", isArchived);
+        redirectAttributes.addFlashAttribute("buildingName", buildingAddBindingModel.getName());
+        if (!alreadyExists && !isArchived) {
+
+            BuildingServiceModel buildingServiceModel = this.buildingService.add(
+                    this.modelMapper.map(buildingAddBindingModel, BuildingServiceModel.class));
+
+            BuildingViewModel buildingDetails =
+                        this.modelMapper.map(buildingServiceModel, BuildingViewModel.class);
+                redirectAttributes.addFlashAttribute("buildingDetails", buildingDetails.toString());
+
+        }
+
         return modelAndView;
     }
 
@@ -95,7 +107,7 @@ public class BuildingsController implements BuildingsNamespace {
     public ModelAndView remove(@PathVariable(value = "buildingId") String buildingId,
                                ModelAndView modelAndView) {
         BuildingViewModel removed =
-                this.modelMapper.map(this.buildingService.remove(buildingId), BuildingViewModel.class);
+                this.modelMapper.map(this.buildingService.archive(buildingId), BuildingViewModel.class);
 
         modelAndView.setViewName("redirect:/buildings/");
         return modelAndView;

@@ -25,6 +25,13 @@
         <button type="submit">Add building</button>
 
         <p th:if="${buildingDetails}" th:text="|Successfully added building ${buildingDetails}|"></p>
+        <p th:if="${alreadyExists}" th:text="|Building ${buildingName} already exists! |"></p>
+
+        <th:block th:if="${isArchived}">
+            <p th:text="|Building ${buildingName} was found in the archve. Do you wish to activate it? |"></p>
+            <p>Yes/No</p>
+        </th:block>
+
         <p th:if="${error}" th:text="${error}"></p>
     </form>
     <hr/>
@@ -36,7 +43,7 @@
                 <a th:href="@{/buildings/{buildingId}(buildingId=${b.getId()})}"
                    th:text="|${b.name} (address: ${b.getAddress()}) |"></a>
                 <form th:action="@{/buildings/{buildingId}(buildingId=${b.getId()})}" th:method="post">
-                    <button type="submit">remove</button>
+                    <button type="submit">archive</button>
                 </form>
 
             </li>

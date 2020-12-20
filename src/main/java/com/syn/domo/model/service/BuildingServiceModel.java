@@ -9,7 +9,7 @@ public class BuildingServiceModel extends BaseServiceModel {
     private String address;
     private int floorsNumber;
     private LocalDate addedOn;
-    private LocalDate removedOn;
+    private LocalDate archivedOn;
 
     Set<FloorServiceModel> floors;
     Set<ApartmentServiceModel> apartments;
@@ -49,12 +49,12 @@ public class BuildingServiceModel extends BaseServiceModel {
         this.addedOn = addedOn;
     }
 
-    public LocalDate getRemovedOn() {
-        return removedOn;
+    public LocalDate getArchivedOn() {
+        return archivedOn;
     }
 
-    public void setRemovedOn(LocalDate removedOn) {
-        this.removedOn = removedOn;
+    public void setArchivedOn(LocalDate archivedOn) {
+        this.archivedOn = archivedOn;
     }
 
     public Set<FloorServiceModel> getFloors() {

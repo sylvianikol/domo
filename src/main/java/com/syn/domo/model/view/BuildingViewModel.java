@@ -9,7 +9,7 @@ public class BuildingViewModel {
     private String name;
     private String address;
     private LocalDate addedOn;
-    private LocalDate removedOn;
+    private LocalDate archivedOn;
     private Set<FloorViewModel> floors;
 
     private Set<ApartmentViewModel> apartments;
@@ -57,12 +57,12 @@ public class BuildingViewModel {
         this.addedOn = addedOn;
     }
 
-    public LocalDate getRemovedOn() {
-        return removedOn;
+    public LocalDate getArchivedOn() {
+        return archivedOn;
     }
 
-    public void setRemovedOn(LocalDate removedOn) {
-        this.removedOn = removedOn;
+    public void setArchivedOn(LocalDate archivedOn) {
+        this.archivedOn = archivedOn;
     }
 
     public Set<ApartmentViewModel> getApartments() {

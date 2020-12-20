@@ -24,21 +24,23 @@
 
         <button type="submit">Add building</button>
 
-        <th:block th:if="${success}">
+        <th:block th:if="${addedBuilding}">
             <p th:text="|Successfully added building
-            ${building.getName} with
-            ${building.getFloors().size} floors,
-            address ${building.address} |"></p>
-            <a th:href="@{/buildings/{buildingId}(buildingId=${building.getId()})}" th:text="manage"></a>
+            ${addedBuilding.getName} with
+            ${addedBuilding.getFloors().size} floors,
+            address ${addedBuilding.address} |"></p>
+            <a th:href="@{/buildings/{buildingId}(buildingId=${addedBuilding.getId()})}" th:text="manage"></a>
         </th:block>
 
-        <p th:if="${alreadyExists}" th:text="${alreadyExistsMessage}"></p>
-
-        <th:block th:if="${isArchived}">
-            <p th:text="${isArchivedMessage}"></p>
-            <form th:action="@{/buildings/{buildingId}(buildingId=${buildingId})}" th:method="post">
-                <button type="submit">activate</button>
-            </form>
+        <th:block th:if="${foundBuilding}">
+            <p th:text="${message}"></p>
+            <th:block th:if="${foundBuilding.getArchivedOn()}">
+                <form
+                      th:action="@{/buildings/{buildingId}(buildingId=${foundBuilding.getId()})}"
+                      th:method="post">
+                    <button type="submit">activate</button>
+                </form>
+            </th:block>
         </th:block>
 
         <p th:if="${error}" th:text="${error}"></p>

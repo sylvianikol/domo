@@ -19,7 +19,7 @@ public class Building extends BaseEntity{
     public Building() {
     }
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     public String getName() {
         return name;
     }

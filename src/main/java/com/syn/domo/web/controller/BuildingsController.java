@@ -70,26 +70,20 @@ public class BuildingsController implements BuildingsNamespace {
             return modelAndView;
         }
 
-        String buildingName = buildingAddBindingModel.getName();
-        String  buildingAddress = buildingAddBindingModel.getAddress();
+        String buildingName = buildingAddBindingModel.getName().trim();
+        String  buildingAddress = buildingAddBindingModel.getAddress().trim();
 
         try {
-            BuildingServiceModel buildingServiceModel = this.buildingService.add(
-                    this.modelMapper.map(buildingAddBindingModel, BuildingServiceModel.class));
+            redirectAttributes.addFlashAttribute("addedBuilding", this.modelMapper
+                            .map(this.buildingService.add(
+                                    this.modelMapper.map(buildingAddBindingModel, BuildingServiceModel.class)),
+                                    BuildingViewModel.class));
 
-            redirectAttributes.addFlashAttribute("success", true);
-            BuildingViewModel building =
-                    this.modelMapper.map(buildingServiceModel, BuildingViewModel.class);
-            redirectAttributes.addFlashAttribute("building", building);
-
-        } catch (BuildingExistsException e) {
-            redirectAttributes.addFlashAttribute("alreadyExists", true);
-            redirectAttributes.addFlashAttribute("alreadyExistsMessage", e.getMessage());
-        } catch (BuildingArchivedExistsException e) {
-            redirectAttributes.addFlashAttribute("isArchived", true);
-            redirectAttributes.addFlashAttribute("isArchivedMessage", e.getMessage());
-            redirectAttributes.addFlashAttribute("buildingId",
-                    this.buildingService.getByNameAndAddress(buildingName, buildingAddress).getId());
+        } catch (BuildingExistsException | BuildingArchivedExistsException e) {
+            redirectAttributes.addFlashAttribute("message", e.getMessage())
+                    .addFlashAttribute("foundBuilding", this.modelMapper
+                            .map(this.buildingService.getByNameAndAddress(buildingName, buildingAddress),
+                                    BuildingViewModel.class));
         }
 
         return modelAndView;

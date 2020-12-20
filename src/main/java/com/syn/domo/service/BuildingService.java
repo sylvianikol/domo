@@ -1,6 +1,5 @@
 package com.syn.domo.service;
 
-import com.syn.domo.model.binding.BuildingAddBindingModel;
 import com.syn.domo.model.service.BuildingServiceModel;
 
 import java.util.Set;
@@ -21,7 +20,9 @@ public interface BuildingService {
 
     BuildingServiceModel archive(String buildingId);
 
-    boolean exists(String buildingName);
+    boolean alreadyExists(String buildingName, String buildingAddress);
 
-    boolean isArchived(String buildingName);
+    boolean isArchived(String buildingName, String buildingAddress);
+
+    BuildingServiceModel getByNameAndAddress(String buildingName, String buildingAddress);
 }

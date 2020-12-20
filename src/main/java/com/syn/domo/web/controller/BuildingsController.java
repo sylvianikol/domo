@@ -1,5 +1,7 @@
 package com.syn.domo.web.controller;
 
+import com.syn.domo.exception.BuildingArchivedExistsException;
+import com.syn.domo.exception.BuildingExistsException;
 import com.syn.domo.model.binding.BuildingAddBindingModel;
 import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.model.view.BuildingViewModel;
@@ -56,7 +58,7 @@ public class BuildingsController implements BuildingsNamespace {
     }
 
     @PostMapping("/")
-    public ModelAndView add(@Valid @ModelAttribute("buildingConstructModel")
+    public ModelAndView add(@Valid @ModelAttribute("buildingAddBindingModel")
                                             BuildingAddBindingModel buildingAddBindingModel,
                             BindingResult bindingResult, ModelAndView modelAndView,
                             RedirectAttributes redirectAttributes) {
@@ -68,21 +70,26 @@ public class BuildingsController implements BuildingsNamespace {
             return modelAndView;
         }
 
-        boolean alreadyExists = this.buildingService.exists(buildingAddBindingModel.getName());
-        redirectAttributes.addFlashAttribute("alreadyExists", alreadyExists);
+        String buildingName = buildingAddBindingModel.getName();
+        String  buildingAddress = buildingAddBindingModel.getAddress();
 
-        boolean isArchived = this.buildingService.isArchived(buildingAddBindingModel.getName());
-        redirectAttributes.addFlashAttribute("isArchived", isArchived);
-        redirectAttributes.addFlashAttribute("buildingName", buildingAddBindingModel.getName());
-        if (!alreadyExists && !isArchived) {
-
+        try {
             BuildingServiceModel buildingServiceModel = this.buildingService.add(
                     this.modelMapper.map(buildingAddBindingModel, BuildingServiceModel.class));
 
-            BuildingViewModel buildingDetails =
-                        this.modelMapper.map(buildingServiceModel, BuildingViewModel.class);
-                redirectAttributes.addFlashAttribute("buildingDetails", buildingDetails.toString());
+            redirectAttributes.addFlashAttribute("success", true);
+            BuildingViewModel building =
+                    this.modelMapper.map(buildingServiceModel, BuildingViewModel.class);
+            redirectAttributes.addFlashAttribute("building", building);
 
+        } catch (BuildingExistsException e) {
+            redirectAttributes.addFlashAttribute("alreadyExists", true);
+            redirectAttributes.addFlashAttribute("alreadyExistsMessage", e.getMessage());
+        } catch (BuildingArchivedExistsException e) {
+            redirectAttributes.addFlashAttribute("isArchived", true);
+            redirectAttributes.addFlashAttribute("isArchivedMessage", e.getMessage());
+            redirectAttributes.addFlashAttribute("buildingId",
+                    this.buildingService.getByNameAndAddress(buildingName, buildingAddress).getId());
         }
 
         return modelAndView;
@@ -103,10 +110,10 @@ public class BuildingsController implements BuildingsNamespace {
         return modelAndView;
     }
 
-    @PostMapping("/{buildingId}")
-    public ModelAndView remove(@PathVariable(value = "buildingId") String buildingId,
-                               ModelAndView modelAndView) {
-        BuildingViewModel removed =
+    @PostMapping("/{buildingId}/archive")
+    public ModelAndView archive(@PathVariable(value = "buildingId") String buildingId,
+                                ModelAndView modelAndView) {
+        BuildingViewModel archivedBuilding =
                 this.modelMapper.map(this.buildingService.archive(buildingId), BuildingViewModel.class);
 
         modelAndView.setViewName("redirect:/buildings/");

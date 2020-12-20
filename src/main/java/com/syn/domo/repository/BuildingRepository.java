@@ -14,7 +14,9 @@ public interface BuildingRepository extends JpaRepository<Building, String> {
 
     Set<Building> findAllByArchivedOnNullOrderByName();
 
-    Optional<Building> findByNameAndArchivedOnNull(String name);
+    Optional<Building> findByNameAndAddressAndArchivedOnNull(String buildingName, String buildingAddress);
 
-    Optional<Building> findByNameAndArchivedOnNotNull(String name);
+    Optional<Building> findByNameAndAddressAndArchivedOnNotNull(String buildingName, String buildingAddress);
+
+    Optional<Building> findByNameAndAddress(String buildingName, String buildingAddress);
 }

@@ -15,19 +15,19 @@ public class GlobalControllerAdvice {
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     @ExceptionHandler(BuildingNotFoundException.class)
     public ModelAndView handleBuildingNotFound(BuildingNotFoundException ex) {
-        return buildModelAndView(ex.getMessage(), convertStackTraceToString(ex));
+        return buildModelAndView(ex);
     }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     @ExceptionHandler(ResidentNotFoundException.class)
     public ModelAndView handleResidentNotFound(ResidentNotFoundException ex) {
-        return buildModelAndView(ex.getMessage(), convertStackTraceToString(ex));
+        return buildModelAndView(ex);
     }
 
-    private ModelAndView buildModelAndView(String message, String s) {
+     private<E extends Exception> ModelAndView buildModelAndView(E ex) {
         ModelAndView modelAndView = new ModelAndView("error");
-        modelAndView.addObject("message", message)
-                .addObject("trace", s)
+        modelAndView.addObject("message", ex.getMessage())
+                .addObject("trace", this.convertStackTraceToString(ex))
                 .addObject("status", HttpStatus.NOT_FOUND);
         return modelAndView;
     }

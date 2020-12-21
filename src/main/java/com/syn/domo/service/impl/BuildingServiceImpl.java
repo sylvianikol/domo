@@ -111,8 +111,8 @@ public class BuildingServiceImpl implements BuildingService {
         Building building = getBuildingByIdOrThrow(buildingId);
         building.setArchivedOn(LocalDate.now());
         this.buildingRepository.saveAndFlush(building);
-        this.floorService.removeAllByBuildingId(buildingId);
-        this.apartmentService.removeAllByBuildingId(buildingId);
+        this.floorService.archiveAllByBuildingId(buildingId);
+        this.apartmentService.archiveAllByBuildingId(buildingId);
         return this.modelMapper.map(building, BuildingServiceModel.class);
     }
 
@@ -126,11 +126,6 @@ public class BuildingServiceImpl implements BuildingService {
     public boolean isArchived(String buildingName, String buildingAddress) {
         return this.buildingRepository
                 .findByNameAndAddressAndArchivedOnNotNull(buildingName, buildingAddress).isPresent();
-    }
-
-    @Override
-    public boolean isArchived(String id) {
-        return this.getById(id).getArchivedOn() != null;
     }
 
     @Override

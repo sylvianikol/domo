@@ -14,5 +14,5 @@ public interface ResidentService {
 
     ResidentServiceModel getById(String residentId);
 
-    void removeAllByApartmentId(String apartmentId);
+    void archiveAllByApartmentId(String apartmentId);
 }

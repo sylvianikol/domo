@@ -74,7 +74,7 @@ public class FloorServiceImpl implements FloorService {
     }
 
     @Override
-    public void removeAllByBuildingId(String buildingId) {
+    public void archiveAllByBuildingId(String buildingId) {
         this.floorRepository.findAllByBuilding_IdOrderByNumber(buildingId)
                 .forEach(floor -> {
                    floor.setActive(false);

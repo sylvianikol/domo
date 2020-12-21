@@ -20,5 +20,5 @@ public interface ApartmentService {
 
     boolean hasResidents(String apartmentId);
 
-    void removeAllByBuildingId(String buildingId);
+    void archiveAllByBuildingId(String buildingId);
 }

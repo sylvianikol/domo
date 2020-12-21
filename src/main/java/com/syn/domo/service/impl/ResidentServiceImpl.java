@@ -77,17 +77,12 @@ public class ResidentServiceImpl implements ResidentService {
         // TODO: ResidentNotFoundException
         Resident resident = this.residentRepository.findById(residentId).orElse(null);
         ResidentServiceModel residentServiceModel = this.modelMapper.map(resident, ResidentServiceModel.class);
-        System.out.println();
+
         return residentServiceModel;
-//        return this.residentRepository.findById(residentId)
-//                .map(resident -> this.modelMapper.map(resident, ResidentServiceModel.class))
-//                .orElseThrow(() -> {
-//                    throw new EntityNotFoundException("Resident not found!");
-//                });
     }
 
     @Override
-    public void removeAllByApartmentId(String apartmentId) {
+    public void archiveAllByApartmentId(String apartmentId) {
         this.residentRepository.findAllByApartment_Id(apartmentId)
                 .forEach(resident -> {
                     resident.setRemovedOn(LocalDate.now());

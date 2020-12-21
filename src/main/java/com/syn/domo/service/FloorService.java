@@ -12,5 +12,5 @@ public interface FloorService {
 
     Set<Integer> getAllFloorNumbersByBuildingId(String buildingId);
 
-    void removeAllByBuildingId(String buildingId);
+    void archiveAllByBuildingId(String buildingId);
 }

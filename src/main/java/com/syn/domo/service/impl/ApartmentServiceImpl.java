@@ -113,12 +113,12 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
-    public void removeAllByBuildingId(String buildingId) {
+    public void archiveAllByBuildingId(String buildingId) {
         this.apartmentRepository.findAllByBuilding_IdOrderByNumber(buildingId)
                 .forEach(apartment -> {
                     apartment.setRemovedOn(LocalDate.now());
                     this.apartmentRepository.saveAndFlush(apartment);
-                    this.residentService.removeAllByApartmentId(apartment.getId());
+                    this.residentService.archiveAllByApartmentId(apartment.getId());
                     this.childService.removeAllByApartmentId(apartment.getId());
                 });
     }

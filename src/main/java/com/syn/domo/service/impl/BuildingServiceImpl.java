@@ -59,7 +59,7 @@ public class BuildingServiceImpl implements BuildingService {
 
         if (this.isArchived(buildingName, buildingAddress)) {
             throw new BuildingArchivedExistsException(String.format(
-                    "Building '%s' (%s) already exists but is currently inactive. Do you wish to activate it?",
+                    "Building '%s' (%s) already exists but is currently inactive.",
                     buildingName, buildingAddress));
         }
 
@@ -135,6 +135,15 @@ public class BuildingServiceImpl implements BuildingService {
                     throw new BuildingNotFoundException(String.format(
                             "Building %s (%s) not found!", buildingName, buildingAddress));
                 });
+        return this.modelMapper.map(building, BuildingServiceModel.class);
+    }
+
+    @Override
+    public BuildingServiceModel activate(String buildingId) {
+
+        Building building = this.getBuildingByIdOrThrow(buildingId);
+        building.setArchivedOn(null);
+        this.buildingRepository.saveAndFlush(building);
         return this.modelMapper.map(building, BuildingServiceModel.class);
     }
 

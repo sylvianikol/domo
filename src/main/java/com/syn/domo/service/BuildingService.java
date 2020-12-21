@@ -25,4 +25,6 @@ public interface BuildingService {
     boolean isArchived(String buildingName, String buildingAddress);
 
     BuildingServiceModel getByNameAndAddress(String buildingName, String buildingAddress);
+
+    BuildingServiceModel activate(String buildingId);
 }

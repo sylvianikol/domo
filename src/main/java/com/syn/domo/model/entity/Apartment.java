@@ -13,7 +13,7 @@ public class Apartment extends BaseEntity {
     private Building building;
     private int pets;
     private LocalDate addedOn;
-    private LocalDate removedOn;
+    private LocalDate archivedOn;
 
     private Set<Resident> residents;
     private Set<Child> children;
@@ -84,12 +84,12 @@ public class Apartment extends BaseEntity {
         this.addedOn = addedOn;
     }
 
-    @Column(name = "remove_on")
-    public LocalDate getRemovedOn() {
-        return removedOn;
+    @Column(name = "archived_on")
+    public LocalDate getArchivedOn() {
+        return archivedOn;
     }
 
-    public void setRemovedOn(LocalDate removedOn) {
-        this.removedOn = removedOn;
+    public void setArchivedOn(LocalDate removedOn) {
+        this.archivedOn = removedOn;
     }
 }

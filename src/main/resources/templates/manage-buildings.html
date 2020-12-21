@@ -29,22 +29,29 @@
             ${addedBuilding.getName} with
             ${addedBuilding.getFloors().size} floors,
             address ${addedBuilding.address} |"></p>
-            <a th:href="@{/buildings/{buildingId}(buildingId=${addedBuilding.getId()})}" th:text="manage"></a>
+            <a th:href="@{/buildings/{buildingId}(buildingId=${addedBuilding.getId()})}">add apartments and residents</a>
         </th:block>
 
-        <th:block th:if="${foundBuilding}">
-            <p th:text="${message}"></p>
-            <th:block th:if="${foundBuilding.getArchivedOn()}">
-                <form
-                      th:action="@{/buildings/{buildingId}(buildingId=${foundBuilding.getId()})}"
-                      th:method="post">
-                    <button type="submit">activate</button>
-                </form>
-            </th:block>
+        <th:block th:if="${activatedBuilding}">
+            <p th:text="|Successfully activated building
+            ${activatedBuilding.getName} with
+            ${activatedBuilding.getFloors().size} floors,
+            address ${activatedBuilding.address} |"></p>
+            <a th:href="@{/buildings/{buildingId}(buildingId=${activatedBuilding.getId()})}">manage</a>
         </th:block>
 
         <p th:if="${error}" th:text="${error}"></p>
     </form>
+
+    <th:block th:if="${foundBuilding}">
+        <p th:text="${message}"></p>
+        <th:block th:if="${foundBuilding.getArchivedOn()}">
+            <form th:action="@{/buildings/{buildingId}/activate(buildingId=${foundBuilding.getId()})}"
+                  th:method="post">
+                <button type="submit">activate</button>
+            </form>
+        </th:block>
+    </th:block>
     <hr/>
     <th:block th:if="${hasBuildings}">
         <h3 th:text="${pageH3Title}"></h3>

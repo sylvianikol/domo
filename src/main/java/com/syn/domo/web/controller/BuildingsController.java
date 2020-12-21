@@ -90,7 +90,7 @@ public class BuildingsController implements BuildingsNamespace {
     }
 
     @GetMapping("/{buildingId}")
-    public ModelAndView manageBuilding(@PathVariable(value = "buildingId") String buildingId, ModelAndView modelAndView) {
+    public ModelAndView manage(@PathVariable(value = "buildingId") String buildingId, ModelAndView modelAndView) {
         BuildingViewModel building = this.modelMapper.map(
                 this.buildingService.getById(buildingId), BuildingViewModel.class);
 
@@ -110,6 +110,17 @@ public class BuildingsController implements BuildingsNamespace {
         BuildingViewModel archivedBuilding =
                 this.modelMapper.map(this.buildingService.archive(buildingId), BuildingViewModel.class);
 
+        modelAndView.setViewName("redirect:/buildings/");
+        return modelAndView;
+    }
+
+    @PostMapping("/{buildingId}/activate")
+    public ModelAndView activate(@PathVariable(value = "buildingId") String buildingId,
+                                 ModelAndView modelAndView, RedirectAttributes redirectAttributes) {
+        BuildingServiceModel buildingServiceModel = this.buildingService.activate(buildingId);
+
+        redirectAttributes.addFlashAttribute("activatedBuilding", this.modelMapper
+                        .map(buildingServiceModel, BuildingViewModel.class));
         modelAndView.setViewName("redirect:/buildings/");
         return modelAndView;
     }

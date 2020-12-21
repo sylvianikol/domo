@@ -116,7 +116,7 @@ public class ApartmentServiceImpl implements ApartmentService {
     public void archiveAllByBuildingId(String buildingId) {
         this.apartmentRepository.findAllByBuilding_IdOrderByNumber(buildingId)
                 .forEach(apartment -> {
-                    apartment.setRemovedOn(LocalDate.now());
+                    apartment.setArchivedOn(LocalDate.now());
                     this.apartmentRepository.saveAndFlush(apartment);
                     this.residentService.archiveAllByApartmentId(apartment.getId());
                     this.childService.removeAllByApartmentId(apartment.getId());

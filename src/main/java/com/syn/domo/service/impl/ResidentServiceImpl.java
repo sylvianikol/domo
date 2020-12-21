@@ -1,5 +1,6 @@
 package com.syn.domo.service.impl;
 
+import com.syn.domo.exception.ResidentNotFoundException;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Resident;
 import com.syn.domo.model.entity.UserRole;
@@ -12,11 +13,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -52,16 +51,6 @@ public class ResidentServiceImpl implements ResidentService {
     }
 
     @Override
-    public Set<ResidentServiceModel> getAllResidents() {
-        Set<ResidentServiceModel> residentServiceModels =
-                this.residentRepository.findAllByOrderByApartment_Number().stream()
-                .map(resident -> this.modelMapper.map(resident, ResidentServiceModel.class))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-
-        return Collections.unmodifiableSet(residentServiceModels);
-    }
-
-    @Override
     public Set<ResidentServiceModel> getAllResidentsByApartmentId(String apartmentId) {
         Set<ResidentServiceModel> residentServiceModels =
                 this.residentRepository.findAllByApartment_Id(apartmentId)
@@ -74,11 +63,13 @@ public class ResidentServiceImpl implements ResidentService {
 
     @Override
     public ResidentServiceModel getById(String residentId) {
-        // TODO: ResidentNotFoundException
-        Resident resident = this.residentRepository.findById(residentId).orElse(null);
-        ResidentServiceModel residentServiceModel = this.modelMapper.map(resident, ResidentServiceModel.class);
 
-        return residentServiceModel;
+        Resident resident = this.residentRepository.findById(residentId)
+                .orElseThrow(() -> {
+                    throw new ResidentNotFoundException("Resident not found");
+                });
+
+        return this.modelMapper.map(resident, ResidentServiceModel.class);
     }
 
     @Override

@@ -8,8 +8,6 @@ public interface ResidentService {
 
     ResidentServiceModel add(ResidentServiceModel residentServiceModel);
 
-    Set<ResidentServiceModel> getAllResidents();
-
     Set<ResidentServiceModel> getAllResidentsByApartmentId(String apartmentId);
 
     ResidentServiceModel getById(String residentId);

@@ -13,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -79,5 +80,12 @@ public class ResidentServiceImpl implements ResidentService {
                     resident.setRemovedOn(LocalDate.now());
                     this.residentRepository.saveAndFlush(resident);
                 });
+    }
+
+    @Override
+    @Transactional
+    public void deleteAllByApartmentId(String apartmentId) {
+        Set<Resident> residents = this.residentRepository.findAllByApartment_Id(apartmentId);
+        this.residentRepository.deleteAll(residents);
     }
 }

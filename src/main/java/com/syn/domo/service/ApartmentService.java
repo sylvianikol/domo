@@ -8,6 +8,8 @@ public interface ApartmentService {
 
     ApartmentServiceModel add(ApartmentServiceModel addServiceModel, String buildingId);
 
+    void deleteAllByBuildingId(String buildingId);
+
     Set<ApartmentServiceModel> getAllApartmentsByBuildingId(String buildingId);
 
     Set<String> getAllApartmentNumbersByBuildingId(String buildingId);

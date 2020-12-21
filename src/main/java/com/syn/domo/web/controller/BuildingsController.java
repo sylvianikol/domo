@@ -110,7 +110,7 @@ public class BuildingsController implements BuildingsNamespace {
         BuildingViewModel archivedBuilding =
                 this.modelMapper.map(this.buildingService.archive(buildingId), BuildingViewModel.class);
 
-        modelAndView.setViewName("redirect:/buildings/");
+        modelAndView.setViewName("redirect:/buildings/{buildingId}");
         return modelAndView;
     }
 
@@ -121,6 +121,17 @@ public class BuildingsController implements BuildingsNamespace {
 
         redirectAttributes.addFlashAttribute("activatedBuilding", this.modelMapper
                         .map(buildingServiceModel, BuildingViewModel.class));
+        modelAndView.setViewName("redirect:/buildings/{buildingId}");
+        return modelAndView;
+    }
+
+    @PostMapping("/{buildingId}/delete")
+    public ModelAndView delete(@PathVariable(value = "buildingId") String buildingId,
+                                 ModelAndView modelAndView, RedirectAttributes redirectAttributes) {
+        BuildingServiceModel buildingServiceModel = this.buildingService.delete(buildingId);
+        BuildingViewModel deletedBuilding = this.modelMapper
+                .map(buildingServiceModel, BuildingViewModel.class);
+        redirectAttributes.addFlashAttribute("deletedBuilding", deletedBuilding);
         modelAndView.setViewName("redirect:/buildings/");
         return modelAndView;
     }

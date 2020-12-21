@@ -15,6 +15,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -145,6 +146,18 @@ public class BuildingServiceImpl implements BuildingService {
         building.setArchivedOn(null);
         this.buildingRepository.saveAndFlush(building);
         return this.modelMapper.map(building, BuildingServiceModel.class);
+    }
+
+    @Override
+    @Transactional
+    public BuildingServiceModel delete(String buildingId) {
+        Building building = this.getBuildingByIdOrThrow(buildingId);
+        this.apartmentService.deleteAllByBuildingId(buildingId);
+        this.floorService.deleteAllByBuildingId(buildingId);
+        BuildingServiceModel buildingServiceModel
+                = this.modelMapper.map(building, BuildingServiceModel.class);
+        this.buildingRepository.delete(building);
+        return buildingServiceModel;
     }
 
     private Building getBuildingByIdOrThrow(String buildingId) {

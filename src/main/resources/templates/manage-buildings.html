@@ -40,6 +40,11 @@
             <a th:href="@{/buildings/{buildingId}(buildingId=${activatedBuilding.getId()})}">manage</a>
         </th:block>
 
+        <th:block th:if="${deletedBuilding}" th:object="${deletedBuilding}">
+            <p th:text="|Successfully deleted building
+            *{name} (*{address}) |"></p>
+        </th:block>
+
         <p th:if="${error}" th:text="${error}"></p>
     </form>
 
@@ -50,7 +55,11 @@
                   th:method="post">
                 <button type="submit">activate</button>
             </form>
+            <form th:action="@{/buildings/{buildingId}/delete(buildingId=${foundBuilding.getId()})}" th:method="post">
+                <button type="submit">delete</button>
+            </form>
         </th:block>
+
     </th:block>
     <hr/>
     <th:block th:if="${hasBuildings}">
@@ -60,10 +69,6 @@
             <li th:each="b : ${buildings}">
                 <a th:href="@{/buildings/{buildingId}(buildingId=${b.getId()})}"
                    th:text="|${b.name} (address: ${b.getAddress()}) |"></a>
-                <form th:action="@{/buildings/{buildingId}/archive(buildingId=${b.getId()})}" th:method="post">
-                    <button type="submit">archive</button>
-                </form>
-
             </li>
         </ul>
     </th:block>

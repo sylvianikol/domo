@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -61,6 +62,14 @@ public class FloorServiceImpl implements FloorService {
         }
 
         return floorServiceModels;
+    }
+
+    @Override
+    @Transactional
+    public void deleteAllByBuildingId(String buildingId) {
+        this.floorRepository
+                .deleteAll(this.floorRepository
+                        .findAllByBuilding_IdOrderByNumber(buildingId));
     }
 
     @Override

@@ -27,4 +27,6 @@ public interface BuildingService {
     BuildingServiceModel getByNameAndAddress(String buildingName, String buildingAddress);
 
     BuildingServiceModel activate(String buildingId);
+
+    BuildingServiceModel delete(String buildingId);
 }

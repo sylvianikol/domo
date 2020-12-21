@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -60,6 +61,19 @@ public class ApartmentServiceImpl implements ApartmentService {
         this.apartmentRepository.saveAndFlush(apartment);
 
         return this.modelMapper.map(apartment, ApartmentServiceModel.class);
+    }
+
+    @Override
+    @Transactional
+    public void deleteAllByBuildingId(String buildingId) {
+        Set<Apartment> apartments =
+                this.apartmentRepository.findAllByBuilding_IdOrderByNumber(buildingId);
+
+        for (Apartment apartment : apartments) {
+            this.residentService.deleteAllByApartmentId(apartment.getId());
+        }
+
+        this.apartmentRepository.deleteAll(apartments);
     }
 
     @Override

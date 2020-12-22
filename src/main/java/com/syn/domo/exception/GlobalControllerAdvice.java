@@ -10,19 +10,19 @@ import org.springframework.web.servlet.ModelAndView;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-@ControllerAdvice
+//@ControllerAdvice
 public class GlobalControllerAdvice {
     public static final String DEFAULT_ERROR_VIEW = "error";
 
-    @ExceptionHandler(value = Exception.class)
-    public ModelAndView defaultErrorHandler(Exception ex) throws Exception {
-
-        if (AnnotationUtils.findAnnotation(ex.getClass(), ResponseStatus.class) != null) {
-            throw ex;
-        }
-
-        return buildModelAndView(ex);
-    }
+//    @ExceptionHandler(value = Exception.class)
+//    public ModelAndView defaultErrorHandler(Exception ex) throws Exception {
+//
+//        if (AnnotationUtils.findAnnotation(ex.getClass(), ResponseStatus.class) != null) {
+//            throw ex;
+//        }
+//
+//        return buildModelAndView(ex);
+//    }
 
      private<E extends Exception> ModelAndView buildModelAndView(E ex) {
         ModelAndView modelAndView = new ModelAndView(DEFAULT_ERROR_VIEW);

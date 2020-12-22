@@ -8,7 +8,7 @@
 <main>
     <h1 th:text="${pageTitle}"></h1>
     <hr/>
-    <h2 th:text="${pageH2Title}"></h2>
+    <h2>Add Building</h2>
     <form th:action="@{/buildings/}" th:method="post">
         <label for="name">
             <input name="name" type="text" id="name" placeholder="Enter building's name">
@@ -29,7 +29,7 @@
             ${addedBuilding.getName} with
             ${addedBuilding.getFloors().size} floors,
             address ${addedBuilding.address} |"></p>
-            <a th:href="@{/buildings/{buildingId}(buildingId=${addedBuilding.getId()})}">add apartments and residents</a>
+            <a th:href="@{/buildings/{buildingId}(buildingId=${addedBuilding.getId()})}">add apartments</a>
         </th:block>
 
         <th:block th:if="${activatedBuilding}">
@@ -62,13 +62,16 @@
 
     </th:block>
     <hr/>
-    <th:block th:if="${hasBuildings}">
-        <h3 th:text="${pageH3Title}"></h3>
+    <th:block th:if="${buildings}">
+        <h3>All Buildings</h3>
         <p th:text="|${buildings.size()} building(s) |"></p>
         <ul>
             <li th:each="b : ${buildings}">
                 <a th:href="@{/buildings/{buildingId}(buildingId=${b.getId()})}"
                    th:text="|${b.name} (address: ${b.getAddress()}) |"></a>
+                | Status:
+                <span th:if="${b.getArchivedOn()}">Not managed (archived)</span>
+                <span th:unless="${b.getArchivedOn()}">Managed (active)</span>
             </li>
         </ul>
     </th:block>

@@ -1,5 +1,6 @@
 package com.syn.domo.model.view;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 public class ApartmentViewModel {
@@ -8,6 +9,8 @@ public class ApartmentViewModel {
     private String number;
     private int floorNumber;
     private int pets;
+    private LocalDate addedOn;
+    private LocalDate archivedOn;
 
     Set<ResidentViewModel> residents;
 
@@ -44,6 +47,22 @@ public class ApartmentViewModel {
 
     public void setPets(int pets) {
         this.pets = pets;
+    }
+
+    public LocalDate getAddedOn() {
+        return addedOn;
+    }
+
+    public void setAddedOn(LocalDate addedOn) {
+        this.addedOn = addedOn;
+    }
+
+    public LocalDate getArchivedOn() {
+        return archivedOn;
+    }
+
+    public void setArchivedOn(LocalDate archivedOn) {
+        this.archivedOn = archivedOn;
     }
 
     public Set<ResidentViewModel> getResidents() {

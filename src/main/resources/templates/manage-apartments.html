@@ -36,14 +36,19 @@
         <h3 th:text="${pageH3Title}"></h3>
         <ul>
             <li th:each="a : ${apartments}">
-                <a th:href="@{/buildings/{buildingId}/apartments/{apartmentId}(buildingId=${buildingId}, apartmentId=${a.getId()})}"
-                   th:text="|
-                        Apartment No. ${a.number},
-                        Floor: ${a.floorNumber},
-                        Residents: ${a.residents.size() + a.children.size()},
-                        Pets: ${a.pets}
-                        |">
-                </a>
+                <p>
+                    <a th:href="@{/buildings/{buildingId}/apartments/{apartmentId}(buildingId=${buildingId}, apartmentId=${a.getId()})}"
+                       th:text="|
+                            Apartment No. ${a.number},
+                            Floor: ${a.floorNumber},
+                            Residents: ${a.residents.size() + a.children.size()},
+                            Pets: ${a.pets}
+                            |">
+                    </a>
+                    | Status:
+                    <span th:if="${a.getArchivedOn()}">Not managed (archived)</span>
+                    <span th:unless="${a.getArchivedOn()}">Managed (active)</span>
+                </p>
             </li>
 
         </ul>

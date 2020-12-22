@@ -107,7 +107,7 @@ public class ApartmentServiceImpl implements ApartmentService {
         return this.apartmentRepository.findByNumberAndBuilding_Id(apartmentNumber, buildingId)
                 .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
                 .orElseThrow(() -> {
-                    throw new ApartmentNotFoundException("Apartment not found");
+                    throw new EntityNotFoundException("Apartment not found");
                 });
     }
 
@@ -116,7 +116,7 @@ public class ApartmentServiceImpl implements ApartmentService {
         return this.apartmentRepository.findById(apartmentId)
                 .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
                 .orElseThrow(() -> {
-                    throw new ApartmentNotFoundException("Apartment not found");
+                    throw new EntityNotFoundException("Apartment not found");
                 });
     }
 

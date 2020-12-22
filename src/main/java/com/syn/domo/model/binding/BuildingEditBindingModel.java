@@ -1,12 +1,13 @@
 package com.syn.domo.model.binding;
 
-public class BuildingAddBindingModel {
+import java.time.LocalDate;
+
+public class BuildingEditBindingModel {
 
     private String name;
     private String address;
-    private int floorsNumber;
 
-    public BuildingAddBindingModel() {
+    public BuildingEditBindingModel() {
     }
 
     public String getName() {
@@ -24,13 +25,4 @@ public class BuildingAddBindingModel {
     public void setAddress(String address) {
         this.address = address;
     }
-
-    public int getFloorsNumber() {
-        return floorsNumber;
-    }
-
-    public void setFloorsNumber(int floorsNumber) {
-        this.floorsNumber = floorsNumber;
-    }
-
 }

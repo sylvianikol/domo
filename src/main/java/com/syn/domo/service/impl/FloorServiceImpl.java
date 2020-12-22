@@ -36,7 +36,6 @@ public class FloorServiceImpl implements FloorService {
 
     @Override
     public FloorServiceModel getByNumberAndBuildingId(int number, String buildingId) {
-        // TODO: FloorNotFoundException
         return this.floorRepository.findByNumberAndBuilding_Id(number, buildingId)
                 .map(floor -> this.modelMapper.map(floor, FloorServiceModel.class))
                 .orElseThrow(() -> {

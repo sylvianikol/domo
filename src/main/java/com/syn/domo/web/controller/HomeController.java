@@ -1,7 +1,6 @@
 package com.syn.domo.web.controller;
 
 import com.syn.domo.service.BuildingService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +20,7 @@ public class HomeController {
     @GetMapping("/")
     public ModelAndView home(ModelAndView modelAndView) {
 
-        modelAndView.addObject("hasBuildings", this.buildingService.hasBuildings())
+        modelAndView.addObject("hasBuildings", this.buildingService.hasActiveBuildings())
             .addObject("buildingsCount", this.buildingService.getCount())
             .addObject("pageTitle", HOME_TITLE)
             .setViewName("admin-home");

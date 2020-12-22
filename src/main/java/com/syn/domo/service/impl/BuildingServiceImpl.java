@@ -2,7 +2,6 @@ package com.syn.domo.service.impl;
 
 import com.syn.domo.exception.BuildingArchivedExistsException;
 import com.syn.domo.exception.BuildingExistsException;
-import com.syn.domo.exception.BuildingNotFoundException;
 import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.entity.Floor;
 import com.syn.domo.model.service.BuildingServiceModel;
@@ -15,6 +14,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Collections;
@@ -49,20 +50,8 @@ public class BuildingServiceImpl implements BuildingService {
     public BuildingServiceModel add(BuildingServiceModel buildingServiceModel) {
         // TODO: validation
 
-        String buildingName = buildingServiceModel.getName().trim();
-        String buildingAddress = buildingServiceModel.getAddress().trim();
-
-        if (this.alreadyExists(buildingName, buildingAddress)) {
-            throw new BuildingExistsException(String.format(
-                    "Building %s (%s) already exists",
-                    buildingName, buildingAddress));
-        }
-
-        if (this.isArchived(buildingName, buildingAddress)) {
-            throw new BuildingArchivedExistsException(String.format(
-                    "Building '%s' (%s) already exists but is currently inactive.",
-                    buildingName, buildingAddress));
-        }
+        this.checkIfExistsOrArchived(buildingServiceModel.getName().trim(),
+                buildingServiceModel.getAddress().trim());
 
         Building building = this.modelMapper.map(buildingServiceModel, Building.class);
         building.setAddedOn(LocalDate.now());
@@ -84,16 +73,31 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public boolean hasBuildings() {
+    public boolean hasActiveBuildings() {
         return this.getAllBuildings().size() > 0;
     }
 
     @Override
+    public boolean hasNonActiveBuildings() {
+        return this.getAllNonActiveBuildings().size() > 0;
+    }
+
+    @Override
     public Set<BuildingServiceModel> getAllBuildings() {
+
         Set<BuildingServiceModel> buildingServiceModels =
-                this.buildingRepository.findAllByArchivedOnNullOrderByName().stream()
+                this.buildingRepository.findAll().stream()
                 .map(building -> this.modelMapper.map(building, BuildingServiceModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
+        return Collections.unmodifiableSet(buildingServiceModels);
+    }
+
+    @Override
+    public Set<BuildingServiceModel> getAllNonActiveBuildings() {
+        Set<BuildingServiceModel> buildingServiceModels =
+                this.buildingRepository.findAllByArchivedOnNotNullOrderByName().stream()
+                        .map(building -> this.modelMapper.map(building, BuildingServiceModel.class))
+                        .collect(Collectors.toCollection(LinkedHashSet::new));
         return Collections.unmodifiableSet(buildingServiceModels);
     }
 
@@ -133,7 +137,7 @@ public class BuildingServiceImpl implements BuildingService {
     public BuildingServiceModel getByNameAndAddress(String buildingName, String buildingAddress) {
         Building building = this.buildingRepository.findByNameAndAddress(buildingName, buildingAddress)
                 .orElseThrow(() -> {
-                    throw new BuildingNotFoundException(String.format(
+                    throw new EntityNotFoundException(String.format(
                             "Building %s (%s) not found!", buildingName, buildingAddress));
                 });
         return this.modelMapper.map(building, BuildingServiceModel.class);
@@ -160,11 +164,39 @@ public class BuildingServiceImpl implements BuildingService {
         return buildingServiceModel;
     }
 
+    @Override
+    public BuildingServiceModel edit(BuildingServiceModel buildingServiceModel, String buildingId) {
+        // TODO: validation
+        checkIfExistsOrArchived(buildingServiceModel.getName().trim(),
+                buildingServiceModel.getAddress().trim());
+
+        Building building = this.getBuildingByIdOrThrow(buildingId);
+        building.setName(buildingServiceModel.getName());
+        building.setAddress(buildingServiceModel.getAddress());
+        this.buildingRepository.saveAndFlush(building);
+
+        return this.modelMapper.map(building, BuildingServiceModel.class);
+    }
+
     private Building getBuildingByIdOrThrow(String buildingId) {
         return this.buildingRepository.findById(buildingId)
                 .orElseThrow(() -> {
-                    throw new BuildingNotFoundException("Building not found");
+                    throw new EntityNotFoundException("Building not found");
                 });
+    }
+
+    private void checkIfExistsOrArchived(String buildingName, String buildingAddress) {
+        if (this.alreadyExists(buildingName, buildingAddress)) {
+            throw new BuildingExistsException(String.format(
+                    "Building %s (%s) already exists",
+                    buildingName, buildingAddress));
+        }
+
+        if (this.isArchived(buildingName, buildingAddress)) {
+            throw new BuildingArchivedExistsException(String.format(
+                    "Building '%s' (%s) already exists but is currently inactive.",
+                    buildingName, buildingAddress));
+        }
     }
 
 }

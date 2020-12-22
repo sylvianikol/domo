@@ -10,9 +10,13 @@ public interface BuildingService {
 
     BuildingServiceModel add(BuildingServiceModel buildingServiceModel);
 
-    boolean hasBuildings();
+    boolean hasActiveBuildings();
+
+    boolean hasNonActiveBuildings();
 
     Set<BuildingServiceModel> getAllBuildings();
+
+    Set<BuildingServiceModel> getAllNonActiveBuildings();
 
     int getCount();
 
@@ -29,4 +33,6 @@ public interface BuildingService {
     BuildingServiceModel activate(String buildingId);
 
     BuildingServiceModel delete(String buildingId);
+
+    BuildingServiceModel edit(BuildingServiceModel buildingServiceModel, String buildingId);
 }

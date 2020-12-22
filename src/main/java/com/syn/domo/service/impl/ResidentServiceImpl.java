@@ -1,6 +1,5 @@
 package com.syn.domo.service.impl;
 
-import com.syn.domo.exception.ResidentNotFoundException;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Resident;
 import com.syn.domo.model.entity.UserRole;
@@ -13,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Collections;
@@ -67,7 +67,7 @@ public class ResidentServiceImpl implements ResidentService {
 
         Resident resident = this.residentRepository.findById(residentId)
                 .orElseThrow(() -> {
-                    throw new ResidentNotFoundException("Resident not found");
+                    throw new EntityNotFoundException("Resident not found");
                 });
 
         return this.modelMapper.map(resident, ResidentServiceModel.class);

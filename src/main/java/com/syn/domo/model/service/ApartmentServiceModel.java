@@ -1,5 +1,6 @@
 package com.syn.domo.model.service;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 public class ApartmentServiceModel extends BaseServiceModel {
@@ -8,6 +9,8 @@ public class ApartmentServiceModel extends BaseServiceModel {
     private int floorNumber;
     private BuildingServiceModel building;
     private int pets;
+    private LocalDate addedOn;
+    private LocalDate archivedOn;
 
     private Set<ResidentServiceModel> residents;
     private Set<ChildServiceModel> children;
@@ -45,6 +48,22 @@ public class ApartmentServiceModel extends BaseServiceModel {
 
     public void setPets(int pets) {
         this.pets = pets;
+    }
+
+    public LocalDate getAddedOn() {
+        return addedOn;
+    }
+
+    public void setAddedOn(LocalDate addedOn) {
+        this.addedOn = addedOn;
+    }
+
+    public LocalDate getArchivedOn() {
+        return archivedOn;
+    }
+
+    public void setArchivedOn(LocalDate archivedOn) {
+        this.archivedOn = archivedOn;
     }
 
     public Set<ResidentServiceModel> getResidents() {

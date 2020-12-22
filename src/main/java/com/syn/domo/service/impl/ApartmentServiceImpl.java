@@ -1,5 +1,6 @@
 package com.syn.domo.service.impl;
 
+import com.syn.domo.exception.ApartmentNotFoundException;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.entity.Floor;
@@ -103,21 +104,19 @@ public class ApartmentServiceImpl implements ApartmentService {
 
     @Override
     public ApartmentServiceModel getByNumberAndBuildingId(String apartmentNumber, String buildingId) {
-        // TODO: ApartmentNotFoundException
         return this.apartmentRepository.findByNumberAndBuilding_Id(apartmentNumber, buildingId)
                 .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
                 .orElseThrow(() -> {
-                    throw new EntityNotFoundException("Apartment not found");
+                    throw new ApartmentNotFoundException("Apartment not found");
                 });
     }
 
     @Override
     public ApartmentServiceModel getById(String apartmentId) {
-        // TODO: ApartmentNotFoundException
         return this.apartmentRepository.findById(apartmentId)
                 .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
                 .orElseThrow(() -> {
-                    throw new EntityNotFoundException("Apartment not found");
+                    throw new ApartmentNotFoundException("Apartment not found");
                 });
     }
 

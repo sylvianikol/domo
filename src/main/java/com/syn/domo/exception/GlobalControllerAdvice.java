@@ -1,5 +1,6 @@
 package com.syn.domo.exception;
 
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,24 +12,22 @@ import java.io.StringWriter;
 
 @ControllerAdvice
 public class GlobalControllerAdvice {
+    public static final String DEFAULT_ERROR_VIEW = "error";
 
-    @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    @ExceptionHandler(BuildingNotFoundException.class)
-    public ModelAndView handleBuildingNotFound(BuildingNotFoundException ex) {
-        return buildModelAndView(ex);
-    }
+    @ExceptionHandler(value = Exception.class)
+    public ModelAndView defaultErrorHandler(Exception ex) throws Exception {
 
-    @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    @ExceptionHandler(ResidentNotFoundException.class)
-    public ModelAndView handleResidentNotFound(ResidentNotFoundException ex) {
+        if (AnnotationUtils.findAnnotation(ex.getClass(), ResponseStatus.class) != null) {
+            throw ex;
+        }
+
         return buildModelAndView(ex);
     }
 
      private<E extends Exception> ModelAndView buildModelAndView(E ex) {
-        ModelAndView modelAndView = new ModelAndView("error");
+        ModelAndView modelAndView = new ModelAndView(DEFAULT_ERROR_VIEW);
         modelAndView.addObject("message", ex.getMessage())
-                .addObject("trace", this.convertStackTraceToString(ex))
-                .addObject("status", HttpStatus.NOT_FOUND);
+                .addObject("trace", this.convertStackTraceToString(ex));
         return modelAndView;
     }
 

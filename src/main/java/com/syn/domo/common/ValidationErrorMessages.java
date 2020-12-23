@@ -2,6 +2,26 @@ package com.syn.domo.common;
 
 public class ValidationErrorMessages {
 
+    public static final String BUILDING_ENTITY = "Building ";
+
+    public static final String NAME_NULL = "Name should not be null!";
+    public static final String NAME_EMPTY = "Name should not be empty!";
+    public static final String NAME_INVALID_LENGTH = "Name should not be more than 40 symbols long!";
+
+
+    public static final String NEIGHBOURHOOD_NULL = "Neighbourhood should not be null!";
+    public static final String NEIGHBOURHOOD_EMPTY = "Neighbourhood should not be empty!";
+    public static final String NEIGHBOURHOOD_INVALID_LENGTH = "Neighbourhood should not be more than 40 symbols long!";
+
+    public static final String ADDRESS_NULL = "Address should not be null!";
+    public static final String ADDRESS_EMPTY = "Address should not be empty!";
+    public static final String ADDRESS_INVALID_LENGTH = "Address should not be more than 100 symbols long!";
+
+    public static final String FLOOR_NUMBER_NULL = "Floor number should not be null!";
+    public static final String FLOOR_NUMBER_MIN = "Floor should not be a negative number!";
+    public static final String FLOOR_NUMBER_MAX = "Floor number should not be more than 100!";
+
+
     public static final String PASSWORD_INVALID =
             "Password should be minimum 3 and 30 characters long!";
 

@@ -1,29 +1,32 @@
 package com.syn.domo.web.controller;
 
-import com.syn.domo.exception.BuildingArchivedExistsException;
 import com.syn.domo.exception.BuildingExistsException;
+import com.syn.domo.exception.BuildingNotFoundException;
 import com.syn.domo.model.binding.BuildingAddBindingModel;
 import com.syn.domo.model.binding.BuildingEditBindingModel;
 import com.syn.domo.model.service.BuildingServiceModel;
+import com.syn.domo.model.view.BuildingAddViewModel;
+import com.syn.domo.model.view.BuildingDeleteViewModel;
+import com.syn.domo.model.view.BuildingEditViewModel;
 import com.syn.domo.model.view.BuildingViewModel;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.web.controller.namespace.BuildingsNamespace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.util.LinkedHashSet;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-@Controller
+@RestController
 public class BuildingsController implements BuildingsNamespace {
-    private static final String MANAGE_BUILDINGS_TITLE = "Manage Buildings";
-    private static final String BUILDING_DETAILS = "Building Details";
 
     private final BuildingService buildingService;
     private final ModelMapper modelMapper;
@@ -34,129 +37,98 @@ public class BuildingsController implements BuildingsNamespace {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping("/")
-    public ModelAndView manage(ModelAndView modelAndView) {
-
-        modelAndView.addObject("buildings",
-                this.buildingService.getAllBuildings().stream()
-                        .map(buildingServiceModel -> this.modelMapper
-                                .map(buildingServiceModel, BuildingViewModel.class))
-                .collect(Collectors.toCollection(LinkedHashSet::new)))
-                .addObject("pageTitle", MANAGE_BUILDINGS_TITLE)
-                .setViewName("manage-buildings");
-
-        return modelAndView;
-    }
-
-    @PostMapping("/")
-    public ModelAndView add(@Valid @ModelAttribute("buildingAddBindingModel")
-                                            BuildingAddBindingModel buildingAddBindingModel,
-                            BindingResult bindingResult, ModelAndView modelAndView,
-                            RedirectAttributes redirectAttributes) {
-
-        modelAndView.setViewName("redirect:/buildings/");
-
-        if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("error", "Something went wrong");
-            return modelAndView;
-        }
-
-        String buildingName = buildingAddBindingModel.getName().trim();
-        String  buildingAddress = buildingAddBindingModel.getAddress().trim();
-
-        try {
-            redirectAttributes.addFlashAttribute("addedBuilding", this.modelMapper
-                            .map(this.buildingService.add(
-                                    this.modelMapper.map(buildingAddBindingModel, BuildingServiceModel.class)),
-                                    BuildingViewModel.class));
-
-        } catch (BuildingExistsException | BuildingArchivedExistsException e) {
-            redirectAttributes.addFlashAttribute("message", e.getMessage())
-                    .addFlashAttribute("foundBuilding", this.modelMapper
-                            .map(this.buildingService.getByNameAndAddress(buildingName, buildingAddress),
-                                    BuildingViewModel.class));
-        }
-
-        return modelAndView;
+    @GetMapping("")
+    public ResponseEntity<Set<BuildingViewModel>> getAll() {
+        Set<BuildingViewModel> buildings = this.buildingService.getAllBuildings().stream()
+                .map(buildingServiceModel -> this.modelMapper.map(buildingServiceModel, BuildingViewModel.class))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        return buildings.isEmpty()
+                ? ResponseEntity.notFound().build()
+                : ResponseEntity.ok().body(buildings);
     }
 
     @GetMapping("/{buildingId}")
-    public ModelAndView manage(@PathVariable(value = "buildingId") String buildingId, ModelAndView modelAndView) {
-        BuildingViewModel building = this.modelMapper.map(
-                this.buildingService.getById(buildingId), BuildingViewModel.class);
+    public ResponseEntity<BuildingViewModel> get(@PathVariable(value = "buildingId") String buildingId) {
 
-        if (building.getApartments().size() > 0) {
-            modelAndView.addObject("hasApartments", true);
+        Optional<BuildingServiceModel> buildingServiceModel = this.buildingService.getOptById(buildingId);
+        if (buildingServiceModel.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok().body(
+                    this.modelMapper.map(buildingServiceModel.get(), BuildingViewModel.class));
         }
-
-        modelAndView.addObject("building", building)
-                .addObject("pageTitle", BUILDING_DETAILS)
-                .setViewName("details-building.html");
-        return modelAndView;
     }
 
-    @PostMapping("/{buildingId}/edit")
-    public ModelAndView edit(@PathVariable(value = "buildingId") String buildingId,
-                             @Valid @ModelAttribute("buildingEditBindingModel")
-                                     BuildingEditBindingModel buildingEditBindingModel,
-                             BindingResult bindingResult, ModelAndView modelAndView,
-                             RedirectAttributes redirectAttributes) {
-
-        modelAndView.setViewName("redirect:/buildings/{buildingId}");
-
+    @PostMapping("")
+    public ResponseEntity<BuildingAddViewModel> add(@Valid @RequestBody BuildingAddBindingModel buildingAddBindingModel,
+                                                    BindingResult bindingResult,
+                                                    UriComponentsBuilder uriComponentsBuilder) {
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("error", "Something went wrong");
-            return modelAndView;
+            BuildingAddViewModel buildingAddViewModel =
+                    this.modelMapper.map(bindingResult.getTarget(), BuildingAddViewModel.class);
+            return ResponseEntity.unprocessableEntity()
+                    .body(buildingAddViewModel);
         }
 
-        String buildingName = buildingEditBindingModel.getName().trim();
-        String  buildingAddress = buildingEditBindingModel.getAddress().trim();
+        String buildingId = this.buildingService.add(
+                this.modelMapper.map(buildingAddBindingModel, BuildingServiceModel.class)).getId();
+
+        return ResponseEntity.created(uriComponentsBuilder
+                .path("/buildings/{buildingId}")
+                .buildAndExpand(buildingId)
+                .toUri()).build();
+    }
+
+    @PutMapping("/{buildingId}")
+    public ResponseEntity<BuildingEditViewModel> edit(@PathVariable(value = "buildingId") String buildingId,
+                                                      @Valid @RequestBody BuildingEditBindingModel buildingEditBindingModel,
+                                                      BindingResult bindingResult,
+                                                      UriComponentsBuilder uriComponentsBuilder) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.unprocessableEntity()
+                    .body(this.modelMapper.map(bindingResult.getTarget(),
+                            BuildingEditViewModel.class));
+        }
 
         try {
-            redirectAttributes.addFlashAttribute("editedBuilding", this.modelMapper
-                    .map(this.buildingService.add(
-                            this.modelMapper.map(buildingEditBindingModel, BuildingServiceModel.class)),
-                            BuildingViewModel.class));
-
-        } catch (BuildingExistsException | BuildingArchivedExistsException e) {
-            redirectAttributes.addFlashAttribute("message", e.getMessage())
-                    .addFlashAttribute("foundBuilding", this.modelMapper
-                            .map(this.buildingService.getByNameAndAddress(buildingName, buildingAddress),
-                                    BuildingViewModel.class));
+            this.buildingService.edit(this.modelMapper.map(
+                    buildingEditBindingModel, BuildingServiceModel.class)
+                    , buildingId);
+        } catch (BuildingExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(this.modelMapper.map(this.buildingService
+                            .getBuilding(buildingEditBindingModel.getName().trim(),
+                                    buildingEditBindingModel.getAddress().trim(),
+                                    buildingEditBindingModel.getNeighbourhood().trim()), BuildingEditViewModel.class));
         }
 
-        return modelAndView;
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .location(uriComponentsBuilder
+                        .path("/buildings/{buildingId}")
+                        .buildAndExpand(buildingId)
+                        .toUri()).build();
     }
 
-    @PostMapping("/{buildingId}/archive")
-    public ModelAndView archive(@PathVariable(value = "buildingId") String buildingId,
-                                ModelAndView modelAndView) {
-        BuildingViewModel archivedBuilding =
-                this.modelMapper.map(this.buildingService.archive(buildingId), BuildingViewModel.class);
+    @DeleteMapping("/{buildingId}")
+    public ResponseEntity<BuildingDeleteViewModel> delete(@PathVariable(value = "buildingId") String buildingId,
+                                                          UriComponentsBuilder uriComponentsBuilder) {
 
-        modelAndView.setViewName("redirect:/buildings/{buildingId}");
-        return modelAndView;
-    }
+        BuildingServiceModel buildingServiceModel;
 
-    @PostMapping("/{buildingId}/activate")
-    public ModelAndView activate(@PathVariable(value = "buildingId") String buildingId,
-                                 ModelAndView modelAndView, RedirectAttributes redirectAttributes) {
-        BuildingServiceModel buildingServiceModel = this.buildingService.activate(buildingId);
+        try {
+            buildingServiceModel = this.buildingService.delete(buildingId);
+        } catch (BuildingNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
 
-        redirectAttributes.addFlashAttribute("activatedBuilding", this.modelMapper
-                        .map(buildingServiceModel, BuildingViewModel.class));
-        modelAndView.setViewName("redirect:/buildings/{buildingId}");
-        return modelAndView;
-    }
+        BuildingDeleteViewModel deletedBuilding = this.modelMapper
+                .map(buildingServiceModel, BuildingDeleteViewModel.class);
 
-    @PostMapping("/{buildingId}/delete")
-    public ModelAndView delete(@PathVariable(value = "buildingId") String buildingId,
-                                 ModelAndView modelAndView, RedirectAttributes redirectAttributes) {
-        BuildingServiceModel buildingServiceModel = this.buildingService.delete(buildingId);
-        BuildingViewModel deletedBuilding = this.modelMapper
-                .map(buildingServiceModel, BuildingViewModel.class);
-        redirectAttributes.addFlashAttribute("deletedBuilding", deletedBuilding);
-        modelAndView.setViewName("redirect:/buildings/");
-        return modelAndView;
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .location(uriComponentsBuilder
+                        .path("/buildings")
+                        .build()
+                        .toUri())
+                .body(deletedBuilding);
     }
 }

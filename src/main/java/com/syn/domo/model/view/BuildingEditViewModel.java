@@ -1,21 +1,25 @@
-package com.syn.domo.model.service;
+package com.syn.domo.model.view;
 
 import java.time.LocalDate;
-import java.util.Set;
 
-public class BuildingServiceModel extends BaseServiceModel {
+public class BuildingEditViewModel {
 
+    private String id;
     private String name;
-    private String address;
     private String neighbourhood;
-    private int floorsNumber;
+    private String address;
     private LocalDate addedOn;
     private LocalDate archivedOn;
 
-    Set<FloorServiceModel> floors;
-    Set<ApartmentServiceModel> apartments;
+    public BuildingEditViewModel() {
+    }
 
-    public BuildingServiceModel() {
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -42,14 +46,6 @@ public class BuildingServiceModel extends BaseServiceModel {
         this.address = address;
     }
 
-    public int getFloorsNumber() {
-        return floorsNumber;
-    }
-
-    public void setFloorsNumber(int floorsNumber) {
-        this.floorsNumber = floorsNumber;
-    }
-
     public LocalDate getAddedOn() {
         return addedOn;
     }
@@ -64,21 +60,5 @@ public class BuildingServiceModel extends BaseServiceModel {
 
     public void setArchivedOn(LocalDate archivedOn) {
         this.archivedOn = archivedOn;
-    }
-
-    public Set<FloorServiceModel> getFloors() {
-        return floors;
-    }
-
-    public void setFloors(Set<FloorServiceModel> floors) {
-        this.floors = floors;
-    }
-
-    public Set<ApartmentServiceModel> getApartments() {
-        return apartments;
-    }
-
-    public void setApartments(Set<ApartmentServiceModel> apartments) {
-        this.apartments = apartments;
     }
 }

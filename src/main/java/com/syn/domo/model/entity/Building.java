@@ -9,6 +9,7 @@ import java.util.Set;
 public class Building extends BaseEntity{
 
     private String name;
+    private String neighbourhood;
     private String address;
     private LocalDate addedOn;
     private LocalDate archivedOn;
@@ -26,6 +27,15 @@ public class Building extends BaseEntity{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Column(nullable = false)
+    public String getNeighbourhood() {
+        return neighbourhood;
+    }
+
+    public void setNeighbourhood(String neighbourhood) {
+        this.neighbourhood = neighbourhood;
     }
 
     @Column(nullable = false)

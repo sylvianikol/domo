@@ -7,6 +7,7 @@ public class BuildingViewModel {
 
     private String id;
     private String name;
+    private String neighbourhood;
     private String address;
     private LocalDate addedOn;
     private LocalDate archivedOn;
@@ -31,6 +32,14 @@ public class BuildingViewModel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getNeighbourhood() {
+        return neighbourhood;
+    }
+
+    public void setNeighbourhood(String neighbourhood) {
+        this.neighbourhood = neighbourhood;
     }
 
     public String getAddress() {

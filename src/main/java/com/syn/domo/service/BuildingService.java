@@ -2,21 +2,20 @@ package com.syn.domo.service;
 
 import com.syn.domo.model.service.BuildingServiceModel;
 
+import java.util.Optional;
 import java.util.Set;
 
 public interface BuildingService {
 
     BuildingServiceModel getById(String id);
 
+    Optional<BuildingServiceModel> getOptById(String id);
+
     BuildingServiceModel add(BuildingServiceModel buildingServiceModel);
 
     boolean hasActiveBuildings();
 
-    boolean hasNonActiveBuildings();
-
     Set<BuildingServiceModel> getAllBuildings();
-
-    Set<BuildingServiceModel> getAllNonActiveBuildings();
 
     int getCount();
 
@@ -24,11 +23,7 @@ public interface BuildingService {
 
     BuildingServiceModel archive(String buildingId);
 
-    boolean alreadyExists(String buildingName, String buildingAddress);
-
-    boolean isArchived(String buildingName, String buildingAddress);
-
-    BuildingServiceModel getByNameAndAddress(String buildingName, String buildingAddress);
+    Optional<BuildingServiceModel> getBuilding(String buildingName, String buildingAddress, String neighbourhood);
 
     BuildingServiceModel activate(String buildingId);
 

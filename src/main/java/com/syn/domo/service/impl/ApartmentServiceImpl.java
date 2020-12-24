@@ -50,13 +50,14 @@ public class ApartmentServiceImpl implements ApartmentService {
         // TODO: validation
 
         int floorNumber = apartmentServiceModel.getFloorNumber();
-        FloorServiceModel floorServiceModel =
+        Optional<FloorServiceModel> floorServiceModel =
                 this.floorService.getByNumberAndBuildingId(floorNumber, buildingId);
+
         BuildingServiceModel buildingServiceModel = this.buildingService.getById(buildingId);
 
         Apartment apartment = this.modelMapper.map(apartmentServiceModel, Apartment.class);
         apartment.setAddedOn(LocalDate.now());
-        apartment.setFloor(this.modelMapper.map(floorServiceModel, Floor.class));
+        apartment.setFloor(this.modelMapper.map(floorServiceModel.get(), Floor.class));
         apartment.setBuilding(this.modelMapper.map(buildingServiceModel, Building.class));
 
         this.apartmentRepository.saveAndFlush(apartment);
@@ -98,7 +99,8 @@ public class ApartmentServiceImpl implements ApartmentService {
 
     @Override
     public boolean alreadyExists(String apartmentNumber, String buildingId) {
-        return this.apartmentRepository.findByNumberAndBuilding_Id(apartmentNumber, buildingId).isPresent();
+        return this.apartmentRepository
+                .findByNumberAndBuilding_Id(apartmentNumber, buildingId).isPresent();
 
     }
 
@@ -118,6 +120,14 @@ public class ApartmentServiceImpl implements ApartmentService {
                 .orElseThrow(() -> {
                     throw new EntityNotFoundException("Apartment not found");
                 });
+    }
+
+    @Override
+    public Optional<ApartmentServiceModel> getOptById(String apartmentId) {
+        Optional<Apartment> apartment = this.apartmentRepository.findById(apartmentId);
+        return apartment.isEmpty()
+                ? Optional.empty()
+                : Optional.of(this.modelMapper.map(apartment.get(), ApartmentServiceModel.class));
     }
 
     @Override

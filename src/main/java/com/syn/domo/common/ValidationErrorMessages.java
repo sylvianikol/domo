@@ -74,7 +74,7 @@ public class ValidationErrorMessages {
             "Apartment number can not be empty!";
 
     public static final String FLOOR_MIN_INVALID =
-            "Floor number can not be less than -3!";
+            "Floor can not be a negative number!";
 
     public static final String FLOOR_MAX_INVALID =
             "Floor number can not be more than 100!";
@@ -104,5 +104,5 @@ public class ValidationErrorMessages {
             "Pets' count can not be a negative number!";
 
     public static final String PETS_MAX =
-            "Maximum number of pets per apartment is 3!";
+            "Maximum number of pets allowed per apartment is 5!";
 }

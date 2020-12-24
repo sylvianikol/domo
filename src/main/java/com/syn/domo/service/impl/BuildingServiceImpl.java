@@ -95,27 +95,6 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public BuildingServiceModel archive(String buildingId) {
-        Building building = getBuildingByIdOrThrow(buildingId);
-        building.setArchivedOn(LocalDate.now());
-        this.buildingRepository.saveAndFlush(building);
-        this.floorService.archiveAllByBuildingId(buildingId);
-        this.apartmentService.archiveAllByBuildingId(buildingId);
-        return this.modelMapper.map(building, BuildingServiceModel.class);
-    }
-
-
-
-    @Override
-    public BuildingServiceModel activate(String buildingId) {
-
-        Building building = this.getBuildingByIdOrThrow(buildingId);
-        building.setArchivedOn(null);
-        this.buildingRepository.saveAndFlush(building);
-        return this.modelMapper.map(building, BuildingServiceModel.class);
-    }
-
-    @Override
     @Transactional
     public BuildingServiceModel delete(String buildingId) {
         Building building = this.getBuildingByIdOrThrow(buildingId);

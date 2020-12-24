@@ -37,8 +37,8 @@ public class BuildingsController implements BuildingsNamespace {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping("")
-    public ResponseEntity<Set<BuildingViewModel>> getAll() {
+    @GetMapping
+    public ResponseEntity<Set<BuildingViewModel>> all() {
         Set<BuildingViewModel> buildings = this.buildingService.getAllBuildings().stream()
                 .map(buildingServiceModel -> this.modelMapper.map(buildingServiceModel, BuildingViewModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -48,18 +48,19 @@ public class BuildingsController implements BuildingsNamespace {
     }
 
     @GetMapping("/{buildingId}")
-    public ResponseEntity<BuildingViewModel> get(@PathVariable(value = "buildingId") String buildingId) {
+    public ResponseEntity<BuildingViewModel> one(@PathVariable(value = "buildingId") String buildingId) {
 
         Optional<BuildingServiceModel> buildingServiceModel = this.buildingService.getOptById(buildingId);
         if (buildingServiceModel.isEmpty()) {
             return ResponseEntity.notFound().build();
-        } else {
-            return ResponseEntity.ok().body(
-                    this.modelMapper.map(buildingServiceModel.get(), BuildingViewModel.class));
         }
+
+        return ResponseEntity.ok().body(
+                this.modelMapper.map(buildingServiceModel.get(), BuildingViewModel.class));
+
     }
 
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<BuildingAddViewModel> add(@Valid @RequestBody BuildingAddBindingModel buildingAddBindingModel,
                                                     BindingResult bindingResult,
                                                     UriComponentsBuilder uriComponentsBuilder) {

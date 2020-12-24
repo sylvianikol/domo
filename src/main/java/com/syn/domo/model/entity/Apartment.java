@@ -21,7 +21,7 @@ public class Apartment extends BaseEntity {
     public Apartment() {
     }
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     public String getNumber() {
         return number;
     }

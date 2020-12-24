@@ -15,6 +15,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,12 +36,18 @@ public class FloorServiceImpl implements FloorService {
     }
 
     @Override
-    public FloorServiceModel getByNumberAndBuildingId(int number, String buildingId) {
-        return this.floorRepository.findByNumberAndBuilding_Id(number, buildingId)
-                .map(floor -> this.modelMapper.map(floor, FloorServiceModel.class))
-                .orElseThrow(() -> {
-                    throw new EntityNotFoundException("Floor not found");
-                });
+    public Optional<FloorServiceModel> getByNumberAndBuildingId(int number, String buildingId) {
+        Optional<Floor> floor =
+                this.floorRepository.findByNumberAndBuilding_Id(number, buildingId);
+
+        return floor.isEmpty()
+                ? Optional.empty()
+                : Optional.of(this.modelMapper.map(floor, FloorServiceModel.class));
+    }
+
+    @Override
+    public boolean alreadyExists(int number, String buildingId) {
+        return this.getByNumberAndBuildingId(number, buildingId).isPresent();
     }
 
     @Override

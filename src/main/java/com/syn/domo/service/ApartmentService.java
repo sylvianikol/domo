@@ -2,6 +2,7 @@ package com.syn.domo.service;
 
 import com.syn.domo.model.service.ApartmentServiceModel;
 
+import java.util.Optional;
 import java.util.Set;
 
 public interface ApartmentService {
@@ -19,6 +20,8 @@ public interface ApartmentService {
     ApartmentServiceModel getByNumberAndBuildingId(String apartmentNumber, String buildingId);
 
     ApartmentServiceModel getById(String apartmentId);
+
+    Optional<ApartmentServiceModel> getOptById(String apartmentId);
 
     boolean hasResidents(String apartmentId);
 

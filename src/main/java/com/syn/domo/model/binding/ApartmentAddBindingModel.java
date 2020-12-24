@@ -29,7 +29,7 @@ public class ApartmentAddBindingModel {
     }
 
     @NotNull(message = FLOOR_NULL)
-    @Min(value = -3, message = FLOOR_MIN_INVALID)
+    @Min(value = 0, message = FLOOR_MIN_INVALID)
     @Max(value = 100, message = FLOOR_MAX_INVALID)
     public Integer getFloorNumber() {
         return floorNumber;
@@ -41,7 +41,7 @@ public class ApartmentAddBindingModel {
 
     @NotNull(message = PETS_NULL)
     @Min(value = 0, message = PETS_MIN)
-    @Max(value = 3, message = PETS_MAX)
+    @Max(value = 5, message = PETS_MAX)
     public int getPets() {
         return pets;
     }

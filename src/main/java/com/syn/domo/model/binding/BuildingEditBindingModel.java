@@ -1,8 +1,6 @@
 package com.syn.domo.model.binding;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 import java.time.LocalDate;
 
@@ -13,8 +11,8 @@ public class BuildingEditBindingModel {
     private String name;
     private String neighbourhood;
     private String address;
+    private int floors;
     private LocalDate addedOn;
-    private LocalDate archivedOn;
 
     public BuildingEditBindingModel() {
     }
@@ -53,6 +51,17 @@ public class BuildingEditBindingModel {
     }
 
     @NotNull
+    @Min(value = 0)
+    @Max(value = 100)
+    public int getFloors() {
+        return floors;
+    }
+
+    public void setFloors(int floors) {
+        this.floors = floors;
+    }
+
+    @NotNull
     public LocalDate getAddedOn() {
         return addedOn;
     }
@@ -61,11 +70,4 @@ public class BuildingEditBindingModel {
         this.addedOn = addedOn;
     }
 
-    public LocalDate getArchivedOn() {
-        return archivedOn;
-    }
-
-    public void setArchivedOn(LocalDate archivedOn) {
-        this.archivedOn = archivedOn;
-    }
 }

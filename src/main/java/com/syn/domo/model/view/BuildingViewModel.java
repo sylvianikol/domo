@@ -9,9 +9,8 @@ public class BuildingViewModel {
     private String name;
     private String neighbourhood;
     private String address;
+    private int floors;
     private LocalDate addedOn;
-    private LocalDate archivedOn;
-    private Set<FloorViewModel> floors;
 
     private Set<ApartmentViewModel> apartments;
 
@@ -50,11 +49,11 @@ public class BuildingViewModel {
         this.address = address;
     }
 
-    public Set<FloorViewModel> getFloors() {
+    public int getFloors() {
         return floors;
     }
 
-    public void setFloors(Set<FloorViewModel> floors) {
+    public void setFloors(int floors) {
         this.floors = floors;
     }
 
@@ -66,25 +65,11 @@ public class BuildingViewModel {
         this.addedOn = addedOn;
     }
 
-    public LocalDate getArchivedOn() {
-        return archivedOn;
-    }
-
-    public void setArchivedOn(LocalDate archivedOn) {
-        this.archivedOn = archivedOn;
-    }
-
     public Set<ApartmentViewModel> getApartments() {
         return apartments;
     }
 
     public void setApartments(Set<ApartmentViewModel> apartments) {
         this.apartments = apartments;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s (\"%s\") - Floors: %d, Managed apartments: %d.",
-                this.getName(), this.getAddress(), this.getFloors().size(), this.getApartments().size());
     }
 }

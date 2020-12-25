@@ -6,11 +6,10 @@ import java.util.Set;
 public class ApartmentServiceModel extends BaseServiceModel {
 
     private String number;
-    private int floorNumber;
+    private int floor;
     private BuildingServiceModel building;
     private int pets;
     private LocalDate addedOn;
-    private LocalDate archivedOn;
 
     private Set<ResidentServiceModel> residents;
     private Set<ChildServiceModel> children;
@@ -26,12 +25,12 @@ public class ApartmentServiceModel extends BaseServiceModel {
         this.number = number;
     }
 
-    public int getFloorNumber() {
-        return floorNumber;
+    public int getFloor() {
+        return floor;
     }
 
-    public void setFloorNumber(int floorNumber) {
-        this.floorNumber = floorNumber;
+    public void setFloor(int floor) {
+        this.floor = floor;
     }
 
     public BuildingServiceModel getBuilding() {
@@ -56,14 +55,6 @@ public class ApartmentServiceModel extends BaseServiceModel {
 
     public void setAddedOn(LocalDate addedOn) {
         this.addedOn = addedOn;
-    }
-
-    public LocalDate getArchivedOn() {
-        return archivedOn;
-    }
-
-    public void setArchivedOn(LocalDate archivedOn) {
-        this.archivedOn = archivedOn;
     }
 
     public Set<ResidentServiceModel> getResidents() {

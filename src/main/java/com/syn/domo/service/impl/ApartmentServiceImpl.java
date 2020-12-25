@@ -1,12 +1,10 @@
 package com.syn.domo.service.impl;
 
-import com.syn.domo.exception.ApartmentNotFoundException;
+import com.syn.domo.exception.*;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Building;
-import com.syn.domo.model.entity.Floor;
 import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.model.service.BuildingServiceModel;
-import com.syn.domo.model.service.FloorServiceModel;
 import com.syn.domo.repository.ApartmentRepository;
 import com.syn.domo.service.*;
 import org.modelmapper.ModelMapper;
@@ -25,7 +23,6 @@ public class ApartmentServiceImpl implements ApartmentService {
 
     private final ApartmentRepository apartmentRepository;
     private final BuildingService buildingService;
-    private final FloorService floorService;
     private final ResidentService residentService;
     private final ChildService childService;
     private final ModelMapper modelMapper;
@@ -33,13 +30,11 @@ public class ApartmentServiceImpl implements ApartmentService {
     @Autowired
     public ApartmentServiceImpl(ApartmentRepository apartmentRepository,
                                 @Lazy BuildingService buildingService,
-                                FloorService floorService,
                                 @Lazy ResidentService residentService,
                                 @Lazy ChildService childService,
                                 ModelMapper modelMapper) {
         this.apartmentRepository = apartmentRepository;
         this.buildingService = buildingService;
-        this.floorService = floorService;
         this.residentService = residentService;
         this.childService = childService;
         this.modelMapper = modelMapper;
@@ -49,19 +44,68 @@ public class ApartmentServiceImpl implements ApartmentService {
     public ApartmentServiceModel add(ApartmentServiceModel apartmentServiceModel, String buildingId) {
         // TODO: validation
 
-        int floorNumber = apartmentServiceModel.getFloorNumber();
-        Optional<FloorServiceModel> floorServiceModel =
-                this.floorService.getByNumberAndBuildingId(floorNumber, buildingId);
+        Optional<BuildingServiceModel> buildingOpt =
+                this.buildingService.getById(buildingId);
 
-        BuildingServiceModel buildingServiceModel = this.buildingService.getById(buildingId);
+        if (buildingOpt.isEmpty()) {
+            throw new BuildingNotFoundException("Building does not exists!");
+        }
+
+        if (this.alreadyExists(apartmentServiceModel.getNumber(), buildingId)) {
+            throw new ApartmentAlreadyExistsException("Apartment already exists!");
+        }
+
+        if (apartmentServiceModel.getFloor() > buildingOpt.get().getFloors()) {
+            throw new FloorNotValidException("Invalid floor number!");
+        }
 
         Apartment apartment = this.modelMapper.map(apartmentServiceModel, Apartment.class);
         apartment.setAddedOn(LocalDate.now());
-        apartment.setFloor(this.modelMapper.map(floorServiceModel.get(), Floor.class));
-        apartment.setBuilding(this.modelMapper.map(buildingServiceModel, Building.class));
+        apartment.setBuilding(this.modelMapper.map(buildingOpt.get(), Building.class));
 
         this.apartmentRepository.saveAndFlush(apartment);
 
+        return this.modelMapper.map(apartment, ApartmentServiceModel.class);
+    }
+
+    @Override
+    public ApartmentServiceModel edit(ApartmentServiceModel apartmentServiceModel, String buildingId) {
+        // TODO: validation
+
+        Optional<BuildingServiceModel> buildingOpt = this.buildingService.getById(buildingId);
+
+        if (buildingOpt.isEmpty()) {
+            throw new BuildingNotFoundException("Building not found!");
+        }
+
+        if (apartmentServiceModel.getFloor() > buildingOpt.get().getFloors()) {
+            throw new FloorNotValidException("Invalid floor number!");
+        }
+
+        Apartment apartment =
+                this.apartmentRepository.findById(apartmentServiceModel.getId()).orElse(null);
+
+        if (apartment == null || !apartment.getBuilding().getId().equals(buildingId)) {
+            throw new ApartmentNotFoundException("Apartment not found!");
+        }
+
+        if (this.isSameData(apartment, apartmentServiceModel)) {
+            throw new SameDataException("Same data!");
+        }
+
+        String newNumber = apartmentServiceModel.getNumber();
+        Optional<Apartment> existingApartment = this.apartmentRepository
+                .findByNumberAndBuilding_Id(newNumber, buildingId);
+
+        if (!apartment.getNumber().equals(newNumber) && existingApartment.isPresent()) {
+            throw new ApartmentAlreadyExistsException(
+                    String.format("Apartment No:%s already exists in this buildingOpt!",
+                            apartmentServiceModel.getNumber()));
+        }
+
+        apartment.setNumber(apartmentServiceModel.getNumber());
+        apartment.setFloor(apartmentServiceModel.getFloor());
+        this.apartmentRepository.saveAndFlush(apartment);
         return this.modelMapper.map(apartment, ApartmentServiceModel.class);
     }
 
@@ -89,22 +133,6 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
-    public Set<String> getAllApartmentNumbersByBuildingId(String buildingId) {
-        Set<String> apartmentNumbers = this.getAllApartmentsByBuildingId(buildingId).stream()
-                .map(ApartmentServiceModel::getNumber)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-
-        return Collections.unmodifiableSet(apartmentNumbers);
-    }
-
-    @Override
-    public boolean alreadyExists(String apartmentNumber, String buildingId) {
-        return this.apartmentRepository
-                .findByNumberAndBuilding_Id(apartmentNumber, buildingId).isPresent();
-
-    }
-
-    @Override
     public ApartmentServiceModel getByNumberAndBuildingId(String apartmentNumber, String buildingId) {
         return this.apartmentRepository.findByNumberAndBuilding_Id(apartmentNumber, buildingId)
                 .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
@@ -114,37 +142,23 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
-    public ApartmentServiceModel getById(String apartmentId) {
-        return this.apartmentRepository.findById(apartmentId)
-                .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
-                .orElseThrow(() -> {
-                    throw new EntityNotFoundException("Apartment not found");
-                });
-    }
-
-    @Override
-    public Optional<ApartmentServiceModel> getOptById(String apartmentId) {
+    public Optional<ApartmentServiceModel> getById(String apartmentId) {
         Optional<Apartment> apartment = this.apartmentRepository.findById(apartmentId);
         return apartment.isEmpty()
                 ? Optional.empty()
                 : Optional.of(this.modelMapper.map(apartment.get(), ApartmentServiceModel.class));
     }
 
-    @Override
-    public boolean hasResidents(String apartmentId) {
-        return this.getById(apartmentId).getResidents().size() > 0;
+    private boolean alreadyExists(String apartmentNumber, String buildingId) {
+        return this.apartmentRepository
+                .findByNumberAndBuilding_Id(apartmentNumber, buildingId).isPresent();
+
     }
 
-    @Override
-    public void archiveAllByBuildingId(String buildingId) {
-        this.apartmentRepository.findAllByBuilding_IdOrderByNumber(buildingId)
-                .forEach(apartment -> {
-                    apartment.setArchivedOn(LocalDate.now());
-                    this.apartmentRepository.saveAndFlush(apartment);
-                    this.residentService.archiveAllByApartmentId(apartment.getId());
-                    this.childService.removeAllByApartmentId(apartment.getId());
-                });
+    private boolean isSameData(Apartment apartment, ApartmentServiceModel apartmentServiceModel) {
+        return apartment.getNumber().equals(apartmentServiceModel.getNumber())
+                && apartment.getFloor() == apartmentServiceModel.getFloor()
+                && apartment.getPets() == apartmentServiceModel.getPets()
+                && apartment.getAddedOn().equals(apartmentServiceModel.getAddedOn());
     }
-
-
 }

@@ -20,9 +20,7 @@ public class HomeController {
     @GetMapping("/")
     public ModelAndView home(ModelAndView modelAndView) {
 
-        modelAndView.addObject("hasBuildings", this.buildingService.hasActiveBuildings())
-            .addObject("buildingsCount", this.buildingService.getCount())
-            .addObject("pageTitle", HOME_TITLE)
+        modelAndView.addObject("pageTitle", HOME_TITLE)
             .setViewName("admin-home");
 
         return modelAndView;

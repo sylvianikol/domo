@@ -7,10 +7,9 @@ public class ApartmentViewModel {
 
     private String id;
     private String number;
-    private int floorNumber;
+    private int floor;
     private int pets;
     private LocalDate addedOn;
-    private LocalDate archivedOn;
 
     Set<ResidentViewModel> residents;
 
@@ -33,12 +32,12 @@ public class ApartmentViewModel {
         this.number = number;
     }
 
-    public int getFloorNumber() {
-        return floorNumber;
+    public int getFloor() {
+        return floor;
     }
 
-    public void setFloorNumber(int floorNumber) {
-        this.floorNumber = floorNumber;
+    public void setFloor(int floor) {
+        this.floor = floor;
     }
 
     public int getPets() {
@@ -55,14 +54,6 @@ public class ApartmentViewModel {
 
     public void setAddedOn(LocalDate addedOn) {
         this.addedOn = addedOn;
-    }
-
-    public LocalDate getArchivedOn() {
-        return archivedOn;
-    }
-
-    public void setArchivedOn(LocalDate archivedOn) {
-        this.archivedOn = archivedOn;
     }
 
     public Set<ResidentViewModel> getResidents() {

@@ -9,21 +9,13 @@ public interface ApartmentService {
 
     ApartmentServiceModel add(ApartmentServiceModel addServiceModel, String buildingId);
 
+    ApartmentServiceModel edit(ApartmentServiceModel apartmentServiceModel, String buildingId);
+
     void deleteAllByBuildingId(String buildingId);
 
     Set<ApartmentServiceModel> getAllApartmentsByBuildingId(String buildingId);
 
-    Set<String> getAllApartmentNumbersByBuildingId(String buildingId);
-
-    boolean alreadyExists(String apartmentNumber, String buildingId);
-
     ApartmentServiceModel getByNumberAndBuildingId(String apartmentNumber, String buildingId);
 
-    ApartmentServiceModel getById(String apartmentId);
-
-    Optional<ApartmentServiceModel> getOptById(String apartmentId);
-
-    boolean hasResidents(String apartmentId);
-
-    void archiveAllByBuildingId(String buildingId);
+    Optional<ApartmentServiceModel> getById(String apartmentId);
 }

@@ -7,13 +7,11 @@ import java.util.Set;
 
 public interface BuildingService {
 
-    Set<BuildingServiceModel> getAllBuildings();
+    Set<BuildingServiceModel> getAll();
 
-    Optional<BuildingServiceModel> getBuilding(String buildingName, String buildingAddress, String neighbourhood);
+    Optional<BuildingServiceModel> getOne(String buildingName, String buildingAddress, String neighbourhood);
 
-    BuildingServiceModel getById(String id);
-
-    Optional<BuildingServiceModel> getOptById(String id);
+    Optional<BuildingServiceModel> getById(String id);
 
     BuildingServiceModel add(BuildingServiceModel buildingServiceModel);
 
@@ -21,10 +19,4 @@ public interface BuildingService {
 
     BuildingServiceModel edit(BuildingServiceModel buildingServiceModel, String buildingId);
 
-    // TODO: delete all below
-    boolean hasActiveBuildings();
-
-    int getCount();
-
-    String getBuildingName(String id);
 }

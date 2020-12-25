@@ -82,6 +82,9 @@ public class ValidationErrorMessages {
     public static final String FLOOR_NULL =
             "Floor can not be null!";
 
+    public static final String ADDED_ON_INVALID =
+            "Date can not be in the future!";
+
     public static final String SALARY_NULL =
             "Salary can not be null!";
 

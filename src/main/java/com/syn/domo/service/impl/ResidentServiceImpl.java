@@ -17,6 +17,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -41,10 +42,9 @@ public class ResidentServiceImpl implements ResidentService {
         resident.setAddedOn(LocalDate.now());
         resident.setUserRole(UserRole.RESIDENT);
 
-        ApartmentServiceModel apartmentServiceModel =
-                this.apartmentService.getById(residentServiceModel.getApartment().getId());
+        Optional<ApartmentServiceModel> apartmentServiceModel = this.apartmentService.getById(residentServiceModel.getApartment().getId());
 
-        resident.setApartment(this.modelMapper.map(apartmentServiceModel, Apartment.class));
+        resident.setApartment(this.modelMapper.map(apartmentServiceModel.get(), Apartment.class));
 
         this.residentRepository.saveAndFlush(resident);
 

@@ -15,6 +15,7 @@ import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -47,10 +48,10 @@ public class ChildServiceImpl implements ChildService {
         Child child = this.modelMapper.map(childServiceModel, Child.class);
         child.setAddedOn(LocalDate.now());
 
-        ApartmentServiceModel apartmentServiceModel =
+        Optional<ApartmentServiceModel> apartmentServiceModel =
                 this.apartmentService.getById(childServiceModel.getApartment().getId());
 
-        child.setApartment(this.modelMapper.map(apartmentServiceModel, Apartment.class));
+        child.setApartment(this.modelMapper.map(apartmentServiceModel.get(), Apartment.class));
 
         this.childRepository.saveAndFlush(child);
 

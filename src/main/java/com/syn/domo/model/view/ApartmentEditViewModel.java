@@ -1,12 +1,15 @@
 package com.syn.domo.model.view;
 
-public class ApartmentAddViewModel {
+import java.time.LocalDate;
+
+public class ApartmentEditViewModel {
 
     private String number;
     private int floor;
     private int pets;
+    private LocalDate addedOn;
 
-    public ApartmentAddViewModel() {
+    public ApartmentEditViewModel() {
     }
 
     public String getNumber() {
@@ -31,6 +34,14 @@ public class ApartmentAddViewModel {
 
     public void setPets(int pets) {
         this.pets = pets;
+    }
+
+    public LocalDate getAddedOn() {
+        return addedOn;
+    }
+
+    public void setAddedOn(LocalDate addedOn) {
+        this.addedOn = addedOn;
     }
 
 }

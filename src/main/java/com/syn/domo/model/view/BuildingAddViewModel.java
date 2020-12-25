@@ -5,7 +5,7 @@ public class BuildingAddViewModel {
     private String name;
     private String neighbourhood;
     private String address;
-    private int floorsNumber;
+    private int floors;
 
     public BuildingAddViewModel() {
     }
@@ -34,11 +34,11 @@ public class BuildingAddViewModel {
         this.address = address;
     }
 
-    public int getFloorsNumber() {
-        return floorsNumber;
+    public int getFloors() {
+        return floors;
     }
 
-    public void setFloorsNumber(int floorsNumber) {
-        this.floorsNumber = floorsNumber;
+    public void setFloors(int floors) {
+        this.floors = floors;
     }
 }

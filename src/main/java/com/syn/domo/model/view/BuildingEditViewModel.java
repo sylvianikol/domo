@@ -8,8 +8,8 @@ public class BuildingEditViewModel {
     private String name;
     private String neighbourhood;
     private String address;
+    private int floors;
     private LocalDate addedOn;
-    private LocalDate archivedOn;
 
     public BuildingEditViewModel() {
     }
@@ -46,19 +46,19 @@ public class BuildingEditViewModel {
         this.address = address;
     }
 
+    public int getFloors() {
+        return floors;
+    }
+
+    public void setFloors(int floors) {
+        this.floors = floors;
+    }
+
     public LocalDate getAddedOn() {
         return addedOn;
     }
 
     public void setAddedOn(LocalDate addedOn) {
         this.addedOn = addedOn;
-    }
-
-    public LocalDate getArchivedOn() {
-        return archivedOn;
-    }
-
-    public void setArchivedOn(LocalDate archivedOn) {
-        this.archivedOn = archivedOn;
     }
 }

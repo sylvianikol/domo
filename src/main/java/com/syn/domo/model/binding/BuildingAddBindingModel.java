@@ -9,7 +9,7 @@ public class BuildingAddBindingModel {
     private String name;
     private String neighbourhood;
     private String address;
-    private int floorsNumber;
+    private int floors;
 
     public BuildingAddBindingModel() {
     }
@@ -50,12 +50,12 @@ public class BuildingAddBindingModel {
     @NotNull(message = FLOOR_NUMBER_NULL)
     @Min(value = 0, message = FLOOR_MIN_INVALID)
     @Max(value = 100, message = FLOOR_MAX_INVALID)
-    public int getFloorsNumber() {
-        return floorsNumber;
+    public int getFloors() {
+        return floors;
     }
 
-    public void setFloorsNumber(int floorsNumber) {
-        this.floorsNumber = floorsNumber;
+    public void setFloors(int floors) {
+        this.floors = floors;
     }
 
 }

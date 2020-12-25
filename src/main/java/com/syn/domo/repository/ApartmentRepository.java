@@ -12,8 +12,6 @@ public interface ApartmentRepository extends JpaRepository<Apartment, String> {
 
     Optional<Apartment> findByNumberAndBuilding_Id(String apartmentNumber, String buildingId);
 
-    Optional<Apartment> findByIdAndBuilding_Id(String apartmentId, String buildingId);
-
     Set<Apartment> findAllByBuilding_IdOrderByNumber(String buildingId);
 
 }

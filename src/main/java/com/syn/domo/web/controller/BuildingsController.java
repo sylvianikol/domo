@@ -2,6 +2,8 @@ package com.syn.domo.web.controller;
 
 import com.syn.domo.exception.BuildingExistsException;
 import com.syn.domo.exception.BuildingNotFoundException;
+import com.syn.domo.exception.FloorNotValidException;
+import com.syn.domo.exception.SameDataException;
 import com.syn.domo.model.binding.BuildingAddBindingModel;
 import com.syn.domo.model.binding.BuildingEditBindingModel;
 import com.syn.domo.model.service.BuildingServiceModel;
@@ -39,7 +41,7 @@ public class BuildingsController implements BuildingsNamespace {
 
     @GetMapping
     public ResponseEntity<Set<BuildingViewModel>> all() {
-        Set<BuildingViewModel> buildings = this.buildingService.getAllBuildings().stream()
+        Set<BuildingViewModel> buildings = this.buildingService.getAll().stream()
                 .map(buildingServiceModel -> this.modelMapper.map(buildingServiceModel, BuildingViewModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         return buildings.isEmpty()
@@ -50,7 +52,7 @@ public class BuildingsController implements BuildingsNamespace {
     @GetMapping("/{buildingId}")
     public ResponseEntity<BuildingViewModel> one(@PathVariable(value = "buildingId") String buildingId) {
 
-        Optional<BuildingServiceModel> buildingServiceModel = this.buildingService.getOptById(buildingId);
+        Optional<BuildingServiceModel> buildingServiceModel = this.buildingService.getById(buildingId);
         if (buildingServiceModel.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -66,13 +68,31 @@ public class BuildingsController implements BuildingsNamespace {
                                                     UriComponentsBuilder uriComponentsBuilder) {
         if (bindingResult.hasErrors()) {
             BuildingAddViewModel buildingAddViewModel =
-                    this.modelMapper.map(bindingResult.getTarget(), BuildingAddViewModel.class);
+                    this.modelMapper.map(buildingAddBindingModel, BuildingAddViewModel.class);
             return ResponseEntity.unprocessableEntity()
                     .body(buildingAddViewModel);
         }
 
-        String buildingId = this.buildingService.add(
-                this.modelMapper.map(buildingAddBindingModel, BuildingServiceModel.class)).getId();
+        String buildingId;
+
+        try {
+
+            buildingId = this.buildingService.add(
+                    this.modelMapper.map(buildingAddBindingModel, BuildingServiceModel.class)).getId();
+
+        } catch (BuildingExistsException ex) {
+
+            Optional<BuildingServiceModel> building = this.buildingService
+                    .getOne(buildingAddBindingModel.getName().trim(),
+                            buildingAddBindingModel.getAddress().trim(),
+                            buildingAddBindingModel.getNeighbourhood().trim());
+
+            return building.map(serviceModel ->
+                    ResponseEntity.status(HttpStatus.CONFLICT)
+                            .body(this.modelMapper.map(serviceModel, BuildingAddViewModel.class)))
+                    .orElseGet(() -> ResponseEntity.notFound().build());
+
+        }
 
         return ResponseEntity.created(uriComponentsBuilder
                 .path("/buildings/{buildingId}")
@@ -87,7 +107,7 @@ public class BuildingsController implements BuildingsNamespace {
                                                       UriComponentsBuilder uriComponentsBuilder) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
-                    .body(this.modelMapper.map(bindingResult.getTarget(),
+                    .body(this.modelMapper.map(buildingEditBindingModel,
                             BuildingEditViewModel.class));
         }
 
@@ -96,11 +116,19 @@ public class BuildingsController implements BuildingsNamespace {
                     buildingEditBindingModel, BuildingServiceModel.class)
                     , buildingId);
         } catch (BuildingExistsException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(this.modelMapper.map(this.buildingService
-                            .getBuilding(buildingEditBindingModel.getName().trim(),
-                                    buildingEditBindingModel.getAddress().trim(),
-                                    buildingEditBindingModel.getNeighbourhood().trim()), BuildingEditViewModel.class));
+            Optional<BuildingServiceModel> building = this.buildingService
+                    .getOne(buildingEditBindingModel.getName().trim(),
+                            buildingEditBindingModel.getAddress().trim(),
+                            buildingEditBindingModel.getNeighbourhood().trim());
+
+            return building.map(serviceModel ->
+                    ResponseEntity.status(HttpStatus.CONFLICT)
+                            .body(this.modelMapper.map(serviceModel, BuildingEditViewModel.class)))
+                    .orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (SameDataException | FloorNotValidException e) {
+            return ResponseEntity.unprocessableEntity()
+                    .body(this.modelMapper.map(buildingEditBindingModel,
+                            BuildingEditViewModel.class));
         }
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)

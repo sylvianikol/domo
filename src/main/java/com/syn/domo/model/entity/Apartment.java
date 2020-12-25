@@ -9,11 +9,10 @@ import java.util.Set;
 public class Apartment extends BaseEntity {
 
     private String number;
-    private Floor floor;
+    private int floor;
     private Building building;
     private int pets;
     private LocalDate addedOn;
-    private LocalDate archivedOn;
 
     private Set<Resident> residents;
     private Set<Child> children;
@@ -30,12 +29,12 @@ public class Apartment extends BaseEntity {
         this.number = number;
     }
 
-    @ManyToOne
-    public Floor getFloor() {
+    @Column(nullable = false)
+    public int getFloor() {
         return floor;
     }
 
-    public void setFloor(Floor floor) {
+    public void setFloor(int floor) {
         this.floor = floor;
     }
 
@@ -84,12 +83,4 @@ public class Apartment extends BaseEntity {
         this.addedOn = addedOn;
     }
 
-    @Column(name = "archived_on")
-    public LocalDate getArchivedOn() {
-        return archivedOn;
-    }
-
-    public void setArchivedOn(LocalDate removedOn) {
-        this.archivedOn = removedOn;
-    }
 }

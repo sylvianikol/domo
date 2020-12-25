@@ -8,11 +8,9 @@ public class BuildingServiceModel extends BaseServiceModel {
     private String name;
     private String address;
     private String neighbourhood;
-    private int floorsNumber;
+    private int floors;
     private LocalDate addedOn;
-    private LocalDate archivedOn;
 
-    Set<FloorServiceModel> floors;
     Set<ApartmentServiceModel> apartments;
 
     public BuildingServiceModel() {
@@ -42,12 +40,12 @@ public class BuildingServiceModel extends BaseServiceModel {
         this.address = address;
     }
 
-    public int getFloorsNumber() {
-        return floorsNumber;
+    public int getFloors() {
+        return floors;
     }
 
-    public void setFloorsNumber(int floorsNumber) {
-        this.floorsNumber = floorsNumber;
+    public void setFloors(int floors) {
+        this.floors = floors;
     }
 
     public LocalDate getAddedOn() {
@@ -56,22 +54,6 @@ public class BuildingServiceModel extends BaseServiceModel {
 
     public void setAddedOn(LocalDate addedOn) {
         this.addedOn = addedOn;
-    }
-
-    public LocalDate getArchivedOn() {
-        return archivedOn;
-    }
-
-    public void setArchivedOn(LocalDate archivedOn) {
-        this.archivedOn = archivedOn;
-    }
-
-    public Set<FloorServiceModel> getFloors() {
-        return floors;
-    }
-
-    public void setFloors(Set<FloorServiceModel> floors) {
-        this.floors = floors;
     }
 
     public Set<ApartmentServiceModel> getApartments() {

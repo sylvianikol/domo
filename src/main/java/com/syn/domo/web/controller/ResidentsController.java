@@ -44,68 +44,68 @@ public class ResidentsController implements ResidentsNamespace {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping("/")
-    public ModelAndView manage(@PathVariable(value = "buildingId") String buildingId,
-                               @PathVariable(value = "apartmentId") String apartmentId,
-                               ModelAndView modelAndView) {
-
-        Set<ResidentViewModel> residents =
-                new LinkedHashSet<>(Collections.unmodifiableCollection(
-                        this.residentService.getAllResidentsByApartmentId(apartmentId).stream()
-                        .map(residentServiceModel -> this.modelMapper.map(residentServiceModel, ResidentViewModel.class))
-                        .collect(Collectors.toCollection(LinkedHashSet::new))));
-
-        boolean hasResidents = residents.size() > 0;
-        modelAndView.addObject("hasResidents", hasResidents);
-
-        if (hasResidents) {
-            modelAndView.addObject("pageH3Title", EDIT_RESIDENTS_TITLE);
-        }
-
-        modelAndView.addObject("buildingName", this.buildingService.getBuildingName(buildingId));
-        modelAndView.addObject("apartmentNumber", this.apartmentService.getById(apartmentId).getNumber());
-        modelAndView.addObject("residents", residents);
-        modelAndView.addObject("pageTitle", MANAGE_RESIDENTS_TITLE);
-        modelAndView.addObject("pageH2Title", ADD_RESIDENT_TITLE);
-        modelAndView.setViewName("manage-residents");
-        return modelAndView;
-    }
-
-    @PostMapping("/")
-    public ModelAndView add(@PathVariable(value = "buildingId") String buildingId,
-                            @PathVariable(value = "apartmentId") String apartmentId,
-                            @Valid @ModelAttribute("residentAddBindingModel")
-                                        ResidentAddBindingModel residentAddBindingModel,
-                            BindingResult bindingResult, ModelAndView modelAndView) {
-
-        if (bindingResult.hasErrors()) {
-            modelAndView.setViewName("redirect:/buildings/" + buildingId +
-                    "/apartments/" + apartmentId + "/residents/");
-        } else {
-            this.residentService.add(
-                    this.modelMapper.map(residentAddBindingModel, ResidentServiceModel.class));
-
-            modelAndView.setViewName("redirect:/buildings/" + buildingId +
-                    "/apartments/" + apartmentId + "/residents/");
-        }
-
-        return modelAndView;
-    }
-
-    @GetMapping("/{residentId}")
-    public ModelAndView details(@PathVariable(value = "buildingId") String buildingId,
-                                @PathVariable(value = "apartmentId") String apartmentId,
-                                @PathVariable(value = "residentId") String residentId,
-                                ModelAndView modelAndView) {
-        ResidentViewModel resident =
-                this.modelMapper.map(this.residentService.getById(residentId), ResidentViewModel.class);
-
-        modelAndView.addObject("resident", resident);
-        modelAndView.addObject("buildingName",
-                this.buildingService.getBuildingName(buildingId));
-        modelAndView.addObject("pageTitle", RESIDENT_DETAILS);
-        modelAndView.setViewName("details-resident");
-        return modelAndView;
-    }
+//    @GetMapping("/")
+//    public ModelAndView manage(@PathVariable(value = "buildingId") String buildingId,
+//                               @PathVariable(value = "apartmentId") String apartmentId,
+//                               ModelAndView modelAndView) {
+//
+//        Set<ResidentViewModel> residents =
+//                new LinkedHashSet<>(Collections.unmodifiableCollection(
+//                        this.residentService.getAllResidentsByApartmentId(apartmentId).stream()
+//                        .map(residentServiceModel -> this.modelMapper.map(residentServiceModel, ResidentViewModel.class))
+//                        .collect(Collectors.toCollection(LinkedHashSet::new))));
+//
+//        boolean hasResidents = residents.size() > 0;
+//        modelAndView.addObject("hasResidents", hasResidents);
+//
+//        if (hasResidents) {
+//            modelAndView.addObject("pageH3Title", EDIT_RESIDENTS_TITLE);
+//        }
+//
+//        modelAndView.addObject("buildingName", this.buildingService.getBuildingName(buildingId));
+//        modelAndView.addObject("apartmentNumber", this.apartmentService.getById(apartmentId).getNumber());
+//        modelAndView.addObject("residents", residents);
+//        modelAndView.addObject("pageTitle", MANAGE_RESIDENTS_TITLE);
+//        modelAndView.addObject("pageH2Title", ADD_RESIDENT_TITLE);
+//        modelAndView.setViewName("manage-residents");
+//        return modelAndView;
+//    }
+//
+//    @PostMapping("/")
+//    public ModelAndView add(@PathVariable(value = "buildingId") String buildingId,
+//                            @PathVariable(value = "apartmentId") String apartmentId,
+//                            @Valid @ModelAttribute("residentAddBindingModel")
+//                                        ResidentAddBindingModel residentAddBindingModel,
+//                            BindingResult bindingResult, ModelAndView modelAndView) {
+//
+//        if (bindingResult.hasErrors()) {
+//            modelAndView.setViewName("redirect:/buildings/" + buildingId +
+//                    "/apartments/" + apartmentId + "/residents/");
+//        } else {
+//            this.residentService.add(
+//                    this.modelMapper.map(residentAddBindingModel, ResidentServiceModel.class));
+//
+//            modelAndView.setViewName("redirect:/buildings/" + buildingId +
+//                    "/apartments/" + apartmentId + "/residents/");
+//        }
+//
+//        return modelAndView;
+//    }
+//
+//    @GetMapping("/{residentId}")
+//    public ModelAndView details(@PathVariable(value = "buildingId") String buildingId,
+//                                @PathVariable(value = "apartmentId") String apartmentId,
+//                                @PathVariable(value = "residentId") String residentId,
+//                                ModelAndView modelAndView) {
+//        ResidentViewModel resident =
+//                this.modelMapper.map(this.residentService.getById(residentId), ResidentViewModel.class);
+//
+//        modelAndView.addObject("resident", resident);
+//        modelAndView.addObject("buildingName",
+//                this.buildingService.getBuildingName(buildingId));
+//        modelAndView.addObject("pageTitle", RESIDENT_DETAILS);
+//        modelAndView.setViewName("details-resident");
+//        return modelAndView;
+//    }
 
 }

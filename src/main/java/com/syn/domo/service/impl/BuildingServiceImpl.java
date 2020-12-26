@@ -67,7 +67,7 @@ public class BuildingServiceImpl implements BuildingService {
 
     @Override
     @Transactional
-    public BuildingServiceModel delete(String buildingId) {
+    public void delete(String buildingId) {
         Optional<Building> building = this.buildingRepository.findById(buildingId);
 
         if (building.isEmpty()) {
@@ -75,10 +75,8 @@ public class BuildingServiceImpl implements BuildingService {
         }
 
         this.apartmentService.deleteAllByBuildingId(buildingId);
-        BuildingServiceModel buildingServiceModel
-                = this.modelMapper.map(building.get(), BuildingServiceModel.class);
+
         this.buildingRepository.delete(building.get());
-        return buildingServiceModel;
     }
 
     @Override

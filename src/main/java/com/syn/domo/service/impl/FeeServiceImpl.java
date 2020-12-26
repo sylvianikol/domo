@@ -36,7 +36,7 @@ public class FeeServiceImpl implements FeeService  {
     public List<FeeServiceModel> generateMonthlyFees(FeeAddBindingModel feeAddBindingModel) {
 
         Set<ApartmentServiceModel> apartments =
-                this.apartmentService.getAllApartmentsByBuildingId("buildingId");
+                this.apartmentService.getAllByBuildingId("buildingId");
 
         List<FeeServiceModel> feeServiceModels = new ArrayList<>();
 

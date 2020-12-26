@@ -15,7 +15,7 @@ public interface BuildingService {
 
     BuildingServiceModel add(BuildingServiceModel buildingServiceModel);
 
-    BuildingServiceModel delete(String buildingId);
+    void delete(String buildingId);
 
     BuildingServiceModel edit(BuildingServiceModel buildingServiceModel, String buildingId);
 

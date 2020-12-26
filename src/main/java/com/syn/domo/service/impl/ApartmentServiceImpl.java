@@ -51,12 +51,14 @@ public class ApartmentServiceImpl implements ApartmentService {
             throw new BuildingNotFoundException("Building does not exists!");
         }
 
-        if (this.alreadyExists(apartmentServiceModel.getNumber(), buildingId)) {
-            throw new ApartmentAlreadyExistsException("Apartment already exists!");
+        String apartmentNumber = apartmentServiceModel.getNumber();
+        if (this.alreadyExists(apartmentNumber, buildingId)) {
+            throw new ApartmentAlreadyExistsException(
+                    String.format("Apartment No.%s already exists in this building!", apartmentNumber));
         }
 
         if (apartmentServiceModel.getFloor() > buildingOpt.get().getFloors()) {
-            throw new FloorNotValidException("Invalid floor number!");
+            throw new UnprocessableEntityException("Invalid floor number!");
         }
 
         Apartment apartment = this.modelMapper.map(apartmentServiceModel, Apartment.class);
@@ -79,7 +81,7 @@ public class ApartmentServiceImpl implements ApartmentService {
         }
 
         if (apartmentServiceModel.getFloor() > buildingOpt.get().getFloors()) {
-            throw new FloorNotValidException("Invalid floor number!");
+            throw new UnprocessableEntityException("Invalid floor number!");
         }
 
         Apartment apartment =
@@ -90,7 +92,7 @@ public class ApartmentServiceImpl implements ApartmentService {
         }
 
         if (this.isSameData(apartment, apartmentServiceModel)) {
-            throw new SameDataException("Same data!");
+            throw new UnprocessableEntityException("No new data found!");
         }
 
         String newNumber = apartmentServiceModel.getNumber();
@@ -99,14 +101,34 @@ public class ApartmentServiceImpl implements ApartmentService {
 
         if (!apartment.getNumber().equals(newNumber) && existingApartment.isPresent()) {
             throw new ApartmentAlreadyExistsException(
-                    String.format("Apartment No:%s already exists in this buildingOpt!",
+                    String.format("Apartment No:%s already exists in this building!",
                             apartmentServiceModel.getNumber()));
         }
 
         apartment.setNumber(apartmentServiceModel.getNumber());
         apartment.setFloor(apartmentServiceModel.getFloor());
+        apartment.setPets(apartmentServiceModel.getPets());
+        apartment.setAddedOn(apartmentServiceModel.getAddedOn());
         this.apartmentRepository.saveAndFlush(apartment);
         return this.modelMapper.map(apartment, ApartmentServiceModel.class);
+    }
+
+    @Override
+    public void delete(String apartmentId, String buildingId) {
+
+        if (this.buildingService.getById(buildingId).isEmpty()) {
+            throw new BuildingNotFoundException("Building not found!");
+        }
+
+        Apartment apartment =
+                this.apartmentRepository.findById(apartmentId).orElse(null);
+
+        if (apartment == null || !apartment.getBuilding().getId().equals(buildingId)) {
+            throw new ApartmentNotFoundException("Apartment not found!");
+        }
+
+        this.residentService.deleteAllByApartmentId(apartment.getId());
+        this.apartmentRepository.delete(apartment);
     }
 
     @Override
@@ -123,7 +145,7 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
-    public Set<ApartmentServiceModel> getAllApartmentsByBuildingId(String buildingId) {
+    public Set<ApartmentServiceModel> getAllByBuildingId(String buildingId) {
         Set<ApartmentServiceModel> apartmentServiceModels =
                 this.apartmentRepository.findAllByBuilding_IdOrderByNumber(buildingId).stream()
                 .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
@@ -148,6 +170,8 @@ public class ApartmentServiceImpl implements ApartmentService {
                 ? Optional.empty()
                 : Optional.of(this.modelMapper.map(apartment.get(), ApartmentServiceModel.class));
     }
+
+
 
     private boolean alreadyExists(String apartmentNumber, String buildingId) {
         return this.apartmentRepository

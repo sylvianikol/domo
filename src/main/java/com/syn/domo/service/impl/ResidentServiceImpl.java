@@ -74,15 +74,6 @@ public class ResidentServiceImpl implements ResidentService {
     }
 
     @Override
-    public void archiveAllByApartmentId(String apartmentId) {
-        this.residentRepository.findAllByApartment_Id(apartmentId)
-                .forEach(resident -> {
-                    resident.setRemovedOn(LocalDate.now());
-                    this.residentRepository.saveAndFlush(resident);
-                });
-    }
-
-    @Override
     @Transactional
     public void deleteAllByApartmentId(String apartmentId) {
         Set<Resident> residents = this.residentRepository.findAllByApartment_Id(apartmentId);

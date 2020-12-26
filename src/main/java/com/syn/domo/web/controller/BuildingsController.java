@@ -100,14 +100,13 @@ public class BuildingsController implements BuildingsNamespace {
     public ResponseEntity<BuildingDeleteViewModel> delete(@PathVariable(value = "buildingId") String buildingId,
                                                           UriComponentsBuilder uriComponentsBuilder) {
 
-        BuildingDeleteViewModel deletedBuilding = this.modelMapper
-                .map(this.buildingService.delete(buildingId), BuildingDeleteViewModel.class);
+        this.buildingService.delete(buildingId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder
                         .path("/buildings")
                         .build()
                         .toUri())
-                .body(deletedBuilding);
+                .build();
     }
 }

@@ -13,9 +13,11 @@ public interface ApartmentService {
 
     void deleteAllByBuildingId(String buildingId);
 
-    Set<ApartmentServiceModel> getAllApartmentsByBuildingId(String buildingId);
+    Set<ApartmentServiceModel> getAllByBuildingId(String buildingId);
 
     ApartmentServiceModel getByNumberAndBuildingId(String apartmentNumber, String buildingId);
 
     Optional<ApartmentServiceModel> getById(String apartmentId);
+
+    void delete(String apartmentId, String buildingId);
 }

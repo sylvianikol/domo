@@ -12,6 +12,10 @@ public interface BuildingRepository extends JpaRepository<Building, String> {
 
     Optional<Building> findById(String id);
 
+    Optional<Building> findByAddress(String address);
+
+    Optional<Building> findByNameAndNeighbourhood(String buildingName, String neighbourhood);
+
     Optional<Building> findByNameAndAddressAndNeighbourhood
             (String buildingName, String buildingAddress, String neighbourhood);
 }

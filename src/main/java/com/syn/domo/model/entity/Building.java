@@ -37,7 +37,7 @@ public class Building extends BaseEntity{
         this.neighbourhood = neighbourhood;
     }
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     public String getAddress() {
         return address;
     }

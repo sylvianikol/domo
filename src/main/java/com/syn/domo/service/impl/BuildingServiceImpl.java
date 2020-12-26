@@ -1,12 +1,7 @@
 package com.syn.domo.service.impl;
 
-import com.syn.domo.exception.BuildingExistsException;
-import com.syn.domo.exception.BuildingNotFoundException;
-import com.syn.domo.exception.FloorNotValidException;
-import com.syn.domo.exception.SameDataException;
-import com.syn.domo.model.entity.Apartment;
+import com.syn.domo.exception.*;
 import com.syn.domo.model.entity.Building;
-import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.repository.BuildingRepository;
 import com.syn.domo.service.ApartmentService;
@@ -47,7 +42,9 @@ public class BuildingServiceImpl implements BuildingService {
                 buildingServiceModel.getNeighbourhood().trim());
 
         if (duplicate.isPresent()) {
-            throw new BuildingExistsException("Building already exists!");
+            throw new BuildingExistsException(String.format(
+                    "Building with name \"%s\" already exists in \"%s\"!",
+                    buildingServiceModel.getName(), buildingServiceModel.getNeighbourhood()));
         }
 
         Building building = this.modelMapper.map(buildingServiceModel, Building.class);
@@ -88,27 +85,37 @@ public class BuildingServiceImpl implements BuildingService {
     public BuildingServiceModel edit(BuildingServiceModel buildingServiceModel, String buildingId) {
         // TODO: validation
 
-        Optional<BuildingServiceModel> duplicate = this.getOne(
-                buildingServiceModel.getName().trim(),
-                buildingServiceModel.getAddress().trim(),
-                buildingServiceModel.getNeighbourhood().trim());
-
-        if (duplicate.isPresent() && !duplicate.get().getId().equals(buildingId)) {
-            throw new BuildingExistsException("Building already exists!");
-        }
-
         Optional<Building> building = this.buildingRepository.findById(buildingId);
 
         if (building.isEmpty()) {
             throw new BuildingNotFoundException("Building not found!");
         }
 
-        if (this.isSameData(building.get(), buildingServiceModel)) {
-            throw new SameDataException("Same data!");
+        if (this.hasSameData(building.get(), buildingServiceModel)) {
+            throw new UnprocessableEntityException("New data is same as old data!");
         }
 
         if (buildingServiceModel.getFloors() > building.get().getFloors()) {
-            throw new FloorNotValidException("Floor number not valid!");
+            throw new UnprocessableEntityException("Floor number is not valid!");
+        }
+
+        Optional<Building> duplicate =
+                this.buildingRepository.findByAddress(buildingServiceModel.getAddress());
+
+        if (this.hasSameAddress(duplicate, buildingId)) {
+            throw new UnprocessableEntityException("This address is already used by another building!");
+        }
+
+        duplicate = this.buildingRepository.findByNameAndNeighbourhood(
+                buildingServiceModel.getName().trim(),
+                buildingServiceModel.getNeighbourhood().trim());
+
+        if (duplicate.isPresent()
+                && !duplicate.get().getId().equals(buildingId)) {
+            throw new BuildingExistsException(
+                    String.format("Building with name \"%s\" already exists in \"%s\"!",
+                            buildingServiceModel.getName(), buildingServiceModel.getNeighbourhood())
+                    );
         }
 
         building.get().setName(buildingServiceModel.getName());
@@ -119,7 +126,6 @@ public class BuildingServiceImpl implements BuildingService {
 
         return this.modelMapper.map(building.get(), BuildingServiceModel.class);
     }
-
 
     @Override
     public Optional<BuildingServiceModel> getOne(String buildingName,
@@ -139,11 +145,16 @@ public class BuildingServiceImpl implements BuildingService {
                 : Optional.of(this.modelMapper.map(building.get(), BuildingServiceModel.class));
     }
 
-    private boolean isSameData(Building building, BuildingServiceModel buildingServiceModel) {
+    private boolean hasSameData(Building building, BuildingServiceModel buildingServiceModel) {
         return building.getName().equals(buildingServiceModel.getName())
                 && building.getNeighbourhood().equals(buildingServiceModel.getNeighbourhood())
                 && building.getAddress().equals(buildingServiceModel.getAddress())
                 && building.getFloors() == buildingServiceModel.getFloors()
                 && building.getAddedOn().equals(buildingServiceModel.getAddedOn());
     }
+
+    private boolean hasSameAddress(Optional<Building> duplicate, String buildingId) {
+        return duplicate.isPresent() && !duplicate.get().getId().equals(buildingId);
+    }
+
 }

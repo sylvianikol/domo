@@ -72,7 +72,6 @@ public class ApartmentServiceImpl implements ApartmentService {
         // TODO: validation
 
         Optional<BuildingServiceModel> buildingOpt = this.buildingService.getById(buildingId);
-
         if (buildingOpt.isEmpty()) {
             throw new BuildingNotFoundException("Building not found!");
         }
@@ -86,10 +85,6 @@ public class ApartmentServiceImpl implements ApartmentService {
 
         if (apartment == null || !apartment.getBuilding().getId().equals(buildingId)) {
             throw new ApartmentNotFoundException("Apartment not found!");
-        }
-
-        if (this.isSameData(apartment, apartmentServiceModel)) {
-            throw new UnprocessableEntityException("No new data found!");
         }
 
         String newNumber = apartmentServiceModel.getNumber();
@@ -168,18 +163,9 @@ public class ApartmentServiceImpl implements ApartmentService {
                 : Optional.of(this.modelMapper.map(apartment.get(), ApartmentServiceModel.class));
     }
 
-
-
     private boolean alreadyExists(String apartmentNumber, String buildingId) {
         return this.apartmentRepository
                 .findByNumberAndBuilding_Id(apartmentNumber, buildingId).isPresent();
 
-    }
-
-    private boolean isSameData(Apartment apartment, ApartmentServiceModel apartmentServiceModel) {
-        return apartment.getNumber().equals(apartmentServiceModel.getNumber())
-                && apartment.getFloor() == apartmentServiceModel.getFloor()
-                && apartment.getPets() == apartmentServiceModel.getPets()
-                && apartment.getAddedOn().equals(apartmentServiceModel.getAddedOn());
     }
 }

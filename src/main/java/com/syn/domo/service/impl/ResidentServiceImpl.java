@@ -2,6 +2,7 @@ package com.syn.domo.service.impl;
 
 import com.syn.domo.exception.ApartmentNotFoundException;
 import com.syn.domo.exception.BuildingNotFoundException;
+import com.syn.domo.exception.ResidentNotFoundException;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Resident;
 import com.syn.domo.model.entity.UserRole;
@@ -63,6 +64,29 @@ public class ResidentServiceImpl implements ResidentService {
         resident.setApartment(this.modelMapper.map(apartment.get(), Apartment.class));
 
         this.residentRepository.saveAndFlush(resident);
+
+        return this.modelMapper.map(resident, ResidentServiceModel.class);
+    }
+
+    @Override
+    public ResidentServiceModel edit(ResidentServiceModel residentServiceModel, String buildingId, String apartmentId) {
+        // TODO: validation
+
+        if (this.buildingService.getById(buildingId).isEmpty()) {
+            throw new BuildingNotFoundException("Building not found!");
+        }
+
+        Optional<ApartmentServiceModel> apartment = this.apartmentService.getById(apartmentId);
+        if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(buildingId)) {
+            throw new ApartmentNotFoundException("Apartment not found!");
+        }
+
+        Resident resident = this.residentRepository.findById(residentServiceModel.getId()).orElse(null);
+        if (resident == null || !resident.getApartment().getId().equals(apartmentId)) {
+            throw new ResidentNotFoundException("Resident not found!");
+        }
+
+
 
         return this.modelMapper.map(resident, ResidentServiceModel.class);
     }

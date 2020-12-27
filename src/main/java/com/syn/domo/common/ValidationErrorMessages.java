@@ -2,6 +2,9 @@ package com.syn.domo.common;
 
 public class ValidationErrorMessages {
 
+    public static final String ID_NULL = "ID can not be null!";
+    public static final String ID_EMPTY = "ID can not by empty!";
+
     public static final String BUILDING_NAME_NULL =
             "Building name should not be null!";
     public static final String BUILDING_NAME_EMPTY =
@@ -49,6 +52,18 @@ public class ValidationErrorMessages {
     public static final String EMAIL_EMPTY =
             "Email can not be empty!";
 
+    public static final String PHONE_NULL =
+            "Phone number can not be null!";
+
+    public static final String PHONE_EMPTY =
+            "Phone number can not be empty!";
+
+    public static final String PHONE_INVALID =
+            "Phone number should be in the following format: '0888123456' or '+359888123456'";
+
+    public static final String PHONE_LENGTH =
+            "Phone number should be no more than 20 characters long";
+
     public static final String FIRST_NAME_INVALID =
             "First name should be between 2 and 55 characters long!";
 
@@ -68,6 +83,9 @@ public class ValidationErrorMessages {
             "Last name can not be empty!";
 
     public static final String ROLE_NULL =
+            "Role can not be null!";
+
+    public static final String ROLE_EMPTY =
             "Role can not be null!";
 
     public static final String APARTMENT_LENGTH_INVALID =
@@ -91,23 +109,14 @@ public class ValidationErrorMessages {
     public static final String FLOOR_NULL =
             "Floor can not be null!";
 
-    public static final String ADDED_ON_INVALID =
-            "Date can not be in the future!";
-
-    public static final String SALARY_NULL =
-            "Salary can not be null!";
-
-    public static final String SALARY_INVALID =
-            "Salary must be a positive number!";
-
     public static final String DATE_NULL =
             "Date can not be null!";
 
-    public static final String START_DATE_INVALID =
-            "Start date can not be in the future!";
+    public static final String DATE_EMPTY =
+            "Date can not be empty!";
 
-    public static final String END_DATE_INVALID =
-            "End date can not be in the future!";
+    public static final String DATE_INVALID =
+            "Date can not be in the future!";
 
     public static final String PETS_NULL =
             "Pets can not be null!";

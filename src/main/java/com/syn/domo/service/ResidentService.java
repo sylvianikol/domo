@@ -9,6 +9,8 @@ public interface ResidentService {
 
     ResidentServiceModel add(ResidentServiceModel residentServiceModel, String buildingId, String apartmentId);
 
+    ResidentServiceModel edit(ResidentServiceModel residentServiceModel, String buildingId, String apartmentId);
+
     Set<ResidentServiceModel> getAllByApartmentId(String apartmentId);
 
     Optional<ResidentServiceModel> getById(String residentId);

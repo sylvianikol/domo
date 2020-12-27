@@ -1,6 +1,6 @@
 package com.syn.domo.model.binding;
 
-public class ResidentAddBindingModel extends UserEntityAddBindingModel {
+public class ResidentAddBindingModel extends UserEntityBindingModel {
 
     private String apartmentId;
 

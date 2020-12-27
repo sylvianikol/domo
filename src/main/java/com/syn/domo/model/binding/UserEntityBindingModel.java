@@ -7,14 +7,13 @@ import javax.validation.constraints.NotNull;
 import static com.syn.domo.common.ValidationErrorMessages.*;
 import static com.syn.domo.common.ValidationErrorMessages.EMAIL_INVALID;
 
-public abstract class UserEntityAddBindingModel extends BaseUserEntityAddBindingModel {
+public abstract class UserEntityBindingModel extends BaseUserEntityBindingModel {
 
 //    private String password;
     private String email;
-    private String identityCardNumber;
     private String phoneNumber;
 
-    public UserEntityAddBindingModel() {
+    public UserEntityBindingModel() {
     }
 
 //    @NotNull(message = PASSWORD_NULL)
@@ -37,14 +36,6 @@ public abstract class UserEntityAddBindingModel extends BaseUserEntityAddBinding
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getIdentityCardNumber() {
-        return identityCardNumber;
-    }
-
-    public void setIdentityCardNumber(String identityCardNumber) {
-        this.identityCardNumber = identityCardNumber;
     }
 
     public String getPhoneNumber() {

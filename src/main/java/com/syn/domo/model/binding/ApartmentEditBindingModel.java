@@ -17,8 +17,8 @@ public class ApartmentEditBindingModel {
     public ApartmentEditBindingModel() {
     }
 
-    @NotNull
-    @NotEmpty
+    @NotNull(message = ID_NULL)
+    @NotEmpty(message = ID_EMPTY)
     public String getId() {
         return id;
     }
@@ -60,7 +60,9 @@ public class ApartmentEditBindingModel {
         this.pets = pets;
     }
 
-    @PastOrPresent(message = ADDED_ON_INVALID)
+    @NotNull(message = DATE_NULL)
+    @NotEmpty(message = DATE_EMPTY)
+    @PastOrPresent(message = DATE_INVALID)
     public LocalDate getAddedOn() {
         return addedOn;
     }

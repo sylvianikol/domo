@@ -25,7 +25,7 @@ public abstract class UserEntity extends BaseUserEntity {
         this.password = password;
     }
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     public String getEmail() {
         return email;
     }
@@ -34,7 +34,7 @@ public abstract class UserEntity extends BaseUserEntity {
         this.email = email;
     }
 
-    @Column(name = "phone_number", unique = true)
+    @Column(name = "phone_number", unique = true, nullable = false, length = 20)
     public String getPhoneNumber() {
         return phoneNumber;
     }

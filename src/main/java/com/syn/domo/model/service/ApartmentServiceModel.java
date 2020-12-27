@@ -1,6 +1,7 @@
 package com.syn.domo.model.service;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Set;
 
 public class ApartmentServiceModel extends BaseServiceModel {

@@ -2,6 +2,7 @@ package com.syn.domo.web.controller;
 
 import com.syn.domo.model.ErrorResponse;
 import com.syn.domo.model.binding.ResidentAddBindingModel;
+import com.syn.domo.model.binding.ResidentEditBindingModel;
 import com.syn.domo.model.service.ResidentServiceModel;
 import com.syn.domo.model.view.ResidentViewModel;
 import com.syn.domo.service.ApartmentService;
@@ -10,6 +11,7 @@ import com.syn.domo.service.ResidentService;
 import com.syn.domo.web.controller.namespace.ResidentsNamespace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -89,4 +91,26 @@ public class ResidentsController implements ResidentsNamespace {
                 .toUri()).build();
     }
 
+    @PutMapping("/{residentId}")
+    public ResponseEntity<?> edit(@PathVariable(value = "buildingId") String buildingId,
+                                  @PathVariable(value = "apartmentId") String apartmentId,
+                                  @PathVariable(value = "residentId") String residentId,
+                                  @Valid @RequestBody ResidentEditBindingModel residentEditBindingModel,
+                                  BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.unprocessableEntity()
+                    .body(new ErrorResponse(bindingResult.getTarget(),
+                            bindingResult.getAllErrors()));
+        }
+
+        this.residentService.edit(this.modelMapper.map(residentEditBindingModel, ResidentServiceModel.class),
+                buildingId, apartmentId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .location(uriComponentsBuilder
+                        .path(URI_RESIDENTS + "/{residentId}")
+                        .buildAndExpand(buildingId, apartmentId, residentId)
+                        .toUri()).build();
+    }
 }

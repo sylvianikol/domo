@@ -8,12 +8,12 @@ import javax.validation.constraints.Size;
 import static com.syn.domo.common.ValidationErrorMessages.*;
 
 @MappedSuperclass
-public abstract class BaseUserEntityAddBindingModel {
+public abstract class BaseUserEntityBindingModel {
 
     private String firstName;
     private String lastName;
 
-    public BaseUserEntityAddBindingModel() {
+    public BaseUserEntityBindingModel() {
     }
 
     @NotNull(message = FIRST_NAME_NULL)

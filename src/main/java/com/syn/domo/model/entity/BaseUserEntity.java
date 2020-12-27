@@ -9,12 +9,11 @@ public abstract class BaseUserEntity extends BaseEntity {
     private String firstName;
     private String lastName;
     private LocalDate addedOn;
-    private LocalDate removedOn;
 
     public BaseUserEntity() {
     }
 
-    @Column(name = "first_name")
+    @Column(name = "first_name", nullable = false, length = 55)
     public String getFirstName() {
         return firstName;
     }
@@ -23,7 +22,7 @@ public abstract class BaseUserEntity extends BaseEntity {
         this.firstName = firstName;
     }
 
-    @Column(name = "last_name")
+    @Column(name = "last_name", nullable = false, length = 55)
     public String getLastName() {
         return lastName;
     }
@@ -41,12 +40,4 @@ public abstract class BaseUserEntity extends BaseEntity {
         this.addedOn = addedOn;
     }
 
-    @Column(name = "removed_on")
-    public LocalDate getRemovedOn() {
-        return removedOn;
-    }
-
-    public void setRemovedOn(LocalDate removedOn) {
-        this.removedOn = removedOn;
-    }
 }

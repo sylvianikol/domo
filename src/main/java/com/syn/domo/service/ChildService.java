@@ -12,5 +12,5 @@ public interface ChildService {
 
     ChildServiceModel getById(String childId);
 
-    void removeAllByApartmentId(String apartmentId);
+//    void removeAllByApartmentId(String apartmentId);
 }

@@ -68,12 +68,12 @@ public class ChildServiceImpl implements ChildService {
                 });
     }
 
-    @Override
-    public void removeAllByApartmentId(String apartmentId) {
-        this.childRepository.findAllByApartment_Id(apartmentId)
-                .forEach(child -> {
-                    child.setRemovedOn(LocalDate.now());
-                    this.childRepository.saveAndFlush(child);
-                });
-    }
+//    @Override
+//    public void removeAllByApartmentId(String apartmentId) {
+//        this.childRepository.findAllByApartment_Id(apartmentId)
+//                .forEach(child -> {
+//                    child.setRemovedOn(LocalDate.now());
+//                    this.childRepository.saveAndFlush(child);
+//                });
+//    }
 }

@@ -1,6 +1,11 @@
 package com.syn.domo.model.binding;
 
 import javax.persistence.MappedSuperclass;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import static com.syn.domo.common.ValidationErrorMessages.*;
 
 @MappedSuperclass
 public abstract class BaseUserEntityAddBindingModel {
@@ -11,6 +16,9 @@ public abstract class BaseUserEntityAddBindingModel {
     public BaseUserEntityAddBindingModel() {
     }
 
+    @NotNull(message = FIRST_NAME_NULL)
+    @NotEmpty(message = FIRST_NAME_EMPTY)
+    @Size(min = 2, max = 55, message = FIRST_NAME_INVALID)
     public String getFirstName() {
         return firstName;
     }
@@ -19,6 +27,9 @@ public abstract class BaseUserEntityAddBindingModel {
         this.firstName = firstName;
     }
 
+    @NotNull(message = LAST_NAME_NULL)
+    @NotEmpty(message = LAST_NAME_EMPTY)
+    @Size(min = 2, max = 55, message = LAST_NAME_INVALID)
     public String getLastName() {
         return lastName;
     }

@@ -10,7 +10,6 @@ public abstract class UserEntity extends BaseUserEntity {
 
     private String password;
     private String email;
-    private String identityCardNumber;
     private String phoneNumber;
     private UserRole userRole;
 
@@ -33,15 +32,6 @@ public abstract class UserEntity extends BaseUserEntity {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    @Column(name = "id_card_number", unique = true)
-    public String getIdentityCardNumber() {
-        return identityCardNumber;
-    }
-
-    public void setIdentityCardNumber(String idCardNumber) {
-        this.identityCardNumber = idCardNumber;
     }
 
     @Column(name = "phone_number", unique = true)

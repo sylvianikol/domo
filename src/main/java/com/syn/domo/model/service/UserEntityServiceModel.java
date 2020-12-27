@@ -4,9 +4,8 @@ public abstract class UserEntityServiceModel extends BaseUserEntityServiceModel 
 
     //    private String password;
     private String email;
-    private String identityCardNumber;
     private String phoneNumber;
-
+    private String userRole;
 
     public UserEntityServiceModel() {
     }
@@ -19,14 +18,6 @@ public abstract class UserEntityServiceModel extends BaseUserEntityServiceModel 
         this.email = email;
     }
 
-    public String getIdentityCardNumber() {
-        return identityCardNumber;
-    }
-
-    public void setIdentityCardNumber(String identityCardNumber) {
-        this.identityCardNumber = identityCardNumber;
-    }
-
     public String getPhoneNumber() {
         return phoneNumber;
     }
@@ -35,4 +26,11 @@ public abstract class UserEntityServiceModel extends BaseUserEntityServiceModel 
         this.phoneNumber = phoneNumber;
     }
 
+    public String getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(String userRole) {
+        this.userRole = userRole;
+    }
 }

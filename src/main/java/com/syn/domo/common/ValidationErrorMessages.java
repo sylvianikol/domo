@@ -2,24 +2,33 @@ package com.syn.domo.common;
 
 public class ValidationErrorMessages {
 
-    public static final String BUILDING_ENTITY = "Building ";
+    public static final String BUILDING_NAME_NULL =
+            "Building name should not be null!";
+    public static final String BUILDING_NAME_EMPTY =
+            "Building name should not be empty!";
+    public static final String BUILDING_NAME_INVALID_LENGTH =
+            "Building name should not be more than 40 symbols long!";
 
-    public static final String NAME_NULL = "Name should not be null!";
-    public static final String NAME_EMPTY = "Name should not be empty!";
-    public static final String NAME_INVALID_LENGTH = "Name should not be more than 40 symbols long!";
+    public static final String NEIGHBOURHOOD_NULL =
+            "Neighbourhood should not be null!";
+    public static final String NEIGHBOURHOOD_EMPTY =
+            "Neighbourhood should not be empty!";
+    public static final String NEIGHBOURHOOD_INVALID_LENGTH =
+            "Neighbourhood should not be more than 40 symbols long!";
 
+    public static final String ADDRESS_NULL =
+            "Address should not be null!";
+    public static final String ADDRESS_EMPTY =
+            "Address should not be empty!";
+    public static final String ADDRESS_INVALID_LENGTH =
+            "Address should not be more than 100 symbols long!";
 
-    public static final String NEIGHBOURHOOD_NULL = "Neighbourhood should not be null!";
-    public static final String NEIGHBOURHOOD_EMPTY = "Neighbourhood should not be empty!";
-    public static final String NEIGHBOURHOOD_INVALID_LENGTH = "Neighbourhood should not be more than 40 symbols long!";
-
-    public static final String ADDRESS_NULL = "Address should not be null!";
-    public static final String ADDRESS_EMPTY = "Address should not be empty!";
-    public static final String ADDRESS_INVALID_LENGTH = "Address should not be more than 100 symbols long!";
-
-    public static final String FLOOR_NUMBER_NULL = "Floor number should not be null!";
-    public static final String FLOOR_NUMBER_MIN = "Floor should not be a negative number!";
-    public static final String FLOOR_NUMBER_MAX = "Floor number should not be more than 100!";
+    public static final String FLOOR_NUMBER_NULL =
+            "Floor number should not be null!";
+    public static final String FLOOR_NUMBER_MIN =
+            "Floor should not be a negative number!";
+    public static final String FLOOR_NUMBER_MAX =
+            "Floor number should not be more than 100!";
 
 
     public static final String PASSWORD_INVALID =
@@ -41,7 +50,7 @@ public class ValidationErrorMessages {
             "Email can not be empty!";
 
     public static final String FIRST_NAME_INVALID =
-            "First name should be between 2 and 40 characters long!";
+            "First name should be between 2 and 55 characters long!";
 
     public static final String FIRST_NAME_NULL =
             "First name can not be null!";
@@ -50,7 +59,7 @@ public class ValidationErrorMessages {
             "First name can not be empty!";
 
     public static final String LAST_NAME_INVALID =
-            "Last name should be between 2 and 50 characters long!";
+            "Last name should be between 2 and 55 characters long!";
 
     public static final String LAST_NAME_NULL =
             "Last name can not be null!";

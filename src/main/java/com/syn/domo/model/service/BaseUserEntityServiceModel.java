@@ -7,7 +7,6 @@ public abstract class BaseUserEntityServiceModel extends BaseServiceModel {
     private String firstName;
     private String lastName;
     private LocalDate addedOn;
-    private LocalDate removedOn;
 
     public BaseUserEntityServiceModel() {
     }
@@ -34,13 +33,5 @@ public abstract class BaseUserEntityServiceModel extends BaseServiceModel {
 
     public void setAddedOn(LocalDate addedOn) {
         this.addedOn = addedOn;
-    }
-
-    public LocalDate getRemovedOn() {
-        return removedOn;
-    }
-
-    public void setRemovedOn(LocalDate removedOn) {
-        this.removedOn = removedOn;
     }
 }

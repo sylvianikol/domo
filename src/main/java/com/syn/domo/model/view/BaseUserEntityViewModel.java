@@ -8,7 +8,6 @@ public abstract class BaseUserEntityViewModel {
     private String firstName;
     private String lastName;
     private LocalDate addedOn;
-    private LocalDate removedOn;
 
     public BaseUserEntityViewModel() {
     }
@@ -45,11 +44,4 @@ public abstract class BaseUserEntityViewModel {
         this.addedOn = addedOn;
     }
 
-    public LocalDate getRemovedOn() {
-        return removedOn;
-    }
-
-    public void setRemovedOn(LocalDate removedOn) {
-        this.removedOn = removedOn;
-    }
 }

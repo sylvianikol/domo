@@ -30,7 +30,13 @@ public class ExceptionHandlerAdvice {
 
     @ExceptionHandler(ApartmentNotFoundException.class)
     public ResponseEntity<?> handleApartmentNotFoundException(ApartmentNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(ResidentNotFoundException.class)
+    public ResponseEntity<?> handleResidentNotFoundException(ResidentNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ex.getMessage());
     }
 

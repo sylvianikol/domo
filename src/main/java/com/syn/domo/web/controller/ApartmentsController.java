@@ -40,7 +40,7 @@ public class ApartmentsController implements ApartmentsNamespace {
 
         Set<ApartmentViewModel> apartments =
                 this.apartmentService.getAllByBuildingId(buildingId).stream()
-                .map(apartmentServiceModel -> this.modelMapper.map(apartmentServiceModel, ApartmentViewModel.class))
+                .map(a -> this.modelMapper.map(a, ApartmentViewModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
         return apartments.isEmpty()
@@ -62,8 +62,8 @@ public class ApartmentsController implements ApartmentsNamespace {
 
     @PostMapping
     public ResponseEntity<?> add(@PathVariable(value = "buildingId") String buildingId,
-                                                     @Valid @RequestBody ApartmentAddBindingModel apartmentAddBindingModel,
-                                                     BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
+                                 @Valid @RequestBody ApartmentAddBindingModel apartmentAddBindingModel,
+                                 BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
                     .body(new ErrorResponse(bindingResult.getTarget(),
@@ -93,7 +93,8 @@ public class ApartmentsController implements ApartmentsNamespace {
         }
 
        this.apartmentService
-               .edit(this.modelMapper.map(apartmentEditBindingModel, ApartmentServiceModel.class),
+               .edit(this.modelMapper.map(apartmentEditBindingModel,
+                       ApartmentServiceModel.class),
                 buildingId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)

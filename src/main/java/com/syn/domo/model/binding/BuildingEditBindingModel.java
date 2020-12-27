@@ -17,9 +17,9 @@ public class BuildingEditBindingModel {
     public BuildingEditBindingModel() {
     }
 
-    @NotNull(message = BUILDING_ENTITY + NAME_NULL)
-    @NotEmpty(message = BUILDING_ENTITY + NAME_EMPTY)
-    @Size(max = 40, message = BUILDING_ENTITY + NAME_INVALID_LENGTH)
+    @NotNull(message = BUILDING_NAME_NULL)
+    @NotEmpty(message = BUILDING_NAME_EMPTY)
+    @Size(max = 40, message = BUILDING_NAME_INVALID_LENGTH)
     public String getName() {
         return name;
     }
@@ -28,9 +28,9 @@ public class BuildingEditBindingModel {
         this.name = name;
     }
 
-    @NotNull(message = BUILDING_ENTITY + NEIGHBOURHOOD_NULL)
-    @NotEmpty(message = BUILDING_ENTITY + NEIGHBOURHOOD_EMPTY)
-    @Size(max = 40, message = BUILDING_ENTITY + NEIGHBOURHOOD_INVALID_LENGTH)
+    @NotNull(message = NEIGHBOURHOOD_NULL)
+    @NotEmpty(message = NEIGHBOURHOOD_EMPTY)
+    @Size(max = 40, message = NEIGHBOURHOOD_INVALID_LENGTH)
     public String getNeighbourhood() {
         return neighbourhood;
     }
@@ -39,9 +39,9 @@ public class BuildingEditBindingModel {
         this.neighbourhood = neighbourhood;
     }
 
-    @NotNull(message = BUILDING_ENTITY + ADDRESS_NULL)
-    @NotEmpty(message = BUILDING_ENTITY + ADDRESS_EMPTY)
-    @Size(max = 40, message = BUILDING_ENTITY + ADDRESS_INVALID_LENGTH)
+    @NotNull(message = ADDRESS_NULL)
+    @NotEmpty(message = ADDRESS_EMPTY)
+    @Size(max = 40, message = ADDRESS_INVALID_LENGTH)
     public String getAddress() {
         return address;
     }

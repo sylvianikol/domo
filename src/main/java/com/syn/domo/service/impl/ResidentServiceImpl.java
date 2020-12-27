@@ -3,6 +3,7 @@ package com.syn.domo.service.impl;
 import com.syn.domo.exception.ApartmentNotFoundException;
 import com.syn.domo.exception.BuildingNotFoundException;
 import com.syn.domo.exception.ResidentNotFoundException;
+import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Resident;
 import com.syn.domo.model.entity.UserRole;
@@ -86,7 +87,20 @@ public class ResidentServiceImpl implements ResidentService {
             throw new ResidentNotFoundException("Resident not found!");
         }
 
+        Optional<Resident> existingResident = this.residentRepository.findByEmail(residentServiceModel.getEmail());
+        if (existingResident.isPresent() && !existingResident.get().getId().equals(residentServiceModel.getId())) {
+            throw new UnprocessableEntityException(
+                    String.format("Email '%s' is already used by another resident.", residentServiceModel.getEmail()));
+        }
 
+        resident.setFirstName(residentServiceModel.getFirstName());
+        resident.setLastName(residentServiceModel.getLastName());
+        resident.setEmail(residentServiceModel.getEmail());
+        resident.setPhoneNumber(residentServiceModel.getPhoneNumber());
+        resident.setAddedOn(residentServiceModel.getAddedOn());
+        resident.setUserRole(UserRole.valueOf(residentServiceModel.getUserRole()));
+
+        this.residentRepository.saveAndFlush(resident);
 
         return this.modelMapper.map(resident, ResidentServiceModel.class);
     }

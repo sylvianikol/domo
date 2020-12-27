@@ -112,9 +112,6 @@ public class ValidationErrorMessages {
     public static final String DATE_NULL =
             "Date can not be null!";
 
-    public static final String DATE_EMPTY =
-            "Date can not be empty!";
-
     public static final String DATE_INVALID =
             "Date can not be in the future!";
 

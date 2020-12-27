@@ -61,7 +61,6 @@ public class ApartmentEditBindingModel {
     }
 
     @NotNull(message = DATE_NULL)
-    @NotEmpty(message = DATE_EMPTY)
     @PastOrPresent(message = DATE_INVALID)
     public LocalDate getAddedOn() {
         return addedOn;

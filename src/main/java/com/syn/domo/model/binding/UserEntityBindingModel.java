@@ -1,9 +1,8 @@
 package com.syn.domo.model.binding;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 
+import static com.syn.domo.common.RegexPatterns.PHONE_NUMBER_REGEX;
 import static com.syn.domo.common.ValidationErrorMessages.*;
 import static com.syn.domo.common.ValidationErrorMessages.EMAIL_INVALID;
 
@@ -38,6 +37,10 @@ public abstract class UserEntityBindingModel extends BaseUserEntityBindingModel 
         this.email = email;
     }
 
+    @NotNull(message = PHONE_NULL)
+    @NotEmpty(message = PHONE_EMPTY)
+    @Pattern(regexp = PHONE_NUMBER_REGEX, message = PHONE_INVALID)
+    @Size(max = 20, message = PHONE_LENGTH)
     public String getPhoneNumber() {
         return phoneNumber;
     }

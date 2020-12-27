@@ -34,7 +34,7 @@ public abstract class UserEntity extends BaseUserEntity {
         this.email = email;
     }
 
-    @Column(name = "phone_number", unique = true, nullable = false, length = 20)
+    @Column(name = "phone_number", nullable = false, length = 20)
     public String getPhoneNumber() {
         return phoneNumber;
     }

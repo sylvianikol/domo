@@ -101,6 +101,7 @@ public class ApartmentServiceImpl implements ApartmentService {
         apartment.setFloor(apartmentServiceModel.getFloor());
         apartment.setPets(apartmentServiceModel.getPets());
         apartment.setAddedOn(apartmentServiceModel.getAddedOn());
+
         this.apartmentRepository.saveAndFlush(apartment);
         return this.modelMapper.map(apartment, ApartmentServiceModel.class);
     }

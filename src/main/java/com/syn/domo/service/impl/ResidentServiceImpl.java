@@ -49,22 +49,19 @@ public class ResidentServiceImpl implements ResidentService {
     public ResidentServiceModel add(ResidentServiceModel residentServiceModel, String buildingId, String apartmentId) {
         // TODO: validation
 
-        if (this.buildingService.getById(buildingId).isEmpty()) {
-            throw new BuildingNotFoundException("Building not found!");
-        }
-
+        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
         Optional<ApartmentServiceModel> apartment = this.apartmentService.getById(apartmentId);
-        if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(buildingId)) {
-            throw new ApartmentNotFoundException("Apartment not found!");
+        Resident resident = null;
+
+        if (apartment.isPresent() && this.existAndRelated(building, apartment)) {
+            resident = this.modelMapper.map(residentServiceModel, Resident.class);
+            resident.setAddedOn(LocalDate.now());
+            resident.setUserRole(UserRole.RESIDENT);
+
+            resident.setApartment(this.modelMapper.map(apartment.get(), Apartment.class));
+
+            this.residentRepository.saveAndFlush(resident);
         }
-
-        Resident resident = this.modelMapper.map(residentServiceModel, Resident.class);
-        resident.setAddedOn(LocalDate.now());
-        resident.setUserRole(UserRole.RESIDENT);
-
-        resident.setApartment(this.modelMapper.map(apartment.get(), Apartment.class));
-
-        this.residentRepository.saveAndFlush(resident);
 
         return this.modelMapper.map(resident, ResidentServiceModel.class);
     }
@@ -76,16 +73,10 @@ public class ResidentServiceImpl implements ResidentService {
         Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
         Optional<ApartmentServiceModel> apartment = this.apartmentService.getById(apartmentId);
         Resident resident = this.residentRepository.findById(residentServiceModel.getId()).orElse(null);
-        Optional<Resident> anotherResident = this.residentRepository.findByEmail(residentServiceModel.getEmail());
 
-        if (anotherResident.isPresent() && !anotherResident.get().getId().equals(residentServiceModel.getId())) {
-            throw new UnprocessableEntityException(
-                    String.format("Email '%s' is already used by another resident.",
-                            residentServiceModel.getEmail()));
-        }
-
-        if (resident != null && this.existAndRelated(building, apartment, resident)) {
-
+        if (resident != null
+                && this.existAndRelated(building, apartment, resident)
+                && this.isUniqueEmail(residentServiceModel.getEmail())) {
 
             resident.setFirstName(residentServiceModel.getFirstName());
             resident.setLastName(residentServiceModel.getLastName());
@@ -142,8 +133,7 @@ public class ResidentServiceImpl implements ResidentService {
     }
 
     private boolean existAndRelated(Optional<BuildingServiceModel> building,
-                                    Optional<ApartmentServiceModel> apartment,
-                                    Resident resident) {
+                                    Optional<ApartmentServiceModel> apartment) {
         if (building.isEmpty()) {
             throw new BuildingNotFoundException("Building not found!");
         }
@@ -152,8 +142,28 @@ public class ResidentServiceImpl implements ResidentService {
             throw new ApartmentNotFoundException("Apartment not found!");
         }
 
-        if (!resident.getApartment().getId().equals(apartment.get().getId())) {
-            throw new ResidentNotFoundException("Resident not found!");
+        return true;
+    }
+
+    private boolean existAndRelated(Optional<BuildingServiceModel> building,
+                                    Optional<ApartmentServiceModel> apartment,
+                                    Resident resident) {
+
+        if (apartment.isPresent() && this.existAndRelated(building, apartment)) {
+            if (!resident.getApartment().getId().equals(apartment.get().getId())) {
+                throw new ResidentNotFoundException("Resident not found!");
+            }
+        }
+
+        return true;
+    }
+
+    private boolean isUniqueEmail(String email) {
+        Optional<Resident> anotherResident = this.residentRepository.findByEmail(email);
+
+        if (anotherResident.isPresent() && !anotherResident.get().getId().equals(email)) {
+            throw new UnprocessableEntityException(
+                    String.format("Email '%s' is already used by another resident.", email));
         }
 
         return true;

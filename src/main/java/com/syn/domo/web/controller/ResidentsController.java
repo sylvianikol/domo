@@ -125,7 +125,7 @@ public class ResidentsController implements ResidentsNamespace {
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder
                         .path(URI_RESIDENTS)
-                        .buildAndExpand(buildingId)
+                        .buildAndExpand(buildingId, apartmentId)
                         .toUri())
                 .build();
     }

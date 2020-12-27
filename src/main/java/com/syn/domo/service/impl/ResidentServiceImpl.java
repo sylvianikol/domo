@@ -73,45 +73,60 @@ public class ResidentServiceImpl implements ResidentService {
     public ResidentServiceModel edit(ResidentServiceModel residentServiceModel, String buildingId, String apartmentId) {
         // TODO: validation
 
-        if (this.buildingService.getById(buildingId).isEmpty()) {
-            throw new BuildingNotFoundException("Building not found!");
-        }
-
+        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
         Optional<ApartmentServiceModel> apartment = this.apartmentService.getById(apartmentId);
-        if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(buildingId)) {
-            throw new ApartmentNotFoundException("Apartment not found!");
+        Resident resident = this.residentRepository.findById(residentServiceModel.getId()).orElse(null);
+        Optional<Resident> anotherResident = this.residentRepository.findByEmail(residentServiceModel.getEmail());
+
+        if (anotherResident.isPresent() && !anotherResident.get().getId().equals(residentServiceModel.getId())) {
+            throw new UnprocessableEntityException(
+                    String.format("Email '%s' is already used by another resident.",
+                            residentServiceModel.getEmail()));
         }
 
-        Resident resident = this.residentRepository.findById(residentServiceModel.getId()).orElse(null);
-        if (resident == null || !resident.getApartment().getId().equals(apartmentId)) {
+        if (resident != null && this.existAndRelated(building, apartment, resident)) {
+
+
+            resident.setFirstName(residentServiceModel.getFirstName());
+            resident.setLastName(residentServiceModel.getLastName());
+            resident.setEmail(residentServiceModel.getEmail());
+            resident.setPhoneNumber(residentServiceModel.getPhoneNumber());
+            resident.setAddedOn(residentServiceModel.getAddedOn());
+            resident.setUserRole(UserRole.valueOf(residentServiceModel.getUserRole()));
+
+            this.residentRepository.saveAndFlush(resident);
+        } else {
             throw new ResidentNotFoundException("Resident not found!");
         }
 
-        Optional<Resident> existingResident = this.residentRepository.findByEmail(residentServiceModel.getEmail());
-        if (existingResident.isPresent() && !existingResident.get().getId().equals(residentServiceModel.getId())) {
-            throw new UnprocessableEntityException(
-                    String.format("Email '%s' is already used by another resident.", residentServiceModel.getEmail()));
-        }
-
-        resident.setFirstName(residentServiceModel.getFirstName());
-        resident.setLastName(residentServiceModel.getLastName());
-        resident.setEmail(residentServiceModel.getEmail());
-        resident.setPhoneNumber(residentServiceModel.getPhoneNumber());
-        resident.setAddedOn(residentServiceModel.getAddedOn());
-        resident.setUserRole(UserRole.valueOf(residentServiceModel.getUserRole()));
-
-        this.residentRepository.saveAndFlush(resident);
-
         return this.modelMapper.map(resident, ResidentServiceModel.class);
+    }
+
+    @Override
+    public void delete(String residentId, String buildingId, String apartmentId) {
+        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
+        Optional<ApartmentServiceModel> apartment = this.apartmentService.getById(apartmentId);
+        Resident resident = this.residentRepository.findById(residentId).orElse(null);
+
+        if (resident != null && this.existAndRelated(building, apartment, resident)) {
+            this.residentRepository.delete(resident);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteAllByApartmentId(String apartmentId) {
+        Set<Resident> residents = this.residentRepository.findAllByApartment_Id(apartmentId);
+        this.residentRepository.deleteAll(residents);
     }
 
     @Override
     public Set<ResidentServiceModel> getAllByApartmentId(String apartmentId) {
         Set<ResidentServiceModel> residentServiceModels =
                 this.residentRepository.findAllByApartment_Id(apartmentId)
-                .stream()
-                .map(resident -> this.modelMapper.map(resident, ResidentServiceModel.class))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+                        .stream()
+                        .map(resident -> this.modelMapper.map(resident, ResidentServiceModel.class))
+                        .collect(Collectors.toCollection(LinkedHashSet::new));
 
         return Collections.unmodifiableSet(residentServiceModels);
     }
@@ -126,15 +141,21 @@ public class ResidentServiceImpl implements ResidentService {
                 : Optional.of(this.modelMapper.map(resident.get(), ResidentServiceModel.class));
     }
 
-    @Override
-    @Transactional
-    public void deleteAllByApartmentId(String apartmentId) {
-        Set<Resident> residents = this.residentRepository.findAllByApartment_Id(apartmentId);
-        this.residentRepository.deleteAll(residents);
-    }
+    private boolean existAndRelated(Optional<BuildingServiceModel> building,
+                                    Optional<ApartmentServiceModel> apartment,
+                                    Resident resident) {
+        if (building.isEmpty()) {
+            throw new BuildingNotFoundException("Building not found!");
+        }
 
-    @Override
-    public void delete(String residentId, String buildingId, String apartmentId) {
+        if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
+            throw new ApartmentNotFoundException("Apartment not found!");
+        }
 
+        if (!resident.getApartment().getId().equals(apartment.get().getId())) {
+            throw new ResidentNotFoundException("Resident not found!");
+        }
+
+        return true;
     }
 }

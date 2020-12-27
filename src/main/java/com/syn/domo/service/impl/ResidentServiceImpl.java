@@ -132,4 +132,9 @@ public class ResidentServiceImpl implements ResidentService {
         Set<Resident> residents = this.residentRepository.findAllByApartment_Id(apartmentId);
         this.residentRepository.deleteAll(residents);
     }
+
+    @Override
+    public void delete(String residentId, String buildingId, String apartmentId) {
+
+    }
 }

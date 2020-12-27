@@ -16,4 +16,6 @@ public interface ResidentService {
     Optional<ResidentServiceModel> getById(String residentId);
 
     void deleteAllByApartmentId(String apartmentId);
+
+    void delete(String residentId, String buildingId, String apartmentId);
 }

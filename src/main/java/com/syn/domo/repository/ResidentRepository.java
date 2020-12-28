@@ -19,5 +19,9 @@ public interface ResidentRepository extends JpaRepository<Resident, String> {
             (@Param(value = "buildingId") String buildingId,
              @Param(value = "apartmentId") String apartmentId);
 
+    Set<Resident> findAllByIdIn(Set<String> ids);
+
     Optional<Resident> findByEmail(String email);
+
+    Optional<Resident> findByFirstNameAndLastName(String firstName, String lastName);
 }

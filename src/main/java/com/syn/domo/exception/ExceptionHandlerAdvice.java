@@ -10,8 +10,8 @@ public class ExceptionHandlerAdvice {
 
     // TODO: log exceptions
 
-    @ExceptionHandler(BuildingExistsException.class)
-    public ResponseEntity<?> handleBuildingExistsException(BuildingExistsException ex) {
+    @ExceptionHandler(BuildingAlreadyExistsException.class)
+    public ResponseEntity<?> handleBuildingExistsException(BuildingAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(ex.getMessage());
     }
@@ -37,6 +37,18 @@ public class ExceptionHandlerAdvice {
     @ExceptionHandler(ResidentNotFoundException.class)
     public ResponseEntity<?> handleResidentNotFoundException(ResidentNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<?> handleResidentAlreadyExistsException(EmailAlreadyExistsException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(ChildAlreadyExists.class)
+    public ResponseEntity<?> handleChildAlreadyExists(ChildAlreadyExists ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(ex.getMessage());
     }
 

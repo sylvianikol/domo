@@ -42,7 +42,7 @@ public class BuildingServiceImpl implements BuildingService {
                 buildingServiceModel.getNeighbourhood().trim());
 
         if (duplicate.isPresent()) {
-            throw new BuildingExistsException(String.format(
+            throw new BuildingAlreadyExistsException(String.format(
                     "Building with name \"%s\" already exists in \"%s\"!",
                     buildingServiceModel.getName(), buildingServiceModel.getNeighbourhood()));
         }
@@ -110,7 +110,7 @@ public class BuildingServiceImpl implements BuildingService {
 
         if (duplicate.isPresent()
                 && !duplicate.get().getId().equals(buildingId)) {
-            throw new BuildingExistsException(
+            throw new BuildingAlreadyExistsException(
                     String.format("Building with name \"%s\" already exists in \"%s\"!",
                             buildingServiceModel.getName(), buildingServiceModel.getNeighbourhood())
                     );

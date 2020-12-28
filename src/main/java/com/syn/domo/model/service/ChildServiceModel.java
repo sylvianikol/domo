@@ -1,17 +1,19 @@
 package com.syn.domo.model.service;
 
+import java.util.Set;
+
 public class ChildServiceModel extends BaseUserEntityServiceModel {
 
-    private ApartmentServiceModel apartment;
+    private Set<ResidentServiceModel> parents;
 
     public ChildServiceModel() {
     }
 
-    public ApartmentServiceModel getApartment() {
-        return apartment;
+    public Set<ResidentServiceModel> getParents() {
+        return parents;
     }
 
-    public void setApartment(ApartmentServiceModel apartment) {
-        this.apartment = apartment;
+    public void setParents(Set<ResidentServiceModel> parents) {
+        this.parents = parents;
     }
 }

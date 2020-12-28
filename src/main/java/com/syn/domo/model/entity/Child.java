@@ -22,7 +22,7 @@ public class Child extends BaseUserEntity {
         this.apartment = apartment;
     }
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.REFRESH })
     @JoinTable(name = "children_parents",
             joinColumns = @JoinColumn(name = "child_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "parent_id", referencedColumnName = "id"))

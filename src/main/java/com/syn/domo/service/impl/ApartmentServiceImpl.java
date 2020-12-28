@@ -120,7 +120,7 @@ public class ApartmentServiceImpl implements ApartmentService {
             throw new ApartmentNotFoundException("Apartment not found!");
         }
 
-        this.residentService.deleteAllByApartmentId(apartment.getId());
+        this.residentService.deleteAllByApartmentId(buildingId, apartment.getId());
         this.apartmentRepository.delete(apartment);
     }
 
@@ -131,7 +131,7 @@ public class ApartmentServiceImpl implements ApartmentService {
                 this.apartmentRepository.findAllByBuilding_IdOrderByNumber(buildingId);
 
         for (Apartment apartment : apartments) {
-            this.residentService.deleteAllByApartmentId(apartment.getId());
+            this.residentService.deleteAllByApartmentId(buildingId, apartment.getId());
         }
 
         this.apartmentRepository.deleteAll(apartments);

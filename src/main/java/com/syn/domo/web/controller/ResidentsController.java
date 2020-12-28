@@ -13,20 +13,14 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static com.syn.domo.web.controller.namespace.ResidentsNamespace.URI_RESIDENTS;
 
 @RestController
 public class ResidentsController implements ResidentsNamespace {
@@ -46,8 +40,9 @@ public class ResidentsController implements ResidentsNamespace {
     @GetMapping
     public ResponseEntity<Set<ResidentViewModel>> all(@PathVariable(value = "buildingId") String buildingId,
                                                       @PathVariable(value = "apartmentId") String apartmentId) {
-        Set<ResidentViewModel> residents =
-                this.residentService.getAllByApartmentId(apartmentId).stream()
+        Set<ResidentViewModel> residents = this.residentService
+                        .getAllByApartmentIdAndBuildingId(buildingId, apartmentId)
+                .stream()
                 .map(r -> this.modelMapper.map(r, ResidentViewModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 

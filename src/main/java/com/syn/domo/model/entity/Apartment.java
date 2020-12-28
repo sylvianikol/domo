@@ -20,7 +20,7 @@ public class Apartment extends BaseEntity {
     public Apartment() {
     }
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     public String getNumber() {
         return number;
     }

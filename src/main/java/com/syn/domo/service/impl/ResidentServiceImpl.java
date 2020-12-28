@@ -106,15 +106,17 @@ public class ResidentServiceImpl implements ResidentService {
 
     @Override
     @Transactional
-    public void deleteAllByApartmentId(String apartmentId) {
-        Set<Resident> residents = this.residentRepository.findAllByApartment_Id(apartmentId);
+    public void deleteAllByApartmentId(String buildingId, String apartmentId) {
+        Set<Resident> residents = this.residentRepository
+                .getAllByApartmentIdAndBuildingId(buildingId, apartmentId);
         this.residentRepository.deleteAll(residents);
     }
 
     @Override
-    public Set<ResidentServiceModel> getAllByApartmentId(String apartmentId) {
+    public Set<ResidentServiceModel> getAllByApartmentIdAndBuildingId(String buildingId, String apartmentId) {
         Set<ResidentServiceModel> residentServiceModels =
-                this.residentRepository.findAllByApartment_Id(apartmentId)
+                this.residentRepository
+                        .getAllByApartmentIdAndBuildingId(buildingId, apartmentId)
                         .stream()
                         .map(resident -> this.modelMapper.map(resident, ResidentServiceModel.class))
                         .collect(Collectors.toCollection(LinkedHashSet::new));

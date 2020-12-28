@@ -1,14 +1,14 @@
 package com.syn.domo.model.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "children")
 public class Child extends BaseUserEntity {
 
     private Apartment apartment;
+    Set<Resident> parents;
 
     public Child() {
     }
@@ -22,4 +22,15 @@ public class Child extends BaseUserEntity {
         this.apartment = apartment;
     }
 
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "children_parents",
+            joinColumns = @JoinColumn(name = "child_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "parent_id", referencedColumnName = "id"))
+    public Set<Resident> getParents() {
+        return parents;
+    }
+
+    public void setParents(Set<Resident> parents) {
+        this.parents = parents;
+    }
 }

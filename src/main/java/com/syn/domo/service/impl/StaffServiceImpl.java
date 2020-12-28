@@ -31,8 +31,11 @@ public class StaffServiceImpl implements StaffService {
     public void initStaff() {
         if (this.staffRepository.count() == 0) {
             Staff admin = new Staff();
+            admin.setFirstName("Admin");
+            admin.setLastName("Admin");
             admin.setEmail("admin@domo.bg");
             admin.setPassword("123");
+            admin.setPhoneNumber("0888147384573");
             admin.setAddedOn(LocalDate.now());
             admin.setUserRole(UserRole.ADMIN);
 

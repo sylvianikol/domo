@@ -52,6 +52,19 @@ public class ChildrenController implements ChildrenNamespace {
                 : ResponseEntity.ok(children);
     }
 
+    @GetMapping("/{childId}")
+    public ResponseEntity<ChildViewModel> one(@PathVariable(value = "buildingId") String buildingId,
+                                              @PathVariable(value = "apartmentId") String apartmentId,
+                                              @PathVariable(value = "childId") String childId) {
+
+        return this.childService.getById(childId)
+                .filter(c -> c.getApartment().getId().equals(apartmentId)
+                        && c.getApartment().getBuilding().getId().equals(buildingId))
+                .map(c -> ResponseEntity.ok()
+                        .body(this.modelMapper.map(c, ChildViewModel.class)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @PostMapping
     public ResponseEntity<?> add(@PathVariable(value = "buildingId") String buildingId,
                                  @PathVariable(value = "apartmentId") String apartmentId,

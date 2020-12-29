@@ -167,9 +167,7 @@ public class ResidentServiceImpl implements ResidentService {
 
     @Override
     public Optional<ResidentServiceModel> getById(String residentId) {
-
         Optional<Resident> resident = this.residentRepository.findById(residentId);
-
         return resident.isEmpty()
                 ? Optional.empty()
                 : Optional.of(this.modelMapper.map(resident.get(), ResidentServiceModel.class));

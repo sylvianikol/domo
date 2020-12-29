@@ -1,6 +1,7 @@
 package com.syn.domo.model.view;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Set;
 
 public class ApartmentViewModel {
@@ -12,6 +13,7 @@ public class ApartmentViewModel {
     private LocalDate addedOn;
 
     Set<ResidentViewModel> residents;
+    Set<ChildViewModel> children;
 
     public ApartmentViewModel() {
     }
@@ -62,5 +64,30 @@ public class ApartmentViewModel {
 
     public void setResidents(Set<ResidentViewModel> residents) {
         this.residents = residents;
+    }
+
+    public Set<ChildViewModel> getChildren() {
+        return children;
+    }
+
+    public void setChildren(Set<ChildViewModel> children) {
+        this.children = children;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ApartmentViewModel)) return false;
+        ApartmentViewModel that = (ApartmentViewModel) o;
+        return floor == that.floor &&
+                pets == that.pets &&
+                Objects.equals(id, that.id) &&
+                Objects.equals(number, that.number) &&
+                Objects.equals(addedOn, that.addedOn);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, number, floor, pets, addedOn);
     }
 }

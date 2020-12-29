@@ -1,6 +1,7 @@
 package com.syn.domo.model.service;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public abstract class BaseUserEntityServiceModel extends BaseServiceModel {
 
@@ -33,5 +34,21 @@ public abstract class BaseUserEntityServiceModel extends BaseServiceModel {
 
     public void setAddedOn(LocalDate addedOn) {
         this.addedOn = addedOn;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BaseUserEntityServiceModel)) return false;
+        if (!super.equals(o)) return false;
+        BaseUserEntityServiceModel that = (BaseUserEntityServiceModel) o;
+        return Objects.equals(firstName, that.firstName) &&
+                Objects.equals(lastName, that.lastName) &&
+                Objects.equals(addedOn, that.addedOn);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), firstName, lastName, addedOn);
     }
 }

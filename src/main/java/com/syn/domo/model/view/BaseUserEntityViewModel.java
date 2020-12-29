@@ -1,6 +1,7 @@
 package com.syn.domo.model.view;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public abstract class BaseUserEntityViewModel {
 
@@ -44,4 +45,19 @@ public abstract class BaseUserEntityViewModel {
         this.addedOn = addedOn;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BaseUserEntityViewModel)) return false;
+        BaseUserEntityViewModel that = (BaseUserEntityViewModel) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(firstName, that.firstName) &&
+                Objects.equals(lastName, that.lastName) &&
+                Objects.equals(addedOn, that.addedOn);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, lastName, addedOn);
+    }
 }

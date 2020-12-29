@@ -1,6 +1,7 @@
 package com.syn.domo.model.entity;
 
 import javax.persistence.*;
+import java.util.Objects;
 import java.util.Set;
 
 import static javax.persistence.CascadeType.MERGE;
@@ -36,5 +37,19 @@ public class Child extends BaseUserEntity {
 
     public void setParents(Set<Resident> parents) {
         this.parents = parents;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Child)) return false;
+        if (!super.equals(o)) return false;
+        Child child = (Child) o;
+        return Objects.equals(apartment.getId(), child.apartment.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), apartment);
     }
 }

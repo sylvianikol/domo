@@ -2,6 +2,7 @@ package com.syn.domo.model.entity;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @MappedSuperclass
 public abstract class BaseUserEntity extends BaseEntity {
@@ -40,4 +41,19 @@ public abstract class BaseUserEntity extends BaseEntity {
         this.addedOn = addedOn;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BaseUserEntity)) return false;
+        if (!super.equals(o)) return false;
+        BaseUserEntity that = (BaseUserEntity) o;
+        return Objects.equals(firstName, that.firstName) &&
+                Objects.equals(lastName, that.lastName) &&
+                Objects.equals(addedOn, that.addedOn);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), firstName, lastName, addedOn);
+    }
 }

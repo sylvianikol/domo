@@ -1,5 +1,7 @@
 package com.syn.domo.model.view;
 
+import java.util.Objects;
+
 public abstract class UserEntityViewModel extends BaseUserEntityViewModel {
 
     private String email;
@@ -33,4 +35,19 @@ public abstract class UserEntityViewModel extends BaseUserEntityViewModel {
         this.userRole = userRole;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserEntityViewModel)) return false;
+        if (!super.equals(o)) return false;
+        UserEntityViewModel that = (UserEntityViewModel) o;
+        return Objects.equals(email, that.email) &&
+                Objects.equals(phoneNumber, that.phoneNumber) &&
+                Objects.equals(userRole, that.userRole);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), email, phoneNumber, userRole);
+    }
 }

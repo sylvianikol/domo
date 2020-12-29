@@ -42,15 +42,6 @@ public class ChildServiceImpl implements ChildService {
     }
 
     @Override
-    public Set<ChildServiceModel> getAllByApartmentId(String apartmentId) {
-        Set<ChildServiceModel> childServiceModels = this.childRepository.findAllByApartment_Id(apartmentId).stream()
-                .map(child -> this.modelMapper.map(child, ChildServiceModel.class))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-
-        return Collections.unmodifiableSet(childServiceModels);
-    }
-
-    @Override
     @Transactional
     public ChildServiceModel add(ChildServiceModel childServiceModel, String buildingId, String apartmentId) {
         // TODO: validation
@@ -131,6 +122,46 @@ public class ChildServiceImpl implements ChildService {
         return this.modelMapper.map(child, ChildServiceModel.class);
     }
 
+    @Override
+    public void delete(String childId, String buildingId, String apartmentId) {
+        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
+        if (building.isEmpty()) {
+            throw new BuildingNotFoundException("Building not found!");
+        }
+
+        Optional<ApartmentServiceModel> apartment = this.apartmentService.getById(apartmentId);
+        if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
+            throw new ApartmentNotFoundException("Apartment not found!");
+        }
+
+        Child child = this.childRepository.findById(childId).orElse(null);
+
+        if (child != null && child.getApartment().getId().equals(apartmentId)) {
+            this.childRepository.delete(child);
+        } else {
+            throw new ChildNotFoundException("Child not found!");
+        }
+    }
+
+    @Override
+    public Optional<ChildServiceModel> getById(String childId) {
+        Optional<Child> child = this.childRepository.findById(childId);
+        return child.isEmpty()
+                ? Optional.empty()
+                : Optional.of(this.modelMapper.map(child.get(), ChildServiceModel.class));
+    }
+
+    @Override
+    public Set<ChildServiceModel> getAllByApartmentIdAndBuildingId(String buildingId, String apartmentId) {
+        Set<ChildServiceModel> childServiceModels = this.childRepository
+                .getAllByApartmentIdAndBuildingId(buildingId, apartmentId)
+                .stream()
+                .map(c -> this.modelMapper.map(c, ChildServiceModel.class))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return Collections.unmodifiableSet(childServiceModels);
+    }
+
     private boolean hasSameParents(ChildServiceModel newChild, Child existingChild) {
         int sameParentsCount = 0;
         Set<Resident> existingParents = existingChild.getParents();
@@ -144,14 +175,6 @@ public class ChildServiceImpl implements ChildService {
             }
         }
         return sameParentsCount == existingParents.size() && sameParentsCount == newParents.size();
-    }
-
-    @Override
-    public Optional<ChildServiceModel> getById(String childId) {
-        Optional<Child> child = this.childRepository.findById(childId);
-        return child.isEmpty()
-                ? Optional.empty()
-                : Optional.of(this.modelMapper.map(child.get(), ChildServiceModel.class));
     }
 
 //    @Override

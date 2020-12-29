@@ -73,4 +73,22 @@ public class ApartmentServiceModel extends BaseServiceModel {
     public void setChildren(Set<ChildServiceModel> children) {
         this.children = children;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ApartmentServiceModel)) return false;
+        if (!super.equals(o)) return false;
+        ApartmentServiceModel that = (ApartmentServiceModel) o;
+        return floor == that.floor &&
+                pets == that.pets &&
+                Objects.equals(number, that.number) &&
+                Objects.equals(building.getId(), that.building.getId()) &&
+                Objects.equals(addedOn, that.addedOn);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), number, floor, building, pets, addedOn);
+    }
 }

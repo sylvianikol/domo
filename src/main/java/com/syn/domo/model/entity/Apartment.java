@@ -2,6 +2,7 @@ package com.syn.domo.model.entity;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -83,4 +84,20 @@ public class Apartment extends BaseEntity {
         this.addedOn = addedOn;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Apartment)) return false;
+        Apartment apartment = (Apartment) o;
+        return floor == apartment.floor &&
+                pets == apartment.pets &&
+                Objects.equals(number, apartment.number) &&
+                Objects.equals(building.getId(), apartment.building.getId()) &&
+                Objects.equals(addedOn, apartment.addedOn);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(number, floor, building, pets, addedOn);
+    }
 }

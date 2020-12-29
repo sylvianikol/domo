@@ -4,6 +4,7 @@ import com.syn.domo.model.ErrorResponse;
 import com.syn.domo.model.binding.ChildAddBindingModel;
 import com.syn.domo.model.binding.ChildEditBindingModel;
 import com.syn.domo.model.service.ChildServiceModel;
+import com.syn.domo.model.view.ChildViewModel;
 import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.ChildService;
@@ -17,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 public class ChildrenController implements ChildrenNamespace {
@@ -32,6 +36,20 @@ public class ChildrenController implements ChildrenNamespace {
         this.buildingService = buildingService;
         this.apartmentService = apartmentService;
         this.modelMapper = modelMapper;
+    }
+
+    @GetMapping
+    public ResponseEntity<Set<ChildViewModel>> all(@PathVariable(value = "buildingId") String buildingId,
+                                                   @PathVariable(value = "apartmentId") String apartmentId) {
+        Set<ChildViewModel> children = this.childService
+                .getAllByApartmentIdAndBuildingId(buildingId, apartmentId)
+                .stream()
+                .map(c -> this.modelMapper.map(c, ChildViewModel.class))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return children.isEmpty()
+                ? ResponseEntity.notFound().build()
+                : ResponseEntity.ok(children);
     }
 
     @PostMapping
@@ -74,6 +92,21 @@ public class ChildrenController implements ChildrenNamespace {
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder.path(URI_CHILDREN + "/{childId}")
                         .buildAndExpand(buildingId, apartmentId, childId)
+                        .toUri()).build();
+    }
+
+    @DeleteMapping("/{childId}")
+    public ResponseEntity<?> delete(@PathVariable(value = "buildingId") String buildingId,
+                                    @PathVariable(value = "apartmentId") String apartmentId,
+                                    @PathVariable(value = "childId") String childId,
+                                    UriComponentsBuilder uriComponentsBuilder) {
+
+        this.childService.delete(childId, buildingId, apartmentId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .location(uriComponentsBuilder
+                        .path(URI_CHILDREN)
+                        .buildAndExpand(buildingId, apartmentId)
                         .toUri()).build();
     }
 }

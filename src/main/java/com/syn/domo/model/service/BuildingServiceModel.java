@@ -1,6 +1,7 @@
 package com.syn.domo.model.service;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Set;
 
 public class BuildingServiceModel extends BaseServiceModel {
@@ -62,5 +63,23 @@ public class BuildingServiceModel extends BaseServiceModel {
 
     public void setApartments(Set<ApartmentServiceModel> apartments) {
         this.apartments = apartments;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BuildingServiceModel)) return false;
+        if (!super.equals(o)) return false;
+        BuildingServiceModel that = (BuildingServiceModel) o;
+        return floors == that.floors &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(address, that.address) &&
+                Objects.equals(neighbourhood, that.neighbourhood) &&
+                Objects.equals(addedOn, that.addedOn);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), name, address, neighbourhood, floors, addedOn);
     }
 }

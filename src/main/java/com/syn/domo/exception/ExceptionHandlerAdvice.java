@@ -46,6 +46,12 @@ public class ExceptionHandlerAdvice {
                 .body(ex.getMessage());
     }
 
+    @ExceptionHandler(ChildNotFoundException.class)
+    public ResponseEntity<?> handleChildNotFoundException(ChildNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ex.getMessage());
+    }
+
     @ExceptionHandler(ChildAlreadyExists.class)
     public ResponseEntity<?> handleChildAlreadyExists(ChildAlreadyExists ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)

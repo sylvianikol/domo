@@ -1,9 +1,6 @@
 package com.syn.domo.service.impl;
 
-import com.syn.domo.exception.ApartmentNotFoundException;
-import com.syn.domo.exception.BuildingNotFoundException;
-import com.syn.domo.exception.ChildAlreadyExists;
-import com.syn.domo.exception.UnprocessableEntityException;
+import com.syn.domo.exception.*;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Child;
 import com.syn.domo.model.entity.Resident;
@@ -101,6 +98,35 @@ public class ChildServiceImpl implements ChildService {
         child.setParents(parents);
 
         childRepository.saveAndFlush(child);
+
+        return this.modelMapper.map(child, ChildServiceModel.class);
+    }
+
+    @Override
+    public ChildServiceModel edit(ChildServiceModel childServiceModel, String buildingId, String apartmentId) {
+        // TODO: validation
+
+        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
+        if (building.isEmpty()) {
+            throw new BuildingNotFoundException("Building not found!");
+        }
+
+        Optional<ApartmentServiceModel> apartment = this.apartmentService.getById(apartmentId);
+        if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
+            throw new ApartmentNotFoundException("Apartment not found!");
+        }
+
+        Child child = this.childRepository.findById(childServiceModel.getId()).orElse(null);
+
+        if (child != null && child.getApartment().getId().equals(apartmentId)) {
+            child.setFirstName(childServiceModel.getFirstName());
+            child.setLastName(childServiceModel.getLastName());
+            child.setAddedOn(childServiceModel.getAddedOn());
+
+            this.childRepository.saveAndFlush(child);
+        } else {
+            throw new ChildNotFoundException("Child not found!");
+        }
 
         return this.modelMapper.map(child, ChildServiceModel.class);
     }

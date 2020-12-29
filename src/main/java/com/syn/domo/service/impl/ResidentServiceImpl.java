@@ -95,7 +95,7 @@ public class ResidentServiceImpl implements ResidentService {
 
         Resident resident = this.residentRepository.findById(residentServiceModel.getId()).orElse(null);
 
-        if (resident != null && !resident.getApartment().getId().equals(apartment.get().getId())) {
+        if (resident != null && resident.getApartment().getId().equals(apartment.get().getId())) {
 
             resident.setFirstName(residentServiceModel.getFirstName());
             resident.setLastName(residentServiceModel.getLastName());
@@ -128,7 +128,7 @@ public class ResidentServiceImpl implements ResidentService {
 
         Resident resident = this.residentRepository.findById(residentId).orElse(null);
 
-        if (resident != null && !resident.getApartment().getId().equals(apartment.get().getId())) {
+        if (resident != null && resident.getApartment().getId().equals(apartment.get().getId())) {
             this.residentRepository.delete(resident);
         } else {
             throw new ResidentNotFoundException("Resident not found!");
@@ -176,7 +176,7 @@ public class ResidentServiceImpl implements ResidentService {
     }
 
     private boolean notUniqueEmail(String email, String residentId) {
-        Optional<Resident> anotherResident = this.residentRepository.findByEmail(email);
-        return anotherResident.isPresent() && !anotherResident.get().getId().equals(residentId);
+        Optional<Resident> resident = this.residentRepository.findByEmail(email);
+        return resident.isPresent() && !resident.get().getId().equals(residentId);
     }
 }

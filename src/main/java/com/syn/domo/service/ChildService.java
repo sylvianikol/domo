@@ -11,6 +11,8 @@ public interface ChildService {
 
     ChildServiceModel add(ChildServiceModel childServiceModel, String buildingId, String apartmentId);
 
+    ChildServiceModel edit(ChildServiceModel childServiceModel, String buildingId, String apartmentId);
+
     Optional<ChildServiceModel> getById(String childId);
 
 //    void removeAllByApartmentId(String apartmentId);

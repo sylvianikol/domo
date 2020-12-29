@@ -3,6 +3,10 @@ package com.syn.domo.model.entity;
 import javax.persistence.*;
 import java.util.Set;
 
+import static javax.persistence.CascadeType.MERGE;
+import static javax.persistence.CascadeType.REFRESH;
+import static javax.persistence.FetchType.EAGER;
+
 @Entity
 @Table(name = "children")
 public class Child extends BaseUserEntity {
@@ -22,7 +26,7 @@ public class Child extends BaseUserEntity {
         this.apartment = apartment;
     }
 
-    @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.REFRESH })
+    @ManyToMany(cascade = { MERGE, REFRESH }, fetch = EAGER)
     @JoinTable(name = "children_parents",
             joinColumns = @JoinColumn(name = "child_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "parent_id", referencedColumnName = "id"))

@@ -24,16 +24,18 @@ public class ApartmentServiceImpl implements ApartmentService {
     private final ApartmentRepository apartmentRepository;
     private final BuildingService buildingService;
     private final ResidentService residentService;
+    private final ChildService childService;
     private final ModelMapper modelMapper;
 
     @Autowired
     public ApartmentServiceImpl(ApartmentRepository apartmentRepository,
                                 @Lazy BuildingService buildingService,
                                 @Lazy ResidentService residentService,
-                                ModelMapper modelMapper) {
+                                ChildService childService, ModelMapper modelMapper) {
         this.apartmentRepository = apartmentRepository;
         this.buildingService = buildingService;
         this.residentService = residentService;
+        this.childService = childService;
         this.modelMapper = modelMapper;
     }
 
@@ -121,6 +123,7 @@ public class ApartmentServiceImpl implements ApartmentService {
         }
 
         this.residentService.deleteAllByApartmentId(buildingId, apartment.getId());
+        this.childService.deleteAllByApartmentId(buildingId, apartment.getId());
         this.apartmentRepository.delete(apartment);
     }
 

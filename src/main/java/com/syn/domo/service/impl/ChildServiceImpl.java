@@ -177,12 +177,10 @@ public class ChildServiceImpl implements ChildService {
         return sameParentsCount == existingParents.size() && sameParentsCount == newParents.size();
     }
 
-//    @Override
-//    public void removeAllByApartmentId(String apartmentId) {
-//        this.childRepository.findAllByApartment_Id(apartmentId)
-//                .forEach(child -> {
-//                    child.setRemovedOn(LocalDate.now());
-//                    this.childRepository.saveAndFlush(child);
-//                });
-//    }
+    @Override
+    public void deleteAllByApartmentId(String buildingId, String apartmentId) {
+        Set<Child> children = this.childRepository
+                .getAllByApartmentIdAndBuildingId(buildingId, apartmentId);
+        this.childRepository.deleteAll(children);
+    }
 }

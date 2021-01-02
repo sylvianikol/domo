@@ -1,18 +1,22 @@
 package com.syn.domo.model.entity;
 
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.util.Objects;
+import java.util.Set;
 
-@MappedSuperclass
+import static javax.persistence.CascadeType.MERGE;
+import static javax.persistence.CascadeType.REFRESH;
+import static javax.persistence.FetchType.EAGER;
+
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class UserEntity extends BaseUserEntity {
 
     private String password;
     private String email;
     private String phoneNumber;
     private UserRole userRole;
+    private Set<Role> roles;
 
     public UserEntity() {
     }
@@ -51,6 +55,18 @@ public abstract class UserEntity extends BaseUserEntity {
 
     public void setUserRole(UserRole userRole) {
         this.userRole = userRole;
+    }
+
+    @ManyToMany(cascade = { MERGE, REFRESH }, fetch = EAGER)
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     @Override

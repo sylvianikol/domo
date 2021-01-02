@@ -29,8 +29,8 @@ public class Child extends BaseUserEntity {
 
     @ManyToMany(cascade = { MERGE, REFRESH }, fetch = EAGER)
     @JoinTable(name = "children_parents",
-            joinColumns = @JoinColumn(name = "child_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "parent_id", referencedColumnName = "id"))
+            joinColumns = @JoinColumn(name = "child_id"),
+            inverseJoinColumns = @JoinColumn(name = "parent_id"))
     public Set<Resident> getParents() {
         return parents;
     }

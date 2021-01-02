@@ -1,6 +1,6 @@
 package com.syn.domo.model.entity;
 
-public enum InitJobRoles {
+public enum JobPosition {
 
     SUPER,
 }

@@ -8,7 +8,7 @@ public interface JobService {
 
     void initJobRoles();
 
-    JobServiceModel findByJobRole(String jobRole);
+    JobServiceModel findByJobPosition(String jobRole);
 
     List<String> getAllJobRoles();
 }

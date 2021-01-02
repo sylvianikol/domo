@@ -1,6 +1,6 @@
 package com.syn.domo.service.impl;
 
-import com.syn.domo.model.entity.InitJobRoles;
+import com.syn.domo.model.entity.JobPosition;
 import com.syn.domo.model.entity.Job;
 import com.syn.domo.model.service.JobServiceModel;
 import com.syn.domo.repository.JobRepository;
@@ -29,15 +29,15 @@ public class JobServiceImpl implements JobService {
     public void initJobRoles() {
         if (this.jobRepository.count() == 0) {
             Job job = new Job();
-            job.setRole(InitJobRoles.SUPER.toString());
+            job.setPosition(JobPosition.SUPER.toString());
             job.setWage(BigDecimal.valueOf(0));
             this.jobRepository.saveAndFlush(job);
         }
     }
 
     @Override
-    public JobServiceModel findByJobRole(String jobRole) {
-        Job job = this.jobRepository.findByRole(jobRole).orElse(null);
+    public JobServiceModel findByJobPosition(String jobRole) {
+        Job job = this.jobRepository.findByPosition(jobRole).orElse(null);
 
         if (job == null) {
             return null;
@@ -49,7 +49,7 @@ public class JobServiceImpl implements JobService {
     @Override
     public List<String> getAllJobRoles() {
         return this.jobRepository.findAll().stream()
-                .map(Job::getRole)
+                .map(Job::getPosition)
                 .collect(Collectors.toList());
     }
 }

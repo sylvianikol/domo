@@ -1,33 +1,36 @@
 package com.syn.domo.service.impl;
 
-import com.syn.domo.model.entity.InitJobRoles;
-import com.syn.domo.model.entity.Job;
-import com.syn.domo.model.entity.Staff;
-import com.syn.domo.model.entity.UserRole;
+import com.syn.domo.model.entity.*;
 import com.syn.domo.model.service.JobServiceModel;
 import com.syn.domo.repository.StaffRepository;
 import com.syn.domo.service.JobService;
+import com.syn.domo.service.RoleService;
 import com.syn.domo.service.StaffService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Service
 public class StaffServiceImpl implements StaffService {
 
     private final StaffRepository staffRepository;
+    private final RoleService roleService;
     private final JobService jobService;
     private final ModelMapper modelMapper;
 
 
-    public StaffServiceImpl(StaffRepository staffRepository, JobService jobService, ModelMapper modelMapper) {
+    public StaffServiceImpl(StaffRepository staffRepository, RoleService roleService, JobService jobService, ModelMapper modelMapper) {
         this.staffRepository = staffRepository;
+        this.roleService = roleService;
         this.jobService = jobService;
         this.modelMapper = modelMapper;
     }
 
     @Override
+    @Transactional
     public void initStaff() {
         if (this.staffRepository.count() == 0) {
             Staff admin = new Staff();
@@ -37,14 +40,18 @@ public class StaffServiceImpl implements StaffService {
             admin.setPassword("123");
             admin.setPhoneNumber("0888147384573");
             admin.setAddedOn(LocalDate.now());
-            admin.setUserRole(UserRole.ADMIN);
+
+            Set<Role> roles = this.roleService.getAll();
+            roles.forEach(role -> role.getUsers().add(admin));
+            admin.setRoles(roles);
 
             JobServiceModel jobServiceModel =
-                     this.jobService.findByJobRole(InitJobRoles.SUPER.toString());
+                     this.jobService.findByJobPosition(JobPosition.SUPER.toString());
 
             if (jobServiceModel != null) {
                 admin.setJob(this.modelMapper.map(jobServiceModel, Job.class));
                 this.staffRepository.saveAndFlush(admin);
+
             }
         }
     }

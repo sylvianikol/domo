@@ -8,18 +8,18 @@ import java.math.BigDecimal;
 @Table(name = "jobs")
 public class Job extends BaseEntity {
 
-    private String role;
+    private String position;
     private BigDecimal wage;
 
     public Job() {
     }
 
-    public String getRole() {
-        return role;
+    public String getPosition() {
+        return position;
     }
 
-    public void setRole(String position) {
-        this.role = position;
+    public void setPosition(String position) {
+        this.position = position;
     }
 
     public BigDecimal getWage() {

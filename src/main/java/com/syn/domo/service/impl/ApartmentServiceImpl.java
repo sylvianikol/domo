@@ -31,7 +31,7 @@ public class ApartmentServiceImpl implements ApartmentService {
     public ApartmentServiceImpl(ApartmentRepository apartmentRepository,
                                 @Lazy BuildingService buildingService,
                                 @Lazy ResidentService residentService,
-                                ChildService childService, ModelMapper modelMapper) {
+                                @Lazy ChildService childService, ModelMapper modelMapper) {
         this.apartmentRepository = apartmentRepository;
         this.buildingService = buildingService;
         this.residentService = residentService;

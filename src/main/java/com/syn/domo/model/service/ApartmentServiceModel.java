@@ -12,7 +12,7 @@ public class ApartmentServiceModel extends BaseServiceModel {
     private int pets;
     private LocalDate addedOn;
 
-    private Set<ResidentServiceModel> residents;
+    private Set<UserServiceModel> residents;
     private Set<ChildServiceModel> children;
 
     public ApartmentServiceModel() {
@@ -58,11 +58,11 @@ public class ApartmentServiceModel extends BaseServiceModel {
         this.addedOn = addedOn;
     }
 
-    public Set<ResidentServiceModel> getResidents() {
+    public Set<UserServiceModel> getResidents() {
         return residents;
     }
 
-    public void setResidents(Set<ResidentServiceModel> residents) {
+    public void setResidents(Set<UserServiceModel> residents) {
         this.residents = residents;
     }
 
@@ -83,7 +83,7 @@ public class ApartmentServiceModel extends BaseServiceModel {
         return floor == that.floor &&
                 pets == that.pets &&
                 Objects.equals(number, that.number) &&
-                Objects.equals(building.getId(), that.building.getId()) &&
+                Objects.equals(building, that.building) &&
                 Objects.equals(addedOn, that.addedOn);
     }
 

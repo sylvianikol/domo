@@ -2,18 +2,18 @@ package com.syn.domo.model.binding;
 
 import java.util.Set;
 
-public class ChildAddBindingModel extends BaseUserEntityBindingModel {
+public class ChildAddBindingModel extends BaseUserBindingModel {
 
-    private Set<ParentBindingModel> parents;
+    private Set<UserBindingModel> parents;
 
     public ChildAddBindingModel() {
     }
 
-    public Set<ParentBindingModel>  getParents() {
+    public Set<UserBindingModel>  getParents() {
         return parents;
     }
 
-    public void setParents(Set<ParentBindingModel>  parents) {
+    public void setParents(Set<UserBindingModel>  parents) {
         this.parents = parents;
     }
 }

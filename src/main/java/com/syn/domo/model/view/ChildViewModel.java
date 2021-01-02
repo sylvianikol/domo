@@ -3,10 +3,10 @@ package com.syn.domo.model.view;
 import java.util.Objects;
 import java.util.Set;
 
-public class ChildViewModel extends BaseUserEntityViewModel {
+public class ChildViewModel extends BaseUserViewModel {
 
     private String apartmentNumber;
-    private Set<ParentViewModel> parents;
+    private Set<UserViewModel> parents;
 
     public ChildViewModel() {
     }
@@ -19,11 +19,11 @@ public class ChildViewModel extends BaseUserEntityViewModel {
         this.apartmentNumber = apartmentNumber;
     }
 
-    public Set<ParentViewModel> getParents() {
+    public Set<UserViewModel> getParents() {
         return parents;
     }
 
-    public void setParents(Set<ParentViewModel> parents) {
+    public void setParents(Set<UserViewModel> parents) {
         this.parents = parents;
     }
 

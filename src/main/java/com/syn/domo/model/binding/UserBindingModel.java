@@ -2,17 +2,21 @@ package com.syn.domo.model.binding;
 
 import javax.validation.constraints.*;
 
+import java.time.LocalDate;
+
 import static com.syn.domo.common.RegexPatterns.PHONE_NUMBER_REGEX;
 import static com.syn.domo.common.ValidationErrorMessages.*;
 import static com.syn.domo.common.ValidationErrorMessages.EMAIL_INVALID;
 
-public abstract class UserEntityBindingModel extends BaseUserEntityBindingModel {
+public class UserBindingModel extends BaseUserBindingModel {
 
 //    private String password;
     private String email;
     private String phoneNumber;
+    private String userRole;
+    private LocalDate addedOn;
 
-    public UserEntityBindingModel() {
+    public UserBindingModel() {
     }
 
 //    @NotNull(message = PASSWORD_NULL)

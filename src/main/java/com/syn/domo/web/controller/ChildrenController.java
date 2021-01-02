@@ -26,15 +26,11 @@ import java.util.stream.Collectors;
 public class ChildrenController implements ChildrenNamespace {
 
     private final ChildService childService;
-    private final BuildingService buildingService;
-    private final ApartmentService apartmentService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ChildrenController(ChildService childService, BuildingService buildingService, ApartmentService apartmentService, ModelMapper modelMapper) {
+    public ChildrenController(ChildService childService, ModelMapper modelMapper) {
         this.childService = childService;
-        this.buildingService = buildingService;
-        this.apartmentService = apartmentService;
         this.modelMapper = modelMapper;
     }
 

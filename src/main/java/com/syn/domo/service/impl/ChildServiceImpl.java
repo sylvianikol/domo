@@ -3,18 +3,14 @@ package com.syn.domo.service.impl;
 import com.syn.domo.exception.*;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Child;
-import com.syn.domo.model.entity.Resident;
+import com.syn.domo.model.entity.UserEntity;
 import com.syn.domo.model.service.*;
 import com.syn.domo.repository.ChildRepository;
-import com.syn.domo.service.ApartmentService;
-import com.syn.domo.service.BuildingService;
-import com.syn.domo.service.ChildService;
-import com.syn.domo.service.ResidentService;
+import com.syn.domo.service.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Collections;
@@ -29,15 +25,19 @@ public class ChildServiceImpl implements ChildService {
     private final ChildRepository childRepository;
     private final BuildingService buildingService;
     private final ApartmentService apartmentService;
-    private final ResidentService residentService;
+    private final UserService userService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ChildServiceImpl(ChildRepository childRepository, BuildingService buildingService, ApartmentService apartmentService, ResidentService residentService, ModelMapper modelMapper) {
+    public ChildServiceImpl(ChildRepository childRepository,
+                            BuildingService buildingService,
+                            ApartmentService apartmentService,
+                            UserService userService,
+                            ModelMapper modelMapper) {
         this.childRepository = childRepository;
         this.buildingService = buildingService;
         this.apartmentService = apartmentService;
-        this.residentService = residentService;
+        this.userService = userService;
         this.modelMapper = modelMapper;
     }
 
@@ -56,9 +56,9 @@ public class ChildServiceImpl implements ChildService {
             throw new ApartmentNotFoundException("Apartment not found!");
         }
 
-        Set<ResidentServiceModel> parentServiceModels =
-                this.residentService.getAllById(childServiceModel.getParents().stream()
-                        .map(ResidentServiceModel::getId)
+        Set<UserServiceModel> parentServiceModels =
+                this.userService.getAllById(childServiceModel.getParents().stream()
+                        .map(UserServiceModel::getId)
                         .collect(Collectors.toSet()));
 
         if (parentServiceModels.isEmpty()) {
@@ -80,8 +80,8 @@ public class ChildServiceImpl implements ChildService {
         child.setAddedOn(LocalDate.now());
         child.setApartment(this.modelMapper.map(apartment.get(), Apartment.class));
 
-        Set<Resident> parents = parentServiceModels.stream()
-                .map(p -> this.modelMapper.map(p, Resident.class))
+        Set<UserEntity> parents = parentServiceModels.stream()
+                .map(p -> this.modelMapper.map(p, UserEntity.class))
                 .collect(Collectors.toSet());
 
         parents.forEach(parent -> parent.getChildren().add(child));
@@ -164,11 +164,11 @@ public class ChildServiceImpl implements ChildService {
 
     private boolean hasSameParents(ChildServiceModel newChild, Child existingChild) {
         int sameParentsCount = 0;
-        Set<Resident> existingParents = existingChild.getParents();
-        Set<ResidentServiceModel> newParents = newChild.getParents();
+        Set<UserEntity> existingParents = existingChild.getParents();
+        Set<UserServiceModel> newParents = newChild.getParents();
 
-        for (Resident parent : existingParents) {
-            for (ResidentServiceModel newChildParent : newParents) {
+        for (UserEntity parent : existingParents) {
+            for (UserServiceModel newChildParent : newParents) {
                 if (parent.getId().equals(newChildParent.getId())) {
                     ++sameParentsCount;
                 }

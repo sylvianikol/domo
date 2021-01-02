@@ -3,13 +3,13 @@ package com.syn.domo.model.service;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public abstract class BaseUserEntityServiceModel extends BaseServiceModel {
+public abstract class BaseUserServiceModel extends BaseServiceModel {
 
     private String firstName;
     private String lastName;
     private LocalDate addedOn;
 
-    public BaseUserEntityServiceModel() {
+    public BaseUserServiceModel() {
     }
 
     public String getFirstName() {
@@ -39,9 +39,9 @@ public abstract class BaseUserEntityServiceModel extends BaseServiceModel {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof BaseUserEntityServiceModel)) return false;
+        if (!(o instanceof BaseUserServiceModel)) return false;
         if (!super.equals(o)) return false;
-        BaseUserEntityServiceModel that = (BaseUserEntityServiceModel) o;
+        BaseUserServiceModel that = (BaseUserServiceModel) o;
         return Objects.equals(firstName, that.firstName) &&
                 Objects.equals(lastName, that.lastName) &&
                 Objects.equals(addedOn, that.addedOn);

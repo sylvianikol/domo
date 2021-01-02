@@ -9,16 +9,26 @@ import static javax.persistence.CascadeType.REFRESH;
 import static javax.persistence.FetchType.EAGER;
 
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class UserEntity extends BaseUserEntity {
+//@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Table(name = "users")
+public class UserEntity extends BaseUserEntity {
 
-    private String password;
     private String email;
+    private String password;
     private String phoneNumber;
-    private UserRole userRole;
     private Set<Role> roles;
+    private Apartment apartment;
+    Set<Child> children;
 
     public UserEntity() {
+    }
+    @Column(unique = true, nullable = false)
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Column
@@ -30,15 +40,6 @@ public abstract class UserEntity extends BaseUserEntity {
         this.password = password;
     }
 
-    @Column(unique = true, nullable = false)
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     @Column(name = "phone_number", nullable = false, length = 20)
     public String getPhoneNumber() {
         return phoneNumber;
@@ -46,15 +47,6 @@ public abstract class UserEntity extends BaseUserEntity {
 
     public void setPhoneNumber(String personalNumber) {
         this.phoneNumber = personalNumber;
-    }
-
-    @Enumerated(EnumType.STRING)
-    public UserRole getUserRole() {
-        return userRole;
-    }
-
-    public void setUserRole(UserRole userRole) {
-        this.userRole = userRole;
     }
 
     @ManyToMany(cascade = { MERGE, REFRESH }, fetch = EAGER)
@@ -69,20 +61,39 @@ public abstract class UserEntity extends BaseUserEntity {
         this.roles = roles;
     }
 
+    @ManyToOne
+    public Apartment getApartment() {
+        return apartment;
+    }
+
+    public void setApartment(Apartment apartment) {
+        this.apartment = apartment;
+    }
+
+    @ManyToMany(mappedBy = "parents", fetch = FetchType.EAGER)
+    public Set<Child> getChildren() {
+        return children;
+    }
+
+    public void setChildren(Set<Child> children) {
+        this.children = children;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof UserEntity)) return false;
         if (!super.equals(o)) return false;
         UserEntity that = (UserEntity) o;
-        return Objects.equals(password, that.password) &&
-                Objects.equals(email, that.email) &&
+        return Objects.equals(email, that.email) &&
+                Objects.equals(password, that.password) &&
                 Objects.equals(phoneNumber, that.phoneNumber) &&
-                userRole == that.userRole;
+                Objects.equals(roles, that.roles) &&
+                Objects.equals(apartment, that.apartment);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), password, email, phoneNumber, userRole);
+        return Objects.hash(super.hashCode(), email, password, phoneNumber, roles, apartment);
     }
 }

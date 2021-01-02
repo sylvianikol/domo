@@ -3,10 +3,10 @@ package com.syn.domo.model.service;
 import java.util.Objects;
 import java.util.Set;
 
-public class ChildServiceModel extends BaseUserEntityServiceModel {
+public class ChildServiceModel extends BaseUserServiceModel {
 
     private ApartmentServiceModel apartment;
-    private Set<ResidentServiceModel> parents;
+    private Set<UserServiceModel> parents;
 
     public ChildServiceModel() {
     }
@@ -19,11 +19,11 @@ public class ChildServiceModel extends BaseUserEntityServiceModel {
         this.apartment = apartment;
     }
 
-    public Set<ResidentServiceModel> getParents() {
+    public Set<UserServiceModel> getParents() {
         return parents;
     }
 
-    public void setParents(Set<ResidentServiceModel> parents) {
+    public void setParents(Set<UserServiceModel> parents) {
         this.parents = parents;
     }
 
@@ -33,7 +33,7 @@ public class ChildServiceModel extends BaseUserEntityServiceModel {
         if (!(o instanceof ChildServiceModel)) return false;
         if (!super.equals(o)) return false;
         ChildServiceModel that = (ChildServiceModel) o;
-        return Objects.equals(apartment.getId(), that.apartment.getId());
+        return Objects.equals(apartment, that.apartment);
     }
 
     @Override

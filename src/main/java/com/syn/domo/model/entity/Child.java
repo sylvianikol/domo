@@ -13,7 +13,7 @@ import static javax.persistence.FetchType.EAGER;
 public class Child extends BaseUserEntity {
 
     private Apartment apartment;
-    Set<Resident> parents;
+    Set<UserEntity> parents;
 
     public Child() {
     }
@@ -31,11 +31,11 @@ public class Child extends BaseUserEntity {
     @JoinTable(name = "children_parents",
             joinColumns = @JoinColumn(name = "child_id"),
             inverseJoinColumns = @JoinColumn(name = "parent_id"))
-    public Set<Resident> getParents() {
+    public Set<UserEntity> getParents() {
         return parents;
     }
 
-    public void setParents(Set<Resident> parents) {
+    public void setParents(Set<UserEntity> parents) {
         this.parents = parents;
     }
 
@@ -45,7 +45,7 @@ public class Child extends BaseUserEntity {
         if (!(o instanceof Child)) return false;
         if (!super.equals(o)) return false;
         Child child = (Child) o;
-        return Objects.equals(apartment.getId(), child.apartment.getId());
+        return Objects.equals(apartment, child.apartment);
     }
 
     @Override

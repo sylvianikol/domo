@@ -23,18 +23,18 @@ public class ApartmentServiceImpl implements ApartmentService {
 
     private final ApartmentRepository apartmentRepository;
     private final BuildingService buildingService;
-    private final ResidentService residentService;
+    private final UserService userService;
     private final ChildService childService;
     private final ModelMapper modelMapper;
 
     @Autowired
     public ApartmentServiceImpl(ApartmentRepository apartmentRepository,
                                 @Lazy BuildingService buildingService,
-                                @Lazy ResidentService residentService,
+                                @Lazy UserService userService,
                                 @Lazy ChildService childService, ModelMapper modelMapper) {
         this.apartmentRepository = apartmentRepository;
         this.buildingService = buildingService;
-        this.residentService = residentService;
+        this.userService = userService;
         this.childService = childService;
         this.modelMapper = modelMapper;
     }
@@ -122,7 +122,7 @@ public class ApartmentServiceImpl implements ApartmentService {
             throw new ApartmentNotFoundException("Apartment not found!");
         }
 
-        this.residentService.deleteAllByApartmentId(buildingId, apartment.getId());
+        this.userService.deleteAllByApartmentId(buildingId, apartment.getId());
         this.childService.deleteAllByApartmentId(buildingId, apartment.getId());
         this.apartmentRepository.delete(apartment);
     }
@@ -134,7 +134,7 @@ public class ApartmentServiceImpl implements ApartmentService {
                 this.apartmentRepository.findAllByBuilding_IdOrderByNumber(buildingId);
 
         for (Apartment apartment : apartments) {
-            this.residentService.deleteAllByApartmentId(buildingId, apartment.getId());
+            this.userService.deleteAllByApartmentId(buildingId, apartment.getId());
         }
 
         this.apartmentRepository.deleteAll(apartments);

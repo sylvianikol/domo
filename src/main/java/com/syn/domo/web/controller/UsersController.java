@@ -1,14 +1,12 @@
 package com.syn.domo.web.controller;
 
 import com.syn.domo.model.ErrorResponse;
-import com.syn.domo.model.binding.ResidentAddBindingModel;
-import com.syn.domo.model.binding.ResidentEditBindingModel;
-import com.syn.domo.model.service.ResidentServiceModel;
-import com.syn.domo.model.view.ResidentViewModel;
-import com.syn.domo.service.ApartmentService;
-import com.syn.domo.service.BuildingService;
-import com.syn.domo.service.ResidentService;
-import com.syn.domo.web.controller.namespace.ResidentsNamespace;
+import com.syn.domo.model.binding.UserAddBindingModel;
+import com.syn.domo.model.binding.UserEditBindingModel;
+import com.syn.domo.model.service.UserServiceModel;
+import com.syn.domo.model.view.UserViewModel;
+import com.syn.domo.service.UserService;
+import com.syn.domo.web.controller.namespace.UsersNamespace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,51 +21,48 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-public class ResidentsController implements ResidentsNamespace {
-    private final ResidentService residentService;
-    private final ApartmentService apartmentService;
-    private final BuildingService buildingService;
+public class UsersController implements UsersNamespace {
+    private final UserService userService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ResidentsController(ResidentService residentService, ApartmentService apartmentService, BuildingService buildingService, ModelMapper modelMapper) {
-        this.residentService = residentService;
-        this.apartmentService = apartmentService;
-        this.buildingService = buildingService;
+    public UsersController(UserService userService,
+                           ModelMapper modelMapper) {
+        this.userService = userService;
         this.modelMapper = modelMapper;
     }
 
     @GetMapping
-    public ResponseEntity<Set<ResidentViewModel>> all(@PathVariable(value = "buildingId") String buildingId,
-                                                      @PathVariable(value = "apartmentId") String apartmentId) {
-        Set<ResidentViewModel> residents = this.residentService
+    public ResponseEntity<Set<UserViewModel>> all(@PathVariable(value = "buildingId") String buildingId,
+                                                  @PathVariable(value = "apartmentId") String apartmentId) {
+        Set<UserViewModel> users = this.userService
                         .getAllByApartmentIdAndBuildingId(buildingId, apartmentId)
                 .stream()
-                .map(r -> this.modelMapper.map(r, ResidentViewModel.class))
+                .map(r -> this.modelMapper.map(r, UserViewModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
-        return residents.isEmpty()
+        return users.isEmpty()
                 ? ResponseEntity.notFound().build()
-                : ResponseEntity.ok(residents);
+                : ResponseEntity.ok(users);
     }
 
-    @GetMapping("/{residentId}")
-    public ResponseEntity<ResidentViewModel> one(@PathVariable(value = "buildingId") String buildingId,
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserViewModel> one(@PathVariable(value = "buildingId") String buildingId,
                                                  @PathVariable(value = "apartmentId") String apartmentId,
-                                                 @PathVariable(value = "residentId") String residentId) {
+                                                 @PathVariable(value = "userId") String userId) {
 
-        return this.residentService.getById(residentId)
+        return this.userService.getById(userId)
                 .filter(r -> r.getApartment().getId().equals(apartmentId)
                         && r.getApartment().getBuilding().getId().equals(buildingId))
-                .map(r -> ResponseEntity.ok()
-                        .body(this.modelMapper.map(r, ResidentViewModel.class)))
+                .map(u -> ResponseEntity.ok()
+                        .body(this.modelMapper.map(u, UserViewModel.class)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
     public ResponseEntity<?> add(@PathVariable(value = "buildingId") String buildingId,
                                  @PathVariable(value = "apartmentId") String apartmentId,
-                                 @Valid @RequestBody ResidentAddBindingModel residentAddBindingModel,
+                                 @Valid @RequestBody UserAddBindingModel userAddBindingModel,
                                  BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
 
         if (bindingResult.hasErrors()) {
@@ -76,21 +71,21 @@ public class ResidentsController implements ResidentsNamespace {
                             bindingResult.getAllErrors()));
         }
 
-        String residentId = this.residentService.add(
-                this.modelMapper.map(residentAddBindingModel, ResidentServiceModel.class),
+        String userId = this.userService.add(
+                this.modelMapper.map(userAddBindingModel, UserServiceModel.class),
                 buildingId, apartmentId).getId();
 
         return ResponseEntity.created(uriComponentsBuilder
-                .path(URI_RESIDENTS + "/{residentId}")
-                .buildAndExpand(buildingId, apartmentId, residentId)
+                .path(URI_USERS + "/{userId}")
+                .buildAndExpand(buildingId, apartmentId, userId)
                 .toUri()).build();
     }
 
-    @PutMapping("/{residentId}")
+    @PutMapping("/{userId}")
     public ResponseEntity<?> edit(@PathVariable(value = "buildingId") String buildingId,
                                   @PathVariable(value = "apartmentId") String apartmentId,
-                                  @PathVariable(value = "residentId") String residentId,
-                                  @Valid @RequestBody ResidentEditBindingModel residentEditBindingModel,
+                                  @PathVariable(value = "userId") String userId,
+                                  @Valid @RequestBody UserEditBindingModel userEditBindingModel,
                                   BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
 
         if (bindingResult.hasErrors()) {
@@ -99,27 +94,27 @@ public class ResidentsController implements ResidentsNamespace {
                             bindingResult.getAllErrors()));
         }
 
-        this.residentService.edit(this.modelMapper.map(residentEditBindingModel, ResidentServiceModel.class),
+        this.userService.edit(this.modelMapper.map(userEditBindingModel, UserServiceModel.class),
                 buildingId, apartmentId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder
-                        .path(URI_RESIDENTS + "/{residentId}")
-                        .buildAndExpand(buildingId, apartmentId, residentId)
+                        .path(URI_USERS + "/{userId}")
+                        .buildAndExpand(buildingId, apartmentId, userId)
                         .toUri()).build();
     }
 
-    @DeleteMapping("/{residentId}")
+    @DeleteMapping("/{userId}")
     public ResponseEntity<?> delete(@PathVariable(value = "buildingId") String buildingId,
                                     @PathVariable(value = "apartmentId") String apartmentId,
-                                    @PathVariable(value = "residentId") String residentId,
+                                    @PathVariable(value = "userId") String userId,
                                     UriComponentsBuilder uriComponentsBuilder) {
 
-        this.residentService.delete(residentId, buildingId, apartmentId);
+        this.userService.delete(userId, buildingId, apartmentId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder
-                        .path(URI_RESIDENTS)
+                        .path(URI_USERS)
                         .buildAndExpand(buildingId, apartmentId)
                         .toUri())
                 .build();

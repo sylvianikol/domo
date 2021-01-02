@@ -1,7 +1,10 @@
 package com.syn.domo.service;
 
 import com.syn.domo.model.entity.Role;
+import com.syn.domo.model.entity.UserRole;
+import com.syn.domo.model.service.RoleServiceModel;
 
+import java.util.Optional;
 import java.util.Set;
 
 public interface RoleService {
@@ -10,5 +13,5 @@ public interface RoleService {
 
     Set<Role> getAll();
 
-    void saveAll(Set<Role> roles);
+    Optional<RoleServiceModel> getByName(UserRole name);
 }

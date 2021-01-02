@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import static com.syn.domo.common.ValidationErrorMessages.*;
 import static com.syn.domo.common.ValidationErrorMessages.DATE_INVALID;
 
-public class ChildEditBindingModel extends BaseUserEntityBindingModel {
+public class ChildEditBindingModel extends BaseUserBindingModel {
 
     private String id;
     private LocalDate addedOn;

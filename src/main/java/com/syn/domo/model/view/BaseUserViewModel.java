@@ -3,14 +3,14 @@ package com.syn.domo.model.view;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public abstract class BaseUserEntityViewModel {
+public abstract class BaseUserViewModel {
 
     private String id;
     private String firstName;
     private String lastName;
     private LocalDate addedOn;
 
-    public BaseUserEntityViewModel() {
+    public BaseUserViewModel() {
     }
 
     public String getId() {
@@ -48,8 +48,8 @@ public abstract class BaseUserEntityViewModel {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof BaseUserEntityViewModel)) return false;
-        BaseUserEntityViewModel that = (BaseUserEntityViewModel) o;
+        if (!(o instanceof BaseUserViewModel)) return false;
+        BaseUserViewModel that = (BaseUserViewModel) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(firstName, that.firstName) &&
                 Objects.equals(lastName, that.lastName) &&

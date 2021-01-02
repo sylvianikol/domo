@@ -34,8 +34,8 @@ public class ExceptionHandlerAdvice {
                 .body(ex.getMessage());
     }
 
-    @ExceptionHandler(ResidentNotFoundException.class)
-    public ResponseEntity<?> handleResidentNotFoundException(ResidentNotFoundException ex) {
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<?> handleResidentNotFoundException(UserNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ex.getMessage());
     }
@@ -43,6 +43,12 @@ public class ExceptionHandlerAdvice {
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<?> handleResidentAlreadyExistsException(EmailAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(RoleNotFoundException.class)
+    public ResponseEntity<?> handleRoleNotFoundException(RoleNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ex.getMessage());
     }
 

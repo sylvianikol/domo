@@ -15,7 +15,7 @@ public class Apartment extends BaseEntity {
     private int pets;
     private LocalDate addedOn;
 
-    private Set<Resident> residents;
+    private Set<UserEntity> residents;
     private Set<Child> children;
 
     public Apartment() {
@@ -58,11 +58,11 @@ public class Apartment extends BaseEntity {
     }
 
     @OneToMany(mappedBy = "apartment", fetch = FetchType.EAGER)
-    public Set<Resident> getResidents() {
+    public Set<UserEntity> getResidents() {
         return residents;
     }
 
-    public void setResidents(Set<Resident> residents) {
+    public void setResidents(Set<UserEntity> residents) {
         this.residents = residents;
     }
 

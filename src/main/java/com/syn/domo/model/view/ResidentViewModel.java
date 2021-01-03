@@ -4,17 +4,17 @@ import java.util.Set;
 
 public class ResidentViewModel extends UserViewModel {
 
-    private Set<ApartmentViewModel> apartments;
+    private Set<ApartmentsInResidentViewModel> apartments;
     private Set<ChildViewModel> children;
 
     public ResidentViewModel() {
     }
 
-    public Set<ApartmentViewModel> getApartments() {
+    public Set<ApartmentsInResidentViewModel> getApartments() {
         return apartments;
     }
 
-    public void setApartments(Set<ApartmentViewModel> apartments) {
+    public void setApartments(Set<ApartmentsInResidentViewModel> apartments) {
         this.apartments = apartments;
     }
 
@@ -26,10 +26,4 @@ public class ResidentViewModel extends UserViewModel {
         this.children = children;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ResidentViewModel)) return false;
-        return super.equals(o);
-    }
 }

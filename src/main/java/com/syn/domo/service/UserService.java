@@ -27,4 +27,6 @@ public interface UserService {
     void initAdmin();
 
     Optional<UserServiceModel> getByEmail(String email);
+
+    boolean notUniqueEmail(String email, String id);
 }

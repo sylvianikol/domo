@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, String> {
-// TODO: delete
+
 //    @Query("SELECT u FROM UserEntity u " +
 //            "WHERE u.apartment.id = :apartmentId " +
 //            "AND u.apartment.building.id = :buildingId ")

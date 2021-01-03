@@ -53,12 +53,14 @@ public class ChildrenController implements ChildrenNamespace {
                                               @PathVariable(value = "apartmentId") String apartmentId,
                                               @PathVariable(value = "childId") String childId) {
 
-        return this.childService.getById(childId)
-                .filter(c -> c.getApartment().getId().equals(apartmentId)
-                        && c.getApartment().getBuilding().getId().equals(buildingId))
-                .map(c -> ResponseEntity.ok()
-                        .body(this.modelMapper.map(c, ChildViewModel.class)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+//        return this.childService.getById(childId)
+//                .filter(c -> c.getApartment().getId().equals(apartmentId)
+//                        && c.getApartment().getBuilding().getId().equals(buildingId))
+//                .map(c -> ResponseEntity.ok()
+//                        .body(this.modelMapper.map(c, ChildViewModel.class)))
+//                .orElseGet(() -> ResponseEntity.notFound().build());
+
+        return null;
     }
 
     @PostMapping

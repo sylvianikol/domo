@@ -12,7 +12,7 @@ public class ApartmentViewModel {
     private int pets;
     private LocalDate addedOn;
 
-    Set<UserViewModel> residents;
+    Set<ResidentViewModel> residents;
     Set<ChildViewModel> children;
 
     public ApartmentViewModel() {
@@ -58,11 +58,11 @@ public class ApartmentViewModel {
         this.addedOn = addedOn;
     }
 
-    public Set<UserViewModel> getResidents() {
+    public Set<ResidentViewModel> getResidents() {
         return residents;
     }
 
-    public void setResidents(Set<UserViewModel> residents) {
+    public void setResidents(Set<ResidentViewModel> residents) {
         this.residents = residents;
     }
 

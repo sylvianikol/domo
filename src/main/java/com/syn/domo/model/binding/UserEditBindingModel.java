@@ -2,6 +2,7 @@ package com.syn.domo.model.binding;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.Set;
 
 import static com.syn.domo.common.RegexPatterns.PHONE_NUMBER_REGEX;
 import static com.syn.domo.common.ValidationErrorMessages.*;
@@ -12,7 +13,6 @@ public class UserEditBindingModel extends BaseUserBindingModel {
     //    private String password;
     private String email;
     private String phoneNumber;
-    private String userRole;
     private LocalDate addedOn;
 
     public UserEditBindingModel() {
@@ -49,17 +49,6 @@ public class UserEditBindingModel extends BaseUserBindingModel {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-
-    @NotNull(message = ROLE_NULL)
-    @NotEmpty(message = ROLE_EMPTY)
-    public String getUserRole() {
-        return userRole;
-    }
-
-    public void setUserRole(String userRole) {
-        this.userRole = userRole;
     }
 
     @NotNull(message = DATE_NULL)

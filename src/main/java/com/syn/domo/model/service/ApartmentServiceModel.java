@@ -12,7 +12,7 @@ public class ApartmentServiceModel extends BaseServiceModel {
     private int pets;
     private LocalDate addedOn;
 
-    private Set<UserServiceModel> residents;
+    private Set<ResidentServiceModel> residents;
     private Set<ChildServiceModel> children;
 
     public ApartmentServiceModel() {
@@ -58,11 +58,11 @@ public class ApartmentServiceModel extends BaseServiceModel {
         this.addedOn = addedOn;
     }
 
-    public Set<UserServiceModel> getResidents() {
+    public Set<ResidentServiceModel> getResidents() {
         return residents;
     }
 
-    public void setResidents(Set<UserServiceModel> residents) {
+    public void setResidents(Set<ResidentServiceModel> residents) {
         this.residents = residents;
     }
 

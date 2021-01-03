@@ -128,6 +128,14 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
+    public Optional<ApartmentServiceModel> getByIdIn(String id, Set<String> apartmentIds) {
+        Optional<Apartment> apartment = this.apartmentRepository.getByIdIn(id, apartmentIds);
+        return apartment.isEmpty()
+                ? Optional.empty()
+                : Optional.of(this.modelMapper.map(apartment, ApartmentServiceModel.class));
+    }
+
+    @Override
     @Transactional
     public void deleteAllByBuildingId(String buildingId) {
         Set<Apartment> apartments =

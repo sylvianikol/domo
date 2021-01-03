@@ -73,4 +73,22 @@ public class Building extends BaseEntity{
     public void setApartments(Set<Apartment> apartments) {
         this.apartments = apartments;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Building)) return false;
+        if (!super.equals(o)) return false;
+        Building building = (Building) o;
+        return floors == building.floors &&
+                Objects.equals(name, building.name) &&
+                Objects.equals(neighbourhood, building.neighbourhood) &&
+                Objects.equals(address, building.address) &&
+                Objects.equals(addedOn, building.addedOn);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), name, neighbourhood, address, floors, addedOn);
+    }
 }

@@ -1,6 +1,7 @@
 package com.syn.domo.model.entity;
 
 import javax.persistence.*;
+import java.util.Objects;
 import java.util.Set;
 
 import static javax.persistence.CascadeType.*;
@@ -35,5 +36,12 @@ public class Resident extends UserEntity {
 
     public void setChildren(Set<Child> children) {
         this.children = children;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Resident)) return false;
+        return super.equals(o);
     }
 }

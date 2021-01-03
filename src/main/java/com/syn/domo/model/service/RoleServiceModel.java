@@ -33,12 +33,13 @@ public class RoleServiceModel extends BaseServiceModel {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof RoleServiceModel)) return false;
+        if (!super.equals(o)) return false;
         RoleServiceModel that = (RoleServiceModel) o;
         return name == that.name;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name);
+        return Objects.hash(super.hashCode(), name);
     }
 }

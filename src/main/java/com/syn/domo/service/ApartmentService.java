@@ -20,4 +20,7 @@ public interface ApartmentService {
     Optional<ApartmentServiceModel> getById(String apartmentId);
 
     void delete(String apartmentId, String buildingId);
+
+    Optional<ApartmentServiceModel> getByIdIn(String id, Set<String> apartmentIds);
 }
+

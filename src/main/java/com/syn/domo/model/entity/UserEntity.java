@@ -17,7 +17,7 @@ public class UserEntity extends BaseUserEntity {
     private String password;
     private String phoneNumber;
     private Set<Role> roles;
-    
+
     public UserEntity() {
     }
 
@@ -58,5 +58,21 @@ public class UserEntity extends BaseUserEntity {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserEntity)) return false;
+        if (!super.equals(o)) return false;
+        UserEntity that = (UserEntity) o;
+        return Objects.equals(email, that.email) &&
+                Objects.equals(password, that.password) &&
+                Objects.equals(phoneNumber, that.phoneNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), email, password, phoneNumber);
     }
 }

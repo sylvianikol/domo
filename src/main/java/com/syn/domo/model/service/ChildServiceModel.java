@@ -5,18 +5,18 @@ import java.util.Set;
 
 public class ChildServiceModel extends BaseUserServiceModel {
 
-    private ApartmentServiceModel apartment;
+    private Set<ApartmentServiceModel> apartments;
     private Set<UserServiceModel> parents;
 
     public ChildServiceModel() {
     }
 
-    public ApartmentServiceModel getApartment() {
-        return apartment;
+    public Set<ApartmentServiceModel> getApartments() {
+        return apartments;
     }
 
-    public void setApartment(ApartmentServiceModel apartment) {
-        this.apartment = apartment;
+    public void setApartments(Set<ApartmentServiceModel> apartments) {
+        this.apartments = apartments;
     }
 
     public Set<UserServiceModel> getParents() {
@@ -31,13 +31,6 @@ public class ChildServiceModel extends BaseUserServiceModel {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ChildServiceModel)) return false;
-        if (!super.equals(o)) return false;
-        ChildServiceModel that = (ChildServiceModel) o;
-        return Objects.equals(apartment, that.apartment);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), apartment);
+        return super.equals(o);
     }
 }

@@ -1,6 +1,7 @@
 package com.syn.domo.model.entity;
 
 import javax.persistence.*;
+import java.util.Objects;
 import java.util.Set;
 
 import static javax.persistence.FetchType.*;
@@ -16,7 +17,7 @@ public class Role extends BaseEntity {
     }
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     public UserRole getName() {
         return name;
     }
@@ -32,5 +33,19 @@ public class Role extends BaseEntity {
 
     public void setUsers(Set<UserEntity> users) {
         this.users = users;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Role)) return false;
+        if (!super.equals(o)) return false;
+        Role role = (Role) o;
+        return name == role.name;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), name);
     }
 }

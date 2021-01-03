@@ -7,9 +7,7 @@ public class UserViewModel extends BaseUserViewModel {
 
     private String email;
     private String phoneNumber;
-    private String userRole;
-    private String apartmentNumber;
-    private Set<ChildViewModel> children;
+    private Set<RoleViewModel> roles;
 
     public UserViewModel() {
     }
@@ -30,28 +28,12 @@ public class UserViewModel extends BaseUserViewModel {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getUserRole() {
-        return userRole;
+    public Set<RoleViewModel> getRoles() {
+        return roles;
     }
 
-    public void setUserRole(String userRole) {
-        this.userRole = userRole;
-    }
-
-    public String getApartmentNumber() {
-        return apartmentNumber;
-    }
-
-    public void setApartmentNumber(String apartmentNumber) {
-        this.apartmentNumber = apartmentNumber;
-    }
-
-    public Set<ChildViewModel> getChildren() {
-        return children;
-    }
-
-    public void setChildren(Set<ChildViewModel> children) {
-        this.children = children;
+    public void setRoles(Set<RoleViewModel> roles) {
+        this.roles = roles;
     }
 
     @Override
@@ -62,12 +44,11 @@ public class UserViewModel extends BaseUserViewModel {
         UserViewModel that = (UserViewModel) o;
         return Objects.equals(email, that.email) &&
                 Objects.equals(phoneNumber, that.phoneNumber) &&
-                Objects.equals(userRole, that.userRole) &&
-                Objects.equals(apartmentNumber, that.apartmentNumber);
+                Objects.equals(roles, that.roles);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), email, phoneNumber, userRole, apartmentNumber);
+        return Objects.hash(super.hashCode(), email, phoneNumber, roles);
     }
 }

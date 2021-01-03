@@ -18,6 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -70,6 +71,18 @@ public class ResidentsController implements ResidentsNamespace {
                 .path(URI_RESIDENTS + "/{residentId}")
                 .buildAndExpand(buildingId, apartmentId, residentId)
                 .toUri()).build();
+    }
+
+    @GetMapping("/{residentId}")
+    public ResponseEntity<ResidentViewModel> one(@PathVariable(value = "buildingId") String buildingId,
+                                                 @PathVariable(value = "apartmentId") String apartmentId,
+                                                 @PathVariable(value = "residentId") String residentId) {
+        Optional<ResidentServiceModel> resident =
+               this.residentService.getOne(buildingId, apartmentId, residentId);
+
+        return resident.isEmpty()
+                ? ResponseEntity.notFound().build()
+                : ResponseEntity.ok(this.modelMapper.map(resident.get(), ResidentViewModel.class));
     }
 
     @PutMapping("/{residentId}")

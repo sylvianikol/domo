@@ -162,9 +162,19 @@ public class ResidentServiceImpl implements ResidentService  {
     @Override
     public Set<ResidentServiceModel> getAllByBuildingIdAndApartmentId(String buildingId, String apartmentId) {
         return this.residentRepository
-                .getAllByApartmentAndBuildingId(buildingId, apartmentId)
+                .getAllByBuildingIdAndApartmentId(buildingId, apartmentId)
                 .stream()
                 .map(r -> this.modelMapper.map(r, ResidentServiceModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    @Override
+    public Optional<ResidentServiceModel> getOne(String buildingId, String apartmentId, String residentId) {
+        Optional<Resident> resident = this.residentRepository
+                .getOneByIdAndBuildingIdAndApartmentId(residentId, buildingId, apartmentId);
+
+        return resident.isEmpty()
+                ? Optional.empty()
+                : Optional.of(this.modelMapper.map(resident.get(), ResidentServiceModel.class));
     }
 }

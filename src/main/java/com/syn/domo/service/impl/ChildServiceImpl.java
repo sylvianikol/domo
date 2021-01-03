@@ -3,6 +3,7 @@ package com.syn.domo.service.impl;
 import com.syn.domo.exception.*;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Child;
+import com.syn.domo.model.entity.Resident;
 import com.syn.domo.model.entity.UserEntity;
 import com.syn.domo.model.service.*;
 import com.syn.domo.repository.ChildRepository;
@@ -80,11 +81,11 @@ public class ChildServiceImpl implements ChildService {
         child.setAddedOn(LocalDate.now());
         child.setApartment(this.modelMapper.map(apartment.get(), Apartment.class));
 
-        Set<UserEntity> parents = parentServiceModels.stream()
-                .map(p -> this.modelMapper.map(p, UserEntity.class))
+        Set<Resident> parents = parentServiceModels.stream()
+                .map(p -> this.modelMapper.map(p, Resident.class))
                 .collect(Collectors.toSet());
 
-        parents.forEach(parent -> parent.getChildren().add(child));
+//        parents.forEach(parent -> parent.getChildren().add(child));
 
         child.setParents(parents);
 
@@ -164,7 +165,7 @@ public class ChildServiceImpl implements ChildService {
 
     private boolean hasSameParents(ChildServiceModel newChild, Child existingChild) {
         int sameParentsCount = 0;
-        Set<UserEntity> existingParents = existingChild.getParents();
+        Set<Resident> existingParents = existingChild.getParents();
         Set<UserServiceModel> newParents = newChild.getParents();
 
         for (UserEntity parent : existingParents) {

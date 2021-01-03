@@ -39,19 +39,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserServiceModel add(UserServiceModel userServiceModel, String buildingId, String apartmentId) {
+    public UserServiceModel add(UserServiceModel userServiceModel, Set<RoleServiceModel> roleServiceModels) {
         // TODO: validation
-
-        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
-        Optional<ApartmentServiceModel> apartment = this.apartmentService.getById(apartmentId);
-
-        if (building.isEmpty()) {
-            throw new BuildingNotFoundException("Building not found!");
-        }
-
-        if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
-            throw new ApartmentNotFoundException("Apartment not found!");
-        }
 
         if (this.userRepository.findByEmail(userServiceModel.getEmail()).isPresent()) {
             throw new UnprocessableEntityException(
@@ -59,23 +48,17 @@ public class UserServiceImpl implements UserService {
                             userServiceModel.getEmail()));
         }
 
-
         UserEntity user = this.modelMapper.map(userServiceModel, UserEntity.class);
 
-        Optional<RoleServiceModel> roleServiceModel =
-                this.roleService.getByName(UserRole.RESIDENT);
+        Set<Role> roles = roleServiceModels.stream()
+                .map(r -> this.modelMapper.map(r, Role.class))
+                .collect(Collectors.toUnmodifiableSet());
 
-        if (roleServiceModel.isEmpty()) {
-            throw new RoleNotFoundException("Role not found!");
-        }
-
-        Role role = this.modelMapper.map(roleServiceModel.get(), Role.class);
-        user.setRoles(Set.of(role));
+        user.setRoles(roles);
 
         user.setAddedOn(LocalDate.now());
-        user.setApartment(this.modelMapper.map(apartment.get(), Apartment.class));
 
-        this.userRepository.saveAndFlush(user);
+        user = this.userRepository.saveAndFlush(user);
 
         return this.modelMapper.map(user, UserServiceModel.class);
     }
@@ -109,25 +92,25 @@ public class UserServiceImpl implements UserService {
 
         UserEntity user = this.userRepository.findById(userServiceModel.getId()).orElse(null);
 
-        if (user != null && user.getApartment().getId().equals(apartment.get().getId())) {
-
-            user.setFirstName(userServiceModel.getFirstName());
-            user.setLastName(userServiceModel.getLastName());
-            user.setEmail(userServiceModel.getEmail());
-            user.setPhoneNumber(userServiceModel.getPhoneNumber());
-            user.setAddedOn(userServiceModel.getAddedOn());
-
-            Set<Role> roles = newRoles.stream()
-                    .map(roleServiceModel -> this.modelMapper.map(roleServiceModel, Role.class))
-                    .collect(Collectors.toUnmodifiableSet());
-
-            user.setRoles(roles);
-
-            this.userRepository.saveAndFlush(user);
-
-        } else {
-            throw new UserNotFoundException("User not found!");
-        }
+//        if (user != null && user.getApartment().getId().equals(apartment.get().getId())) {
+//
+//            user.setFirstName(userServiceModel.getFirstName());
+//            user.setLastName(userServiceModel.getLastName());
+//            user.setEmail(userServiceModel.getEmail());
+//            user.setPhoneNumber(userServiceModel.getPhoneNumber());
+//            user.setAddedOn(userServiceModel.getAddedOn());
+//
+//            Set<Role> roles = newRoles.stream()
+//                    .map(roleServiceModel -> this.modelMapper.map(roleServiceModel, Role.class))
+//                    .collect(Collectors.toUnmodifiableSet());
+//
+//            user.setRoles(roles);
+//
+//            this.userRepository.saveAndFlush(user);
+//
+//        } else {
+//            throw new UserNotFoundException("User not found!");
+//        }
 
         return this.modelMapper.map(user, UserServiceModel.class);
     }
@@ -146,11 +129,11 @@ public class UserServiceImpl implements UserService {
 
         UserEntity user = this.userRepository.findById(residentId).orElse(null);
 
-        if (user != null && user.getApartment().getId().equals(apartment.get().getId())) {
-            this.userRepository.delete(user);
-        } else {
-            throw new UserNotFoundException("User not found!");
-        }
+//        if (user != null && user.getApartment().getId().equals(apartment.get().getId())) {
+//            this.userRepository.delete(user);
+//        } else {
+//            throw new UserNotFoundException("User not found!");
+//        }
     }
 
     @Override
@@ -173,22 +156,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<UserServiceModel> getByEmail(String email) {
+        Optional<UserEntity> user = this.userRepository.findByEmail(email);
+        return user.isEmpty()
+                ? Optional.empty()
+                : Optional.of(this.modelMapper.map(user, UserServiceModel.class));
+    }
+
+    @Override
     public void deleteAllByApartmentId(String buildingId, String apartmentId) {
-        Set<UserEntity> users = this.userRepository
-                .getAllByApartmentIdAndBuildingId(buildingId, apartmentId);
-        this.userRepository.deleteAll(users);
+//        Set<UserEntity> users = this.userRepository
+//                .getAllByApartmentIdAndBuildingId(buildingId, apartmentId);
+//        this.userRepository.deleteAll(users);
     }
 
     @Override
     public Set<UserServiceModel> getAllByApartmentIdAndBuildingId(String buildingId, String apartmentId) {
-        Set<UserServiceModel> userServiceModels =
-                this.userRepository
-                        .getAllByApartmentIdAndBuildingId(buildingId, apartmentId)
-                        .stream()
-                        .map(user -> this.modelMapper.map(user, UserServiceModel.class))
-                        .collect(Collectors.toCollection(LinkedHashSet::new));
-
-        return Collections.unmodifiableSet(userServiceModels);
+//        Set<UserServiceModel> userServiceModels =
+//                this.userRepository
+//                        .getAllByApartmentIdAndBuildingId(buildingId, apartmentId)
+//                        .stream()
+//                        .map(user -> this.modelMapper.map(user, UserServiceModel.class))
+//                        .collect(Collectors.toCollection(LinkedHashSet::new));
+//
+//        return Collections.unmodifiableSet(userServiceModels);
+        return null;
     }
 
     @Override

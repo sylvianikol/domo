@@ -51,12 +51,13 @@ public class UsersController implements UsersNamespace {
                                                  @PathVariable(value = "apartmentId") String apartmentId,
                                                  @PathVariable(value = "userId") String userId) {
 
-        return this.userService.getById(userId)
-                .filter(r -> r.getApartment().getId().equals(apartmentId)
-                        && r.getApartment().getBuilding().getId().equals(buildingId))
-                .map(u -> ResponseEntity.ok()
-                        .body(this.modelMapper.map(u, UserViewModel.class)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+//        return this.userService.getById(userId)
+//                .filter(r -> r.getApartment().getId().equals(apartmentId)
+//                        && r.getApartment().getBuilding().getId().equals(buildingId))
+//                .map(u -> ResponseEntity.ok()
+//                        .body(this.modelMapper.map(u, UserViewModel.class)))
+//                .orElseGet(() -> ResponseEntity.notFound().build());
+        return null;
     }
 
     @PostMapping
@@ -71,14 +72,14 @@ public class UsersController implements UsersNamespace {
                             bindingResult.getAllErrors()));
         }
 
-        String userId = this.userService.add(
-                this.modelMapper.map(userAddBindingModel, UserServiceModel.class),
-                buildingId, apartmentId).getId();
-
-        return ResponseEntity.created(uriComponentsBuilder
-                .path(URI_USERS + "/{userId}")
-                .buildAndExpand(buildingId, apartmentId, userId)
-                .toUri()).build();
+//        String userId = this.userService.add(
+//                this.modelMapper.map(userAddBindingModel, UserServiceModel.class)).getId();
+//
+//        return ResponseEntity.created(uriComponentsBuilder
+//                .path(URI_USERS + "/{userId}")
+//                .buildAndExpand(buildingId, apartmentId, userId)
+//                .toUri()).build();
+        return null;
     }
 
     @PutMapping("/{userId}")

@@ -19,4 +19,6 @@ public interface ChildService {
     Set<ChildServiceModel> getAllByApartmentIdAndBuildingId(String buildingId, String apartmentId);
 
     void deleteAllByApartmentId(String buildingId, String apartmentId);
+
+    Optional<ChildServiceModel> getOne(String buildingId, String apartmentId, String childId);
 }

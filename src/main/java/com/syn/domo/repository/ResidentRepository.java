@@ -1,6 +1,7 @@
 package com.syn.domo.repository;
 
 import com.syn.domo.model.entity.Resident;
+import com.syn.domo.model.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,5 +30,7 @@ public interface ResidentRepository extends JpaRepository<Resident, String> {
             (@Param(value = "id") String id,
              @Param(value = "buildingId") String buildingId,
              @Param(value = "apartmentId") String apartmentId);
+
+    Set<Resident> findAllByIdIn(Set<String> ids);
 
 }

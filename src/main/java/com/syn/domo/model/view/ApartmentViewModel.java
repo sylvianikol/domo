@@ -12,8 +12,8 @@ public class ApartmentViewModel {
     private int pets;
     private LocalDate addedOn;
 
-    Set<ResidentViewModel> residents;
-    Set<ChildViewModel> children;
+    Set<ResidentInnerViewModel> residents;
+    Set<ChildInnerViewModel> children;
 
     public ApartmentViewModel() {
     }
@@ -58,19 +58,19 @@ public class ApartmentViewModel {
         this.addedOn = addedOn;
     }
 
-    public Set<ResidentViewModel> getResidents() {
+    public Set<ResidentInnerViewModel> getResidents() {
         return residents;
     }
 
-    public void setResidents(Set<ResidentViewModel> residents) {
+    public void setResidents(Set<ResidentInnerViewModel> residents) {
         this.residents = residents;
     }
 
-    public Set<ChildViewModel> getChildren() {
+    public Set<ChildInnerViewModel> getChildren() {
         return children;
     }
 
-    public void setChildren(Set<ChildViewModel> children) {
+    public void setChildren(Set<ChildInnerViewModel> children) {
         this.children = children;
     }
 

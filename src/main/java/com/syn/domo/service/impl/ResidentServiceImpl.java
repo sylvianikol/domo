@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -176,5 +177,15 @@ public class ResidentServiceImpl implements ResidentService  {
         return resident.isEmpty()
                 ? Optional.empty()
                 : Optional.of(this.modelMapper.map(resident.get(), ResidentServiceModel.class));
+    }
+
+    @Override
+    public Set<ResidentServiceModel> getAllByIdIn(Set<String> ids) {
+        Set<ResidentServiceModel> residentServiceModels =
+                this.residentRepository.findAllByIdIn(ids).stream()
+                        .map(r -> this.modelMapper.map(r, ResidentServiceModel.class))
+                        .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return Collections.unmodifiableSet(residentServiceModels);
     }
 }

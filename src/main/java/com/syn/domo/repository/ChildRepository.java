@@ -20,4 +20,12 @@ public interface ChildRepository extends JpaRepository<Child, String> {
 
     Optional<Child> findByFirstNameAndLastNameAndApartment_Id
             (String firstName, String lastName, String apartmentId);
+
+    @Query("SELECT c FROM Child c " +
+            "JOIN c.parents p " +
+            "WHERE c.id = :id AND " +
+            "p.id IN :ids ")
+    Optional<Child> getOneByIdAndParentsIds
+            (@Param(value = "id") String id,
+             @Param(value = "ids") Set<String> ids);
 }

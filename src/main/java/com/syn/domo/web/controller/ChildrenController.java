@@ -4,7 +4,9 @@ import com.syn.domo.model.ErrorResponse;
 import com.syn.domo.model.binding.ChildAddBindingModel;
 import com.syn.domo.model.binding.ChildEditBindingModel;
 import com.syn.domo.model.service.ChildServiceModel;
+import com.syn.domo.model.service.ResidentServiceModel;
 import com.syn.domo.model.view.ChildViewModel;
+import com.syn.domo.model.view.ResidentViewModel;
 import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.ChildService;
@@ -19,6 +21,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -53,14 +56,12 @@ public class ChildrenController implements ChildrenNamespace {
                                               @PathVariable(value = "apartmentId") String apartmentId,
                                               @PathVariable(value = "childId") String childId) {
 
-//        return this.childService.getById(childId)
-//                .filter(c -> c.getApartment().getId().equals(apartmentId)
-//                        && c.getApartment().getBuilding().getId().equals(buildingId))
-//                .map(c -> ResponseEntity.ok()
-//                        .body(this.modelMapper.map(c, ChildViewModel.class)))
-//                .orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<ChildServiceModel> child =
+                this.childService.getOne(buildingId, apartmentId, childId);
 
-        return null;
+        return child.isEmpty()
+                ? ResponseEntity.notFound().build()
+                : ResponseEntity.ok(this.modelMapper.map(child.get(), ChildViewModel.class));
     }
 
     @PostMapping

@@ -26,6 +26,7 @@ public class ChildServiceImpl implements ChildService {
     private final ChildRepository childRepository;
     private final BuildingService buildingService;
     private final ApartmentService apartmentService;
+    private final ResidentService residentService;
     private final UserService userService;
     private final ModelMapper modelMapper;
 
@@ -33,11 +34,12 @@ public class ChildServiceImpl implements ChildService {
     public ChildServiceImpl(ChildRepository childRepository,
                             BuildingService buildingService,
                             ApartmentService apartmentService,
-                            UserService userService,
+                            ResidentService residentService, UserService userService,
                             ModelMapper modelMapper) {
         this.childRepository = childRepository;
         this.buildingService = buildingService;
         this.apartmentService = apartmentService;
+        this.residentService = residentService;
         this.userService = userService;
         this.modelMapper = modelMapper;
     }
@@ -57,10 +59,12 @@ public class ChildServiceImpl implements ChildService {
             throw new ApartmentNotFoundException("Apartment not found!");
         }
 
-        Set<UserServiceModel> parentServiceModels =
-                this.userService.getAllById(childServiceModel.getParents().stream()
-                        .map(UserServiceModel::getId)
-                        .collect(Collectors.toSet()));
+        Set<String> ids = childServiceModel.getParents().stream()
+                .map(UserServiceModel::getId)
+                .collect(Collectors.toSet());
+
+        Set<ResidentServiceModel> parentServiceModels =
+                this.residentService.getAllByIdIn(ids);
 
         if (parentServiceModels.isEmpty()) {
             throw new UnprocessableEntityException("Child must have parents!");
@@ -84,8 +88,6 @@ public class ChildServiceImpl implements ChildService {
         Set<Resident> parents = parentServiceModels.stream()
                 .map(p -> this.modelMapper.map(p, Resident.class))
                 .collect(Collectors.toSet());
-
-//        parents.forEach(parent -> parent.getChildren().add(child));
 
         child.setParents(parents);
 
@@ -183,5 +185,20 @@ public class ChildServiceImpl implements ChildService {
         Set<Child> children = this.childRepository
                 .getAllByApartmentIdAndBuildingId(buildingId, apartmentId);
         this.childRepository.deleteAll(children);
+    }
+
+    @Override
+    public Optional<ChildServiceModel> getOne(String buildingId, String apartmentId, String childId) {
+        Set<String> parentsIds =
+                this.residentService.getAllByBuildingIdAndApartmentId(buildingId, apartmentId)
+                .stream().map(BaseServiceModel::getId)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        Optional<Child> child = this.childRepository
+                .getOneByIdAndParentsIds(childId, parentsIds);
+
+        return child.isEmpty()
+                ? Optional.empty()
+                : Optional.of(this.modelMapper.map(child.get(), ChildServiceModel.class));
     }
 }

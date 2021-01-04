@@ -1,6 +1,5 @@
 package com.syn.domo.model.service;
 
-import java.util.Objects;
 import java.util.Set;
 
 public class ResidentServiceModel extends UserServiceModel  {

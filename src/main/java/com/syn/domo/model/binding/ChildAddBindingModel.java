@@ -4,16 +4,16 @@ import java.util.Set;
 
 public class ChildAddBindingModel extends BaseUserBindingModel {
 
-    private Set<UserBindingModel> parents;
+    private Set<ParentBindingModel> parents;
 
     public ChildAddBindingModel() {
     }
 
-    public Set<UserBindingModel>  getParents() {
+    public Set<ParentBindingModel>  getParents() {
         return parents;
     }
 
-    public void setParents(Set<UserBindingModel>  parents) {
+    public void setParents(Set<ParentBindingModel>  parents) {
         this.parents = parents;
     }
 }

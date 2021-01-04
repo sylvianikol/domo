@@ -17,4 +17,6 @@ public interface ResidentService {
     Set<ResidentServiceModel> getAllByBuildingIdAndApartmentId(String buildingId, String apartmentId);
 
     Optional<ResidentServiceModel> getOne(String buildingId, String apartmentId, String residentId);
+
+    Set<ResidentServiceModel> getAllByIdIn(Set<String> ids);
 }

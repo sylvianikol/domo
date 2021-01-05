@@ -39,7 +39,7 @@ public class UserEntity extends BaseUserEntity {
         this.password = password;
     }
 
-    @Column(name = "phone_number", nullable = false, length = 20)
+    @Column(name = "phone_number", unique = true, nullable = false, length = 20)
     public String getPhoneNumber() {
         return phoneNumber;
     }

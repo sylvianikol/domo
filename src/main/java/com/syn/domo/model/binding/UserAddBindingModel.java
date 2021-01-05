@@ -10,7 +10,6 @@ public class UserAddBindingModel extends BaseUserBindingModel {
     //    private String password;
     private String email;
     private String phoneNumber;
-    private String apartmentId;
 
     public UserAddBindingModel() {
     }
@@ -47,13 +46,5 @@ public class UserAddBindingModel extends BaseUserBindingModel {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-    public String getApartmentId() {
-        return apartmentId;
-    }
-
-    public void setApartmentId(String apartmentId) {
-        this.apartmentId = apartmentId;
     }
 }

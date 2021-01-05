@@ -67,7 +67,8 @@ public class ResidentsController implements ResidentsNamespace {
     public ResponseEntity<?> add(@PathVariable(value = "buildingId") String buildingId,
                                  @PathVariable(value = "apartmentId") String apartmentId,
                                  @Valid @RequestBody UserAddBindingModel userAddBindingModel,
-                                 BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
+                                 BindingResult bindingResult,
+                                 UriComponentsBuilder uriComponentsBuilder) {
 
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()

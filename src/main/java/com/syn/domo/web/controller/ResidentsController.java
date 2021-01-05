@@ -41,14 +41,14 @@ public class ResidentsController implements ResidentsNamespace {
         Set<ResidentServiceModel> residentServiceModels = this.residentService
                 .getAllByBuildingIdAndApartmentId(buildingId, apartmentId);
 
-        Set<ResidentViewModel> residents = residentServiceModels
+        if (residentServiceModels.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(residentServiceModels
                 .stream()
                 .map(r -> this.modelMapper.map(r, ResidentViewModel.class))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-
-        return residents.isEmpty()
-                ? ResponseEntity.notFound().build()
-                : ResponseEntity.ok(residents);
+                .collect(Collectors.toSet()));
     }
 
     @GetMapping("/{residentId}")

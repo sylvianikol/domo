@@ -15,8 +15,11 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class StaffServiceImpl implements StaffService {
@@ -80,5 +83,22 @@ public class StaffServiceImpl implements StaffService {
     @Override
     public void delete(String staffId) {
 
+    }
+
+    @Override
+    public Optional<StaffServiceModel> getOne(String staffId) {
+        Optional<Staff> staff = this.staffRepository.findById(staffId);
+        return staff.isEmpty()
+                ? Optional.empty()
+                : Optional.of(this.modelMapper.map(staff.get(), StaffServiceModel.class));
+    }
+
+    @Override
+    public Set<StaffServiceModel> getAll() {
+        Set<StaffServiceModel> staff = this.staffRepository.findAll().stream()
+                .map(s -> this.modelMapper.map(s, StaffServiceModel.class))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return Collections.unmodifiableSet(staff);
     }
 }

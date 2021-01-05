@@ -3,20 +3,20 @@ package com.syn.domo.web.controller;
 import com.syn.domo.model.ErrorResponse;
 import com.syn.domo.model.binding.StaffAddBindingModel;
 import com.syn.domo.model.service.StaffServiceModel;
+import com.syn.domo.model.view.StaffViewModel;
 import com.syn.domo.service.StaffService;
 import com.syn.domo.web.controller.namespace.StaffNamespace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
-
-import static com.syn.domo.web.controller.namespace.StaffNamespace.URI_STAFF;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 public class StaffController implements StaffNamespace {
@@ -28,6 +28,31 @@ public class StaffController implements StaffNamespace {
     public StaffController(StaffService staffService, ModelMapper modelMapper) {
         this.staffService = staffService;
         this.modelMapper = modelMapper;
+    }
+
+    @GetMapping
+    public ResponseEntity<Set<StaffViewModel>> all() {
+
+        Set<StaffServiceModel> staffServiceModels =
+                this.staffService.getAll();
+
+        if (staffServiceModels.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(staffServiceModels.stream()
+                .map(s -> this.modelMapper.map(s, StaffViewModel.class))
+                .collect(Collectors.toSet()));
+    }
+
+    @GetMapping("/{staffId}")
+    public ResponseEntity<StaffViewModel> one(@PathVariable(value = "staffId") String staffId) {
+
+        Optional<StaffServiceModel> staff = this.staffService.getOne(staffId);
+
+        return staff.isEmpty()
+                ? ResponseEntity.notFound().build()
+                : ResponseEntity.ok(this.modelMapper.map(staff.get(), StaffViewModel.class));
     }
 
     @PostMapping

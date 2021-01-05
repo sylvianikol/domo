@@ -162,11 +162,13 @@ public class ResidentServiceImpl implements ResidentService  {
 
     @Override
     public Set<ResidentServiceModel> getAllByBuildingIdAndApartmentId(String buildingId, String apartmentId) {
-        return this.residentRepository
+        Set<ResidentServiceModel> residents = this.residentRepository
                 .getAllByBuildingIdAndApartmentId(buildingId, apartmentId)
                 .stream()
                 .map(r -> this.modelMapper.map(r, ResidentServiceModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return Collections.unmodifiableSet(residents);
     }
 
     @Override

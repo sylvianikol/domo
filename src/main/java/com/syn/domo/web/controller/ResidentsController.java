@@ -38,17 +38,15 @@ public class ResidentsController implements ResidentsNamespace {
     public ResponseEntity<Set<ResidentViewModel>> all(@PathVariable(value = "buildingId") String buildingId,
                                                       @PathVariable(value = "apartmentId") String apartmentId) {
 
-        Set<ResidentServiceModel> residentServiceModels = this.residentService
-                .getAllByBuildingIdAndApartmentId(buildingId, apartmentId);
-
-        if (residentServiceModels.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(residentServiceModels
+        Set<ResidentViewModel> residents = this.residentService
+                .getAllByBuildingIdAndApartmentId(buildingId, apartmentId)
                 .stream()
                 .map(r -> this.modelMapper.map(r, ResidentViewModel.class))
-                .collect(Collectors.toSet()));
+                .collect(Collectors.toSet());
+
+        return residents.isEmpty()
+                ? ResponseEntity.notFound().build()
+                : ResponseEntity.ok(residents);
     }
 
     @GetMapping("/{residentId}")

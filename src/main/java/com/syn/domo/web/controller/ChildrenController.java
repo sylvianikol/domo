@@ -44,7 +44,7 @@ public class ChildrenController implements ChildrenNamespace {
                 .getAllByApartmentIdAndBuildingId(buildingId, apartmentId)
                 .stream()
                 .map(c -> this.modelMapper.map(c, ChildViewModel.class))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+                .collect(Collectors.toSet());
 
         return children.isEmpty()
                 ? ResponseEntity.notFound().build()

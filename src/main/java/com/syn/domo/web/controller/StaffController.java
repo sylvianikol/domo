@@ -33,16 +33,14 @@ public class StaffController implements StaffNamespace {
     @GetMapping
     public ResponseEntity<Set<StaffViewModel>> all() {
 
-        Set<StaffServiceModel> staffServiceModels =
-                this.staffService.getAll();
+        Set<StaffViewModel> staff =
+                this.staffService.getAll().stream()
+                        .map(s -> this.modelMapper.map(s, StaffViewModel.class))
+                        .collect(Collectors.toSet());
 
-        if (staffServiceModels.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(staffServiceModels.stream()
-                .map(s -> this.modelMapper.map(s, StaffViewModel.class))
-                .collect(Collectors.toSet()));
+        return staff.isEmpty()
+                ? ResponseEntity.notFound().build()
+                : ResponseEntity.ok(staff);
     }
 
     @GetMapping("/{staffId}")

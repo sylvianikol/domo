@@ -20,7 +20,7 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public StaffServiceModel add(StaffServiceModel staffServiceModel, String buildingId) {
+    public StaffServiceModel add(StaffServiceModel staffServiceModel) {
         return null;
     }
 

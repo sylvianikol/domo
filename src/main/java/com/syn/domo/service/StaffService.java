@@ -4,7 +4,7 @@ import com.syn.domo.model.service.StaffServiceModel;
 
 public interface StaffService {
 
-    StaffServiceModel add(StaffServiceModel staffServiceModel, String buildingId);
+    StaffServiceModel add(StaffServiceModel staffServiceModel);
 
     StaffServiceModel edit(StaffServiceModel staffServiceModel);
 

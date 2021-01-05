@@ -25,11 +25,4 @@ public class ResidentServiceModel extends UserServiceModel  {
     public void setChildren(Set<ChildServiceModel> children) {
         this.children = children;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ResidentServiceModel)) return false;
-        return super.equals(o);
-    }
 }

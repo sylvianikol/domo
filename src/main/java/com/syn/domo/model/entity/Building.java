@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 
+import static javax.persistence.FetchType.EAGER;
+
 @Entity
 @Table(name = "buildings")
 public class Building extends BaseEntity{
@@ -16,6 +18,7 @@ public class Building extends BaseEntity{
     private LocalDate addedOn;
 
     private Set<Apartment> apartments;
+    private Set<Staff> staff;
 
     public Building() {
     }
@@ -65,13 +68,22 @@ public class Building extends BaseEntity{
         this.addedOn = addedOn;
     }
 
-    @OneToMany(mappedBy = "building", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "building", fetch = EAGER)
     public Set<Apartment> getApartments() {
         return apartments;
     }
 
     public void setApartments(Set<Apartment> apartments) {
         this.apartments = apartments;
+    }
+
+    @ManyToMany(mappedBy = "buildings", fetch = EAGER)
+    public Set<Staff> getStaff() {
+        return staff;
+    }
+
+    public void setStaff(Set<Staff> staff) {
+        this.staff = staff;
     }
 
     @Override

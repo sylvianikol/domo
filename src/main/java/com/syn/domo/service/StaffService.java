@@ -1,15 +1,16 @@
 package com.syn.domo.service;
 
 import com.syn.domo.model.service.StaffServiceModel;
+import com.syn.domo.model.service.UserServiceModel;
 
 import java.util.Optional;
 import java.util.Set;
 
 public interface StaffService {
 
-    StaffServiceModel add(StaffServiceModel staffServiceModel);
+    StaffServiceModel add(UserServiceModel userServiceModel);
 
-    StaffServiceModel edit(StaffServiceModel staffServiceModel);
+    StaffServiceModel edit(UserServiceModel userServiceModel);
 
     void delete(String staffId);
 

@@ -2,12 +2,15 @@ package com.syn.domo.web.controller;
 
 import com.syn.domo.model.ErrorResponse;
 import com.syn.domo.model.binding.StaffAddBindingModel;
+import com.syn.domo.model.binding.UserEditBindingModel;
 import com.syn.domo.model.service.StaffServiceModel;
+import com.syn.domo.model.service.UserServiceModel;
 import com.syn.domo.model.view.StaffViewModel;
 import com.syn.domo.service.StaffService;
 import com.syn.domo.web.controller.namespace.StaffNamespace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -72,5 +75,25 @@ public class StaffController implements StaffNamespace {
                 .path(URI_STAFF + "/{staffId}")
                 .buildAndExpand(staffId)
                 .toUri()).build();
+    }
+
+    @PutMapping("/{staffId}")
+    public ResponseEntity<?> edit(@PathVariable(value = "staffId") String staffId,
+                                  @Valid @RequestBody UserEditBindingModel userEditBindingModel,
+                                  BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.unprocessableEntity()
+                    .body(new ErrorResponse(bindingResult.getTarget(),
+                            bindingResult.getAllErrors()));
+        }
+
+        this.staffService.edit(this.modelMapper.map(userEditBindingModel, UserServiceModel.class));
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .location(uriComponentsBuilder
+                        .path(URI_STAFF + "/{staffId}")
+                        .buildAndExpand(staffId)
+                        .toUri()).build();
     }
 }

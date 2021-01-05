@@ -208,4 +208,10 @@ public class UserServiceImpl implements UserService {
         return user.isPresent() && !user.get().getId().equals(id);
     }
 
+    @Override
+    public boolean notUniquePhoneNumber(String phoneNumber, String id) {
+        Optional<UserEntity> user = this.userRepository.findByPhoneNumber(phoneNumber);
+        return user.isPresent() && !user.get().getId().equals(id);
+    }
+
 }

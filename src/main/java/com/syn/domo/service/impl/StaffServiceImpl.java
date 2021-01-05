@@ -9,6 +9,7 @@ import com.syn.domo.model.service.RoleServiceModel;
 import com.syn.domo.model.service.StaffServiceModel;
 import com.syn.domo.model.service.UserServiceModel;
 import com.syn.domo.repository.StaffRepository;
+import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.RoleService;
 import com.syn.domo.service.StaffService;
 import com.syn.domo.service.UserService;
@@ -30,16 +31,19 @@ public class StaffServiceImpl implements StaffService {
 
     private final StaffRepository staffRepository;
     private final UserService userService;
+    private final BuildingService buildingService;
     private final RoleService roleService;
     private final ModelMapper modelMapper;
 
     @Autowired
     public StaffServiceImpl(StaffRepository staffRepository,
                             UserService userService,
+                            BuildingService buildingService,
                             RoleService roleService,
                             ModelMapper modelMapper) {
         this.staffRepository = staffRepository;
         this.userService = userService;
+        this.buildingService = buildingService;
         this.roleService = roleService;
         this.modelMapper = modelMapper;
     }
@@ -117,7 +121,16 @@ public class StaffServiceImpl implements StaffService {
 
     @Override
     public void delete(String staffId) {
+        Staff staff = this.staffRepository.findById(staffId).orElse(null);
 
+        if (staff != null) {
+            // TODO: test
+            this.buildingService.removeStaff(staffId);
+
+            this.staffRepository.delete(staff);
+        } else {
+            throw new EntityNotFoundException("Staff member not found!");
+        }
     }
 
     @Override

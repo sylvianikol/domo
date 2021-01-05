@@ -96,4 +96,16 @@ public class StaffController implements StaffNamespace {
                         .buildAndExpand(staffId)
                         .toUri()).build();
     }
+
+    @DeleteMapping("/{staffId}")
+    public ResponseEntity<?> delete(@PathVariable(value = "staffId") String staffId,
+                                    UriComponentsBuilder uriComponentsBuilder) {
+
+        this.staffService.delete(staffId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .location(uriComponentsBuilder
+                        .path(URI_STAFF).build().toUri())
+                .build();
+    }
 }

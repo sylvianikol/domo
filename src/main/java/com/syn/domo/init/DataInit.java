@@ -4,6 +4,7 @@ import com.syn.domo.service.RoleService;
 import com.syn.domo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,7 +14,7 @@ public class DataInit implements CommandLineRunner {
     private final UserService userService;
 
     @Autowired
-    public DataInit(RoleService roleService, UserService userService) {
+    public DataInit(RoleService roleService, @Lazy UserService userService) {
         this.roleService = roleService;
         this.userService = userService;
     }

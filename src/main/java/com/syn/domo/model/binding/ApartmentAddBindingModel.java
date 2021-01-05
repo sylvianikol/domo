@@ -28,7 +28,7 @@ public class ApartmentAddBindingModel {
         this.number = number;
     }
 
-    @NotNull(message = FLOOR_NULL)
+    @NotNull(message = FLOOR_NUMBER_NULL)
     @Min(value = 0, message = FLOOR_MIN_INVALID)
     @Max(value = 100, message = FLOOR_MAX_INVALID)
     public int getFloor() {

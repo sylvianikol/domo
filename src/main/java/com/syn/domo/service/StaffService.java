@@ -8,9 +8,9 @@ import java.util.Set;
 
 public interface StaffService {
 
-    StaffServiceModel add(UserServiceModel userServiceModel);
+    StaffServiceModel add(StaffServiceModel staffServiceModel);
 
-    StaffServiceModel edit(UserServiceModel userServiceModel);
+    StaffServiceModel edit(StaffServiceModel staffServiceModel);
 
     void delete(String staffId);
 

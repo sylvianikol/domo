@@ -49,9 +49,9 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public StaffServiceModel add(UserServiceModel userServiceModel) {
+    public StaffServiceModel add(StaffServiceModel staffServiceModel) {
         // TODO: validation
-        String email = userServiceModel.getEmail();
+        String email = staffServiceModel.getEmail();
         Optional<Staff> byEmail =
                 this.staffRepository.findByEmail(email);
 
@@ -60,7 +60,7 @@ public class StaffServiceImpl implements StaffService {
                     String.format("Email \"%s\" is already used by another user", email));
         }
 
-        String phoneNumber = userServiceModel.getPhoneNumber();
+        String phoneNumber = staffServiceModel.getPhoneNumber();
         Optional<Staff> byPhoneNumber =
                 this.staffRepository.findByPhoneNumber(phoneNumber);
 
@@ -76,10 +76,12 @@ public class StaffServiceImpl implements StaffService {
             throw new RoleNotFoundException("Role not found");
         }
 
-        Staff staff = this.modelMapper.map(userServiceModel, Staff.class);
+        Staff staff = this.modelMapper.map(staffServiceModel, Staff.class);
         staff.setRoles(new LinkedHashSet<>());
         staff.getRoles().add(this.modelMapper.map(roleServiceModel.get(), Role.class));
         staff.setAddedOn(LocalDate.now());
+        staff.setSalary(staffServiceModel.getSalary());
+        staff.setJob(staffServiceModel.getJob());
 
         this.staffRepository.saveAndFlush(staff);
 
@@ -87,29 +89,31 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public StaffServiceModel edit(UserServiceModel userServiceModel) {
+    public StaffServiceModel edit(StaffServiceModel staffServiceModel) {
         // TODO: validation
 
-        if (this.userService.notUniqueEmail(userServiceModel.getEmail(), userServiceModel.getId())) {
+        if (this.userService.notUniqueEmail(staffServiceModel.getEmail(), staffServiceModel.getId())) {
             throw new UnprocessableEntityException(
                     String.format("Email '%s' is already used by another user!",
-                            userServiceModel.getEmail()));
+                            staffServiceModel.getEmail()));
         }
 
-        if (this.userService.notUniquePhoneNumber(userServiceModel.getPhoneNumber(), userServiceModel.getId())) {
+        if (this.userService.notUniquePhoneNumber(staffServiceModel.getPhoneNumber(), staffServiceModel.getId())) {
             throw new UnprocessableEntityException(
                     String.format("Phone number '%s' is already used by another user!",
-                            userServiceModel.getPhoneNumber()));
+                            staffServiceModel.getPhoneNumber()));
         }
 
-        Staff staff = this.staffRepository.findById(userServiceModel.getId()).orElse(null);
+        Staff staff = this.staffRepository.findById(staffServiceModel.getId()).orElse(null);
 
         if (staff != null) {
-            staff.setFirstName(userServiceModel.getFirstName());
-            staff.setLastName(userServiceModel.getLastName());
-            staff.setEmail(userServiceModel.getEmail());
-            staff.setPhoneNumber(userServiceModel.getPhoneNumber());
-            staff.setAddedOn(userServiceModel.getAddedOn());
+            staff.setFirstName(staffServiceModel.getFirstName());
+            staff.setLastName(staffServiceModel.getLastName());
+            staff.setEmail(staffServiceModel.getEmail());
+            staff.setPhoneNumber(staffServiceModel.getPhoneNumber());
+            staff.setAddedOn(staffServiceModel.getAddedOn());
+            staff.setSalary(staffServiceModel.getSalary());
+            staff.setJob(staffServiceModel.getJob());
 
             this.staffRepository.saveAndFlush(staff);
         } else {
@@ -125,7 +129,7 @@ public class StaffServiceImpl implements StaffService {
 
         if (staff != null) {
             // TODO: test
-            this.buildingService.removeStaff(staffId);
+            this.buildingService.releaseStaff(staffId);
 
             this.staffRepository.delete(staff);
         } else {

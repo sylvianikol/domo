@@ -21,6 +21,6 @@ public interface BuildingService {
 
     BuildingServiceModel edit(BuildingServiceModel buildingServiceModel, String buildingId);
 
-    void removeStaff(String staffId);
+    void releaseStaff(String staffId);
 
 }

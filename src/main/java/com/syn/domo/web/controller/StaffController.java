@@ -2,6 +2,7 @@ package com.syn.domo.web.controller;
 
 import com.syn.domo.model.ErrorResponse;
 import com.syn.domo.model.binding.StaffAddBindingModel;
+import com.syn.domo.model.binding.StaffEditBindingModel;
 import com.syn.domo.model.binding.UserEditBindingModel;
 import com.syn.domo.model.service.StaffServiceModel;
 import com.syn.domo.model.service.UserServiceModel;
@@ -79,7 +80,7 @@ public class StaffController implements StaffNamespace {
 
     @PutMapping("/{staffId}")
     public ResponseEntity<?> edit(@PathVariable(value = "staffId") String staffId,
-                                  @Valid @RequestBody UserEditBindingModel userEditBindingModel,
+                                  @Valid @RequestBody StaffEditBindingModel staffEditBindingModel,
                                   BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
 
         if (bindingResult.hasErrors()) {
@@ -88,7 +89,7 @@ public class StaffController implements StaffNamespace {
                             bindingResult.getAllErrors()));
         }
 
-        this.staffService.edit(this.modelMapper.map(userEditBindingModel, UserServiceModel.class));
+        this.staffService.edit(this.modelMapper.map(staffEditBindingModel, StaffServiceModel.class));
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder

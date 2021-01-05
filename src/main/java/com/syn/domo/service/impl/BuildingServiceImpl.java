@@ -136,7 +136,7 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public void removeStaff(String staffId) {
+    public void releaseStaff(String staffId) {
         Optional<StaffServiceModel> staffServiceModel = this.staffService.getOne(staffId);
         if (staffServiceModel.isEmpty()) {
             throw new EntityNotFoundException("Staff member not found!");

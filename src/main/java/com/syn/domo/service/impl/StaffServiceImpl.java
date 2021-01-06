@@ -132,12 +132,32 @@ public class StaffServiceImpl implements StaffService {
         Staff staff = this.staffRepository.findById(staffId).orElse(null);
 
         if (staff != null) {
-            // TODO: test
+
             this.buildingService.releaseStaff(staffId);
 
             this.staffRepository.delete(staff);
         } else {
             throw new EntityNotFoundException("Staff member not found!");
+        }
+    }
+
+    @Override
+    public void assignBuildings(String staffId, Set<String> buildingIds) {
+        Staff staff = this.staffRepository.findById(staffId).orElse(null);
+
+        if (staff != null) {
+            Set<BuildingServiceModel> buildingServiceModels =
+                    this.buildingService.getAllByIdIn(buildingIds);
+
+            Set<Building> buildings = buildingServiceModels.stream()
+                    .map(b -> this.modelMapper.map(b, Building.class))
+                    .collect(Collectors.toSet());
+
+            staff.getBuildings().addAll(buildings);
+
+            this.staffRepository.saveAndFlush(staff);
+        } else {
+            throw new EntityNotFoundException("Staff not found!");
         }
     }
 
@@ -156,23 +176,5 @@ public class StaffServiceImpl implements StaffService {
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
         return Collections.unmodifiableSet(staff);
-    }
-
-    @Override
-    public void assignBuildings(String staffId, Set<String> buildingIds) {
-        Staff staff = this.staffRepository.findById(staffId).orElse(null);
-
-        if (staff != null) {
-            Set<BuildingServiceModel> buildingServiceModels =
-                    this.buildingService.getAllByIdIn(buildingIds);
-
-            Set<Building> buildings = buildingServiceModels.stream()
-                    .map(b -> this.modelMapper.map(b, Building.class))
-                    .collect(Collectors.toSet());
-
-            staff.getBuildings().addAll(buildings);
-
-            this.staffRepository.saveAndFlush(staff);
-        }
     }
 }

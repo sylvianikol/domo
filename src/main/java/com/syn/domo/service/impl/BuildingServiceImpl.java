@@ -66,28 +66,6 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    @Transactional
-    public void delete(String buildingId) {
-        Building building = this.buildingRepository.findById(buildingId).orElse(null);
-
-        if (building == null) {
-            throw new BuildingNotFoundException("Building not found!");
-        }
-
-        Set<String> staffIds = building.getStaff().stream()
-                .map(Staff::getId)
-                .collect(Collectors.toUnmodifiableSet());
-
-        if (!staffIds.isEmpty()) {
-            this.staffService.releaseBuilding(staffIds, buildingId);
-        }
-
-        this.apartmentService.deleteAllByBuildingId(buildingId);
-
-        this.buildingRepository.delete(building);
-    }
-
-    @Override
     public BuildingServiceModel edit(BuildingServiceModel buildingServiceModel, String buildingId) {
         // TODO: validation
 
@@ -121,7 +99,7 @@ public class BuildingServiceImpl implements BuildingService {
             throw new BuildingAlreadyExistsException(
                     String.format("Building with name \"%s\" already exists in \"%s\"!",
                             buildingServiceModel.getName(), buildingServiceModel.getNeighbourhood())
-                    );
+            );
         }
 
         building.get().setName(buildingServiceModel.getName());
@@ -131,6 +109,45 @@ public class BuildingServiceImpl implements BuildingService {
         this.buildingRepository.saveAndFlush(building.get());
 
         return this.modelMapper.map(building.get(), BuildingServiceModel.class);
+    }
+
+    @Override
+    @Transactional
+    public void delete(String buildingId) {
+        Building building = this.buildingRepository.findById(buildingId).orElse(null);
+
+        if (building == null) {
+            throw new BuildingNotFoundException("Building not found!");
+        }
+
+        Set<String> staffIds = building.getStaff().stream()
+                .map(Staff::getId)
+                .collect(Collectors.toUnmodifiableSet());
+
+        if (!staffIds.isEmpty()) {
+            this.staffService.releaseBuilding(staffIds, buildingId);
+        }
+
+        this.apartmentService.deleteAllByBuildingId(buildingId);
+
+        this.buildingRepository.delete(building);
+    }
+
+    @Override
+    public void assignStaff(String buildingId, Set<String> staffIds) {
+        Building building = this.buildingRepository.findById(buildingId).orElse(null);
+
+        if (building == null) {
+            throw new EntityNotFoundException("Building not found!");
+        }
+
+        Set<Staff> staff = this.staffService.getAllByIdIn(staffIds).stream()
+                .map(s -> this.modelMapper.map(s, Staff.class))
+                .collect(Collectors.toUnmodifiableSet());
+
+        for (Staff employee : staff) {
+            this.staffService.assignBuildings(employee.getId(), Set.of(buildingId));
+        }
     }
 
     @Override
@@ -150,16 +167,6 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public Optional<BuildingServiceModel> getOne(String buildingName,
-                                                 String buildingAddress, String neighbourhood) {
-        Optional<Building> optionalBuilding = this.buildingRepository
-                .findByNameAndAddressAndNeighbourhood(buildingName, buildingAddress, neighbourhood);
-
-        return optionalBuilding.map(building ->
-                this.modelMapper.map(building, BuildingServiceModel.class));
-    }
-
-    @Override
     public Set<BuildingServiceModel> getAll() {
 
         Set<BuildingServiceModel> buildingServiceModels =
@@ -167,6 +174,16 @@ public class BuildingServiceImpl implements BuildingService {
                         .map(building -> this.modelMapper.map(building, BuildingServiceModel.class))
                         .collect(Collectors.toCollection(LinkedHashSet::new));
         return Collections.unmodifiableSet(buildingServiceModels);
+    }
+
+    @Override
+    public Optional<BuildingServiceModel> getOne(String buildingName,
+                                                 String buildingAddress, String neighbourhood) {
+        Optional<Building> optionalBuilding = this.buildingRepository
+                .findByNameAndAddressAndNeighbourhood(buildingName, buildingAddress, neighbourhood);
+
+        return optionalBuilding.map(building ->
+                this.modelMapper.map(building, BuildingServiceModel.class));
     }
 
     @Override

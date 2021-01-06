@@ -2,7 +2,9 @@ package com.syn.domo.web.controller;
 
 import com.syn.domo.model.ErrorResponse;
 import com.syn.domo.model.binding.BuildingAddBindingModel;
+import com.syn.domo.model.binding.BuildingAssignStaffBindingModel;
 import com.syn.domo.model.binding.BuildingEditBindingModel;
+import com.syn.domo.model.binding.StaffIdBindingModel;
 import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.model.view.BuildingDeleteViewModel;
 import com.syn.domo.model.view.BuildingViewModel;
@@ -108,5 +110,30 @@ public class BuildingsController implements BuildingsNamespace {
                         .build()
                         .toUri())
                 .build();
+    }
+
+    @PutMapping("/{buildingId}/assign-staff")
+    public ResponseEntity<?> assignStaff(@PathVariable(value = "buildingId") String buildingId,
+                                         @Valid @RequestBody
+                                                 BuildingAssignStaffBindingModel buildingAssignStaffBindingModel,
+                                         BindingResult bindingResult,
+                                         UriComponentsBuilder uriComponentsBuilder) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.unprocessableEntity()
+                    .body(new ErrorResponse(bindingResult.getTarget(),
+                            bindingResult.getAllErrors()));
+        }
+
+        Set<String> staffIds = buildingAssignStaffBindingModel.getStaff().stream()
+                .map(StaffIdBindingModel::getId)
+                .collect(Collectors.toUnmodifiableSet());
+
+        this.buildingService.assignStaff(buildingId, staffIds);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .location(uriComponentsBuilder
+                        .path("/buildings/{buildingId}")
+                        .buildAndExpand(buildingId)
+                        .toUri()).build();
     }
 }

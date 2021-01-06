@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 
+import static javax.persistence.CascadeType.MERGE;
+import static javax.persistence.CascadeType.REFRESH;
 import static javax.persistence.FetchType.EAGER;
 
 @Entity
@@ -77,7 +79,7 @@ public class Building extends BaseEntity{
         this.apartments = apartments;
     }
 
-    @ManyToMany(mappedBy = "buildings", fetch = EAGER)
+    @ManyToMany(mappedBy = "buildings", cascade = { MERGE, REFRESH }, fetch = EAGER)
     public Set<Staff> getStaff() {
         return staff;
     }

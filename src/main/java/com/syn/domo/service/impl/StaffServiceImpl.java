@@ -145,20 +145,20 @@ public class StaffServiceImpl implements StaffService {
     public void assignBuildings(String staffId, Set<String> buildingIds) {
         Staff staff = this.staffRepository.findById(staffId).orElse(null);
 
-        if (staff != null) {
-            Set<BuildingServiceModel> buildingServiceModels =
-                    this.buildingService.getAllByIdIn(buildingIds);
-
-            Set<Building> buildings = buildingServiceModels.stream()
-                    .map(b -> this.modelMapper.map(b, Building.class))
-                    .collect(Collectors.toSet());
-
-            staff.getBuildings().addAll(buildings);
-
-            this.staffRepository.saveAndFlush(staff);
-        } else {
+        if (staff == null) {
             throw new EntityNotFoundException("Staff not found!");
         }
+
+        Set<BuildingServiceModel> buildingServiceModels =
+                    this.buildingService.getAllByIdIn(buildingIds);
+
+        Set<Building> buildings = buildingServiceModels.stream()
+                .map(b -> this.modelMapper.map(b, Building.class))
+                .collect(Collectors.toUnmodifiableSet());
+
+        staff.getBuildings().addAll(buildings);
+
+        this.staffRepository.saveAndFlush(staff);
     }
 
     @Override
@@ -195,5 +195,13 @@ public class StaffServiceImpl implements StaffService {
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
         return Collections.unmodifiableSet(staff);
+    }
+
+    @Override
+    public Set<StaffServiceModel> getAllByIdIn(Set<String> staffIds) {
+        Set<StaffServiceModel> staffServiceModels = this.staffRepository.findAllByIdIn(staffIds).stream()
+                .map(staff -> this.modelMapper.map(staff, StaffServiceModel.class))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        return Collections.unmodifiableSet(staffServiceModels);
     }
 }

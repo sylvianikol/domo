@@ -9,18 +9,20 @@ public interface BuildingService {
 
     Set<BuildingServiceModel> getAll();
 
-    Optional<BuildingServiceModel> getOne(String buildingName, String buildingAddress, String neighbourhood);
-
-    Optional<BuildingServiceModel> getById(String id);
+    Optional<BuildingServiceModel> getOne
+            (String buildingName, String buildingAddress, String neighbourhood);
 
     BuildingServiceModel add(BuildingServiceModel buildingServiceModel);
 
+    BuildingServiceModel edit(BuildingServiceModel buildingServiceModel, String buildingId);
+
     void delete(String buildingId);
 
-    BuildingServiceModel edit(BuildingServiceModel buildingServiceModel, String buildingId);
+    void assignStaff(String buildingId, Set<String> staffIds);
 
     void releaseStaff(String staffId);
 
-    Set<BuildingServiceModel> getAllByIdIn(Set<String> ids);
+    Optional<BuildingServiceModel> getById(String id);
 
+    Set<BuildingServiceModel> getAllByIdIn(Set<String> ids);
 }

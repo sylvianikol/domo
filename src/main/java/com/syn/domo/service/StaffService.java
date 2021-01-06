@@ -22,4 +22,6 @@ public interface StaffService {
     void assignBuildings(String staffId, Set<String> buildingIds);
 
     void releaseBuilding(Set<String> staffIds, String buildingId);
+
+    Set<StaffServiceModel> getAllByIdIn(Set<String> staffIds);
 }

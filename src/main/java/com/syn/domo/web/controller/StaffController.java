@@ -123,7 +123,7 @@ public class StaffController implements StaffNamespace {
 
         Set<String> buildingIds = staffAssignBuildingsBindingModel.getBuildings().stream()
                 .map(BuildingIdBindingModel::getId)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toUnmodifiableSet());
 
         this.staffService.assignBuildings(staffId, buildingIds);
 

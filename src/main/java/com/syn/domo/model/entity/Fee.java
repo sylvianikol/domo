@@ -6,6 +6,9 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import static javax.persistence.CascadeType.MERGE;
+import static javax.persistence.CascadeType.REFRESH;
+
 @Entity
 @Table(name = "fees")
 public class Fee extends BaseEntity {
@@ -57,7 +60,7 @@ public class Fee extends BaseEntity {
         isPaid = paid;
     }
 
-    @ManyToOne
+    @ManyToOne(cascade = { MERGE, REFRESH })
     public Apartment getApartment() {
         return apartment;
     }

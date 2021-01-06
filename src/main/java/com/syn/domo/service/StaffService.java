@@ -20,4 +20,6 @@ public interface StaffService {
     Set<StaffServiceModel> getAll();
 
     void assignBuildings(String staffId, Set<String> buildingIds);
+
+    void releaseBuilding(Set<String> staffIds, String buildingId);
 }

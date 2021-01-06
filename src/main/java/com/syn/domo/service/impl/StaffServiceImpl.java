@@ -162,6 +162,25 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
+    public void releaseBuilding(Set<String> staffIds, String buildingId) {
+        Set<Staff> staff = this.staffRepository.findAllByIdIn(staffIds);
+
+        Optional<BuildingServiceModel> buildingServiceModel =
+                this.buildingService.getById(buildingId);
+
+        if (buildingServiceModel.isEmpty()) {
+            throw new EntityNotFoundException("Building not found!");
+        }
+
+        Building building = this.modelMapper.map(buildingServiceModel.get(), Building.class);
+
+        for (Staff employee : staff) {
+            employee.getBuildings().remove(building);
+            this.staffRepository.saveAndFlush(employee);
+        }
+    }
+
+    @Override
     public Optional<StaffServiceModel> getOne(String staffId) {
         Optional<Staff> staff = this.staffRepository.findById(staffId);
         return staff.isEmpty()

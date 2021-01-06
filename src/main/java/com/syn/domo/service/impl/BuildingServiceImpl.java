@@ -68,15 +68,23 @@ public class BuildingServiceImpl implements BuildingService {
     @Override
     @Transactional
     public void delete(String buildingId) {
-        Optional<Building> building = this.buildingRepository.findById(buildingId);
+        Building building = this.buildingRepository.findById(buildingId).orElse(null);
 
-        if (building.isEmpty()) {
+        if (building == null) {
             throw new BuildingNotFoundException("Building not found!");
+        }
+
+        Set<String> staffIds = building.getStaff().stream()
+                .map(Staff::getId)
+                .collect(Collectors.toUnmodifiableSet());
+
+        if (!staffIds.isEmpty()) {
+            this.staffService.releaseBuilding(staffIds, buildingId);
         }
 
         this.apartmentService.deleteAllByBuildingId(buildingId);
 
-        this.buildingRepository.delete(building.get());
+        this.buildingRepository.delete(building);
     }
 
     @Override

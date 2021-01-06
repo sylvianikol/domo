@@ -159,15 +159,6 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
-    public ApartmentServiceModel getByNumberAndBuildingId(String apartmentNumber, String buildingId) {
-        return this.apartmentRepository.findByNumberAndBuilding_Id(apartmentNumber, buildingId)
-                .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
-                .orElseThrow(() -> {
-                    throw new EntityNotFoundException("Apartment not found");
-                });
-    }
-
-    @Override
     public Optional<ApartmentServiceModel> getById(String apartmentId) {
         Optional<Apartment> apartment = this.apartmentRepository.findById(apartmentId);
         return apartment.isEmpty()

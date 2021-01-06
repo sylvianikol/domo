@@ -1,25 +1,37 @@
 package com.syn.domo.service.impl;
 
+import com.syn.domo.model.entity.Apartment;
+import com.syn.domo.model.entity.Fee;
+import com.syn.domo.model.service.ApartmentServiceModel;
+import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.repository.FeeRepository;
 import com.syn.domo.service.ApartmentService;
+import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.FeeService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Set;
+
+import static com.syn.domo.model.entity.Fee.BASE_FEE;
 
 @Service
 public class FeeServiceImpl implements FeeService {
 
     private final FeeRepository feeRepository;
+    private final BuildingService buildingService;
     private final ApartmentService apartmentService;
     private final ModelMapper modelMapper;
 
     @Autowired
     public FeeServiceImpl(FeeRepository feeRepository,
-                          ApartmentService apartmentService,
+                          BuildingService buildingService, ApartmentService apartmentService,
                           ModelMapper modelMapper) {
         this.feeRepository = feeRepository;
+        this.buildingService = buildingService;
         this.apartmentService = apartmentService;
         this.modelMapper = modelMapper;
     }
@@ -27,6 +39,36 @@ public class FeeServiceImpl implements FeeService {
 
     @Override
     public void generateMonthlyFees() {
-        System.out.println("generateMonthlyFees() triggered!");
+        Set<BuildingServiceModel> buildingServiceModels = this.buildingService.getAll();
+
+        for (BuildingServiceModel building : buildingServiceModels) {
+            Set<ApartmentServiceModel> apartments = building.getApartments();
+            for (ApartmentServiceModel apartment : apartments) {
+                Fee fee = new Fee();
+                fee.setIssueDate(LocalDate.now());
+                fee.setDueDate(LocalDate.now().plusMonths(1));
+                fee.setApartment(this.modelMapper.map(apartment, Apartment.class));
+
+                BigDecimal total = this.calculateTotal(apartment);
+
+                fee.setTotal(total);
+
+                this.feeRepository.saveAndFlush(fee);
+            }
+        }
+    }
+
+    private BigDecimal calculateTotal(ApartmentServiceModel apartment) {
+        BigDecimal total = new BigDecimal("0");
+        int inhabitants = apartment.getResidents().size() +
+                apartment.getChildren().size() +
+                apartment.getPets();
+
+        total = total.add(BASE_FEE.multiply(BigDecimal.valueOf(inhabitants)));
+        if (apartment.getFloor() > 2) {
+            total = total.add(BASE_FEE);
+        }
+
+        return total;
     }
 }

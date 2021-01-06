@@ -11,16 +11,15 @@ public interface ApartmentService {
 
     ApartmentServiceModel edit(ApartmentServiceModel apartmentServiceModel, String buildingId);
 
+    void delete(String apartmentId, String buildingId);
+
     void deleteAllByBuildingId(String buildingId);
 
     Set<ApartmentServiceModel> getAllByBuildingId(String buildingId);
 
-    ApartmentServiceModel getByNumberAndBuildingId(String apartmentNumber, String buildingId);
-
     Optional<ApartmentServiceModel> getById(String apartmentId);
 
-    void delete(String apartmentId, String buildingId);
-
     Optional<ApartmentServiceModel> getByIdIn(String id, Set<String> apartmentIds);
+
 }
 

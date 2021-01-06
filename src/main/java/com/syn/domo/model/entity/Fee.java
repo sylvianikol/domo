@@ -2,16 +2,15 @@ package com.syn.domo.model.entity;
 
 import org.hibernate.annotations.ColumnDefault;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "fees")
 public class Fee extends BaseEntity {
+
+    public static final BigDecimal BASE_FEE = new BigDecimal("5");
 
     private BigDecimal total;
     private LocalDate issueDate;

@@ -14,7 +14,10 @@ public interface ApartmentRepository extends JpaRepository<Apartment, String> {
 
     Optional<Apartment> findByNumberAndBuilding_Id(String apartmentNumber, String buildingId);
 
-    Set<Apartment> findAllByBuilding_IdOrderByNumber(String buildingId);
+    @Query("SELECT a FROM Apartment a " +
+            "WHERE a.building.id = :buildingId " +
+            "ORDER BY a.number ")
+    Set<Apartment> getAllByBuildingId(@Param("buildingId") String buildingId);
 
     @Query("SELECT a FROM Apartment a " +
             "WHERE a.id = :id AND a.id IN :ids")

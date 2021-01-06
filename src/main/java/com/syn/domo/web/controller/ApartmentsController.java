@@ -41,7 +41,7 @@ public class ApartmentsController implements ApartmentsNamespace {
         Set<ApartmentViewModel> apartments =
                 this.apartmentService.getAllByBuildingId(buildingId).stream()
                 .map(a -> this.modelMapper.map(a, ApartmentViewModel.class))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+                .collect(Collectors.toSet());
 
         return apartments.isEmpty()
                 ? ResponseEntity.notFound().build()

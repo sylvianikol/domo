@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.*;
@@ -139,7 +138,7 @@ public class ApartmentServiceImpl implements ApartmentService {
     @Transactional
     public void deleteAllByBuildingId(String buildingId) {
         Set<Apartment> apartments =
-                this.apartmentRepository.findAllByBuilding_IdOrderByNumber(buildingId);
+                this.apartmentRepository.getAllByBuildingId(buildingId);
 
         for (Apartment apartment : apartments) {
             this.userService.deleteAllByApartmentId(buildingId, apartment.getId());
@@ -150,8 +149,11 @@ public class ApartmentServiceImpl implements ApartmentService {
 
     @Override
     public Set<ApartmentServiceModel> getAllByBuildingId(String buildingId) {
+
+        Set<Apartment> all = this.apartmentRepository.getAllByBuildingId(buildingId);
+
         Set<ApartmentServiceModel> apartmentServiceModels =
-                this.apartmentRepository.findAllByBuilding_IdOrderByNumber(buildingId).stream()
+                this.apartmentRepository.getAllByBuildingId(buildingId).stream()
                 .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 

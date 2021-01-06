@@ -5,6 +5,7 @@ import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.FeeService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,4 +25,10 @@ public class FeeServiceImpl implements FeeService {
     }
 
 
+    @Override
+//    @Scheduled(cron = "0 0 10 1 * ?")
+    @Scheduled(cron = "10 0 0 * * ?")
+    public void generateMonthlyFees() {
+        System.out.println("generateMonthlyFees() triggered!");
+    }
 }

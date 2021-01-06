@@ -22,6 +22,7 @@ import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
 
+//@CrossOrigin("http://host")
 @RestController
 public class BuildingsController implements BuildingsNamespace {
 

@@ -1,8 +1,6 @@
 package com.syn.domo.service;
 
-import com.syn.domo.model.entity.Staff;
 import com.syn.domo.model.service.BuildingServiceModel;
-import com.syn.domo.model.service.StaffServiceModel;
 
 import java.util.Optional;
 import java.util.Set;
@@ -22,5 +20,7 @@ public interface BuildingService {
     BuildingServiceModel edit(BuildingServiceModel buildingServiceModel, String buildingId);
 
     void releaseStaff(String staffId);
+
+    Set<BuildingServiceModel> getAllByIdIn(Set<String> ids);
 
 }

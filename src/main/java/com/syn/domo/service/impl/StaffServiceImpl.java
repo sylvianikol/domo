@@ -2,9 +2,12 @@ package com.syn.domo.service.impl;
 
 import com.syn.domo.exception.RoleNotFoundException;
 import com.syn.domo.exception.UnprocessableEntityException;
+import com.syn.domo.model.binding.StaffAssignBuildingsBindingModel;
+import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.entity.Role;
 import com.syn.domo.model.entity.Staff;
 import com.syn.domo.model.entity.UserRole;
+import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.model.service.RoleServiceModel;
 import com.syn.domo.model.service.StaffServiceModel;
 import com.syn.domo.model.service.UserServiceModel;
@@ -25,6 +28,7 @@ import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class StaffServiceImpl implements StaffService {
@@ -152,5 +156,23 @@ public class StaffServiceImpl implements StaffService {
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
         return Collections.unmodifiableSet(staff);
+    }
+
+    @Override
+    public void assignBuildings(String staffId, Set<String> buildingIds) {
+        Staff staff = this.staffRepository.findById(staffId).orElse(null);
+
+        if (staff != null) {
+            Set<BuildingServiceModel> buildingServiceModels =
+                    this.buildingService.getAllByIdIn(buildingIds);
+
+            Set<Building> buildings = buildingServiceModels.stream()
+                    .map(b -> this.modelMapper.map(b, Building.class))
+                    .collect(Collectors.toSet());
+
+            staff.getBuildings().addAll(buildings);
+
+            this.staffRepository.saveAndFlush(staff);
+        }
     }
 }

@@ -1,9 +1,7 @@
 package com.syn.domo.web.controller;
 
 import com.syn.domo.model.ErrorResponse;
-import com.syn.domo.model.binding.StaffAddBindingModel;
-import com.syn.domo.model.binding.StaffEditBindingModel;
-import com.syn.domo.model.binding.UserEditBindingModel;
+import com.syn.domo.model.binding.*;
 import com.syn.domo.model.service.StaffServiceModel;
 import com.syn.domo.model.service.UserServiceModel;
 import com.syn.domo.model.view.StaffViewModel;
@@ -81,7 +79,8 @@ public class StaffController implements StaffNamespace {
     @PutMapping("/{staffId}")
     public ResponseEntity<?> edit(@PathVariable(value = "staffId") String staffId,
                                   @Valid @RequestBody StaffEditBindingModel staffEditBindingModel,
-                                  BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
+                                  BindingResult bindingResult,
+                                  UriComponentsBuilder uriComponentsBuilder) {
 
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
@@ -108,5 +107,30 @@ public class StaffController implements StaffNamespace {
                 .location(uriComponentsBuilder
                         .path(URI_STAFF).build().toUri())
                 .build();
+    }
+
+    @PutMapping("/{staffId}/assign-buildings")
+    public ResponseEntity<?> assignBuildings(@PathVariable(value = "staffId") String staffId,
+                                              @Valid @RequestBody
+                                                      StaffAssignBuildingsBindingModel staffAssignBuildingsBindingModel,
+                                              BindingResult bindingResult,
+                                              UriComponentsBuilder uriComponentsBuilder) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.unprocessableEntity()
+                    .body(new ErrorResponse(bindingResult.getTarget(),
+                            bindingResult.getAllErrors()));
+        }
+
+        Set<String> buildingIds = staffAssignBuildingsBindingModel.getBuildings().stream()
+                .map(BuildingIdBindingModel::getId)
+                .collect(Collectors.toSet());
+
+        this.staffService.assignBuildings(staffId, buildingIds);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .location(uriComponentsBuilder
+                        .path(URI_STAFF + "/{staffId}")
+                        .buildAndExpand(staffId)
+                        .toUri()).build();
     }
 }

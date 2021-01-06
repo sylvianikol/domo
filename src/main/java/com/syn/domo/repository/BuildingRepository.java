@@ -12,8 +12,6 @@ import java.util.Set;
 @Repository
 public interface BuildingRepository extends JpaRepository<Building, String> {
 
-    Optional<Building> findById(String id);
-
     Optional<Building> findByAddress(String address);
 
     Optional<Building> findByNameAndNeighbourhood(String buildingName, String neighbourhood);
@@ -25,4 +23,6 @@ public interface BuildingRepository extends JpaRepository<Building, String> {
             "JOIN b.staff s " +
             "WHERE s.id = :staffId")
     Set<Building> getAllByStaffId(@Param(value = "staffId") String staffId);
+
+    Set<Building> findAllByIdIn(Set<String> ids);
 }

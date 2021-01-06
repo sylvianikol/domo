@@ -1,5 +1,6 @@
 package com.syn.domo.service;
 
+import com.syn.domo.model.binding.StaffAssignBuildingsBindingModel;
 import com.syn.domo.model.service.StaffServiceModel;
 import com.syn.domo.model.service.UserServiceModel;
 
@@ -17,4 +18,6 @@ public interface StaffService {
     Optional<StaffServiceModel> getOne(String staffId);
 
     Set<StaffServiceModel> getAll();
+
+    void assignBuildings(String staffId, Set<String> buildingIds);
 }

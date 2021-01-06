@@ -66,16 +66,6 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public Set<BuildingServiceModel> getAll() {
-
-        Set<BuildingServiceModel> buildingServiceModels =
-                this.buildingRepository.findAll().stream()
-                .map(building -> this.modelMapper.map(building, BuildingServiceModel.class))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-        return Collections.unmodifiableSet(buildingServiceModels);
-    }
-
-    @Override
     @Transactional
     public void delete(String buildingId) {
         Optional<Building> building = this.buildingRepository.findById(buildingId);
@@ -162,11 +152,30 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
+    public Set<BuildingServiceModel> getAll() {
+
+        Set<BuildingServiceModel> buildingServiceModels =
+                this.buildingRepository.findAll().stream()
+                        .map(building -> this.modelMapper.map(building, BuildingServiceModel.class))
+                        .collect(Collectors.toCollection(LinkedHashSet::new));
+        return Collections.unmodifiableSet(buildingServiceModels);
+    }
+
+    @Override
     public Optional<BuildingServiceModel> getById(String id) {
         Optional<Building> building = this.buildingRepository.findById(id);
         return building.isEmpty()
                 ? Optional.empty()
                 : Optional.of(this.modelMapper.map(building.get(), BuildingServiceModel.class));
+    }
+
+    @Override
+    public Set<BuildingServiceModel> getAllByIdIn(Set<String> ids) {
+        Set<BuildingServiceModel> buildingServiceModels =
+                this.buildingRepository.findAllByIdIn(ids).stream()
+                        .map(building -> this.modelMapper.map(building, BuildingServiceModel.class))
+                        .collect(Collectors.toCollection(LinkedHashSet::new));
+        return Collections.unmodifiableSet(buildingServiceModels);
     }
 
     private boolean hasSameData(Building building, BuildingServiceModel buildingServiceModel) {

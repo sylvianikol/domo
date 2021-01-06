@@ -148,7 +148,6 @@ public class UserServiceImpl implements UserService {
             admin.setAddedOn(LocalDate.now());
 
             Set<Role> roles = this.roleService.getAll();
-            roles.forEach(role -> role.getUsers().add(admin));
             admin.setRoles(roles);
 
             this.userRepository.saveAndFlush(admin);

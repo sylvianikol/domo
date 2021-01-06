@@ -4,11 +4,16 @@ import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Fee;
 import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.model.service.BuildingServiceModel;
+import com.syn.domo.model.service.ResidentServiceModel;
+import com.syn.domo.model.service.UserServiceModel;
+import com.syn.domo.notification.service.NotificationService;
 import com.syn.domo.repository.FeeRepository;
-import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.FeeService;
+import com.syn.domo.task.ScheduledFeesGenerator;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,18 +26,22 @@ import static com.syn.domo.model.entity.Fee.BASE_FEE;
 @Service
 public class FeeServiceImpl implements FeeService {
 
+    private static final Logger log =
+            LoggerFactory.getLogger(ScheduledFeesGenerator.class);
+
     private final FeeRepository feeRepository;
     private final BuildingService buildingService;
-    private final ApartmentService apartmentService;
+    private final NotificationService notificationService;
     private final ModelMapper modelMapper;
 
     @Autowired
     public FeeServiceImpl(FeeRepository feeRepository,
-                          BuildingService buildingService, ApartmentService apartmentService,
+                          BuildingService buildingService,
+                          NotificationService notificationService,
                           ModelMapper modelMapper) {
         this.feeRepository = feeRepository;
         this.buildingService = buildingService;
-        this.apartmentService = apartmentService;
+        this.notificationService = notificationService;
         this.modelMapper = modelMapper;
     }
 
@@ -54,8 +63,14 @@ public class FeeServiceImpl implements FeeService {
                 fee.setTotal(total);
 
                 this.feeRepository.saveAndFlush(fee);
+
+                for (UserServiceModel resident : apartment.getResidents()) {
+                    this.notificationService.sendNotification(resident);
+                }
             }
         }
+
+        log.info("++++++++++++++++   FEES GENERATED!   ++++++++++++++++++++");
     }
 
     private BigDecimal calculateTotal(ApartmentServiceModel apartment) {

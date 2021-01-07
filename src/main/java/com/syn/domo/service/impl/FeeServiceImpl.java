@@ -77,7 +77,7 @@ public class FeeServiceImpl implements FeeService {
             response.put("fees", fees);
             response.put("currentPage", pageFees.getNumber());
             response.put("totalItems", pageFees.getTotalElements());
-            response.put("totalPages", pageFees.getTotalPages());
+            response.put("totalPages", pageFees.getTotalPages() - 1);
         }
 
         return response;
@@ -124,9 +124,13 @@ public class FeeServiceImpl implements FeeService {
                 apartment.getChildren().size() +
                 apartment.getPets();
 
-        total = total.add(BASE_FEE.multiply(BigDecimal.valueOf(inhabitants)));
-        if (apartment.getFloor() > 2) {
+        if (inhabitants == 0) {
             total = total.add(BASE_FEE);
+        } else {
+            total = total.add(BASE_FEE.multiply(BigDecimal.valueOf(inhabitants)));
+            if (apartment.getFloor() > 2) {
+                total = total.add(BASE_FEE);
+            }
         }
 
         return total;

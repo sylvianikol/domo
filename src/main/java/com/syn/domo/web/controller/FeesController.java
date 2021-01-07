@@ -38,7 +38,7 @@ public class FeesController implements FeesNamespace {
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> all(@PathVariable(value = "buildingId") String buildingId,
-                                                   @RequestParam(defaultValue = "0") int page,
+                                                   @RequestParam(defaultValue = "1") int page,
                                                    @RequestParam(defaultValue = "5") int size,
                                                    @RequestParam(defaultValue = "issueDate,desc") String[] sort) {
 

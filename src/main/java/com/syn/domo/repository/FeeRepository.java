@@ -4,10 +4,23 @@ import com.syn.domo.model.entity.Fee;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 @Repository
 public interface FeeRepository extends JpaRepository<Fee, String> {
 
-    Page<Fee> findAll(Pageable pagingSort);
+    @Query("SELECT f FROM Fee f " +
+            "WHERE f.apartment.building.id = :buildingId ")
+    Page<Fee> getAllByBuildingId(@Param(value = "buildingId") String buildingId,
+                                 Pageable pagingSort);
+
+    @Query("SELECT f FROM Fee f " +
+            "WHERE f.id = :id " +
+            "AND f.apartment.building.id = :buildingId ")
+    Optional<Fee> getOneByIdAndBuildingId(@Param(value = "id") String id,
+                                          @Param(value = "buildingId") String buildingId);
 }

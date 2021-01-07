@@ -56,11 +56,14 @@ public class FeeServiceImpl implements FeeService {
 
 
     @Override
-    public Map<String, Object> getAll(int page, int size, String[] sort) {
+    public Map<String, Object> getAll(String buildingId,
+                                      int page, int size, String[] sort) {
+
         List<Order> orders = this.createOrders(sort);
 
         Pageable pagingSort = PageRequest.of(page, size, Sort.by(orders));
-        Page<Fee> pageFees = this.feeRepository.findAll(pagingSort);
+        Page<Fee> pageFees = this.feeRepository
+                .getAllByBuildingId(buildingId, pagingSort);
 
         List<FeeViewModel> fees = pageFees.getContent().stream()
                 .map(fee -> this.modelMapper.map(fee, FeeViewModel.class))
@@ -79,8 +82,6 @@ public class FeeServiceImpl implements FeeService {
 
         return response;
     }
-
-
 
     @Override
     public void generateMonthlyFees() {
@@ -105,8 +106,16 @@ public class FeeServiceImpl implements FeeService {
                 }
             }
         }
+    }
 
-        log.info("++++++++++++++++   FEES GENERATED!   ++++++++++++++++++++");
+    @Override
+    public Optional<FeeServiceModel> getOne(String feeId, String buildingId) {
+        Optional<Fee> fee = this.feeRepository
+                .getOneByIdAndBuildingId(feeId, buildingId);
+
+        return fee.isEmpty()
+                ? Optional.empty()
+                : Optional.of(this.modelMapper.map(fee.get(), FeeServiceModel.class));
     }
 
     private BigDecimal calculateFeeTotal(ApartmentServiceModel apartment) {
@@ -137,14 +146,11 @@ public class FeeServiceImpl implements FeeService {
         List<Order> orders = new ArrayList<>();
 
         if (sort[0].contains(",")) {
-            // will sort more than 2 fields
-            // sortOrder="field, direction"
             for (String sortOrder : sort) {
                 String[] _sort = sortOrder.split(",");
                 orders.add(new Order(this.getSortDirection(_sort[1]), _sort[0]));
             }
         } else {
-            // sort=[field, direction]
             orders.add(new Order(getSortDirection(sort[1]), sort[0]));
         }
 

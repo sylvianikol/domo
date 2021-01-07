@@ -9,7 +9,7 @@ public class FeeServiceModel extends BaseServiceModel {
     private LocalDate issueDate;
     private LocalDate dueDate;
     private boolean isPaid;
-    private ApartmentServiceModel apartmentServiceModel;
+    private ApartmentServiceModel apartment;
 
     public FeeServiceModel() {
     }
@@ -46,11 +46,11 @@ public class FeeServiceModel extends BaseServiceModel {
         isPaid = paid;
     }
 
-    public ApartmentServiceModel getApartmentServiceModel() {
-        return apartmentServiceModel;
+    public ApartmentServiceModel getApartment() {
+        return apartment;
     }
 
-    public void setApartmentServiceModel(ApartmentServiceModel apartmentServiceModel) {
-        this.apartmentServiceModel = apartmentServiceModel;
+    public void setApartment(ApartmentServiceModel apartment) {
+        this.apartment = apartment;
     }
 }

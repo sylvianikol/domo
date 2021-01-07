@@ -2,7 +2,6 @@ package com.syn.domo.web.controller.namespace;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@SuppressWarnings("all")
 @RequestMapping(ResidentsNamespace.URI_RESIDENTS)
 public interface ResidentsNamespace {
 

@@ -4,5 +4,5 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @RequestMapping(BuildingsNamespace.URI_BUILDING)
 public interface BuildingsNamespace {
-    String URI_BUILDING = "/buildings";
+    String URI_BUILDING = "v1/buildings";
 }

@@ -1,30 +1,19 @@
-package com.syn.domo.model.entity;
+package com.syn.domo.model.view;
 
-import org.hibernate.annotations.ColumnDefault;
-
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import static javax.persistence.CascadeType.MERGE;
-import static javax.persistence.CascadeType.REFRESH;
-
-@Entity
-@Table(name = "fees")
-public class Fee extends BaseEntity {
-
-    public static final BigDecimal BASE_FEE = new BigDecimal("5");
+public class FeeViewModel {
 
     private BigDecimal total;
     private LocalDate issueDate;
     private LocalDate dueDate;
     private boolean isPaid;
-    private Apartment apartment;
+    private int apartmentNumber;
 
-    public Fee() {
+    public FeeViewModel() {
     }
 
-    @ColumnDefault("0")
     public BigDecimal getTotal() {
         return total;
     }
@@ -33,7 +22,6 @@ public class Fee extends BaseEntity {
         this.total = total;
     }
 
-    @Column(name = "issue_date", nullable = false)
     public LocalDate getIssueDate() {
         return issueDate;
     }
@@ -42,7 +30,6 @@ public class Fee extends BaseEntity {
         this.issueDate = issueDate;
     }
 
-    @Column(name = "due_date")
     public LocalDate getDueDate() {
         return dueDate;
     }
@@ -51,7 +38,6 @@ public class Fee extends BaseEntity {
         this.dueDate = dueDate;
     }
 
-    @Column(name = "paid")
     public boolean isPaid() {
         return isPaid;
     }
@@ -60,12 +46,11 @@ public class Fee extends BaseEntity {
         isPaid = paid;
     }
 
-    @ManyToOne(cascade = { MERGE, REFRESH })
-    public Apartment getApartment() {
-        return apartment;
+    public int getApartmentNumber() {
+        return apartmentNumber;
     }
 
-    public void setApartment(Apartment apartment) {
-        this.apartment = apartment;
+    public void setApartmentNumber(int apartmentNumber) {
+        this.apartmentNumber = apartmentNumber;
     }
 }

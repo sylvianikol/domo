@@ -4,7 +4,9 @@ import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Fee;
 import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.model.service.BuildingServiceModel;
+import com.syn.domo.model.service.FeeServiceModel;
 import com.syn.domo.model.service.UserServiceModel;
+import com.syn.domo.model.view.FeeViewModel;
 import com.syn.domo.notification.service.NotificationService;
 import com.syn.domo.repository.FeeRepository;
 import com.syn.domo.service.BuildingService;
@@ -14,11 +16,19 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.syn.domo.model.entity.Fee.BASE_FEE;
 
@@ -43,6 +53,33 @@ public class FeeServiceImpl implements FeeService {
         this.notificationService = notificationService;
         this.modelMapper = modelMapper;
     }
+
+
+    @Override
+    public Map<String, Object> getAll(int page, int size, String[] sort) {
+        List<Order> orders = this.createOrders(sort);
+
+        Pageable pagingSort = PageRequest.of(page, size, Sort.by(orders));
+        Page<Fee> pageFees = this.feeRepository.findAll(pagingSort);
+
+        List<FeeViewModel> fees = pageFees.getContent().stream()
+                .map(fee -> this.modelMapper.map(fee, FeeViewModel.class))
+                .collect(Collectors.toList());
+
+        Map<String, Object> response = new HashMap<>();
+
+        if (fees.isEmpty()) {
+            response.put("fees", null);
+        } else {
+            response.put("fees", fees);
+            response.put("currentPage", pageFees.getNumber());
+            response.put("totalItems", pageFees.getTotalElements());
+            response.put("totalPages", pageFees.getTotalPages());
+        }
+
+        return response;
+    }
+
 
 
     @Override
@@ -84,5 +121,33 @@ public class FeeServiceImpl implements FeeService {
         }
 
         return total;
+    }
+
+    private Sort.Direction getSortDirection(String direction) {
+        if (direction.equals("asc")) {
+            return Sort.Direction.ASC;
+        } else if (direction.equals("desc")) {
+            return Sort.Direction.DESC;
+        }
+
+        return Sort.Direction.ASC;
+    }
+
+    private List<Order> createOrders(String[] sort) {
+        List<Order> orders = new ArrayList<>();
+
+        if (sort[0].contains(",")) {
+            // will sort more than 2 fields
+            // sortOrder="field, direction"
+            for (String sortOrder : sort) {
+                String[] _sort = sortOrder.split(",");
+                orders.add(new Order(this.getSortDirection(_sort[1]), _sort[0]));
+            }
+        } else {
+            // sort=[field, direction]
+            orders.add(new Order(getSortDirection(sort[1]), sort[0]));
+        }
+
+        return orders;
     }
 }

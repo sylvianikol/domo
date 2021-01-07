@@ -1,12 +1,10 @@
 package com.syn.domo.service;
 
-import com.syn.domo.model.service.FeeServiceModel;
-
-import java.util.List;
+import java.util.Map;
 
 public interface FeeService {
 
-    List<FeeServiceModel> getAll();
+    Map<String, Object> getAll(int page, int size, String[] sort);
 
     void generateMonthlyFees();
 }

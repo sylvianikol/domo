@@ -17,7 +17,7 @@ public class ScheduledFeesGenerator {
         this.feeService = feeService;
     }
 
-    @Scheduled(cron = "0 10 1 * ?")
+    @Scheduled(cron = "0 0 10 1 * ?")
 //    @Scheduled(fixedRate = 5000)
     public void generateMonthlyFees() {
         this.feeService.generateMonthlyFees();

@@ -25,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
@@ -136,6 +137,18 @@ public class FeeServiceImpl implements FeeService {
         return total;
     }
 
+
+    @Override
+    public void delete(String feeId) {
+        Fee fee = this.feeRepository.findById(feeId).orElse(null);
+
+        if (fee == null) {
+            throw new EntityNotFoundException("Fee not found!");
+        }
+
+        this.feeRepository.delete(fee);
+    }
+
     private Sort.Direction getSortDirection(String direction) {
         if (direction.equals("asc")) {
             return Sort.Direction.ASC;
@@ -160,4 +173,5 @@ public class FeeServiceImpl implements FeeService {
 
         return orders;
     }
+
 }

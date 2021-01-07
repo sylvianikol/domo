@@ -1,37 +1,27 @@
 package com.syn.domo.web.controller;
 
-import com.syn.domo.model.entity.Fee;
 import com.syn.domo.model.service.FeeServiceModel;
 import com.syn.domo.model.view.FeeViewModel;
-import com.syn.domo.repository.FeeRepository;
 import com.syn.domo.service.FeeService;
 import com.syn.domo.web.controller.namespace.FeesNamespace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Order;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
 
 @RestController
 public class FeesController implements FeesNamespace {
 
-    private final FeeRepository feeRepository;
     private final FeeService feeService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public FeesController(FeeRepository feeRepository, FeeService feeService, ModelMapper modelMapper) {
-        this.feeRepository = feeRepository;
+    public FeesController(FeeService feeService,
+                          ModelMapper modelMapper) {
         this.feeService = feeService;
         this.modelMapper = modelMapper;
     }
@@ -59,5 +49,20 @@ public class FeesController implements FeesNamespace {
         return fee.isEmpty()
                 ? ResponseEntity.notFound().build()
                 : ResponseEntity.ok(this.modelMapper.map(fee.get(), FeeViewModel.class));
+    }
+
+    @DeleteMapping("/{feeId}")
+    public ResponseEntity<?> delete(@PathVariable(value = "buildingId") String buildingId,
+                                    @PathVariable(value = "feeId") String feeId,
+                                    UriComponentsBuilder uriComponentsBuilder) {
+
+        this.feeService.delete(feeId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .location(uriComponentsBuilder
+                        .path(URI_FEES)
+                        .buildAndExpand(buildingId)
+                        .toUri())
+                .build();
     }
 }

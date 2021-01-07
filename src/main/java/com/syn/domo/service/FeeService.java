@@ -11,6 +11,7 @@ public interface FeeService {
 
     Optional<FeeServiceModel> getOne(String feeId, String buildingId);
 
-    void generateMonthlyFees();
+    void delete(String feeId);
 
+    void generateMonthlyFees();
 }

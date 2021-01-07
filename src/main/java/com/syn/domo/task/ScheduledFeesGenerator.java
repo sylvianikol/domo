@@ -2,8 +2,10 @@ package com.syn.domo.task;
 
 import com.syn.domo.service.FeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
 
 @Component
 public class ScheduledFeesGenerator {
@@ -15,8 +17,8 @@ public class ScheduledFeesGenerator {
         this.feeService = feeService;
     }
 
-//        @Scheduled(cron = "0 0 10 1 * ?")
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(cron = "0 10 1 * ?")
+//    @Scheduled(fixedRate = 5000)
     public void generateMonthlyFees() {
         this.feeService.generateMonthlyFees();
     }

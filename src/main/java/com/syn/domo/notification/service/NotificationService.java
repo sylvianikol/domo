@@ -17,7 +17,7 @@ public class NotificationService {
     private static final Logger log =
             LoggerFactory.getLogger(ScheduledFeesGenerator.class);
 
-    private JavaMailSender javaMailSender;
+    private final JavaMailSender javaMailSender;
 
     @Autowired
     public NotificationService(JavaMailSender javaMailSender) {

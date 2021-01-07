@@ -4,7 +4,6 @@ import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Fee;
 import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.model.service.BuildingServiceModel;
-import com.syn.domo.model.service.ResidentServiceModel;
 import com.syn.domo.model.service.UserServiceModel;
 import com.syn.domo.notification.service.NotificationService;
 import com.syn.domo.repository.FeeRepository;
@@ -58,7 +57,7 @@ public class FeeServiceImpl implements FeeService {
                 fee.setDueDate(LocalDate.now().plusMonths(1));
                 fee.setApartment(this.modelMapper.map(apartment, Apartment.class));
 
-                BigDecimal total = this.calculateTotal(apartment);
+                BigDecimal total = this.calculateFeeTotal(apartment);
 
                 fee.setTotal(total);
 
@@ -73,7 +72,7 @@ public class FeeServiceImpl implements FeeService {
         log.info("++++++++++++++++   FEES GENERATED!   ++++++++++++++++++++");
     }
 
-    private BigDecimal calculateTotal(ApartmentServiceModel apartment) {
+    private BigDecimal calculateFeeTotal(ApartmentServiceModel apartment) {
         BigDecimal total = new BigDecimal("0");
         int inhabitants = apartment.getResidents().size() +
                 apartment.getChildren().size() +

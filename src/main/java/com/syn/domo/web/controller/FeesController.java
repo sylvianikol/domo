@@ -1,5 +1,6 @@
 package com.syn.domo.web.controller;
 
+import com.syn.domo.model.service.FeeServiceModel;
 import com.syn.domo.service.FeeService;
 import com.syn.domo.web.controller.namespace.FeesNamespace;
 import org.modelmapper.ModelMapper;
@@ -21,7 +22,7 @@ public class FeesController implements FeesNamespace {
         this.modelMapper = modelMapper;
     }
 
-    public ResponseEntity<Set<?>> all() {
+    public ResponseEntity<Set<FeeServiceModel>> all() {
         return null;
     }
 }

@@ -7,9 +7,7 @@ import java.util.Optional;
 
 public interface FeeService {
 
-    Map<String, Object> getAllByBuilding(String buildingId, int page, int size, String[] sort);
-
-    Map<String, Object> getAll(int page, int size, String[] sort);
+    Map<String, Object> getAll(String buildingId, int page, int size, String[] sort);
 
     Optional<FeeServiceModel> getOne(String feeId, String buildingId);
 

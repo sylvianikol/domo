@@ -13,6 +13,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
 
+import static com.syn.domo.common.DefaultParamValues.*;
+
 @RestController
 public class FeesController implements FeesNamespace {
 
@@ -27,14 +29,15 @@ public class FeesController implements FeesNamespace {
     }
 
     @GetMapping
-    public ResponseEntity<Map<String, Object>> all(@RequestParam(required = false, defaultValue = "all") String buildingId,
-                                                   @RequestParam(defaultValue = "0") int page,
-                                                   @RequestParam(defaultValue = "5") int size,
-                                                   @RequestParam(defaultValue = "issueDate,desc") String[] sort) {
+    public ResponseEntity<Map<String, Object>> all(@RequestParam(required = false,
+                                                                 defaultValue = ALL_IDS) String buildingId,
+                                                   @RequestParam(defaultValue = DEFAULT_PAGE_NUMBER) int page,
+                                                   @RequestParam(defaultValue = DEFAULT_FEE_PAGE_SIZE) int size,
+                                                   @RequestParam(defaultValue = DEFAULT_FEE_PAGE_SORT) String[] sort) {
         Map<String, Object> response =
                 this.feeService.getAll(buildingId, page, size, sort);
 
-        return response.get("fees") == null
+        return response.get(FEES_RESPONSE_KEY) == null
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.ok(response);
     }
@@ -77,7 +80,7 @@ public class FeesController implements FeesNamespace {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = "all") String buildingId,
+    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = ALL_IDS) String buildingId,
                                        UriComponentsBuilder uriComponentsBuilder) {
 
         this.feeService.deleteAll(buildingId);

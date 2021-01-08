@@ -31,13 +31,14 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.syn.domo.common.DefaultParamValues.*;
 import static com.syn.domo.model.entity.Fee.BASE_FEE;
 
 @Service
 public class FeeServiceImpl implements FeeService {
 
     private static final Logger log =
-            LoggerFactory.getLogger(ScheduledFeesGenerator.class);
+            LoggerFactory.getLogger(FeeServiceImpl.class);
 
     private final FeeRepository feeRepository;
     private final BuildingService buildingService;
@@ -65,7 +66,7 @@ public class FeeServiceImpl implements FeeService {
 
         Page<Fee> pageFees;
 
-        if (buildingId.equals("all")) {
+        if (buildingId.equals(ALL_IDS)) {
             pageFees = this.feeRepository.findAllBy(pagingSort);
         } else {
             pageFees = this.feeRepository
@@ -79,12 +80,12 @@ public class FeeServiceImpl implements FeeService {
         Map<String, Object> response = new HashMap<>();
 
         if (fees.isEmpty()) {
-            response.put("fees", null);
+            response.put(FEES_RESPONSE_KEY, null);
         } else {
-            response.put("fees", fees);
-            response.put("currentPage", pageFees.getNumber());
-            response.put("totalItems", pageFees.getTotalElements());
-            response.put("totalPages", pageFees.getTotalPages());
+            response.put(FEES_RESPONSE_KEY, fees);
+            response.put(CURRENT_PAGE, pageFees.getNumber());
+            response.put(TOTAL_ITEMS, pageFees.getTotalElements());
+            response.put(TOTAL_PAGES, pageFees.getTotalPages());
         }
 
         return response;
@@ -136,7 +137,7 @@ public class FeeServiceImpl implements FeeService {
 
         Set<Fee> fees;
 
-        if (buildingId.equals("all")) {
+        if (buildingId.equals(ALL_IDS)) {
             fees = new HashSet<>(this.feeRepository.findAll());
             this.feeRepository.deleteAll(fees);
         } else {

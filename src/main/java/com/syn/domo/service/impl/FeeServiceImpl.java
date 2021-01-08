@@ -1,5 +1,7 @@
 package com.syn.domo.service.impl;
 
+import com.syn.domo.exception.BuildingNotFoundException;
+import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Fee;
 import com.syn.domo.model.service.ApartmentServiceModel;
@@ -21,8 +23,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -55,7 +55,6 @@ public class FeeServiceImpl implements FeeService {
         this.modelMapper = modelMapper;
     }
 
-
     @Override
     public Map<String, Object> getAll(String buildingId,
                                       int page, int size, String[] sort) {
@@ -64,7 +63,7 @@ public class FeeServiceImpl implements FeeService {
 
         Pageable pagingSort = PageRequest.of(page, size, Sort.by(orders));
         Page<Fee> pageFees = this.feeRepository
-                .getAllByBuildingId(buildingId, pagingSort);
+                .getAllByBuildingIdWithPagingSort(buildingId, pagingSort);
 
         List<FeeViewModel> fees = pageFees.getContent().stream()
                 .map(fee -> this.modelMapper.map(fee, FeeViewModel.class))
@@ -82,6 +81,74 @@ public class FeeServiceImpl implements FeeService {
         }
 
         return response;
+    }
+
+    @Override
+    public Optional<FeeServiceModel> getOne(String feeId, String buildingId) {
+
+        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
+        if (building.isEmpty()) {
+            throw new BuildingNotFoundException("Building not found!");
+        }
+
+        Optional<Fee> fee = this.feeRepository
+                .getOneByIdAndBuildingId(feeId, buildingId);
+
+        return fee.isEmpty()
+                ? Optional.empty()
+                : Optional.of(this.modelMapper.map(fee.get(), FeeServiceModel.class));
+    }
+
+    @Override
+    public FeeServiceModel pay(String feeId, String buildingId) {
+        //TODO: validation
+        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
+        if (building.isEmpty()) {
+            throw new BuildingNotFoundException("Building not found!");
+        }
+
+        Fee fee = this.feeRepository.findById(feeId).orElse(null);
+
+        if (fee == null) {
+            throw new EntityNotFoundException("Fee not found!");
+        }
+
+        if (fee.isPaid()) {
+            throw new UnprocessableEntityException("Fee is already paid!");
+        }
+
+        fee.setPaid(true);
+        this.feeRepository.saveAndFlush(fee);
+
+        return this.modelMapper.map(fee, FeeServiceModel.class);
+    }
+
+    @Override
+    public void delete(String feeId, String buildingId) {
+        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
+        if (building.isEmpty()) {
+            throw new BuildingNotFoundException("Building not found!");
+        }
+
+        Fee fee = this.feeRepository.findById(feeId).orElse(null);
+
+        if (fee == null) {
+            throw new EntityNotFoundException("Fee not found!");
+        }
+
+        this.feeRepository.delete(fee);
+    }
+
+    @Override
+    public void deleteAll(String buildingId) {
+
+        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
+        if (building.isEmpty()) {
+            throw new BuildingNotFoundException("Building not found!");
+        }
+
+        Set<Fee> fees = this.feeRepository.getAllByBuildingId(buildingId);
+        this.feeRepository.deleteAll(fees);
     }
 
     @Override
@@ -103,20 +170,10 @@ public class FeeServiceImpl implements FeeService {
                 this.feeRepository.saveAndFlush(fee);
 
                 for (UserServiceModel resident : apartment.getResidents()) {
-                    this.notificationService.sendNotification(resident);
+                    this.notificationService.sendEmail(resident);
                 }
             }
         }
-    }
-
-    @Override
-    public Optional<FeeServiceModel> getOne(String feeId, String buildingId) {
-        Optional<Fee> fee = this.feeRepository
-                .getOneByIdAndBuildingId(feeId, buildingId);
-
-        return fee.isEmpty()
-                ? Optional.empty()
-                : Optional.of(this.modelMapper.map(fee.get(), FeeServiceModel.class));
     }
 
     private BigDecimal calculateFeeTotal(ApartmentServiceModel apartment) {
@@ -135,18 +192,6 @@ public class FeeServiceImpl implements FeeService {
         }
 
         return total;
-    }
-
-
-    @Override
-    public void delete(String feeId) {
-        Fee fee = this.feeRepository.findById(feeId).orElse(null);
-
-        if (fee == null) {
-            throw new EntityNotFoundException("Fee not found!");
-        }
-
-        this.feeRepository.delete(fee);
     }
 
     private Sort.Direction getSortDirection(String direction) {

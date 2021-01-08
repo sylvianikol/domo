@@ -51,12 +51,40 @@ public class FeesController implements FeesNamespace {
                 : ResponseEntity.ok(this.modelMapper.map(fee.get(), FeeViewModel.class));
     }
 
+    @PostMapping("/{feeId}")
+    public ResponseEntity<?> pay(@PathVariable(value = "buildingId") String buildingId,
+                                  @PathVariable(value = "feeId") String feeId,
+                                  UriComponentsBuilder uriComponentsBuilder) {
+
+        this.feeService.pay(feeId, buildingId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .location(uriComponentsBuilder
+                        .path(URI_FEES + "/{feeId}")
+                        .buildAndExpand(buildingId, feeId)
+                        .toUri()).build();
+    }
+
     @DeleteMapping("/{feeId}")
     public ResponseEntity<?> delete(@PathVariable(value = "buildingId") String buildingId,
                                     @PathVariable(value = "feeId") String feeId,
                                     UriComponentsBuilder uriComponentsBuilder) {
 
-        this.feeService.delete(feeId);
+        this.feeService.delete(feeId, buildingId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .location(uriComponentsBuilder
+                        .path(URI_FEES)
+                        .buildAndExpand(buildingId)
+                        .toUri())
+                .build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteAll(@PathVariable(value = "buildingId") String buildingId,
+                                       UriComponentsBuilder uriComponentsBuilder) {
+
+        this.feeService.deleteAll(buildingId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder

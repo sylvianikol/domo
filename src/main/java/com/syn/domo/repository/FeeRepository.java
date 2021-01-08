@@ -9,14 +9,19 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface FeeRepository extends JpaRepository<Fee, String> {
 
     @Query("SELECT f FROM Fee f " +
             "WHERE f.apartment.building.id = :buildingId ")
-    Page<Fee> getAllByBuildingId(@Param(value = "buildingId") String buildingId,
-                                 Pageable pagingSort);
+    Page<Fee> getAllByBuildingIdWithPagingSort(@Param(value = "buildingId") String buildingId,
+                                               Pageable pagingSort);
+
+    @Query("SELECT f FROM Fee f " +
+            "WHERE f.apartment.building.id = :buildingId ")
+    Set<Fee> getAllByBuildingId(@Param(value = "buildingId") String buildingId);
 
     @Query("SELECT f FROM Fee f " +
             "WHERE f.id = :id " +

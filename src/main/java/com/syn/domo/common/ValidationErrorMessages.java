@@ -96,6 +96,10 @@ public class ValidationErrorMessages {
     public static final String JOB_NULL = "Job can not be null!";
     public static final String JOB_EMPTY = "Job can not be empty!";
 
-    public static final String SALARY_NULL = "Salary can not be null!";
-    public static final String SALARY_MIN = "Salary can not be a negative number!";
+    public static final String SALARY_NULL =
+            "Salary can not be null!";
+    public static final String SALARY_MIN =
+            "Salary can not be a negative number!";
+
+    public static final String PAID_NULL = "Paid can not be null!";
 }

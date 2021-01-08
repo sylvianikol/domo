@@ -24,7 +24,7 @@ public class NotificationService {
         this.javaMailSender = javaMailSender;
     }
 
-    public void sendNotification(UserServiceModel resident) throws MailException {
+    public void sendEmail(UserServiceModel resident) throws MailException {
 
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setTo(resident.getEmail());

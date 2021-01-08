@@ -151,11 +151,7 @@ public class FeeServiceImpl implements FeeService {
     }
 
     @Override
-    public void delete(String feeId, String buildingId) {
-        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
-        if (building.isEmpty()) {
-            throw new BuildingNotFoundException("Building not found!");
-        }
+    public void delete(String feeId) {
 
         Fee fee = this.feeRepository.findById(feeId).orElse(null);
 
@@ -169,13 +165,20 @@ public class FeeServiceImpl implements FeeService {
     @Override
     public void deleteAll(String buildingId) {
 
-        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
-        if (building.isEmpty()) {
-            throw new BuildingNotFoundException("Building not found!");
-        }
+        Set<Fee> fees;
 
-        Set<Fee> fees = this.feeRepository.getAllByBuildingId(buildingId);
-        this.feeRepository.deleteAll(fees);
+        if (buildingId.equals("all")) {
+            fees = new HashSet<>(this.feeRepository.findAll());
+            this.feeRepository.deleteAll(fees);
+        } else {
+            Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
+            if (building.isEmpty()) {
+                throw new BuildingNotFoundException("Building not found!");
+            }
+
+            fees = this.feeRepository.getAllByBuildingId(buildingId);
+            this.feeRepository.deleteAll(fees);
+        }
     }
 
     @Override

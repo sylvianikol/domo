@@ -13,7 +13,7 @@ public interface FeeService {
 
     Optional<FeeServiceModel> getOne(String feeId, String buildingId);
 
-    void delete(String feeId, String buildingId);
+    void delete(String feeId);
 
     FeeServiceModel pay(String feeId, String buildingId);
 

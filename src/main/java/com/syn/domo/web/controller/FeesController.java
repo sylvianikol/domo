@@ -74,22 +74,21 @@ public class FeesController implements FeesNamespace {
     }
 
     @DeleteMapping("/{feeId}")
-    public ResponseEntity<?> delete(@PathVariable(value = "buildingId") String buildingId,
-                                    @PathVariable(value = "feeId") String feeId,
+    public ResponseEntity<?> delete(@PathVariable(value = "feeId") String feeId,
                                     UriComponentsBuilder uriComponentsBuilder) {
 
-        this.feeService.delete(feeId, buildingId);
+        this.feeService.delete(feeId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder
                         .path(URI_FEES)
-                        .buildAndExpand(buildingId)
+                        .build()
                         .toUri())
                 .build();
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteAll(@PathVariable(value = "buildingId") String buildingId,
+    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = "all") String buildingId,
                                        UriComponentsBuilder uriComponentsBuilder) {
 
         this.feeService.deleteAll(buildingId);
@@ -97,7 +96,7 @@ public class FeesController implements FeesNamespace {
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder
                         .path(URI_FEES)
-                        .buildAndExpand(buildingId)
+                        .build()
                         .toUri())
                 .build();
     }

@@ -2,14 +2,15 @@ package com.syn.domo.web.controller;
 
 import com.syn.domo.service.BuildingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-@Controller
+@RestController
 public class HomeController {
 
-    private static final String HOME_TITLE = "Administration Area";
     private final BuildingService buildingService;
 
     @Autowired
@@ -17,12 +18,9 @@ public class HomeController {
         this.buildingService = buildingService;
     }
 
-    @GetMapping("/")
-    public ModelAndView home(ModelAndView modelAndView) {
+    @GetMapping
+    public ResponseEntity<?> home() {
 
-        modelAndView.addObject("pageTitle", HOME_TITLE)
-            .setViewName("admin-home");
-
-        return modelAndView;
+        return ResponseEntity.ok().build();
     }
 }

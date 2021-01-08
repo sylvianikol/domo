@@ -5,5 +5,5 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(StaffNamespace.URI_STAFF)
 public interface StaffNamespace {
 
-    String URI_STAFF = "/staff";
+    String URI_STAFF = "/v1/staff";
 }

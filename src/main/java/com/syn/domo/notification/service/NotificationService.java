@@ -1,8 +1,7 @@
 package com.syn.domo.notification.service;
 
-import com.syn.domo.model.service.ResidentServiceModel;
 import com.syn.domo.model.service.UserServiceModel;
-import com.syn.domo.task.ScheduledFeesGenerator;
+import com.syn.domo.scheduled.ScheduledFeesGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

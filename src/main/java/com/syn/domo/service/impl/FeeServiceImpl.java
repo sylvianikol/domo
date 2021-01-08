@@ -13,7 +13,7 @@ import com.syn.domo.notification.service.NotificationService;
 import com.syn.domo.repository.FeeRepository;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.FeeService;
-import com.syn.domo.task.ScheduledFeesGenerator;
+import com.syn.domo.scheduled.ScheduledFeesGenerator;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,14 +56,41 @@ public class FeeServiceImpl implements FeeService {
     }
 
     @Override
-    public Map<String, Object> getAll(String buildingId,
-                                      int page, int size, String[] sort) {
+    public Map<String, Object> getAllByBuilding(String buildingId,
+                                                int page, int size, String[] sort) {
 
         List<Order> orders = this.createOrders(sort);
 
         Pageable pagingSort = PageRequest.of(page, size, Sort.by(orders));
         Page<Fee> pageFees = this.feeRepository
                 .getAllByBuildingIdWithPagingSort(buildingId, pagingSort);
+
+        List<FeeViewModel> fees = pageFees.getContent().stream()
+                .map(fee -> this.modelMapper.map(fee, FeeViewModel.class))
+                .collect(Collectors.toList());
+
+        Map<String, Object> response = new HashMap<>();
+
+        if (fees.isEmpty()) {
+            response.put("fees", null);
+        } else {
+            response.put("fees", fees);
+            response.put("currentPage", pageFees.getNumber());
+            response.put("totalItems", pageFees.getTotalElements());
+            response.put("totalPages", pageFees.getTotalPages());
+        }
+
+        return response;
+    }
+
+    @Override
+    public Map<String, Object> getAll(int page, int size, String[] sort) {
+        List<Order> orders = this.createOrders(sort);
+
+        Pageable pagingSort = PageRequest.of(page, size, Sort.by(orders));
+
+        Page<Fee> pageFees = this.feeRepository
+                .findAllBy(pagingSort);
 
         List<FeeViewModel> fees = pageFees.getContent().stream()
                 .map(fee -> this.modelMapper.map(fee, FeeViewModel.class))

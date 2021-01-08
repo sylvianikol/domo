@@ -1,4 +1,4 @@
-package com.syn.domo.task;
+package com.syn.domo.scheduled;
 
 import com.syn.domo.service.FeeService;
 import org.springframework.beans.factory.annotation.Autowired;

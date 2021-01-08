@@ -3,6 +3,7 @@ package com.syn.domo.web.controller;
 import com.syn.domo.model.service.FeeServiceModel;
 import com.syn.domo.model.view.FeeViewModel;
 import com.syn.domo.service.FeeService;
+import com.syn.domo.web.controller.namespace.BaseNamespace;
 import com.syn.domo.web.controller.namespace.FeesNamespace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
+
+import static com.syn.domo.web.controller.namespace.BuildingsNamespace.URI_BUILDING;
+import static com.syn.domo.web.controller.namespace.FeesNamespace.URI_FEES;
 
 @RestController
 public class FeesController implements FeesNamespace {
@@ -27,13 +31,17 @@ public class FeesController implements FeesNamespace {
     }
 
     @GetMapping
-    public ResponseEntity<Map<String, Object>> all(@PathVariable(value = "buildingId") String buildingId,
-                                                   @RequestParam(defaultValue = "1") int page,
+    public ResponseEntity<Map<String, Object>> all(@RequestParam(required = false, defaultValue = "all") String buildingId,
+                                                   @RequestParam(defaultValue = "0") int page,
                                                    @RequestParam(defaultValue = "5") int size,
                                                    @RequestParam(defaultValue = "issueDate,desc") String[] sort) {
+        Map<String, Object> response;
 
-        Map<String, Object> response =
-                this.feeService.getAll(buildingId, page, size, sort);
+        if (buildingId.equals("all")) {
+            response = this.feeService.getAll(page, size, sort);
+        } else {
+            response = this.feeService.getAllByBuilding(buildingId, page, size, sort);
+        }
 
         return response.get("fees") == null
                 ? ResponseEntity.noContent().build()

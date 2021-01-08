@@ -19,6 +19,8 @@ public interface FeeRepository extends JpaRepository<Fee, String> {
     Page<Fee> getAllByBuildingIdWithPagingSort(@Param(value = "buildingId") String buildingId,
                                                Pageable pagingSort);
 
+    Page<Fee> findAllBy(Pageable pagingSort);
+
     @Query("SELECT f FROM Fee f " +
             "WHERE f.apartment.building.id = :buildingId ")
     Set<Fee> getAllByBuildingId(@Param(value = "buildingId") String buildingId);

@@ -40,10 +40,9 @@ public class FeesController implements FeesNamespace {
     }
 
     @GetMapping("/{feeId}")
-    public ResponseEntity<FeeViewModel> one(@PathVariable(value = "buildingId") String buildingId,
-                                            @PathVariable(value = "feeId") String feeId) {
+    public ResponseEntity<FeeViewModel> one(@PathVariable(value = "feeId") String feeId) {
 
-        Optional<FeeServiceModel> fee = this.feeService.getOne(feeId, buildingId);
+        Optional<FeeServiceModel> fee = this.feeService.getOne(feeId);
 
         return fee.isEmpty()
                 ? ResponseEntity.notFound().build()

@@ -9,7 +9,7 @@ public interface FeeService {
 
     Map<String, Object> getAll(String buildingId, int page, int size, String[] sort);
 
-    Optional<FeeServiceModel> getOne(String feeId, String buildingId);
+    Optional<FeeServiceModel> getOne(String feeId);
 
     void delete(String feeId);
 

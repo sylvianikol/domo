@@ -91,15 +91,9 @@ public class FeeServiceImpl implements FeeService {
     }
 
     @Override
-    public Optional<FeeServiceModel> getOne(String feeId, String buildingId) {
+    public Optional<FeeServiceModel> getOne(String feeId) {
 
-        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
-        if (building.isEmpty()) {
-            throw new BuildingNotFoundException("Building not found!");
-        }
-
-        Optional<Fee> fee = this.feeRepository
-                .getOneByIdAndBuildingId(feeId, buildingId);
+        Optional<Fee> fee = this.feeRepository.findById(feeId);
 
         return fee.isEmpty()
                 ? Optional.empty()

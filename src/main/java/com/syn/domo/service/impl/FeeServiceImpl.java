@@ -101,12 +101,7 @@ public class FeeServiceImpl implements FeeService {
     }
 
     @Override
-    public FeeServiceModel pay(String feeId, String buildingId) {
-        //TODO: validation
-        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
-        if (building.isEmpty()) {
-            throw new BuildingNotFoundException("Building not found!");
-        }
+    public FeeServiceModel pay(String feeId) {
 
         Fee fee = this.feeRepository.findById(feeId).orElse(null);
 

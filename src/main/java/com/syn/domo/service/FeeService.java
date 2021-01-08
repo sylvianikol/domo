@@ -13,7 +13,7 @@ public interface FeeService {
 
     void delete(String feeId);
 
-    FeeServiceModel pay(String feeId, String buildingId);
+    FeeServiceModel pay(String feeId);
 
     void generateMonthlyFees();
 

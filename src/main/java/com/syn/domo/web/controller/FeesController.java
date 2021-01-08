@@ -50,16 +50,15 @@ public class FeesController implements FeesNamespace {
     }
 
     @PostMapping("/{feeId}/pay")
-    public ResponseEntity<?> pay(@PathVariable(value = "buildingId") String buildingId,
-                                  @PathVariable(value = "feeId") String feeId,
+    public ResponseEntity<?> pay(@PathVariable(value = "feeId") String feeId,
                                   UriComponentsBuilder uriComponentsBuilder) {
 
-        this.feeService.pay(feeId, buildingId);
+        this.feeService.pay(feeId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder
                         .path(URI_FEES + "/{feeId}")
-                        .buildAndExpand(buildingId, feeId)
+                        .buildAndExpand(feeId)
                         .toUri()).build();
     }
 

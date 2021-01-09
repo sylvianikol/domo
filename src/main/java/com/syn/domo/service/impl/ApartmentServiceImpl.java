@@ -154,6 +154,15 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
+    public void emptyApartments(String buildingId) {
+        Set<Apartment> apartments = this.apartmentRepository.getAllByBuildingId(buildingId);
+
+        for (Apartment apartment : apartments) {
+            this.residentService.deleteAllByApartmentId(buildingId, apartment.getId());
+        }
+    }
+
+    @Override
     public Set<ApartmentServiceModel> getAllByBuildingId(String buildingId) {
 
         Set<ApartmentServiceModel> apartmentServiceModels =

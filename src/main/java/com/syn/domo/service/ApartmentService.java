@@ -21,5 +21,6 @@ public interface ApartmentService {
 
     Optional<ApartmentServiceModel> getByIdIn(String id, Set<String> apartmentIds);
 
+    void emptyApartments(String building);
 }
 

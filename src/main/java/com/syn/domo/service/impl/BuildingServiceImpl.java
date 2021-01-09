@@ -23,16 +23,18 @@ import java.util.stream.Collectors;
 public class BuildingServiceImpl implements BuildingService {
 
     private final BuildingRepository buildingRepository;
+    private final ApartmentService apartmentService;
     private final ResidentService residentService;
     private final StaffService staffService;
     private final ModelMapper modelMapper;
 
     @Autowired
     public BuildingServiceImpl(BuildingRepository buildingRepository,
-                               @Lazy ResidentService residentService,
+                               ApartmentService apartmentService, @Lazy ResidentService residentService,
                                @Lazy StaffService staffService,
                                ModelMapper modelMapper) {
         this.buildingRepository = buildingRepository;
+        this.apartmentService = apartmentService;
         this.residentService = residentService;
         this.staffService = staffService;
         this.modelMapper = modelMapper;
@@ -141,9 +143,7 @@ public class BuildingServiceImpl implements BuildingService {
                 this.staffService.cancelBuildingAssignments(staffIds, buildingId);
             }
 
-            for (Apartment apartment : building.getApartments()) {
-                this.residentService.deleteAllByApartmentId(buildingId, apartment.getId());
-            }
+            this.apartmentService.emptyApartments(buildingId);
         }
 
         this.buildingRepository.deleteAll(buildings);
@@ -166,10 +166,7 @@ public class BuildingServiceImpl implements BuildingService {
             this.staffService.cancelBuildingAssignments(staffIds, buildingId);
         }
 
-        for (Apartment apartment : building.getApartments()) {
-            this.residentService.deleteAllByApartmentId(buildingId, apartment.getId());
-        }
-
+        this.apartmentService.emptyApartments(buildingId);
         this.buildingRepository.delete(building);
     }
 

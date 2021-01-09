@@ -1,5 +1,6 @@
 package com.syn.domo.service.impl;
 
+import com.syn.domo.common.DefaultParamValues;
 import com.syn.domo.exception.RoleNotFoundException;
 import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.Building;
@@ -24,6 +25,8 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.syn.domo.common.DefaultParamValues.DEFAULT_EMPTY;
 
 @Service
 public class StaffServiceImpl implements StaffService {
@@ -125,8 +128,15 @@ public class StaffServiceImpl implements StaffService {
 
     @Override
     @Transactional
-    public void deleteAll() {
-        List<Staff> staff = this.staffRepository.findAll();
+    public void deleteAll(String buildingId) {
+
+        List<Staff> staff;
+
+        if (buildingId.equals(DEFAULT_EMPTY)) {
+            staff = this.staffRepository.findAll();
+        } else {
+            staff = this.staffRepository.getAllByBuildingId(buildingId);
+        }
 
         for (Staff employee : staff) {
             this.staffRepository.cancelBuildingAssignments(employee.getId());

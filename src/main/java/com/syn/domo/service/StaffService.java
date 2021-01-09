@@ -1,8 +1,6 @@
 package com.syn.domo.service;
 
-import com.syn.domo.model.binding.StaffAssignBuildingsBindingModel;
 import com.syn.domo.model.service.StaffServiceModel;
-import com.syn.domo.model.service.UserServiceModel;
 
 import java.util.Optional;
 import java.util.Set;
@@ -25,5 +23,5 @@ public interface StaffService {
 
     Set<StaffServiceModel> getAllByIdIn(Set<String> staffIds);
 
-    void deleteAll();
+    void deleteAll(String buildingId);
 }

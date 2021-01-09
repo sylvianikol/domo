@@ -2,7 +2,8 @@ package com.syn.domo.common;
 
 public class DefaultParamValues {
 
-    public static final String ALL_IDS = "all";
+    public static final String DEFAULT_ALL = "all";
+    public static final String DEFAULT_EMPTY = "empty";
 
     public static final String FEES_RESPONSE_KEY = "fees";
     public static final String DEFAULT_FEE_PAGE_SIZE = "5";

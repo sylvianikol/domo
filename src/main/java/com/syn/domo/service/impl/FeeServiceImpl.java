@@ -13,7 +13,6 @@ import com.syn.domo.notification.service.NotificationService;
 import com.syn.domo.repository.FeeRepository;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.FeeService;
-import com.syn.domo.scheduled.ScheduledFeesGenerator;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +65,7 @@ public class FeeServiceImpl implements FeeService {
 
         Page<Fee> pageFees;
 
-        if (buildingId.equals(ALL_IDS)) {
+        if (buildingId.equals(DEFAULT_ALL)) {
             pageFees = this.feeRepository.findAllBy(pagingSort);
         } else {
             pageFees = this.feeRepository
@@ -137,7 +136,7 @@ public class FeeServiceImpl implements FeeService {
 
         Set<Fee> fees;
 
-        if (buildingId.equals(ALL_IDS)) {
+        if (buildingId.equals(DEFAULT_ALL)) {
             fees = new HashSet<>(this.feeRepository.findAll());
             this.feeRepository.deleteAll(fees);
         } else {

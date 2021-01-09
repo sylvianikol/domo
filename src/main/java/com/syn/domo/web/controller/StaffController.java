@@ -3,7 +3,6 @@ package com.syn.domo.web.controller;
 import com.syn.domo.model.ErrorResponse;
 import com.syn.domo.model.binding.*;
 import com.syn.domo.model.service.StaffServiceModel;
-import com.syn.domo.model.service.UserServiceModel;
 import com.syn.domo.model.view.StaffViewModel;
 import com.syn.domo.service.StaffService;
 import com.syn.domo.web.controller.namespace.StaffNamespace;
@@ -16,12 +15,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.syn.domo.common.DefaultParamValues.ALL_IDS;
+import static com.syn.domo.common.DefaultParamValues.DEFAULT_ALL;
+import static com.syn.domo.common.DefaultParamValues.DEFAULT_EMPTY;
 
 @RestController
 public class StaffController implements StaffNamespace {
@@ -101,9 +100,11 @@ public class StaffController implements StaffNamespace {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteAll(UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = DEFAULT_EMPTY,
+                                                     name = "buildingId") String buildingId,
+                                       UriComponentsBuilder uriComponentsBuilder) {
 
-        this.staffService.deleteAll();
+        this.staffService.deleteAll(buildingId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder

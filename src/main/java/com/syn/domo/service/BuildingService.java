@@ -22,5 +22,4 @@ public interface BuildingService {
     void assignStaff(String buildingId, Set<String> staffIds);
 
     Set<BuildingServiceModel> getAllByIdIn(Set<String> ids);
-
 }

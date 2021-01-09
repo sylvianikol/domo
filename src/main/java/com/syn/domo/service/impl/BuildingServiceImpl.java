@@ -23,19 +23,16 @@ import java.util.stream.Collectors;
 public class BuildingServiceImpl implements BuildingService {
 
     private final BuildingRepository buildingRepository;
-    private final ApartmentService apartmentService;
     private final ResidentService residentService;
     private final StaffService staffService;
     private final ModelMapper modelMapper;
 
     @Autowired
     public BuildingServiceImpl(BuildingRepository buildingRepository,
-                               ApartmentService apartmentService,
                                @Lazy ResidentService residentService,
                                @Lazy StaffService staffService,
                                ModelMapper modelMapper) {
         this.buildingRepository = buildingRepository;
-        this.apartmentService = apartmentService;
         this.residentService = residentService;
         this.staffService = staffService;
         this.modelMapper = modelMapper;
@@ -158,7 +155,7 @@ public class BuildingServiceImpl implements BuildingService {
         Building building = this.buildingRepository.findById(buildingId).orElse(null);
 
         if (building == null) {
-            throw new BuildingNotFoundException("Building not found!");
+            throw new EntityNotFoundException("Building not found!");
         }
 
         Set<String> staffIds = building.getStaff().stream()
@@ -169,7 +166,9 @@ public class BuildingServiceImpl implements BuildingService {
             this.staffService.cancelBuildingAssignments(staffIds, buildingId);
         }
 
-        this.apartmentService.deleteAllByBuildingId(buildingId);
+        for (Apartment apartment : building.getApartments()) {
+            this.residentService.deleteAllByApartmentId(buildingId, apartment.getId());
+        }
 
         this.buildingRepository.delete(building);
     }

@@ -2,9 +2,7 @@ package com.syn.domo.web.controller;
 
 import com.syn.domo.model.ErrorResponse;
 import com.syn.domo.model.binding.BuildingAddBindingModel;
-import com.syn.domo.model.binding.BuildingAssignStaffBindingModel;
 import com.syn.domo.model.binding.BuildingEditBindingModel;
-import com.syn.domo.model.binding.StaffIdBindingModel;
 import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.model.view.BuildingDeleteViewModel;
 import com.syn.domo.model.view.BuildingViewModel;
@@ -51,7 +49,7 @@ public class BuildingsController implements BuildingsNamespace {
     public ResponseEntity<BuildingViewModel> get(@PathVariable(value = "buildingId") String buildingId) {
 
         Optional<BuildingServiceModel> buildingServiceModel =
-                this.buildingService.getById(buildingId);
+                this.buildingService.get(buildingId);
 
         return buildingServiceModel.isEmpty()
                 ? ResponseEntity.notFound().build()

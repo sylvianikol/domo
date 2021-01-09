@@ -9,8 +9,7 @@ public interface BuildingService {
 
     Set<BuildingServiceModel> getAll();
 
-    Optional<BuildingServiceModel> getOne
-            (String buildingName, String buildingAddress, String neighbourhood);
+    Optional<BuildingServiceModel> get(String id);
 
     BuildingServiceModel add(BuildingServiceModel buildingServiceModel);
 
@@ -21,8 +20,6 @@ public interface BuildingService {
     void delete(String buildingId);
 
     void assignStaff(String buildingId, Set<String> staffIds);
-
-    Optional<BuildingServiceModel> getById(String id);
 
     Set<BuildingServiceModel> getAllByIdIn(Set<String> ids);
 

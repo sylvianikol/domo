@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -41,16 +42,35 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
+    public Set<BuildingServiceModel> getAll() {
+
+        Set<BuildingServiceModel> buildingServiceModels =
+                this.buildingRepository.findAll().stream()
+                        .map(building -> this.modelMapper.map(building, BuildingServiceModel.class))
+                        .collect(Collectors.toCollection(LinkedHashSet::new));
+        return Collections.unmodifiableSet(buildingServiceModels);
+    }
+
+    @Override
+    public Optional<BuildingServiceModel> get(String id) {
+        Optional<Building> building = this.buildingRepository.findById(id);
+        return building.isEmpty()
+                ? Optional.empty()
+                : Optional.of(this.modelMapper.map(building.get(), BuildingServiceModel.class));
+    }
+
+    @Override
     public BuildingServiceModel add(BuildingServiceModel buildingServiceModel) {
         // TODO: validation
 
-        Optional<BuildingServiceModel> duplicate = this.getOne(
+        Optional<Building> duplicateBuilding = this.buildingRepository
+                .findByNameAndAddressAndNeighbourhood(
                 buildingServiceModel.getName().trim(),
                 buildingServiceModel.getAddress().trim(),
                 buildingServiceModel.getNeighbourhood().trim());
 
-        if (duplicate.isPresent()) {
-            throw new BuildingAlreadyExistsException(String.format(
+        if (duplicateBuilding.isPresent()) {
+            throw new EntityExistsException(String.format(
                     "Building with name \"%s\" already exists in \"%s\"!",
                     buildingServiceModel.getName(), buildingServiceModel.getNeighbourhood()));
         }
@@ -169,34 +189,6 @@ public class BuildingServiceImpl implements BuildingService {
         for (Staff employee : staff) {
             this.staffService.assignBuildings(employee.getId(), Set.of(buildingId));
         }
-    }
-
-    @Override
-    public Set<BuildingServiceModel> getAll() {
-
-        Set<BuildingServiceModel> buildingServiceModels =
-                this.buildingRepository.findAll().stream()
-                        .map(building -> this.modelMapper.map(building, BuildingServiceModel.class))
-                        .collect(Collectors.toCollection(LinkedHashSet::new));
-        return Collections.unmodifiableSet(buildingServiceModels);
-    }
-
-    @Override
-    public Optional<BuildingServiceModel> getOne(String buildingName,
-                                                 String buildingAddress, String neighbourhood) {
-        Optional<Building> optionalBuilding = this.buildingRepository
-                .findByNameAndAddressAndNeighbourhood(buildingName, buildingAddress, neighbourhood);
-
-        return optionalBuilding.map(building ->
-                this.modelMapper.map(building, BuildingServiceModel.class));
-    }
-
-    @Override
-    public Optional<BuildingServiceModel> getById(String id) {
-        Optional<Building> building = this.buildingRepository.findById(id);
-        return building.isEmpty()
-                ? Optional.empty()
-                : Optional.of(this.modelMapper.map(building.get(), BuildingServiceModel.class));
     }
 
     @Override

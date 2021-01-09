@@ -12,7 +12,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -66,7 +65,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserServiceModel edit(UserServiceModel userServiceModel, String buildingId, String apartmentId) {
         // TODO: validation
-        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
+        Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
         if (building.isEmpty()) {
             throw new BuildingNotFoundException("Building not found!");
         }
@@ -117,7 +116,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(String residentId, String buildingId, String apartmentId) {
-        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
+        Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
         if (building.isEmpty()) {
             throw new BuildingNotFoundException("Building not found!");
         }

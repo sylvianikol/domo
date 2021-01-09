@@ -48,7 +48,7 @@ public class ChildServiceImpl implements ChildService {
     public ChildServiceModel add(ChildServiceModel childServiceModel, String buildingId, String apartmentId) {
         // TODO: validation
 
-        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
+        Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
         if (building.isEmpty()) {
             throw new BuildingNotFoundException("Building not found!");
         }
@@ -99,7 +99,7 @@ public class ChildServiceImpl implements ChildService {
     public ChildServiceModel edit(ChildServiceModel childServiceModel, String buildingId, String apartmentId) {
         // TODO: validation
 
-        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
+        Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
         if (building.isEmpty()) {
             throw new BuildingNotFoundException("Building not found!");
         }
@@ -126,7 +126,7 @@ public class ChildServiceImpl implements ChildService {
 
     @Override
     public void deleteAllByApartmentId(String buildingId, String apartmentId) {
-        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
+        Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
         if (building.isEmpty()) {
             throw new BuildingNotFoundException("Building not found!");
         }
@@ -143,7 +143,7 @@ public class ChildServiceImpl implements ChildService {
 
     @Override
     public void delete(String childId, String buildingId, String apartmentId) {
-        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
+        Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
         if (building.isEmpty()) {
             throw new BuildingNotFoundException("Building not found!");
         }

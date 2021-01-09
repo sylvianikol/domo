@@ -46,7 +46,7 @@ public class ResidentServiceImpl implements ResidentService  {
     @Override
     public ResidentServiceModel add(UserServiceModel userServiceModel, String buildingId, String apartmentId) {
         // TODO: validation
-        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
+        Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
         Optional<ApartmentServiceModel> apartment = this.apartmentService.getById(apartmentId);
 
         if (building.isEmpty()) {
@@ -88,7 +88,7 @@ public class ResidentServiceImpl implements ResidentService  {
     public ResidentServiceModel edit(UserServiceModel userServiceModel, String buildingId, String apartmentId) {
         // TODO: validation
 
-        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
+        Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
         if (building.isEmpty()) {
             throw new BuildingNotFoundException("Building not found!");
         }
@@ -135,7 +135,7 @@ public class ResidentServiceImpl implements ResidentService  {
 
     @Override
     public void deleteAllByApartmentId(String buildingId, String apartmentId) {
-        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
+        Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
         if (building.isEmpty()) {
             throw new BuildingNotFoundException("Building not found!");
         }
@@ -153,7 +153,7 @@ public class ResidentServiceImpl implements ResidentService  {
 
     @Override
     public void delete(String buildingId, String apartmentId, String residentId) {
-        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
+        Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
         if (building.isEmpty()) {
             throw new BuildingNotFoundException("Building not found!");
         }

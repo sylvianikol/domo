@@ -43,7 +43,7 @@ public class ApartmentServiceImpl implements ApartmentService {
         // TODO: validation
 
         Optional<BuildingServiceModel> buildingOpt =
-                this.buildingService.getById(buildingId);
+                this.buildingService.get(buildingId);
 
         if (buildingOpt.isEmpty()) {
             throw new BuildingNotFoundException("Building does not exists!");
@@ -72,7 +72,7 @@ public class ApartmentServiceImpl implements ApartmentService {
     public ApartmentServiceModel edit(ApartmentServiceModel apartmentServiceModel, String buildingId) {
         // TODO: validation
 
-        Optional<BuildingServiceModel> buildingOpt = this.buildingService.getById(buildingId);
+        Optional<BuildingServiceModel> buildingOpt = this.buildingService.get(buildingId);
         if (buildingOpt.isEmpty()) {
             throw new BuildingNotFoundException("Building not found!");
         }
@@ -111,7 +111,7 @@ public class ApartmentServiceImpl implements ApartmentService {
     @Transactional
     public void deleteAllByBuildingId(String buildingId) {
 
-        if (this.buildingService.getById(buildingId).isEmpty()) {
+        if (this.buildingService.get(buildingId).isEmpty()) {
             throw new BuildingNotFoundException("Building not found!");
         }
 
@@ -129,7 +129,7 @@ public class ApartmentServiceImpl implements ApartmentService {
     @Override
     public void delete(String apartmentId, String buildingId) {
 
-        if (this.buildingService.getById(buildingId).isEmpty()) {
+        if (this.buildingService.get(buildingId).isEmpty()) {
             throw new BuildingNotFoundException("Building not found!");
         }
 

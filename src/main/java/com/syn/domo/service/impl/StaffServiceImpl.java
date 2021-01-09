@@ -1,6 +1,5 @@
 package com.syn.domo.service.impl;
 
-import com.syn.domo.common.DefaultParamValues;
 import com.syn.domo.exception.RoleNotFoundException;
 import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.Building;
@@ -60,7 +59,7 @@ public class StaffServiceImpl implements StaffService {
                     .map(s -> this.modelMapper.map(s, StaffServiceModel.class))
                     .collect(Collectors.toCollection(LinkedHashSet::new));
         } else {
-            if (this.buildingService.getById(buildingId).isEmpty()) {
+            if (this.buildingService.get(buildingId).isEmpty()) {
                 throw new EntityNotFoundException("Building not found!");
             }
 
@@ -214,7 +213,7 @@ public class StaffServiceImpl implements StaffService {
         Set<Staff> staff = this.staffRepository.findAllByIdIn(staffIds);
 
         Optional<BuildingServiceModel> buildingServiceModel =
-                this.buildingService.getById(buildingId);
+                this.buildingService.get(buildingId);
 
         if (buildingServiceModel.isEmpty()) {
             throw new EntityNotFoundException("Building not found!");

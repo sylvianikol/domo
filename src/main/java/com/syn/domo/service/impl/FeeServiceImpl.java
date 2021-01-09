@@ -140,7 +140,7 @@ public class FeeServiceImpl implements FeeService {
             fees = new HashSet<>(this.feeRepository.findAll());
             this.feeRepository.deleteAll(fees);
         } else {
-            Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
+            Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
             if (building.isEmpty()) {
                 throw new BuildingNotFoundException("Building not found!");
             }

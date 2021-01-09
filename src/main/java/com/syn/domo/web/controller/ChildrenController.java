@@ -108,6 +108,20 @@ public class ChildrenController implements ChildrenNamespace {
     }
 
 
+    @DeleteMapping
+    public ResponseEntity<?> deleteAll(@PathVariable(value = "buildingId") String buildingId,
+                                       @PathVariable(value = "apartmentId") String apartmentId,
+                                       UriComponentsBuilder uriComponentsBuilder) {
+
+        this.childService.deleteAllByApartmentId(buildingId, apartmentId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .location(uriComponentsBuilder
+                        .path(URI_CHILDREN)
+                        .buildAndExpand(buildingId, apartmentId)
+                        .toUri()).build();
+    }
+
     @DeleteMapping("/{childId}")
     public ResponseEntity<?> delete(@PathVariable(value = "buildingId") String buildingId,
                                     @PathVariable(value = "apartmentId") String apartmentId,

@@ -125,6 +125,23 @@ public class ChildServiceImpl implements ChildService {
     }
 
     @Override
+    public void deleteAllByApartmentId(String buildingId, String apartmentId) {
+        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
+        if (building.isEmpty()) {
+            throw new BuildingNotFoundException("Building not found!");
+        }
+
+        Optional<ApartmentServiceModel> apartment = this.apartmentService.getById(apartmentId);
+        if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
+            throw new ApartmentNotFoundException("Apartment not found!");
+        }
+
+        Set<Child> children = this.childRepository
+                .getAllByApartmentIdAndBuildingId(buildingId, apartmentId);
+        this.childRepository.deleteAll(children);
+    }
+
+    @Override
     public void delete(String childId, String buildingId, String apartmentId) {
         Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
         if (building.isEmpty()) {
@@ -179,12 +196,6 @@ public class ChildServiceImpl implements ChildService {
         return sameParentsCount == existingParents.size() && sameParentsCount == newParents.size();
     }
 
-    @Override
-    public void deleteAllByApartmentId(String buildingId, String apartmentId) {
-        Set<Child> children = this.childRepository
-                .getAllByApartmentIdAndBuildingId(buildingId, apartmentId);
-        this.childRepository.deleteAll(children);
-    }
 
     @Override
     public Optional<ChildServiceModel> getOne(String buildingId, String apartmentId, String childId) {

@@ -22,18 +22,18 @@ public class ApartmentServiceImpl implements ApartmentService {
 
     private final ApartmentRepository apartmentRepository;
     private final BuildingService buildingService;
-    private final UserService userService;
+    private final ResidentService residentService;
     private final ChildService childService;
     private final ModelMapper modelMapper;
 
     @Autowired
     public ApartmentServiceImpl(ApartmentRepository apartmentRepository,
                                 @Lazy BuildingService buildingService,
-                                @Lazy UserService userService,
+                                @Lazy ResidentService residentService,
                                 @Lazy ChildService childService, ModelMapper modelMapper) {
         this.apartmentRepository = apartmentRepository;
         this.buildingService = buildingService;
-        this.userService = userService;
+        this.residentService = residentService;
         this.childService = childService;
         this.modelMapper = modelMapper;
     }
@@ -108,6 +108,25 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
+    @Transactional
+    public void deleteAllByBuildingId(String buildingId) {
+
+        if (this.buildingService.getById(buildingId).isEmpty()) {
+            throw new BuildingNotFoundException("Building not found!");
+        }
+
+        Set<Apartment> apartments =
+                this.apartmentRepository.getAllByBuildingId(buildingId);
+
+        for (Apartment apartment : apartments) {
+            this.childService.deleteAllByApartmentId(buildingId, apartment.getId());
+            this.residentService.deleteAllByApartmentId(buildingId, apartment.getId());
+        }
+
+        this.apartmentRepository.deleteAll(apartments);
+    }
+
+    @Override
     public void delete(String apartmentId, String buildingId) {
 
         if (this.buildingService.getById(buildingId).isEmpty()) {
@@ -121,7 +140,7 @@ public class ApartmentServiceImpl implements ApartmentService {
             throw new ApartmentNotFoundException("Apartment not found!");
         }
 
-        this.userService.deleteAllByApartmentId(buildingId, apartment.getId());
+        this.residentService.deleteAllByApartmentId(buildingId, apartment.getId());
         this.childService.deleteAllByApartmentId(buildingId, apartment.getId());
         this.apartmentRepository.delete(apartment);
     }
@@ -135,22 +154,7 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
-    @Transactional
-    public void deleteAllByBuildingId(String buildingId) {
-        Set<Apartment> apartments =
-                this.apartmentRepository.getAllByBuildingId(buildingId);
-
-        for (Apartment apartment : apartments) {
-            this.userService.deleteAllByApartmentId(buildingId, apartment.getId());
-        }
-
-        this.apartmentRepository.deleteAll(apartments);
-    }
-
-    @Override
     public Set<ApartmentServiceModel> getAllByBuildingId(String buildingId) {
-
-        Set<Apartment> all = this.apartmentRepository.getAllByBuildingId(buildingId);
 
         Set<ApartmentServiceModel> apartmentServiceModels =
                 this.apartmentRepository.getAllByBuildingId(buildingId).stream()

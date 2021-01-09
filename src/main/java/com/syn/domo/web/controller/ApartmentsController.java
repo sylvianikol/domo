@@ -104,6 +104,20 @@ public class ApartmentsController implements ApartmentsNamespace {
                         .toUri()).build();
     }
 
+    @DeleteMapping
+    public ResponseEntity<?> deleteAll(@PathVariable(value = "buildingId") String buildingId,
+                                       UriComponentsBuilder uriComponentsBuilder) {
+
+        this.apartmentService.deleteAllByBuildingId(buildingId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .location(uriComponentsBuilder
+                        .path(URI_APARTMENTS)
+                        .buildAndExpand(buildingId)
+                        .toUri())
+                .build();
+    }
+
     @DeleteMapping("/{apartmentId}")
     public ResponseEntity<?> delete(@PathVariable(value = "buildingId") String buildingId,
                                     @PathVariable(value = "apartmentId") String apartmentId,

@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 
+import static javax.persistence.CascadeType.REMOVE;
 import static javax.persistence.FetchType.EAGER;
 
 @Entity
@@ -19,6 +20,7 @@ public class Apartment extends BaseEntity {
 
     private Set<Resident> residents;
     private Set<Child> children;
+    private Set<Fee> fees;
 
     public Apartment() {
     }
@@ -86,4 +88,12 @@ public class Apartment extends BaseEntity {
         this.addedOn = addedOn;
     }
 
+    @OneToMany(mappedBy = "apartment", cascade = REMOVE, fetch = EAGER)
+    public Set<Fee> getFees() {
+        return fees;
+    }
+
+    public void setFees(Set<Fee> fees) {
+        this.fees = fees;
+    }
 }

@@ -12,7 +12,7 @@ public interface ResidentService {
 
     ResidentServiceModel edit(UserServiceModel userServiceModel, String buildingId, String apartmentId);
 
-    void deleteAll(String buildingId, String apartmentId);
+    void deleteAllByApartmentId(String buildingId, String apartmentId);
 
     void delete(String buildingId, String apartmentId, String residentId);
 

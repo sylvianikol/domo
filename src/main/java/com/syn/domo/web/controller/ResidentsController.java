@@ -110,7 +110,7 @@ public class ResidentsController implements ResidentsNamespace {
                                        @PathVariable(value = "apartmentId") String apartmentId,
                                        UriComponentsBuilder uriComponentsBuilder) {
 
-        this.residentService.deleteAll(buildingId, apartmentId);
+        this.residentService.deleteAllByApartmentId(buildingId, apartmentId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder

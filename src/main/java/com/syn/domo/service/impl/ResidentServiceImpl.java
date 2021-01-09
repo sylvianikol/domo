@@ -134,7 +134,7 @@ public class ResidentServiceImpl implements ResidentService  {
     }
 
     @Override
-    public void deleteAll(String buildingId, String apartmentId) {
+    public void deleteAllByApartmentId(String buildingId, String apartmentId) {
         Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
         if (building.isEmpty()) {
             throw new BuildingNotFoundException("Building not found!");

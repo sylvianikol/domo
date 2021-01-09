@@ -125,7 +125,7 @@ public class BuildingServiceImpl implements BuildingService {
                 .collect(Collectors.toUnmodifiableSet());
 
         if (!staffIds.isEmpty()) {
-            this.staffService.releaseBuilding(staffIds, buildingId);
+            this.staffService.cancelBuildingAssignments(staffIds, buildingId);
         }
 
         this.apartmentService.deleteAllByBuildingId(buildingId);

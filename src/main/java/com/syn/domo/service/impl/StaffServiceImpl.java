@@ -51,6 +51,36 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
+    public Set<StaffServiceModel> getAll(String buildingId) {
+
+        Set<StaffServiceModel> staff;
+
+        if (buildingId.equals(DEFAULT_EMPTY)) {
+            staff = this.staffRepository.findAll().stream()
+                    .map(s -> this.modelMapper.map(s, StaffServiceModel.class))
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+        } else {
+            if (this.buildingService.getById(buildingId).isEmpty()) {
+                throw new EntityNotFoundException("Building not found!");
+            }
+
+            staff = this.staffRepository.getAllByBuildingId(buildingId).stream()
+                    .map(s -> this.modelMapper.map(s, StaffServiceModel.class))
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+        }
+
+        return Collections.unmodifiableSet(staff);
+    }
+
+    @Override
+    public Optional<StaffServiceModel> getOne(String staffId) {
+        Optional<Staff> staff = this.staffRepository.findById(staffId);
+        return staff.isEmpty()
+                ? Optional.empty()
+                : Optional.of(this.modelMapper.map(staff.get(), StaffServiceModel.class));
+    }
+
+    @Override
     public StaffServiceModel add(StaffServiceModel staffServiceModel) {
         // TODO: validation
         String email = staffServiceModel.getEmail();
@@ -125,7 +155,6 @@ public class StaffServiceImpl implements StaffService {
         return this.modelMapper.map(staff, StaffServiceModel.class);
     }
 
-
     @Override
     @Transactional
     public void deleteAll(String buildingId) {
@@ -181,7 +210,7 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public void releaseBuilding(Set<String> staffIds, String buildingId) {
+    public void cancelBuildingAssignments(Set<String> staffIds, String buildingId) {
         Set<Staff> staff = this.staffRepository.findAllByIdIn(staffIds);
 
         Optional<BuildingServiceModel> buildingServiceModel =
@@ -197,23 +226,6 @@ public class StaffServiceImpl implements StaffService {
             employee.getBuildings().remove(building);
             this.staffRepository.saveAndFlush(employee);
         }
-    }
-
-    @Override
-    public Optional<StaffServiceModel> getOne(String staffId) {
-        Optional<Staff> staff = this.staffRepository.findById(staffId);
-        return staff.isEmpty()
-                ? Optional.empty()
-                : Optional.of(this.modelMapper.map(staff.get(), StaffServiceModel.class));
-    }
-
-    @Override
-    public Set<StaffServiceModel> getAll() {
-        Set<StaffServiceModel> staff = this.staffRepository.findAll().stream()
-                .map(s -> this.modelMapper.map(s, StaffServiceModel.class))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-
-        return Collections.unmodifiableSet(staff);
     }
 
     @Override

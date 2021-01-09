@@ -35,10 +35,11 @@ public class StaffController implements StaffNamespace {
     }
 
     @GetMapping
-    public ResponseEntity<Set<StaffViewModel>> all() {
+    public ResponseEntity<Set<StaffViewModel>> getAll(@RequestParam(required = false, defaultValue = DEFAULT_EMPTY,
+                                                                 name = "buildingId") String buildingId) {
 
         Set<StaffViewModel> staff =
-                this.staffService.getAll().stream()
+                this.staffService.getAll(buildingId).stream()
                         .map(s -> this.modelMapper.map(s, StaffViewModel.class))
                         .collect(Collectors.toSet());
 
@@ -48,7 +49,7 @@ public class StaffController implements StaffNamespace {
     }
 
     @GetMapping("/{staffId}")
-    public ResponseEntity<StaffViewModel> one(@PathVariable(value = "staffId") String staffId) {
+    public ResponseEntity<StaffViewModel> get(@PathVariable(value = "staffId") String staffId) {
 
         Optional<StaffServiceModel> staff = this.staffService.getOne(staffId);
 

@@ -16,13 +16,14 @@ public interface BuildingService {
 
     BuildingServiceModel edit(BuildingServiceModel buildingServiceModel, String buildingId);
 
+    void deleteAll();
+
     void delete(String buildingId);
 
     void assignStaff(String buildingId, Set<String> staffIds);
 
-    void releaseStaff(String staffId);
-
     Optional<BuildingServiceModel> getById(String id);
 
     Set<BuildingServiceModel> getAllByIdIn(Set<String> ids);
+
 }

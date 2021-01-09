@@ -36,18 +36,19 @@ public class BuildingsController implements BuildingsNamespace {
     }
 
     @GetMapping
-    public ResponseEntity<Set<BuildingViewModel>> all() {
+    public ResponseEntity<Set<BuildingViewModel>> getAll() {
         Set<BuildingViewModel> buildings = this.buildingService.getAll().stream()
                 .map(buildingServiceModel -> this.modelMapper
                         .map(buildingServiceModel, BuildingViewModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
+
         return buildings.isEmpty()
                 ? ResponseEntity.notFound().build()
                 : ResponseEntity.ok().body(buildings);
     }
 
     @GetMapping("/{buildingId}")
-    public ResponseEntity<BuildingViewModel> one(@PathVariable(value = "buildingId") String buildingId) {
+    public ResponseEntity<BuildingViewModel> get(@PathVariable(value = "buildingId") String buildingId) {
 
         Optional<BuildingServiceModel> buildingServiceModel =
                 this.buildingService.getById(buildingId);
@@ -61,8 +62,8 @@ public class BuildingsController implements BuildingsNamespace {
 
     @PostMapping
     public ResponseEntity<?> add(@Valid @RequestBody BuildingAddBindingModel buildingAddBindingModel,
-                                                    BindingResult bindingResult,
-                                                    UriComponentsBuilder uriComponentsBuilder) {
+                                 BindingResult bindingResult,
+                                 UriComponentsBuilder uriComponentsBuilder) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
                     .body(new ErrorResponse(bindingResult.getTarget(),
@@ -80,9 +81,10 @@ public class BuildingsController implements BuildingsNamespace {
 
     @PutMapping("/{buildingId}")
     public ResponseEntity<?> edit(@PathVariable(value = "buildingId") String buildingId,
-                                                      @Valid @RequestBody BuildingEditBindingModel buildingEditBindingModel,
-                                                      BindingResult bindingResult,
-                                                      UriComponentsBuilder uriComponentsBuilder) {
+                                  @Valid @RequestBody BuildingEditBindingModel buildingEditBindingModel,
+                                  BindingResult bindingResult,
+                                  UriComponentsBuilder uriComponentsBuilder) {
+
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
                     .body(new ErrorResponse(bindingResult.getTarget(),
@@ -102,7 +104,7 @@ public class BuildingsController implements BuildingsNamespace {
 
     @DeleteMapping
     public ResponseEntity<?> deleteAll() {
-
+        this.buildingService.deleteAll();
         return ResponseEntity.noContent().build();
     }
 
@@ -120,21 +122,10 @@ public class BuildingsController implements BuildingsNamespace {
                 .build();
     }
 
-    @PutMapping("/{buildingId}/assign-staff")
-    public ResponseEntity<?> assignStaff(@PathVariable(value = "buildingId") String buildingId,
-                                         @Valid @RequestBody
-                                                 BuildingAssignStaffBindingModel buildingAssignStaffBindingModel,
-                                         BindingResult bindingResult,
+    @PutMapping("/{buildingId}/assign")
+    public ResponseEntity<?> assignStaff(@RequestParam(name = "staffIds") Set<String> staffIds,
+                                         @PathVariable(value = "buildingId") String buildingId,
                                          UriComponentsBuilder uriComponentsBuilder) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.unprocessableEntity()
-                    .body(new ErrorResponse(bindingResult.getTarget(),
-                            bindingResult.getAllErrors()));
-        }
-
-        Set<String> staffIds = buildingAssignStaffBindingModel.getStaff().stream()
-                .map(StaffIdBindingModel::getId)
-                .collect(Collectors.toUnmodifiableSet());
 
         this.buildingService.assignStaff(buildingId, staffIds);
 

@@ -1,14 +1,12 @@
 package com.syn.domo.service.impl;
 
 import com.syn.domo.exception.*;
+import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.entity.Staff;
 import com.syn.domo.model.service.BuildingServiceModel;
-import com.syn.domo.model.service.StaffServiceModel;
 import com.syn.domo.repository.BuildingRepository;
-import com.syn.domo.service.ApartmentService;
-import com.syn.domo.service.BuildingService;
-import com.syn.domo.service.StaffService;
+import com.syn.domo.service.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -17,10 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,16 +23,19 @@ public class BuildingServiceImpl implements BuildingService {
 
     private final BuildingRepository buildingRepository;
     private final ApartmentService apartmentService;
+    private final ResidentService residentService;
     private final StaffService staffService;
     private final ModelMapper modelMapper;
 
     @Autowired
     public BuildingServiceImpl(BuildingRepository buildingRepository,
                                ApartmentService apartmentService,
+                               @Lazy ResidentService residentService,
                                @Lazy StaffService staffService,
                                ModelMapper modelMapper) {
         this.buildingRepository = buildingRepository;
         this.apartmentService = apartmentService;
+        this.residentService = residentService;
         this.staffService = staffService;
         this.modelMapper = modelMapper;
     }
@@ -112,6 +110,29 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
+    public void deleteAll() {
+        List<Building> buildings = this.buildingRepository.findAll();
+
+        for (Building building : buildings) {
+            String buildingId = building.getId();
+
+            Set<String> staffIds = building.getStaff().stream()
+                    .map(Staff::getId)
+                    .collect(Collectors.toUnmodifiableSet());
+
+            if (!staffIds.isEmpty()) {
+                this.staffService.cancelBuildingAssignments(staffIds, buildingId);
+            }
+
+            for (Apartment apartment : building.getApartments()) {
+                this.residentService.deleteAllByApartmentId(buildingId, apartment.getId());
+            }
+        }
+
+        this.buildingRepository.deleteAll(buildings);
+    }
+
+    @Override
     @Transactional
     public void delete(String buildingId) {
         Building building = this.buildingRepository.findById(buildingId).orElse(null);
@@ -147,22 +168,6 @@ public class BuildingServiceImpl implements BuildingService {
 
         for (Staff employee : staff) {
             this.staffService.assignBuildings(employee.getId(), Set.of(buildingId));
-        }
-    }
-
-    @Override
-    public void releaseStaff(String staffId) {
-        Optional<StaffServiceModel> staffServiceModel = this.staffService.getOne(staffId);
-        if (staffServiceModel.isEmpty()) {
-            throw new EntityNotFoundException("Staff member not found!");
-        }
-
-        Staff staff = this.modelMapper.map(staffServiceModel.get(), Staff.class);
-
-        Set<Building> buildings = this.buildingRepository.getAllByStaffId(staff.getId());
-        for (Building building : buildings) {
-            building.getStaff().remove(staff);
-            this.buildingRepository.saveAndFlush(building);
         }
     }
 

@@ -12,6 +12,8 @@ public interface ResidentService {
 
     ResidentServiceModel edit(UserServiceModel userServiceModel, String buildingId, String apartmentId);
 
+    void deleteAll(String buildingId, String apartmentId);
+
     void delete(String buildingId, String apartmentId, String residentId);
 
     Set<ResidentServiceModel> getAllByBuildingIdAndApartmentId(String buildingId, String apartmentId);
@@ -19,4 +21,5 @@ public interface ResidentService {
     Optional<ResidentServiceModel> getOne(String buildingId, String apartmentId, String residentId);
 
     Set<ResidentServiceModel> getAllByIdIn(Set<String> ids);
+
 }

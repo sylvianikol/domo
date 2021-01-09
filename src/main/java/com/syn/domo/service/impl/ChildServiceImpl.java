@@ -10,6 +10,7 @@ import com.syn.domo.repository.ChildRepository;
 import com.syn.domo.service.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -27,20 +28,18 @@ public class ChildServiceImpl implements ChildService {
     private final BuildingService buildingService;
     private final ApartmentService apartmentService;
     private final ResidentService residentService;
-    private final UserService userService;
     private final ModelMapper modelMapper;
 
     @Autowired
     public ChildServiceImpl(ChildRepository childRepository,
                             BuildingService buildingService,
                             ApartmentService apartmentService,
-                            ResidentService residentService, UserService userService,
+                            @Lazy ResidentService residentService,
                             ModelMapper modelMapper) {
         this.childRepository = childRepository;
         this.buildingService = buildingService;
         this.apartmentService = apartmentService;
         this.residentService = residentService;
-        this.userService = userService;
         this.modelMapper = modelMapper;
     }
 

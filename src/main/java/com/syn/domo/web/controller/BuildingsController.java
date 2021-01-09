@@ -38,7 +38,8 @@ public class BuildingsController implements BuildingsNamespace {
     @GetMapping
     public ResponseEntity<Set<BuildingViewModel>> all() {
         Set<BuildingViewModel> buildings = this.buildingService.getAll().stream()
-                .map(buildingServiceModel -> this.modelMapper.map(buildingServiceModel, BuildingViewModel.class))
+                .map(buildingServiceModel -> this.modelMapper
+                        .map(buildingServiceModel, BuildingViewModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         return buildings.isEmpty()
                 ? ResponseEntity.notFound().build()
@@ -97,6 +98,12 @@ public class BuildingsController implements BuildingsNamespace {
                         .path("/buildings/{buildingId}")
                         .buildAndExpand(buildingId)
                         .toUri()).build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteAll() {
+
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{buildingId}")

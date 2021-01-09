@@ -107,6 +107,7 @@ public class ChildrenController implements ChildrenNamespace {
                         .toUri()).build();
     }
 
+
     @DeleteMapping("/{childId}")
     public ResponseEntity<?> delete(@PathVariable(value = "buildingId") String buildingId,
                                     @PathVariable(value = "apartmentId") String apartmentId,

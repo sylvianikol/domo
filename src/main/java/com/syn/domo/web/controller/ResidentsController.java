@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -104,6 +103,21 @@ public class ResidentsController implements ResidentsNamespace {
                         .path(URI_RESIDENTS + "/{residentId}")
                         .buildAndExpand(buildingId, apartmentId, residentId)
                         .toUri()).build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteAll(@PathVariable(value = "buildingId") String buildingId,
+                                       @PathVariable(value = "apartmentId") String apartmentId,
+                                       UriComponentsBuilder uriComponentsBuilder) {
+
+        this.residentService.deleteAll(buildingId, apartmentId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .location(uriComponentsBuilder
+                        .path(URI_RESIDENTS)
+                        .buildAndExpand(buildingId, apartmentId)
+                        .toUri())
+                .build();
     }
 
     @DeleteMapping("/{residentId}")

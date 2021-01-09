@@ -13,10 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,14 +23,22 @@ public class ResidentServiceImpl implements ResidentService  {
     private final UserService userService;
     private final BuildingService buildingService;
     private final ApartmentService apartmentService;
+    private final ChildService childService;
     private final RoleService roleService;
     private final ModelMapper modelMapper;
 
-    public ResidentServiceImpl(ResidentRepository residentRepository, UserService userService, BuildingService buildingService, ApartmentService apartmentService, RoleService roleService, ModelMapper modelMapper) {
+    public ResidentServiceImpl(ResidentRepository residentRepository,
+                               UserService userService,
+                               BuildingService buildingService,
+                               ApartmentService apartmentService,
+                               ChildService childService,
+                               RoleService roleService,
+                               ModelMapper modelMapper) {
         this.residentRepository = residentRepository;
         this.userService = userService;
         this.buildingService = buildingService;
         this.apartmentService = apartmentService;
+        this.childService = childService;
         this.roleService = roleService;
         this.modelMapper = modelMapper;
     }
@@ -126,6 +131,24 @@ public class ResidentServiceImpl implements ResidentService  {
         }
 
         return this.modelMapper.map(resident, ResidentServiceModel.class);
+    }
+
+    @Override
+    public void deleteAll(String buildingId, String apartmentId) {
+        Optional<BuildingServiceModel> building = this.buildingService.getById(buildingId);
+        if (building.isEmpty()) {
+            throw new BuildingNotFoundException("Building not found!");
+        }
+
+        Optional<ApartmentServiceModel> apartment = this.apartmentService.getById(apartmentId);
+        if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
+            throw new ApartmentNotFoundException("Apartment not found!");
+        }
+
+        this.childService.deleteAllByApartmentId(buildingId, apartmentId);
+        Set<Resident> residents = this.residentRepository
+                .getAllByBuildingIdAndApartmentId(buildingId, apartmentId);
+        this.residentRepository.deleteAll(residents);
     }
 
     @Override

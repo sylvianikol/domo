@@ -16,9 +16,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.syn.domo.common.DefaultParamValues.ALL_IDS;
 
 @RestController
 public class StaffController implements StaffNamespace {
@@ -120,21 +123,10 @@ public class StaffController implements StaffNamespace {
                 .build();
     }
 
-    @PutMapping("/{staffId}/assign-buildings")
-    public ResponseEntity<?> assignBuildings(@PathVariable(value = "staffId") String staffId,
-                                              @Valid @RequestBody
-                                                      StaffAssignBuildingsBindingModel staffAssignBuildingsBindingModel,
-                                              BindingResult bindingResult,
-                                              UriComponentsBuilder uriComponentsBuilder) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.unprocessableEntity()
-                    .body(new ErrorResponse(bindingResult.getTarget(),
-                            bindingResult.getAllErrors()));
-        }
-
-        Set<String> buildingIds = staffAssignBuildingsBindingModel.getBuildings().stream()
-                .map(BuildingIdBindingModel::getId)
-                .collect(Collectors.toUnmodifiableSet());
+    @PutMapping("/{staffId}/assign")
+    public ResponseEntity<?> assignBuildings(@RequestParam(name = "buildingIds") Set<String> buildingIds,
+                                             @PathVariable(value = "staffId") String staffId,
+                                             UriComponentsBuilder uriComponentsBuilder) {
 
         this.staffService.assignBuildings(staffId, buildingIds);
 

@@ -24,4 +24,6 @@ public interface StaffService {
     void releaseBuilding(Set<String> staffIds, String buildingId);
 
     Set<StaffServiceModel> getAllByIdIn(Set<String> staffIds);
+
+    void deleteAll();
 }

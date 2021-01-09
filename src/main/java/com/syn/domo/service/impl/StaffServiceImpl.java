@@ -2,7 +2,6 @@ package com.syn.domo.service.impl;
 
 import com.syn.domo.exception.RoleNotFoundException;
 import com.syn.domo.exception.UnprocessableEntityException;
-import com.syn.domo.model.binding.StaffAssignBuildingsBindingModel;
 import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.entity.Role;
 import com.syn.domo.model.entity.Staff;
@@ -10,7 +9,6 @@ import com.syn.domo.model.entity.UserRole;
 import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.model.service.RoleServiceModel;
 import com.syn.domo.model.service.StaffServiceModel;
-import com.syn.domo.model.service.UserServiceModel;
 import com.syn.domo.repository.StaffRepository;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.RoleService;
@@ -22,13 +20,10 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class StaffServiceImpl implements StaffService {
@@ -127,13 +122,27 @@ public class StaffServiceImpl implements StaffService {
         return this.modelMapper.map(staff, StaffServiceModel.class);
     }
 
+
     @Override
+    @Transactional
+    public void deleteAll() {
+        List<Staff> staff = this.staffRepository.findAll();
+
+        for (Staff employee : staff) {
+            this.staffRepository.cancelBuildingAssignments(employee.getId());
+        }
+
+        this.staffRepository.deleteAll(staff);
+    }
+
+    @Override
+    @Transactional
     public void delete(String staffId) {
         Staff staff = this.staffRepository.findById(staffId).orElse(null);
 
         if (staff != null) {
 
-            this.buildingService.releaseStaff(staffId);
+            this.staffRepository.cancelBuildingAssignments(staff.getId());
 
             this.staffRepository.delete(staff);
         } else {
@@ -204,4 +213,5 @@ public class StaffServiceImpl implements StaffService {
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         return Collections.unmodifiableSet(staffServiceModels);
     }
+
 }

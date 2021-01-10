@@ -111,7 +111,7 @@ public class ApartmentServiceImpl implements ApartmentService {
 
     @Override
     @Transactional
-    public void deleteAllByBuildingId(String buildingId) {
+    public void deleteAll(String buildingId) {
 
         if (this.buildingService.get(buildingId).isEmpty()) {
             throw new EntityNotFoundException("Building not found!");
@@ -165,7 +165,7 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
-    public Set<ApartmentServiceModel> getAllByBuildingId(String buildingId) {
+    public Set<ApartmentServiceModel> getAll(String buildingId) {
 
         Set<ApartmentServiceModel> apartmentServiceModels =
                 this.apartmentRepository.getAllByBuildingId(buildingId).stream()

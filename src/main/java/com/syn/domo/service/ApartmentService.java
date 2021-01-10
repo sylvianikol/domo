@@ -13,9 +13,9 @@ public interface ApartmentService {
 
     void delete(String apartmentId, String buildingId);
 
-    void deleteAllByBuildingId(String buildingId);
+    void deleteAll(String buildingId);
 
-    Set<ApartmentServiceModel> getAllByBuildingId(String buildingId);
+    Set<ApartmentServiceModel> getAll(String buildingId);
 
     Optional<ApartmentServiceModel> get(String apartmentId);
 

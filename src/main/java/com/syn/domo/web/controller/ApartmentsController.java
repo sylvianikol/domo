@@ -6,7 +6,6 @@ import com.syn.domo.model.binding.ApartmentEditBindingModel;
 import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.model.view.ApartmentViewModel;
 import com.syn.domo.service.ApartmentService;
-import com.syn.domo.service.BuildingService;
 import com.syn.domo.web.controller.namespace.ApartmentsNamespace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +23,12 @@ import java.util.stream.Collectors;
 public class ApartmentsController implements ApartmentsNamespace {
 
     private final ApartmentService apartmentService;
-    private final BuildingService buildingService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ApartmentsController(ApartmentService apartmentService, BuildingService buildingService, ModelMapper modelMapper) {
+    public ApartmentsController(ApartmentService apartmentService,
+                                ModelMapper modelMapper) {
         this.apartmentService = apartmentService;
-        this.buildingService = buildingService;
         this.modelMapper = modelMapper;
     }
 
@@ -38,7 +36,7 @@ public class ApartmentsController implements ApartmentsNamespace {
     public ResponseEntity<Set<ApartmentViewModel>> getAll(@PathVariable(value = "buildingId") String buildingId) {
 
         Set<ApartmentViewModel> apartments =
-                this.apartmentService.getAllByBuildingId(buildingId).stream()
+                this.apartmentService.getAll(buildingId).stream()
                 .map(a -> this.modelMapper.map(a, ApartmentViewModel.class))
                 .collect(Collectors.toSet());
 
@@ -107,7 +105,7 @@ public class ApartmentsController implements ApartmentsNamespace {
     public ResponseEntity<?> deleteAll(@PathVariable(value = "buildingId") String buildingId,
                                        UriComponentsBuilder uriComponentsBuilder) {
 
-        this.apartmentService.deleteAllByBuildingId(buildingId);
+        this.apartmentService.deleteAll(buildingId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder

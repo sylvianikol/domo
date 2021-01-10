@@ -68,6 +68,11 @@ public class FeeServiceImpl implements FeeService {
         if (buildingId.equals(DEFAULT_ALL)) {
             pageFees = this.feeRepository.findAllBy(pagingSort);
         } else {
+
+            if (this.buildingService.get(buildingId).isEmpty()) {
+                throw new EntityNotFoundException("Building not found!");
+            }
+
             pageFees = this.feeRepository
                     .getAllByBuildingIdWithPagingSort(buildingId, pagingSort);
         }

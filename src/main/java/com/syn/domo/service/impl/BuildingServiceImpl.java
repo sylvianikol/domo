@@ -1,7 +1,6 @@
 package com.syn.domo.service.impl;
 
 import com.syn.domo.exception.*;
-import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.entity.Staff;
 import com.syn.domo.model.service.BuildingServiceModel;
@@ -24,18 +23,16 @@ public class BuildingServiceImpl implements BuildingService {
 
     private final BuildingRepository buildingRepository;
     private final ApartmentService apartmentService;
-    private final ResidentService residentService;
     private final StaffService staffService;
     private final ModelMapper modelMapper;
 
     @Autowired
     public BuildingServiceImpl(BuildingRepository buildingRepository,
-                               ApartmentService apartmentService, @Lazy ResidentService residentService,
+                               ApartmentService apartmentService,
                                @Lazy StaffService staffService,
                                ModelMapper modelMapper) {
         this.buildingRepository = buildingRepository;
         this.apartmentService = apartmentService;
-        this.residentService = residentService;
         this.staffService = staffService;
         this.modelMapper = modelMapper;
     }
@@ -107,7 +104,7 @@ public class BuildingServiceImpl implements BuildingService {
 
         if (duplicate.isPresent()
                 && !duplicate.get().getId().equals(buildingId)) {
-            throw new BuildingAlreadyExistsException(
+            throw new EntityExistsException(
                     String.format("Building with name \"%s\" already exists in neighbourhood \"%s\"!",
                             buildingServiceModel.getName(), buildingServiceModel.getNeighbourhood())
             );

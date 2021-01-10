@@ -13,11 +13,11 @@ public interface ResidentService {
     ResidentServiceModel edit(ResidentServiceModel residentServiceModel,
                               String buildingId, String apartmentId, String residentId);
 
-    void deleteAllByApartmentId(String buildingId, String apartmentId);
+    void deleteAll(String buildingId, String apartmentId);
 
     void delete(String buildingId, String apartmentId, String residentId);
 
-    Set<ResidentServiceModel> getAllByBuildingIdAndApartmentId(String buildingId, String apartmentId);
+    Set<ResidentServiceModel> getAll(String buildingId, String apartmentId);
 
     Optional<ResidentServiceModel> get(String buildingId, String apartmentId, String residentId);
 

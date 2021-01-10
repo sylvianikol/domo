@@ -2,9 +2,7 @@ package com.syn.domo.web.controller;
 
 import com.syn.domo.model.ErrorResponse;
 import com.syn.domo.model.binding.ResidentBindingModel;
-import com.syn.domo.model.binding.UserEditBindingModel;
 import com.syn.domo.model.service.ResidentServiceModel;
-import com.syn.domo.model.service.UserServiceModel;
 import com.syn.domo.model.view.ResidentViewModel;
 import com.syn.domo.service.ResidentService;
 import com.syn.domo.web.controller.namespace.ResidentsNamespace;
@@ -38,7 +36,7 @@ public class ResidentsController implements ResidentsNamespace {
                                                          @PathVariable(value = "apartmentId") String apartmentId) {
 
         Set<ResidentViewModel> residents = this.residentService
-                .getAllByBuildingIdAndApartmentId(buildingId, apartmentId)
+                .getAll(buildingId, apartmentId)
                 .stream()
                 .map(r -> this.modelMapper.map(r, ResidentViewModel.class))
                 .collect(Collectors.toSet());
@@ -111,7 +109,7 @@ public class ResidentsController implements ResidentsNamespace {
                                        @PathVariable(value = "apartmentId") String apartmentId,
                                        UriComponentsBuilder uriComponentsBuilder) {
 
-        this.residentService.deleteAllByApartmentId(buildingId, apartmentId);
+        this.residentService.deleteAll(buildingId, apartmentId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder

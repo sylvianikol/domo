@@ -122,7 +122,7 @@ public class ApartmentServiceImpl implements ApartmentService {
 
         for (Apartment apartment : apartments) {
             this.childService.deleteAllByApartmentId(buildingId, apartment.getId());
-            this.residentService.deleteAllByApartmentId(buildingId, apartment.getId());
+            this.residentService.deleteAll(buildingId, apartment.getId());
         }
 
         this.apartmentRepository.deleteAll(apartments);
@@ -142,7 +142,7 @@ public class ApartmentServiceImpl implements ApartmentService {
             throw new EntityNotFoundException("Apartment not found!");
         }
 
-        this.residentService.deleteAllByApartmentId(buildingId, apartment.getId());
+        this.residentService.deleteAll(buildingId, apartment.getId());
         this.childService.deleteAllByApartmentId(buildingId, apartment.getId());
         this.apartmentRepository.delete(apartment);
     }
@@ -160,7 +160,7 @@ public class ApartmentServiceImpl implements ApartmentService {
         Set<Apartment> apartments = this.apartmentRepository.getAllByBuildingId(buildingId);
 
         for (Apartment apartment : apartments) {
-            this.residentService.deleteAllByApartmentId(buildingId, apartment.getId());
+            this.residentService.deleteAll(buildingId, apartment.getId());
         }
     }
 

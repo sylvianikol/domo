@@ -44,6 +44,27 @@ public class ResidentServiceImpl implements ResidentService  {
     }
 
     @Override
+    public Set<ResidentServiceModel> getAll(String buildingId, String apartmentId) {
+        Set<ResidentServiceModel> residents = this.residentRepository
+                .getAllByBuildingIdAndApartmentId(buildingId, apartmentId)
+                .stream()
+                .map(r -> this.modelMapper.map(r, ResidentServiceModel.class))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return Collections.unmodifiableSet(residents);
+    }
+
+    @Override
+    public Optional<ResidentServiceModel> get(String buildingId, String apartmentId, String residentId) {
+        Optional<Resident> resident = this.residentRepository
+                .getOneByIdAndBuildingIdAndApartmentId(residentId, buildingId, apartmentId);
+
+        return resident.isEmpty()
+                ? Optional.empty()
+                : Optional.of(this.modelMapper.map(resident.get(), ResidentServiceModel.class));
+    }
+
+    @Override
     public ResidentServiceModel add(ResidentServiceModel residentServiceModel, String buildingId, String apartmentId) {
         // TODO: validation
         Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
@@ -134,7 +155,7 @@ public class ResidentServiceImpl implements ResidentService  {
     }
 
     @Override
-    public void deleteAllByApartmentId(String buildingId, String apartmentId) {
+    public void deleteAll(String buildingId, String apartmentId) {
         Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
         if (building.isEmpty()) {
             throw new EntityNotFoundException("Building not found!");
@@ -181,27 +202,6 @@ public class ResidentServiceImpl implements ResidentService  {
         } else {
             throw new EntityNotFoundException("Resident not found!");
         }
-    }
-
-    @Override
-    public Set<ResidentServiceModel> getAllByBuildingIdAndApartmentId(String buildingId, String apartmentId) {
-        Set<ResidentServiceModel> residents = this.residentRepository
-                .getAllByBuildingIdAndApartmentId(buildingId, apartmentId)
-                .stream()
-                .map(r -> this.modelMapper.map(r, ResidentServiceModel.class))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-
-        return Collections.unmodifiableSet(residents);
-    }
-
-    @Override
-    public Optional<ResidentServiceModel> get(String buildingId, String apartmentId, String residentId) {
-        Optional<Resident> resident = this.residentRepository
-                .getOneByIdAndBuildingIdAndApartmentId(residentId, buildingId, apartmentId);
-
-        return resident.isEmpty()
-                ? Optional.empty()
-                : Optional.of(this.modelMapper.map(resident.get(), ResidentServiceModel.class));
     }
 
     @Override

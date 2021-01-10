@@ -12,15 +12,6 @@ import java.util.Set;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, String> {
 
-//    @Query("SELECT u FROM UserEntity u " +
-//            "WHERE u.apartment.id = :apartmentId " +
-//            "AND u.apartment.building.id = :buildingId ")
-//    Set<UserEntity> getAllByApartmentIdAndBuildingId
-//            (@Param(value = "buildingId") String buildingId,
-//             @Param(value = "apartmentId") String apartmentId);
-
-    Set<UserEntity> findAllByIdIn(Set<String> ids);
-
     Optional<UserEntity> findByEmail(String email);
 
     Optional<UserEntity> findByPhoneNumber(String phoneNumber);

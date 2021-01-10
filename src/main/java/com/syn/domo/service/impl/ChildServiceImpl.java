@@ -201,7 +201,7 @@ public class ChildServiceImpl implements ChildService {
     @Override
     public Optional<ChildServiceModel> get(String buildingId, String apartmentId, String childId) {
         Set<String> parentsIds =
-                this.residentService.getAllByBuildingIdAndApartmentId(buildingId, apartmentId)
+                this.residentService.getAll(buildingId, apartmentId)
                 .stream().map(BaseServiceModel::getId)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 

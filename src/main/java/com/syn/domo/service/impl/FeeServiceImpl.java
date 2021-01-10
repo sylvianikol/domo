@@ -1,6 +1,5 @@
 package com.syn.domo.service.impl;
 
-import com.syn.domo.exception.BuildingNotFoundException;
 import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Fee;

@@ -1,6 +1,5 @@
 package com.syn.domo.service.impl;
 
-import com.syn.domo.exception.RoleNotFoundException;
 import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.entity.Role;

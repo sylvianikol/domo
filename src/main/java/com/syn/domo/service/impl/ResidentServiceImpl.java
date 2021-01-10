@@ -50,11 +50,11 @@ public class ResidentServiceImpl implements ResidentService  {
         Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
 
         if (building.isEmpty()) {
-            throw new BuildingNotFoundException("Building not found!");
+            throw new EntityNotFoundException("Building not found!");
         }
 
         if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
-            throw new ApartmentNotFoundException("Apartment not found!");
+            throw new EntityNotFoundException("Apartment not found!");
         }
 
         if (this.userService.getByEmail(userServiceModel.getEmail()).isPresent()) {
@@ -67,7 +67,7 @@ public class ResidentServiceImpl implements ResidentService  {
                 this.roleService.getByName(UserRole.RESIDENT);
 
         if (roleServiceModel.isEmpty()) {
-            throw new RoleNotFoundException("Role not found");
+            throw new EntityNotFoundException("Role not found");
         }
 
         Resident resident = this.modelMapper.map(userServiceModel, Resident.class);
@@ -90,12 +90,12 @@ public class ResidentServiceImpl implements ResidentService  {
 
         Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
         if (building.isEmpty()) {
-            throw new BuildingNotFoundException("Building not found!");
+            throw new EntityNotFoundException("Building not found!");
         }
 
         Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
         if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
-            throw new ApartmentNotFoundException("Apartment not found!");
+            throw new EntityNotFoundException("Apartment not found!");
         }
 
         if (this.userService.notUniqueEmail(userServiceModel.getEmail(), userServiceModel.getId())) {
@@ -137,12 +137,12 @@ public class ResidentServiceImpl implements ResidentService  {
     public void deleteAllByApartmentId(String buildingId, String apartmentId) {
         Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
         if (building.isEmpty()) {
-            throw new BuildingNotFoundException("Building not found!");
+            throw new EntityNotFoundException("Building not found!");
         }
 
         Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
         if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
-            throw new ApartmentNotFoundException("Apartment not found!");
+            throw new EntityNotFoundException("Apartment not found!");
         }
 
         this.childService.deleteAllByApartmentId(buildingId, apartmentId);
@@ -155,12 +155,12 @@ public class ResidentServiceImpl implements ResidentService  {
     public void delete(String buildingId, String apartmentId, String residentId) {
         Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
         if (building.isEmpty()) {
-            throw new BuildingNotFoundException("Building not found!");
+            throw new EntityNotFoundException("Building not found!");
         }
 
         Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
         if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
-            throw new ApartmentNotFoundException("Apartment not found!");
+            throw new EntityNotFoundException("Apartment not found!");
         }
 
         Resident resident = this.residentRepository.findById(residentId).orElse(null);

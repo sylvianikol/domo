@@ -104,7 +104,7 @@ public class StaffServiceImpl implements StaffService {
                 this.roleService.getByName(UserRole.STAFF);
 
         if (roleServiceModel.isEmpty()) {
-            throw new RoleNotFoundException("Role not found");
+            throw new EntityNotFoundException("Role not found");
         }
 
         Staff staff = this.modelMapper.map(staffServiceModel, Staff.class);

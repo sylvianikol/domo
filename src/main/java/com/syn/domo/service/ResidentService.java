@@ -8,7 +8,7 @@ import java.util.Set;
 
 public interface ResidentService {
 
-    ResidentServiceModel add(UserServiceModel userServiceModel, String buildingId, String apartmentId);
+    ResidentServiceModel add(ResidentServiceModel residentServiceModel, String buildingId, String apartmentId);
 
     ResidentServiceModel edit(UserServiceModel userServiceModel, String buildingId, String apartmentId);
 

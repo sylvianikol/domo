@@ -1,6 +1,7 @@
 package com.syn.domo.web.controller;
 
 import com.syn.domo.model.ErrorResponse;
+import com.syn.domo.model.binding.ResidentAddBindingModel;
 import com.syn.domo.model.binding.UserAddBindingModel;
 import com.syn.domo.model.binding.UserEditBindingModel;
 import com.syn.domo.model.service.ResidentServiceModel;
@@ -63,7 +64,7 @@ public class ResidentsController implements ResidentsNamespace {
     @PostMapping
     public ResponseEntity<?> add(@PathVariable(value = "buildingId") String buildingId,
                                  @PathVariable(value = "apartmentId") String apartmentId,
-                                 @Valid @RequestBody UserAddBindingModel userAddBindingModel,
+                                 @Valid @RequestBody ResidentAddBindingModel residentAddBindingModel,
                                  BindingResult bindingResult,
                                  UriComponentsBuilder uriComponentsBuilder) {
 
@@ -74,7 +75,7 @@ public class ResidentsController implements ResidentsNamespace {
         }
 
         String residentId = this.residentService.add(
-                this.modelMapper.map(userAddBindingModel, UserServiceModel.class),
+                this.modelMapper.map(residentAddBindingModel, ResidentServiceModel.class),
                 buildingId, apartmentId).getId();
 
         return ResponseEntity.created(uriComponentsBuilder

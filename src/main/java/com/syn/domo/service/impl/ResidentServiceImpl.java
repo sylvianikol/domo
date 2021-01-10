@@ -44,7 +44,7 @@ public class ResidentServiceImpl implements ResidentService  {
     }
 
     @Override
-    public ResidentServiceModel add(UserServiceModel userServiceModel, String buildingId, String apartmentId) {
+    public ResidentServiceModel add(ResidentServiceModel residentServiceModel, String buildingId, String apartmentId) {
         // TODO: validation
         Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
         Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
@@ -57,10 +57,10 @@ public class ResidentServiceImpl implements ResidentService  {
             throw new EntityNotFoundException("Apartment not found!");
         }
 
-        if (this.userService.getByEmail(userServiceModel.getEmail()).isPresent()) {
+        if (this.userService.getByEmail(residentServiceModel.getEmail()).isPresent()) {
             throw new UnprocessableEntityException(
                     String.format("Email '%s' is already used by another user!",
-                            userServiceModel.getEmail()));
+                            residentServiceModel.getEmail()));
         }
 
         Optional<RoleServiceModel> roleServiceModel =
@@ -70,7 +70,7 @@ public class ResidentServiceImpl implements ResidentService  {
             throw new EntityNotFoundException("Role not found");
         }
 
-        Resident resident = this.modelMapper.map(userServiceModel, Resident.class);
+        Resident resident = this.modelMapper.map(residentServiceModel, Resident.class);
 
         resident.setRoles(new LinkedHashSet<>());
         resident.getRoles().add(this.modelMapper.map(roleServiceModel.get(), Role.class));

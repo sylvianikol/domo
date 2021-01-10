@@ -10,7 +10,8 @@ public interface ResidentService {
 
     ResidentServiceModel add(ResidentServiceModel residentServiceModel, String buildingId, String apartmentId);
 
-    ResidentServiceModel edit(UserServiceModel userServiceModel, String buildingId, String apartmentId);
+    ResidentServiceModel edit(ResidentServiceModel residentServiceModel,
+                              String buildingId, String apartmentId, String residentId);
 
     void deleteAllByApartmentId(String buildingId, String apartmentId);
 

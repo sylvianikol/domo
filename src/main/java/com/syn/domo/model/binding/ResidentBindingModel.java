@@ -5,13 +5,13 @@ import javax.validation.constraints.*;
 import static com.syn.domo.common.RegexPatterns.PHONE_NUMBER_REGEX;
 import static com.syn.domo.common.ValidationErrorMessages.*;
 
-public class ResidentAddBindingModel extends BaseUserBindingModel {
+public class ResidentBindingModel extends BaseUserBindingModel {
 
     //    private String password;
     private String email;
     private String phoneNumber;
 
-    public ResidentAddBindingModel() {
+    public ResidentBindingModel() {
     }
 
     //    @NotNull(message = PASSWORD_NULL)

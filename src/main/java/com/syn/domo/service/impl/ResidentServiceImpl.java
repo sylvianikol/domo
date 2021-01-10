@@ -85,7 +85,8 @@ public class ResidentServiceImpl implements ResidentService  {
     }
 
     @Override
-    public ResidentServiceModel edit(UserServiceModel userServiceModel, String buildingId, String apartmentId) {
+    public ResidentServiceModel edit(ResidentServiceModel residentServiceModel,
+                                     String buildingId, String apartmentId, String residentId) {
         // TODO: validation
 
         Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
@@ -98,13 +99,13 @@ public class ResidentServiceImpl implements ResidentService  {
             throw new EntityNotFoundException("Apartment not found!");
         }
 
-        if (this.userService.notUniqueEmail(userServiceModel.getEmail(), userServiceModel.getId())) {
+        if (this.userService.notUniqueEmail(residentServiceModel.getEmail(), residentId)) {
             throw new UnprocessableEntityException(
                     String.format("Email '%s' is already used by another user!",
-                            userServiceModel.getEmail()));
+                            residentServiceModel.getEmail()));
         }
 
-        Resident resident = this.residentRepository.findById(userServiceModel.getId()).orElse(null);
+        Resident resident = this.residentRepository.findById(residentId).orElse(null);
 
         if (resident != null) {
             Set<String> apartmentIds = resident.getApartments().stream()
@@ -118,11 +119,10 @@ public class ResidentServiceImpl implements ResidentService  {
                 throw new EntityNotFoundException("Apartment not found");
             }
 
-            resident.setFirstName(userServiceModel.getFirstName());
-            resident.setLastName(userServiceModel.getLastName());
-            resident.setEmail(userServiceModel.getEmail());
-            resident.setPhoneNumber(userServiceModel.getPhoneNumber());
-            resident.setAddedOn(userServiceModel.getAddedOn());
+            resident.setFirstName(residentServiceModel.getFirstName());
+            resident.setLastName(residentServiceModel.getLastName());
+            resident.setEmail(residentServiceModel.getEmail());
+            resident.setPhoneNumber(residentServiceModel.getPhoneNumber());
 
             this.residentRepository.saveAndFlush(resident);
 

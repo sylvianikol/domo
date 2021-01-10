@@ -1,11 +1,8 @@
 package com.syn.domo.service.impl;
 
-import com.syn.domo.exception.*;
 import com.syn.domo.model.entity.*;
 import com.syn.domo.model.service.*;
 import com.syn.domo.repository.UserRepository;
-import com.syn.domo.service.ApartmentService;
-import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.RoleService;
 import com.syn.domo.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -13,26 +10,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final BuildingService buildingService;
-    private final ApartmentService apartmentService;
     private final RoleService roleService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, BuildingService buildingService, ApartmentService apartmentService, RoleService roleService, ModelMapper modelMapper) {
+    public UserServiceImpl(UserRepository userRepository,
+                           RoleService roleService,
+                           ModelMapper modelMapper) {
         this.userRepository = userRepository;
-        this.buildingService = buildingService;
-        this.apartmentService = apartmentService;
         this.roleService = roleService;
         this.modelMapper = modelMapper;
     }

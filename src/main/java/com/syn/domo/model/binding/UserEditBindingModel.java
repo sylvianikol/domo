@@ -13,7 +13,6 @@ public class UserEditBindingModel extends BaseUserBindingModel {
     //    private String password;
     private String email;
     private String phoneNumber;
-    private LocalDate addedOn;
 
     public UserEditBindingModel() {
     }
@@ -49,15 +48,5 @@ public class UserEditBindingModel extends BaseUserBindingModel {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-    @NotNull(message = DATE_NULL)
-    @PastOrPresent(message = DATE_INVALID)
-    public LocalDate getAddedOn() {
-        return addedOn;
-    }
-
-    public void setAddedOn(LocalDate addedOn) {
-        this.addedOn = addedOn;
     }
 }

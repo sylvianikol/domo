@@ -1,8 +1,7 @@
 package com.syn.domo.web.controller;
 
 import com.syn.domo.model.ErrorResponse;
-import com.syn.domo.model.binding.ResidentAddBindingModel;
-import com.syn.domo.model.binding.UserAddBindingModel;
+import com.syn.domo.model.binding.ResidentBindingModel;
 import com.syn.domo.model.binding.UserEditBindingModel;
 import com.syn.domo.model.service.ResidentServiceModel;
 import com.syn.domo.model.service.UserServiceModel;
@@ -64,7 +63,7 @@ public class ResidentsController implements ResidentsNamespace {
     @PostMapping
     public ResponseEntity<?> add(@PathVariable(value = "buildingId") String buildingId,
                                  @PathVariable(value = "apartmentId") String apartmentId,
-                                 @Valid @RequestBody ResidentAddBindingModel residentAddBindingModel,
+                                 @Valid @RequestBody ResidentBindingModel residentBindingModel,
                                  BindingResult bindingResult,
                                  UriComponentsBuilder uriComponentsBuilder) {
 
@@ -75,7 +74,7 @@ public class ResidentsController implements ResidentsNamespace {
         }
 
         String residentId = this.residentService.add(
-                this.modelMapper.map(residentAddBindingModel, ResidentServiceModel.class),
+                this.modelMapper.map(residentBindingModel, ResidentServiceModel.class),
                 buildingId, apartmentId).getId();
 
         return ResponseEntity.created(uriComponentsBuilder
@@ -88,16 +87,17 @@ public class ResidentsController implements ResidentsNamespace {
     public ResponseEntity<?> edit(@PathVariable(value = "buildingId") String buildingId,
                                   @PathVariable(value = "apartmentId") String apartmentId,
                                   @PathVariable(value = "residentId") String residentId,
-                                  @Valid @RequestBody UserEditBindingModel userEditBindingModel,
+                                  @Valid @RequestBody ResidentBindingModel residentBindingModel,
                                   BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
+
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
                     .body(new ErrorResponse(bindingResult.getTarget(),
                             bindingResult.getAllErrors()));
         }
 
-        this.residentService.edit(this.modelMapper.map(userEditBindingModel, UserServiceModel.class),
-                buildingId, apartmentId);
+        this.residentService.edit(this.modelMapper.map(residentBindingModel, ResidentServiceModel.class),
+                buildingId, apartmentId, residentId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder

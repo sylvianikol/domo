@@ -142,7 +142,7 @@ public class FeeServiceImpl implements FeeService {
         } else {
             Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
             if (building.isEmpty()) {
-                throw new BuildingNotFoundException("Building not found!");
+                throw new EntityNotFoundException("Building not found!");
             }
 
             fees = this.feeRepository.getAllByBuildingId(buildingId);

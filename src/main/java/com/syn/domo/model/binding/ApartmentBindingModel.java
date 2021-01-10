@@ -7,13 +7,13 @@ import javax.validation.constraints.*;
 import static com.syn.domo.common.RegexPatterns.APARTMENT_NUMBER_REGEX;
 import static com.syn.domo.common.ValidationErrorMessages.*;
 
-public class ApartmentAddBindingModel {
+public class ApartmentBindingModel {
 
     private String number;
     private int floor;
     private int pets;
 
-    public ApartmentAddBindingModel() {
+    public ApartmentBindingModel() {
     }
 
     @NotNull(message = APARTMENT_NUMBER_NULL)

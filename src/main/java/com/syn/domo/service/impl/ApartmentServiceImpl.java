@@ -71,7 +71,8 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
-    public ApartmentServiceModel edit(ApartmentServiceModel apartmentServiceModel, String buildingId) {
+    public ApartmentServiceModel edit(ApartmentServiceModel apartmentServiceModel,
+                                      String buildingId, String apartmentId) {
         // TODO: validation
 
         Optional<BuildingServiceModel> buildingOpt = this.buildingService.get(buildingId);
@@ -84,7 +85,7 @@ public class ApartmentServiceImpl implements ApartmentService {
         }
 
         Apartment apartment =
-                this.apartmentRepository.findById(apartmentServiceModel.getId()).orElse(null);
+                this.apartmentRepository.findById(apartmentId).orElse(null);
 
         if (apartment == null || !apartment.getBuilding().getId().equals(buildingId)) {
             throw new EntityNotFoundException("Apartment not found!");
@@ -103,7 +104,6 @@ public class ApartmentServiceImpl implements ApartmentService {
         apartment.setNumber(apartmentServiceModel.getNumber());
         apartment.setFloor(apartmentServiceModel.getFloor());
         apartment.setPets(apartmentServiceModel.getPets());
-        apartment.setAddedOn(apartmentServiceModel.getAddedOn());
 
         this.apartmentRepository.saveAndFlush(apartment);
         return this.modelMapper.map(apartment, ApartmentServiceModel.class);

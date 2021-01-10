@@ -9,7 +9,8 @@ public interface ApartmentService {
 
     ApartmentServiceModel add(ApartmentServiceModel addServiceModel, String buildingId);
 
-    ApartmentServiceModel edit(ApartmentServiceModel apartmentServiceModel, String buildingId);
+    ApartmentServiceModel edit(ApartmentServiceModel apartmentServiceModel,
+                               String buildingId, String apartmentId);
 
     void delete(String apartmentId, String buildingId);
 

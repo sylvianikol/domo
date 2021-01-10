@@ -1,7 +1,7 @@
 package com.syn.domo.web.controller;
 
 import com.syn.domo.model.ErrorResponse;
-import com.syn.domo.model.binding.ApartmentAddBindingModel;
+import com.syn.domo.model.binding.ApartmentBindingModel;
 import com.syn.domo.model.binding.ApartmentEditBindingModel;
 import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.model.view.ApartmentViewModel;
@@ -59,7 +59,7 @@ public class ApartmentsController implements ApartmentsNamespace {
 
     @PostMapping
     public ResponseEntity<?> add(@PathVariable(value = "buildingId") String buildingId,
-                                 @Valid @RequestBody ApartmentAddBindingModel apartmentAddBindingModel,
+                                 @Valid @RequestBody ApartmentBindingModel apartmentBindingModel,
                                  BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
@@ -68,7 +68,7 @@ public class ApartmentsController implements ApartmentsNamespace {
         }
 
         String apartmentId =
-                this.apartmentService.add(this.modelMapper.map(apartmentAddBindingModel,
+                this.apartmentService.add(this.modelMapper.map(apartmentBindingModel,
                         ApartmentServiceModel.class), buildingId).getId();
 
         return ResponseEntity.created(uriComponentsBuilder
@@ -80,7 +80,7 @@ public class ApartmentsController implements ApartmentsNamespace {
     @PutMapping("/{apartmentId}")
     public ResponseEntity<?> edit(@PathVariable(value = "buildingId") String buildingId,
                                   @PathVariable(value = "apartmentId") String apartmentId,
-                                  @Valid @RequestBody ApartmentEditBindingModel apartmentEditBindingModel,
+                                  @Valid @RequestBody ApartmentBindingModel apartmentBindingModel,
                                   BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
 
        if (bindingResult.hasErrors()) {
@@ -90,9 +90,8 @@ public class ApartmentsController implements ApartmentsNamespace {
         }
 
        this.apartmentService
-               .edit(this.modelMapper.map(apartmentEditBindingModel,
-                       ApartmentServiceModel.class),
-                buildingId);
+               .edit(this.modelMapper.map(apartmentBindingModel, ApartmentServiceModel.class),
+                buildingId, apartmentId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder

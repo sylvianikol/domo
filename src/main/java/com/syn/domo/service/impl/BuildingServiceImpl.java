@@ -116,7 +116,6 @@ public class BuildingServiceImpl implements BuildingService {
         building.get().setName(buildingServiceModel.getName());
         building.get().setNeighbourhood(buildingServiceModel.getNeighbourhood());
         building.get().setAddress(buildingServiceModel.getAddress());
-        building.get().setAddedOn(buildingServiceModel.getAddedOn());
         this.buildingRepository.saveAndFlush(building.get());
 
         return this.modelMapper.map(building.get(), BuildingServiceModel.class);

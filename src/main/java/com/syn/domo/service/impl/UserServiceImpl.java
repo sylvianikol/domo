@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
             throw new BuildingNotFoundException("Building not found!");
         }
 
-        Optional<ApartmentServiceModel> apartment = this.apartmentService.getById(apartmentId);
+        Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
         if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
             throw new ApartmentNotFoundException("Apartment not found!");
         }
@@ -121,7 +121,7 @@ public class UserServiceImpl implements UserService {
             throw new BuildingNotFoundException("Building not found!");
         }
 
-        Optional<ApartmentServiceModel> apartment = this.apartmentService.getById(apartmentId);
+        Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
         if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
             throw new ApartmentNotFoundException("Apartment not found!");
         }

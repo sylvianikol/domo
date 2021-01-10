@@ -53,7 +53,7 @@ public class ChildServiceImpl implements ChildService {
             throw new BuildingNotFoundException("Building not found!");
         }
 
-        Optional<ApartmentServiceModel> apartment = this.apartmentService.getById(apartmentId);
+        Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
         if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
             throw new ApartmentNotFoundException("Apartment not found!");
         }
@@ -104,7 +104,7 @@ public class ChildServiceImpl implements ChildService {
             throw new BuildingNotFoundException("Building not found!");
         }
 
-        Optional<ApartmentServiceModel> apartment = this.apartmentService.getById(apartmentId);
+        Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
         if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
             throw new ApartmentNotFoundException("Apartment not found!");
         }
@@ -131,7 +131,7 @@ public class ChildServiceImpl implements ChildService {
             throw new BuildingNotFoundException("Building not found!");
         }
 
-        Optional<ApartmentServiceModel> apartment = this.apartmentService.getById(apartmentId);
+        Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
         if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
             throw new ApartmentNotFoundException("Apartment not found!");
         }
@@ -148,7 +148,7 @@ public class ChildServiceImpl implements ChildService {
             throw new BuildingNotFoundException("Building not found!");
         }
 
-        Optional<ApartmentServiceModel> apartment = this.apartmentService.getById(apartmentId);
+        Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
         if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
             throw new ApartmentNotFoundException("Apartment not found!");
         }
@@ -198,7 +198,7 @@ public class ChildServiceImpl implements ChildService {
 
 
     @Override
-    public Optional<ChildServiceModel> getOne(String buildingId, String apartmentId, String childId) {
+    public Optional<ChildServiceModel> get(String buildingId, String apartmentId, String childId) {
         Set<String> parentsIds =
                 this.residentService.getAllByBuildingIdAndApartmentId(buildingId, apartmentId)
                 .stream().map(BaseServiceModel::getId)

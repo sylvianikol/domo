@@ -20,6 +20,6 @@ public interface ChildService {
 
     void deleteAllByApartmentId(String buildingId, String apartmentId);
 
-    Optional<ChildServiceModel> getOne(String buildingId, String apartmentId, String childId);
+    Optional<ChildServiceModel> get(String buildingId, String apartmentId, String childId);
 
 }

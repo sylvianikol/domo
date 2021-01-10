@@ -4,11 +4,7 @@ import com.syn.domo.model.ErrorResponse;
 import com.syn.domo.model.binding.ChildAddBindingModel;
 import com.syn.domo.model.binding.ChildEditBindingModel;
 import com.syn.domo.model.service.ChildServiceModel;
-import com.syn.domo.model.service.ResidentServiceModel;
 import com.syn.domo.model.view.ChildViewModel;
-import com.syn.domo.model.view.ResidentViewModel;
-import com.syn.domo.service.ApartmentService;
-import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.ChildService;
 import com.syn.domo.web.controller.namespace.ChildrenNamespace;
 import org.modelmapper.ModelMapper;
@@ -20,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,8 +33,8 @@ public class ChildrenController implements ChildrenNamespace {
     }
 
     @GetMapping
-    public ResponseEntity<Set<ChildViewModel>> all(@PathVariable(value = "buildingId") String buildingId,
-                                                   @PathVariable(value = "apartmentId") String apartmentId) {
+    public ResponseEntity<Set<ChildViewModel>> getAll(@PathVariable(value = "buildingId") String buildingId,
+                                                      @PathVariable(value = "apartmentId") String apartmentId) {
         Set<ChildViewModel> children = this.childService
                 .getAllByApartmentIdAndBuildingId(buildingId, apartmentId)
                 .stream()
@@ -52,12 +47,12 @@ public class ChildrenController implements ChildrenNamespace {
     }
 
     @GetMapping("/{childId}")
-    public ResponseEntity<ChildViewModel> one(@PathVariable(value = "buildingId") String buildingId,
+    public ResponseEntity<ChildViewModel> get(@PathVariable(value = "buildingId") String buildingId,
                                               @PathVariable(value = "apartmentId") String apartmentId,
                                               @PathVariable(value = "childId") String childId) {
 
         Optional<ChildServiceModel> child =
-                this.childService.getOne(buildingId, apartmentId, childId);
+                this.childService.get(buildingId, apartmentId, childId);
 
         return child.isEmpty()
                 ? ResponseEntity.notFound().build()

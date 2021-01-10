@@ -17,7 +17,7 @@ public interface ApartmentService {
 
     Set<ApartmentServiceModel> getAllByBuildingId(String buildingId);
 
-    Optional<ApartmentServiceModel> getById(String apartmentId);
+    Optional<ApartmentServiceModel> get(String apartmentId);
 
     Optional<ApartmentServiceModel> getByIdIn(String id, Set<String> apartmentIds);
 

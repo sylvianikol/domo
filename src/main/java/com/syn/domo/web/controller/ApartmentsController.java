@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,7 +35,7 @@ public class ApartmentsController implements ApartmentsNamespace {
     }
 
     @GetMapping
-    public ResponseEntity<Set<ApartmentViewModel>> all(@PathVariable(value = "buildingId") String buildingId) {
+    public ResponseEntity<Set<ApartmentViewModel>> getAll(@PathVariable(value = "buildingId") String buildingId) {
 
         Set<ApartmentViewModel> apartments =
                 this.apartmentService.getAllByBuildingId(buildingId).stream()
@@ -49,10 +48,10 @@ public class ApartmentsController implements ApartmentsNamespace {
     }
 
     @GetMapping("/{apartmentId}")
-    public ResponseEntity<ApartmentViewModel> one(@PathVariable(value = "buildingId") String buildingId,
+    public ResponseEntity<ApartmentViewModel> get(@PathVariable(value = "buildingId") String buildingId,
                                                   @PathVariable(value = "apartmentId") String apartmentId) {
 
-        return this.apartmentService.getById(apartmentId)
+        return this.apartmentService.get(apartmentId)
                 .filter(a -> a.getBuilding().getId().equals(buildingId))
                 .map(a -> ResponseEntity.ok()
                         .body(this.modelMapper.map(a, ApartmentViewModel.class)))

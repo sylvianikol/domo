@@ -34,8 +34,8 @@ public class ResidentsController implements ResidentsNamespace {
     }
 
     @GetMapping
-    public ResponseEntity<Set<ResidentViewModel>> all(@PathVariable(value = "buildingId") String buildingId,
-                                                      @PathVariable(value = "apartmentId") String apartmentId) {
+    public ResponseEntity<Set<ResidentViewModel>> getAll(@PathVariable(value = "buildingId") String buildingId,
+                                                         @PathVariable(value = "apartmentId") String apartmentId) {
 
         Set<ResidentViewModel> residents = this.residentService
                 .getAllByBuildingIdAndApartmentId(buildingId, apartmentId)
@@ -49,11 +49,11 @@ public class ResidentsController implements ResidentsNamespace {
     }
 
     @GetMapping("/{residentId}")
-    public ResponseEntity<ResidentViewModel> one(@PathVariable(value = "buildingId") String buildingId,
+    public ResponseEntity<ResidentViewModel> get(@PathVariable(value = "buildingId") String buildingId,
                                                  @PathVariable(value = "apartmentId") String apartmentId,
                                                  @PathVariable(value = "residentId") String residentId) {
         Optional<ResidentServiceModel> resident =
-                this.residentService.getOne(buildingId, apartmentId, residentId);
+                this.residentService.get(buildingId, apartmentId, residentId);
 
         return resident.isEmpty()
                 ? ResponseEntity.notFound().build()

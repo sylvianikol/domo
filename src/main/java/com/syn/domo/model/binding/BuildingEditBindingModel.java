@@ -12,7 +12,6 @@ public class BuildingEditBindingModel {
     private String neighbourhood;
     private String address;
     private int floors;
-    private LocalDate addedOn;
 
     public BuildingEditBindingModel() {
     }
@@ -60,15 +59,4 @@ public class BuildingEditBindingModel {
     public void setFloors(int floors) {
         this.floors = floors;
     }
-
-    @NotNull(message = DATE_NULL)
-    @PastOrPresent(message = DATE_INVALID)
-    public LocalDate getAddedOn() {
-        return addedOn;
-    }
-
-    public void setAddedOn(LocalDate addedOn) {
-        this.addedOn = addedOn;
-    }
-
 }

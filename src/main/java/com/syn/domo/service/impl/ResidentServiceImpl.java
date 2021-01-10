@@ -47,7 +47,7 @@ public class ResidentServiceImpl implements ResidentService  {
     public ResidentServiceModel add(UserServiceModel userServiceModel, String buildingId, String apartmentId) {
         // TODO: validation
         Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
-        Optional<ApartmentServiceModel> apartment = this.apartmentService.getById(apartmentId);
+        Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
 
         if (building.isEmpty()) {
             throw new BuildingNotFoundException("Building not found!");
@@ -93,7 +93,7 @@ public class ResidentServiceImpl implements ResidentService  {
             throw new BuildingNotFoundException("Building not found!");
         }
 
-        Optional<ApartmentServiceModel> apartment = this.apartmentService.getById(apartmentId);
+        Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
         if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
             throw new ApartmentNotFoundException("Apartment not found!");
         }
@@ -140,7 +140,7 @@ public class ResidentServiceImpl implements ResidentService  {
             throw new BuildingNotFoundException("Building not found!");
         }
 
-        Optional<ApartmentServiceModel> apartment = this.apartmentService.getById(apartmentId);
+        Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
         if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
             throw new ApartmentNotFoundException("Apartment not found!");
         }
@@ -158,7 +158,7 @@ public class ResidentServiceImpl implements ResidentService  {
             throw new BuildingNotFoundException("Building not found!");
         }
 
-        Optional<ApartmentServiceModel> apartment = this.apartmentService.getById(apartmentId);
+        Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
         if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
             throw new ApartmentNotFoundException("Apartment not found!");
         }
@@ -195,7 +195,7 @@ public class ResidentServiceImpl implements ResidentService  {
     }
 
     @Override
-    public Optional<ResidentServiceModel> getOne(String buildingId, String apartmentId, String residentId) {
+    public Optional<ResidentServiceModel> get(String buildingId, String apartmentId, String residentId) {
         Optional<Resident> resident = this.residentRepository
                 .getOneByIdAndBuildingIdAndApartmentId(residentId, buildingId, apartmentId);
 

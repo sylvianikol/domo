@@ -91,7 +91,7 @@ public class FeeServiceImpl implements FeeService {
     }
 
     @Override
-    public Optional<FeeServiceModel> getOne(String feeId) {
+    public Optional<FeeServiceModel> get(String feeId) {
 
         Optional<Fee> fee = this.feeRepository.findById(feeId);
 

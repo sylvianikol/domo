@@ -29,11 +29,11 @@ public class FeesController implements FeesNamespace {
     }
 
     @GetMapping
-    public ResponseEntity<Map<String, Object>> all(@RequestParam(required = false,
+    public ResponseEntity<Map<String, Object>> getAll(@RequestParam(required = false,
                                                                  defaultValue = DEFAULT_ALL) String buildingId,
-                                                   @RequestParam(defaultValue = DEFAULT_PAGE_NUMBER) int page,
-                                                   @RequestParam(defaultValue = DEFAULT_FEE_PAGE_SIZE) int size,
-                                                   @RequestParam(defaultValue = DEFAULT_FEE_PAGE_SORT) String[] sort) {
+                                                      @RequestParam(defaultValue = DEFAULT_PAGE_NUMBER) int page,
+                                                      @RequestParam(defaultValue = DEFAULT_FEE_PAGE_SIZE) int size,
+                                                      @RequestParam(defaultValue = DEFAULT_FEE_PAGE_SORT) String[] sort) {
         Map<String, Object> response =
                 this.feeService.getAll(buildingId, page, size, sort);
 
@@ -43,9 +43,9 @@ public class FeesController implements FeesNamespace {
     }
 
     @GetMapping("/{feeId}")
-    public ResponseEntity<FeeViewModel> one(@PathVariable(value = "feeId") String feeId) {
+    public ResponseEntity<FeeViewModel> get(@PathVariable(value = "feeId") String feeId) {
 
-        Optional<FeeServiceModel> fee = this.feeService.getOne(feeId);
+        Optional<FeeServiceModel> fee = this.feeService.get(feeId);
 
         return fee.isEmpty()
                 ? ResponseEntity.notFound().build()

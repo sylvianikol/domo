@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.*;
@@ -46,12 +48,12 @@ public class ApartmentServiceImpl implements ApartmentService {
                 this.buildingService.get(buildingId);
 
         if (buildingOpt.isEmpty()) {
-            throw new BuildingNotFoundException("Building does not exists!");
+            throw new EntityNotFoundException("Building does not exists!");
         }
 
         String apartmentNumber = apartmentServiceModel.getNumber();
         if (this.alreadyExists(apartmentNumber, buildingId)) {
-            throw new ApartmentAlreadyExistsException(
+            throw new EntityExistsException(
                     String.format("Apartment No.%s already exists in this building!", apartmentNumber));
         }
 
@@ -74,7 +76,7 @@ public class ApartmentServiceImpl implements ApartmentService {
 
         Optional<BuildingServiceModel> buildingOpt = this.buildingService.get(buildingId);
         if (buildingOpt.isEmpty()) {
-            throw new BuildingNotFoundException("Building not found!");
+            throw new EntityNotFoundException("Building not found!");
         }
 
         if (apartmentServiceModel.getFloor() > buildingOpt.get().getFloors()) {
@@ -85,7 +87,7 @@ public class ApartmentServiceImpl implements ApartmentService {
                 this.apartmentRepository.findById(apartmentServiceModel.getId()).orElse(null);
 
         if (apartment == null || !apartment.getBuilding().getId().equals(buildingId)) {
-            throw new ApartmentNotFoundException("Apartment not found!");
+            throw new EntityNotFoundException("Apartment not found!");
         }
 
         String newNumber = apartmentServiceModel.getNumber();
@@ -93,7 +95,7 @@ public class ApartmentServiceImpl implements ApartmentService {
                 .findByNumberAndBuilding_Id(newNumber, buildingId);
 
         if (!apartment.getNumber().equals(newNumber) && existingApartment.isPresent()) {
-            throw new ApartmentAlreadyExistsException(
+            throw new EntityExistsException(
                     String.format("Apartment No:%s already exists in this building!",
                             apartmentServiceModel.getNumber()));
         }
@@ -112,7 +114,7 @@ public class ApartmentServiceImpl implements ApartmentService {
     public void deleteAllByBuildingId(String buildingId) {
 
         if (this.buildingService.get(buildingId).isEmpty()) {
-            throw new BuildingNotFoundException("Building not found!");
+            throw new EntityNotFoundException("Building not found!");
         }
 
         Set<Apartment> apartments =
@@ -130,14 +132,14 @@ public class ApartmentServiceImpl implements ApartmentService {
     public void delete(String apartmentId, String buildingId) {
 
         if (this.buildingService.get(buildingId).isEmpty()) {
-            throw new BuildingNotFoundException("Building not found!");
+            throw new EntityNotFoundException("Building not found!");
         }
 
         Apartment apartment =
                 this.apartmentRepository.findById(apartmentId).orElse(null);
 
         if (apartment == null || !apartment.getBuilding().getId().equals(buildingId)) {
-            throw new ApartmentNotFoundException("Apartment not found!");
+            throw new EntityNotFoundException("Apartment not found!");
         }
 
         this.residentService.deleteAllByApartmentId(buildingId, apartment.getId());
@@ -174,7 +176,7 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
-    public Optional<ApartmentServiceModel> getById(String apartmentId) {
+    public Optional<ApartmentServiceModel> get(String apartmentId) {
         Optional<Apartment> apartment = this.apartmentRepository.findById(apartmentId);
         return apartment.isEmpty()
                 ? Optional.empty()

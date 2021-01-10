@@ -72,7 +72,7 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public Optional<StaffServiceModel> getOne(String staffId) {
+    public Optional<StaffServiceModel> get(String staffId) {
         Optional<Staff> staff = this.staffRepository.findById(staffId);
         return staff.isEmpty()
                 ? Optional.empty()
@@ -120,29 +120,28 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public StaffServiceModel edit(StaffServiceModel staffServiceModel) {
+    public StaffServiceModel edit(StaffServiceModel staffServiceModel, String staffId) {
         // TODO: validation
 
-        if (this.userService.notUniqueEmail(staffServiceModel.getEmail(), staffServiceModel.getId())) {
+        if (this.userService.notUniqueEmail(staffServiceModel.getEmail(), staffId)) {
             throw new UnprocessableEntityException(
                     String.format("Email '%s' is already used by another user!",
                             staffServiceModel.getEmail()));
         }
 
-        if (this.userService.notUniquePhoneNumber(staffServiceModel.getPhoneNumber(), staffServiceModel.getId())) {
+        if (this.userService.notUniquePhoneNumber(staffServiceModel.getPhoneNumber(), staffId)) {
             throw new UnprocessableEntityException(
                     String.format("Phone number '%s' is already used by another user!",
                             staffServiceModel.getPhoneNumber()));
         }
 
-        Staff staff = this.staffRepository.findById(staffServiceModel.getId()).orElse(null);
+        Staff staff = this.staffRepository.findById(staffId).orElse(null);
 
         if (staff != null) {
             staff.setFirstName(staffServiceModel.getFirstName());
             staff.setLastName(staffServiceModel.getLastName());
             staff.setEmail(staffServiceModel.getEmail());
             staff.setPhoneNumber(staffServiceModel.getPhoneNumber());
-            staff.setAddedOn(staffServiceModel.getAddedOn());
             staff.setSalary(staffServiceModel.getSalary());
             staff.setJob(staffServiceModel.getJob());
 

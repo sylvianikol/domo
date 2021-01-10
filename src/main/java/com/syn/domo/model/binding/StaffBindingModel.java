@@ -7,12 +7,12 @@ import java.math.BigDecimal;
 
 import static com.syn.domo.common.ValidationErrorMessages.*;
 
-public class StaffAddBindingModel extends UserAddBindingModel {
+public class StaffBindingModel extends UserAddBindingModel {
 
     private String job;
     private BigDecimal salary;
 
-    public StaffAddBindingModel() {
+    public StaffBindingModel() {
     }
 
     @NotNull(message = JOB_NULL)

@@ -9,11 +9,11 @@ public interface StaffService {
 
     Set<StaffServiceModel> getAll(String buildingId);
 
-    Optional<StaffServiceModel> getOne(String staffId);
+    Optional<StaffServiceModel> get(String staffId);
 
     StaffServiceModel add(StaffServiceModel staffServiceModel);
 
-    StaffServiceModel edit(StaffServiceModel staffServiceModel);
+    StaffServiceModel edit(StaffServiceModel staffServiceModel, String staffId);
 
     void deleteAll(String buildingId);
 

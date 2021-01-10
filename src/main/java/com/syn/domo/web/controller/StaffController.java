@@ -19,7 +19,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.syn.domo.common.DefaultParamValues.DEFAULT_ALL;
 import static com.syn.domo.common.DefaultParamValues.DEFAULT_EMPTY;
 
 @RestController
@@ -51,7 +50,7 @@ public class StaffController implements StaffNamespace {
     @GetMapping("/{staffId}")
     public ResponseEntity<StaffViewModel> get(@PathVariable(value = "staffId") String staffId) {
 
-        Optional<StaffServiceModel> staff = this.staffService.getOne(staffId);
+        Optional<StaffServiceModel> staff = this.staffService.get(staffId);
 
         return staff.isEmpty()
                 ? ResponseEntity.notFound().build()
@@ -59,7 +58,7 @@ public class StaffController implements StaffNamespace {
     }
 
     @PostMapping
-    public ResponseEntity<?> add(@Valid @RequestBody StaffAddBindingModel staffAddBindingModel,
+    public ResponseEntity<?> add(@Valid @RequestBody StaffBindingModel staffBindingModel,
                                  BindingResult bindingResult,
                                  UriComponentsBuilder uriComponentsBuilder) {
 
@@ -70,7 +69,7 @@ public class StaffController implements StaffNamespace {
         }
 
         String staffId = this.staffService
-                        .add(this.modelMapper.map(staffAddBindingModel, StaffServiceModel.class))
+                        .add(this.modelMapper.map(staffBindingModel, StaffServiceModel.class))
                         .getId();
 
         return ResponseEntity.created(uriComponentsBuilder
@@ -81,7 +80,7 @@ public class StaffController implements StaffNamespace {
 
     @PutMapping("/{staffId}")
     public ResponseEntity<?> edit(@PathVariable(value = "staffId") String staffId,
-                                  @Valid @RequestBody StaffEditBindingModel staffEditBindingModel,
+                                  @Valid @RequestBody StaffBindingModel staffBindingModel,
                                   BindingResult bindingResult,
                                   UriComponentsBuilder uriComponentsBuilder) {
 
@@ -91,7 +90,7 @@ public class StaffController implements StaffNamespace {
                             bindingResult.getAllErrors()));
         }
 
-        this.staffService.edit(this.modelMapper.map(staffEditBindingModel, StaffServiceModel.class));
+        this.staffService.edit(this.modelMapper.map(staffBindingModel, StaffServiceModel.class), staffId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder

@@ -3,7 +3,6 @@ package com.syn.domo.web.controller;
 import com.syn.domo.model.ErrorResponse;
 import com.syn.domo.model.binding.BuildingBindingModel;
 import com.syn.domo.model.service.BuildingServiceModel;
-import com.syn.domo.model.view.BuildingDeleteViewModel;
 import com.syn.domo.model.view.BuildingViewModel;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.web.controller.namespace.BuildingsNamespace;
@@ -106,7 +105,7 @@ public class BuildingsController implements BuildingsNamespace {
     }
 
     @DeleteMapping("/{buildingId}")
-    public ResponseEntity<BuildingDeleteViewModel> delete(@PathVariable(value = "buildingId") String buildingId,
+    public ResponseEntity<?> delete(@PathVariable(value = "buildingId") String buildingId,
                                                           UriComponentsBuilder uriComponentsBuilder) {
 
         this.buildingService.delete(buildingId);

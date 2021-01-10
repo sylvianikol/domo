@@ -4,17 +4,17 @@ import java.util.Set;
 
 public class ResidentViewModel extends UserViewModel {
 
-    private Set<ApartmentsInResidentViewModel> apartments;
+    private Set<ApartmentsInnerViewModel> apartments;
     private Set<ChildViewModel> children;
 
     public ResidentViewModel() {
     }
 
-    public Set<ApartmentsInResidentViewModel> getApartments() {
+    public Set<ApartmentsInnerViewModel> getApartments() {
         return apartments;
     }
 
-    public void setApartments(Set<ApartmentsInResidentViewModel> apartments) {
+    public void setApartments(Set<ApartmentsInnerViewModel> apartments) {
         this.apartments = apartments;
     }
 

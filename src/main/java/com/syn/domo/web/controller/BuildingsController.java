@@ -1,8 +1,7 @@
 package com.syn.domo.web.controller;
 
 import com.syn.domo.model.ErrorResponse;
-import com.syn.domo.model.binding.BuildingAddBindingModel;
-import com.syn.domo.model.binding.BuildingEditBindingModel;
+import com.syn.domo.model.binding.BuildingBindingModel;
 import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.model.view.BuildingDeleteViewModel;
 import com.syn.domo.model.view.BuildingViewModel;
@@ -28,7 +27,8 @@ public class BuildingsController implements BuildingsNamespace {
     private final ModelMapper modelMapper;
 
     @Autowired
-    public BuildingsController(BuildingService buildingService, ModelMapper modelMapper) {
+    public BuildingsController(BuildingService buildingService,
+                               ModelMapper modelMapper) {
         this.buildingService = buildingService;
         this.modelMapper = modelMapper;
     }
@@ -59,7 +59,7 @@ public class BuildingsController implements BuildingsNamespace {
     }
 
     @PostMapping
-    public ResponseEntity<?> add(@Valid @RequestBody BuildingAddBindingModel buildingAddBindingModel,
+    public ResponseEntity<?> add(@Valid @RequestBody BuildingBindingModel buildingBindingModel,
                                  BindingResult bindingResult,
                                  UriComponentsBuilder uriComponentsBuilder) {
         if (bindingResult.hasErrors()) {
@@ -69,7 +69,7 @@ public class BuildingsController implements BuildingsNamespace {
         }
 
         String buildingId = this.buildingService.add(
-                this.modelMapper.map(buildingAddBindingModel, BuildingServiceModel.class)).getId();
+                this.modelMapper.map(buildingBindingModel, BuildingServiceModel.class)).getId();
 
         return ResponseEntity.created(uriComponentsBuilder
                 .path("/buildings/{buildingId}")
@@ -79,7 +79,7 @@ public class BuildingsController implements BuildingsNamespace {
 
     @PutMapping("/{buildingId}")
     public ResponseEntity<?> edit(@PathVariable(value = "buildingId") String buildingId,
-                                  @Valid @RequestBody BuildingEditBindingModel buildingEditBindingModel,
+                                  @Valid @RequestBody BuildingBindingModel buildingBindingModel,
                                   BindingResult bindingResult,
                                   UriComponentsBuilder uriComponentsBuilder) {
 
@@ -90,12 +90,11 @@ public class BuildingsController implements BuildingsNamespace {
         }
 
         this.buildingService.edit(this.modelMapper.map(
-                buildingEditBindingModel, BuildingServiceModel.class)
-                , buildingId);
+                buildingBindingModel, BuildingServiceModel.class), buildingId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder
-                        .path("/buildings/{buildingId}")
+                        .path(URI_BUILDINGS + "/{buildingId}")
                         .buildAndExpand(buildingId)
                         .toUri()).build();
     }
@@ -114,7 +113,7 @@ public class BuildingsController implements BuildingsNamespace {
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder
-                        .path("/buildings")
+                        .path(URI_BUILDINGS)
                         .build()
                         .toUri())
                 .build();
@@ -129,7 +128,7 @@ public class BuildingsController implements BuildingsNamespace {
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder
-                        .path("/buildings/{buildingId}")
+                        .path(URI_BUILDINGS + "/{buildingId}")
                         .buildAndExpand(buildingId)
                         .toUri()).build();
     }

@@ -4,14 +4,14 @@ import javax.validation.constraints.*;
 
 import static com.syn.domo.common.ValidationErrorMessages.*;
 
-public class BuildingAddBindingModel {
+public class BuildingBindingModel {
 
     private String name;
     private String neighbourhood;
     private String address;
     private int floors;
 
-    public BuildingAddBindingModel() {
+    public BuildingBindingModel() {
     }
 
     @NotNull(message = BUILDING_NAME_NULL)

@@ -83,9 +83,9 @@ public class BuildingServiceImpl implements BuildingService {
     public BuildingServiceModel edit(BuildingServiceModel buildingServiceModel, String buildingId) {
         // TODO: validation
 
-        Optional<Building> building = this.buildingRepository.findById(buildingId);
+        Building building = this.buildingRepository.findById(buildingId).orElse(null);
 
-        if (building.isEmpty()) {
+        if (building == null) {
             throw new EntityNotFoundException("Building not found!");
         }
 
@@ -110,12 +110,14 @@ public class BuildingServiceImpl implements BuildingService {
             );
         }
 
-        building.get().setName(buildingServiceModel.getName());
-        building.get().setNeighbourhood(buildingServiceModel.getNeighbourhood());
-        building.get().setAddress(buildingServiceModel.getAddress());
-        this.buildingRepository.saveAndFlush(building.get());
+        building.setName(buildingServiceModel.getName());
+        building.setNeighbourhood(buildingServiceModel.getNeighbourhood());
+        building.setAddress(buildingServiceModel.getAddress());
+        building.setFloors(buildingServiceModel.getFloors());
 
-        return this.modelMapper.map(building.get(), BuildingServiceModel.class);
+        this.buildingRepository.saveAndFlush(building);
+
+        return this.modelMapper.map(building, BuildingServiceModel.class);
     }
 
     @Override

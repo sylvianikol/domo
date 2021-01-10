@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Collections;
@@ -50,12 +52,12 @@ public class ChildServiceImpl implements ChildService {
 
         Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
         if (building.isEmpty()) {
-            throw new BuildingNotFoundException("Building not found!");
+            throw new EntityNotFoundException("Building not found!");
         }
 
         Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
         if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
-            throw new ApartmentNotFoundException("Apartment not found!");
+            throw new EntityNotFoundException("Apartment not found!");
         }
 
         Set<String> ids = childServiceModel.getParents().stream()
@@ -74,7 +76,7 @@ public class ChildServiceImpl implements ChildService {
                         (childServiceModel.getFirstName(), childServiceModel.getLastName(), apartmentId);
 
         if (existingChild.isPresent() && this.hasSameParents(childServiceModel, existingChild.get())) {
-            throw new ChildAlreadyExists(String.format("Child named '%s %s' already lives in Apartment No.%s",
+            throw new EntityExistsException(String.format("Child named '%s %s' already lives in Apartment No.%s",
                     childServiceModel.getFirstName(),
                     childServiceModel.getLastName(),
                     apartment.get().getNumber()));
@@ -101,12 +103,12 @@ public class ChildServiceImpl implements ChildService {
 
         Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
         if (building.isEmpty()) {
-            throw new BuildingNotFoundException("Building not found!");
+            throw new EntityNotFoundException("Building not found!");
         }
 
         Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
         if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
-            throw new ApartmentNotFoundException("Apartment not found!");
+            throw new EntityNotFoundException("Apartment not found!");
         }
 
         Child child = this.childRepository.findById(childServiceModel.getId()).orElse(null);
@@ -118,7 +120,7 @@ public class ChildServiceImpl implements ChildService {
 
             this.childRepository.saveAndFlush(child);
         } else {
-            throw new ChildNotFoundException("Child not found!");
+            throw new EntityNotFoundException("Child not found!");
         }
 
         return this.modelMapper.map(child, ChildServiceModel.class);
@@ -128,12 +130,12 @@ public class ChildServiceImpl implements ChildService {
     public void deleteAllByApartmentId(String buildingId, String apartmentId) {
         Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
         if (building.isEmpty()) {
-            throw new BuildingNotFoundException("Building not found!");
+            throw new EntityNotFoundException("Building not found!");
         }
 
         Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
         if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
-            throw new ApartmentNotFoundException("Apartment not found!");
+            throw new EntityNotFoundException("Apartment not found!");
         }
 
         Set<Child> children = this.childRepository
@@ -145,12 +147,12 @@ public class ChildServiceImpl implements ChildService {
     public void delete(String childId, String buildingId, String apartmentId) {
         Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
         if (building.isEmpty()) {
-            throw new BuildingNotFoundException("Building not found!");
+            throw new EntityNotFoundException("Building not found!");
         }
 
         Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
         if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
-            throw new ApartmentNotFoundException("Apartment not found!");
+            throw new EntityNotFoundException("Apartment not found!");
         }
 
         Child child = this.childRepository.findById(childId).orElse(null);
@@ -158,7 +160,7 @@ public class ChildServiceImpl implements ChildService {
         if (child != null && child.getApartment().getId().equals(apartmentId)) {
             this.childRepository.delete(child);
         } else {
-            throw new ChildNotFoundException("Child not found!");
+            throw new EntityNotFoundException("Child not found!");
         }
     }
 
@@ -195,7 +197,6 @@ public class ChildServiceImpl implements ChildService {
         }
         return sameParentsCount == existingParents.size() && sameParentsCount == newParents.size();
     }
-
 
     @Override
     public Optional<ChildServiceModel> get(String buildingId, String apartmentId, String childId) {

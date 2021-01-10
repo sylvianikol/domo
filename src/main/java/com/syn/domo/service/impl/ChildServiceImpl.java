@@ -98,7 +98,8 @@ public class ChildServiceImpl implements ChildService {
     }
 
     @Override
-    public ChildServiceModel edit(ChildServiceModel childServiceModel, String buildingId, String apartmentId) {
+    public ChildServiceModel edit(ChildServiceModel childServiceModel,
+                                  String buildingId, String apartmentId, String childId) {
         // TODO: validation
 
         Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
@@ -111,12 +112,11 @@ public class ChildServiceImpl implements ChildService {
             throw new EntityNotFoundException("Apartment not found!");
         }
 
-        Child child = this.childRepository.findById(childServiceModel.getId()).orElse(null);
+        Child child = this.childRepository.findById(childId).orElse(null);
 
         if (child != null && child.getApartment().getId().equals(apartmentId)) {
             child.setFirstName(childServiceModel.getFirstName());
             child.setLastName(childServiceModel.getLastName());
-            child.setAddedOn(childServiceModel.getAddedOn());
 
             this.childRepository.saveAndFlush(child);
         } else {
@@ -173,7 +173,7 @@ public class ChildServiceImpl implements ChildService {
     }
 
     @Override
-    public Set<ChildServiceModel> getAllByApartmentIdAndBuildingId(String buildingId, String apartmentId) {
+    public Set<ChildServiceModel> getAll(String buildingId, String apartmentId) {
         Set<ChildServiceModel> childServiceModels = this.childRepository
                 .getAllByApartmentIdAndBuildingId(buildingId, apartmentId)
                 .stream()

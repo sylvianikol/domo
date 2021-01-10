@@ -36,7 +36,7 @@ public class ChildrenController implements ChildrenNamespace {
     public ResponseEntity<Set<ChildViewModel>> getAll(@PathVariable(value = "buildingId") String buildingId,
                                                       @PathVariable(value = "apartmentId") String apartmentId) {
         Set<ChildViewModel> children = this.childService
-                .getAllByApartmentIdAndBuildingId(buildingId, apartmentId)
+                .getAll(buildingId, apartmentId)
                 .stream()
                 .map(c -> this.modelMapper.map(c, ChildViewModel.class))
                 .collect(Collectors.toSet());
@@ -87,6 +87,7 @@ public class ChildrenController implements ChildrenNamespace {
                                   @PathVariable(value = "childId") String childId,
                                   @Valid @RequestBody ChildEditBindingModel childEditBindingModel,
                                   BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
+
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
                     .body(new ErrorResponse(bindingResult.getTarget(),
@@ -94,7 +95,7 @@ public class ChildrenController implements ChildrenNamespace {
         }
 
         this.childService.edit(this.modelMapper.map(childEditBindingModel, ChildServiceModel.class),
-                buildingId, apartmentId);
+                buildingId, apartmentId, childId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder.path(URI_CHILDREN + "/{childId}")

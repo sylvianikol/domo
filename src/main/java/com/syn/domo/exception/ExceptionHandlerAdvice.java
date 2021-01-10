@@ -1,5 +1,8 @@
 package com.syn.domo.exception;
 
+import com.syn.domo.scheduled.ScheduledFeesGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -11,76 +14,26 @@ import javax.persistence.EntityNotFoundException;
 @ControllerAdvice
 public class ExceptionHandlerAdvice {
 
-    // TODO: log exceptions
+    private static final Logger log =
+            LoggerFactory.getLogger(ExceptionHandlerAdvice.class);
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException ex) {
+        log.error(ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ex.getMessage());
     }
 
     @ExceptionHandler(EntityExistsException.class)
     public ResponseEntity<?> handleEntityExistsException(EntityExistsException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(BuildingAlreadyExistsException.class)
-    public ResponseEntity<?> handleBuildingExistsException(BuildingAlreadyExistsException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(BuildingNotFoundException.class)
-    public ResponseEntity<?> handleBuildingNotFoundException(BuildingNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(ApartmentAlreadyExistsException.class)
-    public ResponseEntity<?> handleApartmentAlreadyExistsException(ApartmentAlreadyExistsException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(ApartmentNotFoundException.class)
-    public ResponseEntity<?> handleApartmentNotFoundException(ApartmentNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<?> handleResidentNotFoundException(UserNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ResponseEntity<?> handleResidentAlreadyExistsException(EmailAlreadyExistsException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(RoleNotFoundException.class)
-    public ResponseEntity<?> handleRoleNotFoundException(RoleNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(ChildNotFoundException.class)
-    public ResponseEntity<?> handleChildNotFoundException(ChildNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(ChildAlreadyExists.class)
-    public ResponseEntity<?> handleChildAlreadyExists(ChildAlreadyExists ex) {
+        log.error(ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(ex.getMessage());
     }
 
     @ExceptionHandler(UnprocessableEntityException.class)
     public ResponseEntity<?> handleUnprocessableEntityException(UnprocessableEntityException ex) {
+        log.error(ex.getMessage());
         return ResponseEntity.unprocessableEntity()
                 .body(ex.getMessage());
     }

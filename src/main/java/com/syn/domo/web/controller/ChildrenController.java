@@ -109,7 +109,7 @@ public class ChildrenController implements ChildrenNamespace {
                                        @PathVariable(value = "apartmentId") String apartmentId,
                                        UriComponentsBuilder uriComponentsBuilder) {
 
-        this.childService.deleteAllByApartmentId(buildingId, apartmentId);
+        this.childService.deleteAll(buildingId, apartmentId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder

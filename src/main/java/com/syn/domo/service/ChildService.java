@@ -8,19 +8,17 @@ import java.util.Set;
 
 public interface ChildService {
 
+    Set<ChildServiceModel> getAll(String buildingId, String apartmentId);
+
+    Optional<ChildServiceModel> get(String buildingId, String apartmentId, String childId);
+
     ChildServiceModel add(ChildServiceModel childServiceModel, String buildingId, String apartmentId);
 
     ChildServiceModel edit(ChildServiceModel childServiceModel,
                            String buildingId, String apartmentId, String childId);
 
-    Optional<ChildServiceModel> getById(String childId);
+    void deleteAll(String buildingId, String apartmentId);
 
     void delete(String childId, String buildingId, String apartmentId);
-
-    Set<ChildServiceModel> getAll(String buildingId, String apartmentId);
-
-    void deleteAllByApartmentId(String buildingId, String apartmentId);
-
-    Optional<ChildServiceModel> get(String buildingId, String apartmentId, String childId);
 
 }

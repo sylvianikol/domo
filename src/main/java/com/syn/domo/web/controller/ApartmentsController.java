@@ -2,7 +2,6 @@ package com.syn.domo.web.controller;
 
 import com.syn.domo.model.ErrorResponse;
 import com.syn.domo.model.binding.ApartmentBindingModel;
-import com.syn.domo.model.binding.ApartmentEditBindingModel;
 import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.model.view.ApartmentViewModel;
 import com.syn.domo.service.ApartmentService;

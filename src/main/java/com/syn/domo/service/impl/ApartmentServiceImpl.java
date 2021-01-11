@@ -1,6 +1,5 @@
 package com.syn.domo.service.impl;
 
-import com.syn.domo.common.ValidationErrorMessages;
 import com.syn.domo.exception.*;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Building;
@@ -74,9 +73,7 @@ public class ApartmentServiceImpl implements ApartmentService {
         }
 
         if (apartmentServiceModel.getFloor() > buildingOpt.get().getFloors()) {
-            apartmentServiceModel.getErrorContainer().getErrors().putIfAbsent("floor", new HashSet<>());
-            apartmentServiceModel.getErrorContainer().getErrors().get("floor").add(FLOOR_INVALID);
-            return apartmentServiceModel;
+            return this.addError(apartmentServiceModel, "floor", FLOOR_INVALID);
         }
 
         Apartment apartment = this.modelMapper.map(apartmentServiceModel, Apartment.class);
@@ -210,13 +207,22 @@ public class ApartmentServiceImpl implements ApartmentService {
     private ApartmentServiceModel collectErrors(ApartmentServiceModel apartmentServiceModel,
                                Set<ConstraintViolation<ApartmentServiceModel>> constraintViolations) {
         for (ConstraintViolation<ApartmentServiceModel> violation : constraintViolations) {
+            Map<String, Set<String>> errors = apartmentServiceModel.getErrorContainer().getErrors();
             String key = violation.getPropertyPath().toString();
             String value = violation.getMessage();
 
-            apartmentServiceModel.getErrorContainer().getErrors().putIfAbsent(key, new HashSet<>());
-            apartmentServiceModel.getErrorContainer().getErrors().get(key).add(value);
+            errors.putIfAbsent(key, new HashSet<>());
+            errors.get(key).add(value);
         }
 
+        return apartmentServiceModel;
+    }
+
+    private ApartmentServiceModel addError(ApartmentServiceModel apartmentServiceModel,
+                                           String propertyName, String errorMessage) {
+        Map<String, Set<String>> errors = apartmentServiceModel.getErrorContainer().getErrors();
+        errors.putIfAbsent(propertyName, new HashSet<>());
+        errors.get(propertyName).add(errorMessage);
         return apartmentServiceModel;
     }
 }

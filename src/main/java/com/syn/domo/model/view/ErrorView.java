@@ -1,15 +1,15 @@
-package com.syn.domo.model;
+package com.syn.domo.model.view;
 
 import org.springframework.validation.ObjectError;
 
 import java.util.List;
 
-public class ErrorResponse {
+public class ErrorView {
 
     private Object target;
     private List<ObjectError> errors;
 
-    public ErrorResponse(Object target, List<ObjectError> errors) {
+    public ErrorView(Object target, List<ObjectError> errors) {
         this.target = target;
         this.errors = errors;
     }

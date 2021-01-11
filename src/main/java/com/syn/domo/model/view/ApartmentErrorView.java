@@ -8,10 +8,7 @@ public class ApartmentErrorView {
     private int floor;
     private int pets;
 
-    private ViolationContainer violations;
-
     public ApartmentErrorView() {
-        this.violations = new ViolationContainer();
     }
 
     public String getNumber() {
@@ -36,13 +33,5 @@ public class ApartmentErrorView {
 
     public void setPets(int pets) {
         this.pets = pets;
-    }
-
-    public ViolationContainer getViolations() {
-        return violations;
-    }
-
-    public void setViolations(ViolationContainer violations) {
-        this.violations = violations;
     }
 }

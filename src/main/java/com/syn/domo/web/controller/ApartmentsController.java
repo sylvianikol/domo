@@ -1,11 +1,12 @@
 package com.syn.domo.web.controller;
 
-import com.syn.domo.model.ErrorResponse;
+import com.syn.domo.model.view.ErrorView;
 import com.syn.domo.model.binding.ApartmentBindingModel;
 import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.model.view.ApartmentErrorView;
 import com.syn.domo.model.view.ApartmentViewModel;
 import com.syn.domo.service.ApartmentService;
+import com.syn.domo.web.controller.helper.ErrorModel;
 import com.syn.domo.web.controller.namespace.ApartmentsNamespace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,8 +66,11 @@ public class ApartmentsController implements ApartmentsNamespace {
                                  BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
 
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.unprocessableEntity()
-                    .body(createErrorView(apartmentBindingModel, bindingResult));
+            ApartmentErrorView apartmentErrorView =
+                    this.modelMapper.map(apartmentBindingModel, ApartmentErrorView.class);
+            ErrorModel errorModel =
+                    new ErrorModel(apartmentErrorView, bindingResult);
+            return ResponseEntity.unprocessableEntity().body(errorModel);
         }
 
         ApartmentServiceModel apartmentServiceModel =
@@ -92,7 +96,7 @@ public class ApartmentsController implements ApartmentsNamespace {
 
        if (bindingResult.hasErrors()) {
            return ResponseEntity.unprocessableEntity()
-                   .body(new ErrorResponse(bindingResult.getTarget(),
+                   .body(new ErrorView(bindingResult.getTarget(),
                            bindingResult.getAllErrors()));
         }
 
@@ -134,20 +138,5 @@ public class ApartmentsController implements ApartmentsNamespace {
                         .buildAndExpand(buildingId)
                         .toUri())
                 .build();
-    }
-
-    private ApartmentErrorView createErrorView(ApartmentBindingModel apartmentBindingModel,
-                                               BindingResult bindingResult) {
-        ApartmentErrorView apartmentErrorView =
-                this.modelMapper.map(apartmentBindingModel, ApartmentErrorView.class);
-
-        for (FieldError error : bindingResult.getFieldErrors()) {
-            String key = error.getField();
-            String value = error.getDefaultMessage();
-
-            apartmentErrorView.getViolations().getErrors().putIfAbsent(key, new HashSet<>());
-            apartmentErrorView.getViolations().getErrors().get(key).add(value);
-        }
-        return apartmentErrorView;
     }
 }

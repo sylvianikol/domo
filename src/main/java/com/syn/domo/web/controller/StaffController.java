@@ -1,6 +1,6 @@
 package com.syn.domo.web.controller;
 
-import com.syn.domo.model.ErrorResponse;
+import com.syn.domo.model.view.ErrorView;
 import com.syn.domo.model.binding.*;
 import com.syn.domo.model.service.StaffServiceModel;
 import com.syn.domo.model.view.StaffViewModel;
@@ -64,7 +64,7 @@ public class StaffController implements StaffNamespace {
 
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
-                    .body(new ErrorResponse(bindingResult.getTarget(),
+                    .body(new ErrorView(bindingResult.getTarget(),
                             bindingResult.getAllErrors()));
         }
 
@@ -86,7 +86,7 @@ public class StaffController implements StaffNamespace {
 
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
-                    .body(new ErrorResponse(bindingResult.getTarget(),
+                    .body(new ErrorView(bindingResult.getTarget(),
                             bindingResult.getAllErrors()));
         }
 

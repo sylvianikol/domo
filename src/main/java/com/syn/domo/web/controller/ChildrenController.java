@@ -1,6 +1,6 @@
 package com.syn.domo.web.controller;
 
-import com.syn.domo.model.ErrorResponse;
+import com.syn.domo.model.view.ErrorView;
 import com.syn.domo.model.binding.ChildAddBindingModel;
 import com.syn.domo.model.binding.ChildEditBindingModel;
 import com.syn.domo.model.service.ChildServiceModel;
@@ -67,7 +67,7 @@ public class ChildrenController implements ChildrenNamespace {
 
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
-                    .body(new ErrorResponse(bindingResult.getTarget(),
+                    .body(new ErrorView(bindingResult.getTarget(),
                             bindingResult.getAllErrors()));
         }
 
@@ -90,7 +90,7 @@ public class ChildrenController implements ChildrenNamespace {
 
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
-                    .body(new ErrorResponse(bindingResult.getTarget(),
+                    .body(new ErrorView(bindingResult.getTarget(),
                             bindingResult.getAllErrors()));
         }
 

@@ -31,7 +31,7 @@ public class Apartment extends BaseEntity {
     @NotEmpty(message = APARTMENT_NUMBER_EMPTY)
     @Size(min = 1, max = 10, message = APARTMENT_LENGTH_INVALID)
     @Pattern(regexp = APARTMENT_NUMBER_REGEX, message = APARTMENT_INVALID_SYMBOLS)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
     public String getNumber() {
         return number;
     }

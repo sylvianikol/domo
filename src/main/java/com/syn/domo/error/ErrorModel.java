@@ -1,6 +1,5 @@
-package com.syn.domo.web.controller.helper;
+package com.syn.domo.error;
 
-import com.syn.domo.error.ViolationContainer;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
@@ -9,22 +8,22 @@ import java.util.HashSet;
 public class ErrorModel {
 
     Object object;
-    private ViolationContainer violations;
+    private errorContainer errorContainer;
 
     public ErrorModel(Object object, BindingResult bindingResult) {
         this.object = object;
-        this.setViolations(bindingResult);
+        this.setErrorContainer(bindingResult);
     }
 
-    private void setViolations(BindingResult bindingResult) {
-        this.violations = new ViolationContainer();
+    private void setErrorContainer(BindingResult bindingResult) {
+        this.errorContainer = new errorContainer();
 
         for (FieldError error : bindingResult.getFieldErrors()) {
             String key = error.getField();
             String value = error.getDefaultMessage();
 
-            violations.getErrors().putIfAbsent(key, new HashSet<>());
-            violations.getErrors().get(key).add(value);
+            errorContainer.getErrors().putIfAbsent(key, new HashSet<>());
+            errorContainer.getErrors().get(key).add(value);
         }
     }
 
@@ -36,11 +35,11 @@ public class ErrorModel {
         this.object = object;
     }
 
-    public ViolationContainer getViolations() {
-        return violations;
+    public errorContainer getErrorContainer() {
+        return errorContainer;
     }
 
-    public void setViolations(ViolationContainer violations) {
-        this.violations = violations;
+    public void setViolations(errorContainer violations) {
+        this.errorContainer = violations;
     }
 }

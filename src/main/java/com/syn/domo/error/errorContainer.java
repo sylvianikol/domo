@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class ViolationContainer {
+public class errorContainer {
 
     private Map<String, Set<String>> errors;
 
-    public ViolationContainer() {
+    public errorContainer() {
         this.errors = new HashMap<>();
     }
 

@@ -1,4 +1,4 @@
-package com.syn.domo.model.view;
+package com.syn.domo.model.view.error;
 
 import org.springframework.validation.ObjectError;
 

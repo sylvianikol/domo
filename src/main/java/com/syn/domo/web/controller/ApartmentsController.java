@@ -1,24 +1,22 @@
 package com.syn.domo.web.controller;
 
-import com.syn.domo.model.view.ErrorView;
+import com.syn.domo.model.view.error.ErrorView;
 import com.syn.domo.model.binding.ApartmentBindingModel;
 import com.syn.domo.model.service.ApartmentServiceModel;
-import com.syn.domo.model.view.ApartmentErrorView;
+import com.syn.domo.model.view.error.ApartmentErrorView;
 import com.syn.domo.model.view.ApartmentViewModel;
 import com.syn.domo.service.ApartmentService;
-import com.syn.domo.web.controller.helper.ErrorModel;
+import com.syn.domo.error.ErrorModel;
 import com.syn.domo.web.controller.namespace.ApartmentsNamespace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 

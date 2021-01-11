@@ -1,6 +1,4 @@
-package com.syn.domo.model.view;
-
-import com.syn.domo.error.ViolationContainer;
+package com.syn.domo.model.view.error;
 
 public class ApartmentErrorView {
 

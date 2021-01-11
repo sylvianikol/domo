@@ -1,12 +1,10 @@
 package com.syn.domo.model.service;
 
-import com.syn.domo.error.ViolationContainer;
+import com.syn.domo.error.errorContainer;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -25,10 +23,10 @@ public class ApartmentServiceModel extends BaseServiceModel {
     private Set<ResidentServiceModel> residents;
     private Set<ChildServiceModel> children;
 
-    private ViolationContainer violations;
+    private errorContainer violations;
 
     public ApartmentServiceModel() {
-        this.violations = new ViolationContainer();
+        this.violations = new errorContainer();
     }
 
     @NotNull(message = APARTMENT_NUMBER_NULL)
@@ -98,11 +96,11 @@ public class ApartmentServiceModel extends BaseServiceModel {
         this.children = children;
     }
 
-    public ViolationContainer getViolations() {
+    public errorContainer getViolations() {
         return violations;
     }
 
-    public void setViolations(ViolationContainer violations) {
+    public void setViolations(errorContainer violations) {
         this.violations = violations;
     }
 

@@ -1,6 +1,6 @@
 package com.syn.domo.web.controller;
 
-import com.syn.domo.model.view.ErrorView;
+import com.syn.domo.model.view.error.ErrorView;
 import com.syn.domo.model.binding.BuildingBindingModel;
 import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.model.view.BuildingViewModel;

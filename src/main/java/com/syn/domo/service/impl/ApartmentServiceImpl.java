@@ -41,7 +41,8 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
-    public ApartmentServiceModel add(ApartmentServiceModel apartmentServiceModel, String buildingId) {
+    public ApartmentServiceModel add(ApartmentServiceModel apartmentServiceModel,
+                                     String buildingId) {
         // TODO: validation
 
         Optional<BuildingServiceModel> buildingOpt =

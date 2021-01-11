@@ -206,8 +206,8 @@ public class ApartmentServiceImpl implements ApartmentService {
             String key = violation.getPropertyPath().toString();
             String value = violation.getMessage();
 
-            apartmentServiceModel.getViolations().getErrors().putIfAbsent(key, new HashSet<>());
-            apartmentServiceModel.getViolations().getErrors().get(key).add(value);
+            apartmentServiceModel.getErrorContainer().getErrors().putIfAbsent(key, new HashSet<>());
+            apartmentServiceModel.getErrorContainer().getErrors().get(key).add(value);
         }
 
         return apartmentServiceModel;

@@ -15,6 +15,11 @@ public class ErrorModel {
         this.setErrorContainer(bindingResult);
     }
 
+    public ErrorModel(Object object, ErrorContainer errorContainer) {
+        this.object = object;
+        this.errorContainer = errorContainer;
+    }
+
     private void setErrorContainer(BindingResult bindingResult) {
 
         this.errorContainer = new ErrorContainer();

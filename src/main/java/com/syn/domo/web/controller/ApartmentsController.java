@@ -65,11 +65,7 @@ public class ApartmentsController implements ApartmentsNamespace {
 
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
-                    .body(new ErrorModel(this.modelMapper.map(
-                            apartmentBindingModel,
-                            ApartmentErrorView.class
-                    ),
-                    bindingResult));
+                    .body(new ErrorModel(apartmentBindingModel, bindingResult));
         }
 
         ApartmentServiceModel apartmentServiceModel =
@@ -78,7 +74,7 @@ public class ApartmentsController implements ApartmentsNamespace {
 
         if (apartmentServiceModel.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
-                    .body(this.modelMapper.map(apartmentServiceModel, ApartmentErrorView.class));
+                    .body(new ErrorModel(apartmentBindingModel, apartmentServiceModel.getErrorContainer()));
         }
 
         return ResponseEntity.created(uriComponentsBuilder

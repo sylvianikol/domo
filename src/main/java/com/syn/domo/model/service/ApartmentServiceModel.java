@@ -23,10 +23,10 @@ public class ApartmentServiceModel extends BaseServiceModel {
     private Set<ResidentServiceModel> residents;
     private Set<ChildServiceModel> children;
 
-    private ErrorContainer violations;
+    private ErrorContainer errorContainer;
 
     public ApartmentServiceModel() {
-        this.violations = new ErrorContainer();
+        this.errorContainer = new ErrorContainer();
     }
 
     @NotNull(message = APARTMENT_NUMBER_NULL)
@@ -96,12 +96,12 @@ public class ApartmentServiceModel extends BaseServiceModel {
         this.children = children;
     }
 
-    public ErrorContainer getViolations() {
-        return violations;
+    public ErrorContainer getErrorContainer() {
+        return errorContainer;
     }
 
-    public void setViolations(ErrorContainer violations) {
-        this.violations = violations;
+    public void setErrorContainer(ErrorContainer errorContainer) {
+        this.errorContainer = errorContainer;
     }
 
     @Override
@@ -123,6 +123,6 @@ public class ApartmentServiceModel extends BaseServiceModel {
     }
 
     public boolean hasErrors() {
-        return !this.violations.getErrors().isEmpty();
+        return !this.errorContainer.getErrors().isEmpty();
     }
 }

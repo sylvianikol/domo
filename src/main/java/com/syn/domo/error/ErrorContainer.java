@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class errorContainer {
+public class ErrorContainer {
 
     private Map<String, Set<String>> errors;
 
-    public errorContainer() {
+    public ErrorContainer() {
         this.errors = new HashMap<>();
     }
 

@@ -8,7 +8,7 @@ import java.util.HashSet;
 public class ErrorModel {
 
     Object object;
-    private errorContainer errorContainer;
+    private ErrorContainer errorContainer;
 
     public ErrorModel(Object object, BindingResult bindingResult) {
         this.object = object;
@@ -16,7 +16,8 @@ public class ErrorModel {
     }
 
     private void setErrorContainer(BindingResult bindingResult) {
-        this.errorContainer = new errorContainer();
+
+        this.errorContainer = new ErrorContainer();
 
         for (FieldError error : bindingResult.getFieldErrors()) {
             String key = error.getField();
@@ -35,11 +36,11 @@ public class ErrorModel {
         this.object = object;
     }
 
-    public errorContainer getErrorContainer() {
+    public ErrorContainer getErrorContainer() {
         return errorContainer;
     }
 
-    public void setViolations(errorContainer violations) {
+    public void setViolations(ErrorContainer violations) {
         this.errorContainer = violations;
     }
 }

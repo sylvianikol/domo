@@ -66,11 +66,12 @@ public class ApartmentsController implements ApartmentsNamespace {
                                  BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
 
         if (bindingResult.hasErrors()) {
-            ApartmentErrorView apartmentErrorView =
-                    this.modelMapper.map(apartmentBindingModel, ApartmentErrorView.class);
-            ErrorModel errorModel =
-                    new ErrorModel(apartmentErrorView, bindingResult);
-            return ResponseEntity.unprocessableEntity().body(errorModel);
+            return ResponseEntity.unprocessableEntity()
+                    .body(new ErrorModel(this.modelMapper.map(
+                            apartmentBindingModel,
+                            ApartmentErrorView.class
+                    ),
+                    bindingResult));
         }
 
         ApartmentServiceModel apartmentServiceModel =

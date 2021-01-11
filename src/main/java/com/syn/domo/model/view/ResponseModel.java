@@ -14,24 +14,28 @@ public class ResponseModel<T> {
     private T object;
     private ErrorContainer errorContainer;
 
-    public ResponseModel(String id, T object) {
-        this.id = id;
+    public ResponseModel(T object) {
         this.object = object;
         this.errorContainer = new ErrorContainer();
     }
 
+    public ResponseModel(String id, T object) {
+        this(object);
+        this.id = id;
+    }
+
     public ResponseModel(T object, BindingResult bindingResult) {
-        this.object = object;
+        this(object);
         this.setErrorContainer(bindingResult);
     }
 
     public ResponseModel(T object, ErrorContainer errorContainer) {
-        this.object = object;
+        this(object);
         this.errorContainer = errorContainer;
     }
 
     public ResponseModel(T object, Set<ConstraintViolation<T>> constraintViolations) {
-        this.object = object;
+        this(object);
         this.setErrorContainer(constraintViolations);
     }
 

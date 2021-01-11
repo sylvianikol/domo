@@ -62,16 +62,16 @@ public class ApartmentsController implements ApartmentsNamespace {
                                  @Valid @RequestBody ApartmentBindingModel apartmentBindingModel,
                                  BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
 
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.unprocessableEntity()
-                    .body(new ResponseModel<>(apartmentBindingModel, bindingResult));
-        }
+//        if (bindingResult.hasErrors()) {
+//            return ResponseEntity.unprocessableEntity()
+//                    .body(new ResponseModel<>(apartmentBindingModel, bindingResult));
+//        }
 
         ResponseModel<ApartmentServiceModel> responseModel =
                 this.apartmentService.add(this.modelMapper.map(apartmentBindingModel,
                 ApartmentServiceModel.class), buildingId);
 
-        return !responseModel.hasErrors()
+        return  responseModel.hasErrors()
                 ? ResponseEntity.unprocessableEntity().body(responseModel)
                 : ResponseEntity.created(uriComponentsBuilder.path(URI_APARTMENTS + "/{apartmentId}")
                 .buildAndExpand(buildingId, responseModel.getId())

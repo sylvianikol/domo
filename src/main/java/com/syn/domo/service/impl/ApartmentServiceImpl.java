@@ -51,21 +51,18 @@ public class ApartmentServiceImpl implements ApartmentService {
                                      String buildingId) {
 
         if (!this.validationUtil.isValid(apartmentServiceModel)) {
-            Set<ConstraintViolation<ApartmentServiceModel>> violations =
+            Set<ConstraintViolation<ApartmentServiceModel>> constraintViolations =
                     this.validationUtil.violations(apartmentServiceModel);
 
-            Map<String, Set<String>> errors = new HashMap<>();
-
-            for (ConstraintViolation<ApartmentServiceModel> violation : violations) {
+            for (ConstraintViolation<ApartmentServiceModel> violation : constraintViolations) {
                 String key = violation.getPropertyPath().toString();
                 String value = violation.getMessage();
 
-                errors.putIfAbsent(key, new HashSet<>());
-                errors.get(key).add(value);
+                apartmentServiceModel.getViolations().getErrors().putIfAbsent(key, new HashSet<>());
+                apartmentServiceModel.getViolations().getErrors().get(key).add(value);
 
             }
 
-            apartmentServiceModel.setErrors(errors);
             return apartmentServiceModel;
         }
 

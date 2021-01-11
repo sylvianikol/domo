@@ -1,5 +1,7 @@
 package com.syn.domo.model.view;
 
+import com.syn.domo.error.ViolationContainer;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -10,7 +12,7 @@ public class ApartmentErrorView {
     private int floor;
     private int pets;
     private Map<String, Set<String>> errors;
-
+    private ViolationContainer violations;
 
     public ApartmentErrorView() {
         this.errors = new HashMap<>();
@@ -46,5 +48,13 @@ public class ApartmentErrorView {
 
     public void setErrors(Map<String, Set<String>> errors) {
         this.errors = errors;
+    }
+
+    public ViolationContainer getViolations() {
+        return violations;
+    }
+
+    public void setViolations(ViolationContainer violations) {
+        this.violations = violations;
     }
 }

@@ -71,7 +71,7 @@ public class ApartmentsController implements ApartmentsNamespace {
                 this.apartmentService.add(this.modelMapper.map(apartmentBindingModel,
                         ApartmentServiceModel.class), buildingId);
 
-        if (!apartmentServiceModel.getErrors().isEmpty()) {
+        if (!apartmentServiceModel.getViolations().isEmpty()) {
             ApartmentErrorView apartmentErrorView =
                     this.modelMapper.map(apartmentServiceModel, ApartmentErrorView.class);
             return ResponseEntity.unprocessableEntity().body(apartmentErrorView);

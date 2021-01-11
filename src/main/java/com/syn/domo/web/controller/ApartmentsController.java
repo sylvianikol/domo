@@ -84,10 +84,9 @@ public class ApartmentsController implements ApartmentsNamespace {
                                   @Valid @RequestBody ApartmentBindingModel apartmentBindingModel,
                                   BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
 
-       if (bindingResult.hasErrors()) {
-           return ResponseEntity.unprocessableEntity()
-                   .body(new ErrorView(bindingResult.getTarget(),
-                           bindingResult.getAllErrors()));
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.unprocessableEntity()
+                    .body(new ResponseModel<>(apartmentBindingModel, bindingResult));
         }
 
        this.apartmentService

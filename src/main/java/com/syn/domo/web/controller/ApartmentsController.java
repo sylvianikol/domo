@@ -3,6 +3,7 @@ package com.syn.domo.web.controller;
 import com.syn.domo.model.ErrorResponse;
 import com.syn.domo.model.binding.ApartmentBindingModel;
 import com.syn.domo.model.service.ApartmentServiceModel;
+import com.syn.domo.model.view.ApartmentErrorView;
 import com.syn.domo.model.view.ApartmentViewModel;
 import com.syn.domo.service.ApartmentService;
 import com.syn.domo.web.controller.namespace.ApartmentsNamespace;
@@ -60,19 +61,25 @@ public class ApartmentsController implements ApartmentsNamespace {
     public ResponseEntity<?> add(@PathVariable(value = "buildingId") String buildingId,
                                  @Valid @RequestBody ApartmentBindingModel apartmentBindingModel,
                                  BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.unprocessableEntity()
-                    .body(new ErrorResponse(bindingResult.getTarget(),
-                            bindingResult.getAllErrors()));
-        }
+//        if (bindingResult.hasErrors()) {
+//            return ResponseEntity.unprocessableEntity()
+//                    .body(new ErrorResponse(bindingResult.getTarget(),
+//                            bindingResult.getAllErrors()));
+//        }
 
-        String apartmentId =
+        ApartmentServiceModel apartmentServiceModel =
                 this.apartmentService.add(this.modelMapper.map(apartmentBindingModel,
-                        ApartmentServiceModel.class), buildingId).getId();
+                        ApartmentServiceModel.class), buildingId);
+
+        if (!apartmentServiceModel.getErrors().isEmpty()) {
+            ApartmentErrorView apartmentErrorView =
+                    this.modelMapper.map(apartmentServiceModel, ApartmentErrorView.class);
+            return ResponseEntity.unprocessableEntity().body(apartmentErrorView);
+        }
 
         return ResponseEntity.created(uriComponentsBuilder
                 .path(URI_APARTMENTS + "/{apartmentId}")
-                .buildAndExpand(buildingId, apartmentId)
+                .buildAndExpand(buildingId, apartmentServiceModel.getId())
                 .toUri()).build();
     }
 

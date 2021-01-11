@@ -7,6 +7,7 @@ import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.repository.ApartmentRepository;
 import com.syn.domo.service.*;
+import com.syn.domo.utils.ValidationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import javax.validation.ConstraintViolation;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,23 +29,45 @@ public class ApartmentServiceImpl implements ApartmentService {
     private final ResidentService residentService;
     private final ChildService childService;
     private final ModelMapper modelMapper;
+    public final ValidationUtil validationUtil;
 
     @Autowired
     public ApartmentServiceImpl(ApartmentRepository apartmentRepository,
                                 @Lazy BuildingService buildingService,
                                 @Lazy ResidentService residentService,
-                                @Lazy ChildService childService, ModelMapper modelMapper) {
+                                @Lazy ChildService childService,
+                                ModelMapper modelMapper,
+                                ValidationUtil validationUtil) {
         this.apartmentRepository = apartmentRepository;
         this.buildingService = buildingService;
         this.residentService = residentService;
         this.childService = childService;
         this.modelMapper = modelMapper;
+        this.validationUtil = validationUtil;
     }
 
     @Override
     public ApartmentServiceModel add(ApartmentServiceModel apartmentServiceModel,
                                      String buildingId) {
-        // TODO: validation
+
+        if (!this.validationUtil.isValid(apartmentServiceModel)) {
+            Set<ConstraintViolation<ApartmentServiceModel>> violations =
+                    this.validationUtil.violations(apartmentServiceModel);
+
+            Map<String, Set<String>> errors = new HashMap<>();
+
+            for (ConstraintViolation<ApartmentServiceModel> violation : violations) {
+                String key = violation.getPropertyPath().toString();
+                String value = violation.getMessage();
+
+                errors.putIfAbsent(key, new HashSet<>());
+                errors.get(key).add(value);
+
+            }
+
+            apartmentServiceModel.setErrors(errors);
+            return apartmentServiceModel;
+        }
 
         Optional<BuildingServiceModel> buildingOpt =
                 this.buildingService.get(buildingId);
@@ -68,7 +92,7 @@ public class ApartmentServiceImpl implements ApartmentService {
 
         this.apartmentRepository.saveAndFlush(apartment);
 
-        return this.modelMapper.map(apartment, ApartmentServiceModel.class);
+       return this.modelMapper.map(apartment, ApartmentServiceModel.class);
     }
 
     @Override

@@ -4,6 +4,8 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -22,7 +24,10 @@ public class ApartmentServiceModel extends BaseServiceModel {
     private Set<ResidentServiceModel> residents;
     private Set<ChildServiceModel> children;
 
+    private Map<String, Set<String>> errors;
+
     public ApartmentServiceModel() {
+        this.errors = new HashMap<>();
     }
 
     @NotNull(message = APARTMENT_NUMBER_NULL)
@@ -92,6 +97,14 @@ public class ApartmentServiceModel extends BaseServiceModel {
         this.children = children;
     }
 
+    public Map<String, Set<String>> getErrors() {
+        return errors;
+    }
+
+    public void setErrors(Map<String, Set<String>> errors) {
+        this.errors = errors;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -109,4 +122,5 @@ public class ApartmentServiceModel extends BaseServiceModel {
     public int hashCode() {
         return Objects.hash(super.hashCode(), number, floor, building, pets, addedOn);
     }
+
 }

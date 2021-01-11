@@ -12,6 +12,10 @@ public class ErrorContainer {
         this.errors = new HashMap<>();
     }
 
+    public ErrorContainer(Map<String, Set<String>> errors) {
+        this.errors = errors;
+    }
+
     public Map<String, Set<String>> getErrors() {
         return errors;
     }

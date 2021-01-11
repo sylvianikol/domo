@@ -3,10 +3,9 @@ package com.syn.domo.web.controller;
 import com.syn.domo.model.view.error.ErrorView;
 import com.syn.domo.model.binding.ApartmentBindingModel;
 import com.syn.domo.model.service.ApartmentServiceModel;
-import com.syn.domo.model.view.error.ApartmentErrorView;
 import com.syn.domo.model.view.ApartmentViewModel;
 import com.syn.domo.service.ApartmentService;
-import com.syn.domo.error.ErrorModel;
+import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.web.controller.namespace.ApartmentsNamespace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,21 +64,17 @@ public class ApartmentsController implements ApartmentsNamespace {
 
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
-                    .body(new ErrorModel(apartmentBindingModel, bindingResult));
+                    .body(new ResponseModel<>(apartmentBindingModel, bindingResult));
         }
 
-        ApartmentServiceModel apartmentServiceModel =
+        ResponseModel<ApartmentServiceModel> responseModel =
                 this.apartmentService.add(this.modelMapper.map(apartmentBindingModel,
-                        ApartmentServiceModel.class), buildingId);
+                ApartmentServiceModel.class), buildingId);
 
-        if (apartmentServiceModel.hasErrors()) {
-            return ResponseEntity.unprocessableEntity()
-                    .body(new ErrorModel(apartmentBindingModel, apartmentServiceModel.getErrorContainer()));
-        }
-
-        return ResponseEntity.created(uriComponentsBuilder
-                .path(URI_APARTMENTS + "/{apartmentId}")
-                .buildAndExpand(buildingId, apartmentServiceModel.getId())
+        return !responseModel.hasErrors()
+                ? ResponseEntity.unprocessableEntity().body(responseModel)
+                : ResponseEntity.created(uriComponentsBuilder.path(URI_APARTMENTS + "/{apartmentId}")
+                .buildAndExpand(buildingId, responseModel.getId())
                 .toUri()).build();
     }
 

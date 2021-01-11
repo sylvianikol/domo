@@ -23,10 +23,7 @@ public class ApartmentServiceModel extends BaseServiceModel {
     private Set<ResidentServiceModel> residents;
     private Set<ChildServiceModel> children;
 
-    private ErrorContainer errorContainer;
-
     public ApartmentServiceModel() {
-        this.errorContainer = new ErrorContainer();
     }
 
     @NotNull(message = APARTMENT_NUMBER_NULL)
@@ -96,14 +93,6 @@ public class ApartmentServiceModel extends BaseServiceModel {
         this.children = children;
     }
 
-    public ErrorContainer getErrorContainer() {
-        return errorContainer;
-    }
-
-    public void setErrorContainer(ErrorContainer errorContainer) {
-        this.errorContainer = errorContainer;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -122,7 +111,4 @@ public class ApartmentServiceModel extends BaseServiceModel {
         return Objects.hash(super.hashCode(), number, floor, building, pets, addedOn);
     }
 
-    public boolean hasErrors() {
-        return !this.errorContainer.getErrors().isEmpty();
-    }
 }

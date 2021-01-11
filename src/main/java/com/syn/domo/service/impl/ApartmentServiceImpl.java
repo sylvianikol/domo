@@ -1,5 +1,7 @@
 package com.syn.domo.service.impl;
 
+import com.syn.domo.error.ErrorContainer;
+import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.exception.*;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Building;
@@ -16,7 +18,6 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-import javax.validation.ConstraintViolation;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -51,11 +52,11 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
-    public ApartmentServiceModel add(ApartmentServiceModel apartmentServiceModel,
+    public ResponseModel<ApartmentServiceModel> add(ApartmentServiceModel apartmentServiceModel,
                                      String buildingId) {
 
         if (!this.validationUtil.isValid(apartmentServiceModel)) {
-            return collectErrors(apartmentServiceModel,
+            return new ResponseModel<>(apartmentServiceModel,
                     this.validationUtil.violations(apartmentServiceModel));
         }
 
@@ -73,7 +74,8 @@ public class ApartmentServiceImpl implements ApartmentService {
         }
 
         if (apartmentServiceModel.getFloor() > buildingOpt.get().getFloors()) {
-            return this.addError(apartmentServiceModel, "floor", FLOOR_INVALID);
+            return new ResponseModel<>(apartmentServiceModel, new ErrorContainer(
+                    Map.of("floor", Set.of(FLOOR_INVALID))));
         }
 
         Apartment apartment = this.modelMapper.map(apartmentServiceModel, Apartment.class);
@@ -82,7 +84,7 @@ public class ApartmentServiceImpl implements ApartmentService {
 
         this.apartmentRepository.saveAndFlush(apartment);
 
-       return this.modelMapper.map(apartment, ApartmentServiceModel.class);
+       return new ResponseModel<>(apartment.getId(), this.modelMapper.map(apartment, ApartmentServiceModel.class));
     }
 
     @Override
@@ -204,25 +206,25 @@ public class ApartmentServiceImpl implements ApartmentService {
 
     }
 
-    private ApartmentServiceModel collectErrors(ApartmentServiceModel apartmentServiceModel,
-                               Set<ConstraintViolation<ApartmentServiceModel>> constraintViolations) {
-        for (ConstraintViolation<ApartmentServiceModel> violation : constraintViolations) {
-            Map<String, Set<String>> errors = apartmentServiceModel.getErrorContainer().getErrors();
-            String key = violation.getPropertyPath().toString();
-            String value = violation.getMessage();
+//    private ApartmentServiceModel collectErrors(ApartmentServiceModel apartmentServiceModel,
+//                               Set<ConstraintViolation<ApartmentServiceModel>> constraintViolations) {
+//        for (ConstraintViolation<ApartmentServiceModel> violation : constraintViolations) {
+//            Map<String, Set<String>> errors = apartmentServiceModel.getErrorContainer().getErrors();
+//            String key = violation.getPropertyPath().toString();
+//            String value = violation.getMessage();
+//
+//            errors.putIfAbsent(key, new HashSet<>());
+//            errors.get(key).add(value);
+//        }
+//
+//        return apartmentServiceModel;
+//    }
 
-            errors.putIfAbsent(key, new HashSet<>());
-            errors.get(key).add(value);
-        }
-
-        return apartmentServiceModel;
-    }
-
-    private ApartmentServiceModel addError(ApartmentServiceModel apartmentServiceModel,
-                                           String propertyName, String errorMessage) {
-        Map<String, Set<String>> errors = apartmentServiceModel.getErrorContainer().getErrors();
-        errors.putIfAbsent(propertyName, new HashSet<>());
-        errors.get(propertyName).add(errorMessage);
-        return apartmentServiceModel;
-    }
+//    private ApartmentServiceModel addError(ApartmentServiceModel apartmentServiceModel,
+//                                           String propertyName, String errorMessage) {
+//        Map<String, Set<String>> errors = apartmentServiceModel.getErrorContainer().getErrors();
+//        errors.putIfAbsent(propertyName, new HashSet<>());
+//        errors.get(propertyName).add(errorMessage);
+//        return apartmentServiceModel;
+//    }
 }

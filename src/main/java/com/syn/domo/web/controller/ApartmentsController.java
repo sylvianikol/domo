@@ -61,17 +61,21 @@ public class ApartmentsController implements ApartmentsNamespace {
     public ResponseEntity<?> add(@PathVariable(value = "buildingId") String buildingId,
                                  @Valid @RequestBody ApartmentBindingModel apartmentBindingModel,
                                  BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
-//        if (bindingResult.hasErrors()) {
-//            return ResponseEntity.unprocessableEntity()
-//                    .body(new ErrorResponse(bindingResult.getTarget(),
-//                            bindingResult.getAllErrors()));
-//        }
+
+        if (bindingResult.hasErrors()) {
+            ApartmentErrorView apartmentErrorView =
+                    this.modelMapper.map(apartmentBindingModel, ApartmentErrorView.class);
+            System.out.println();
+            return ResponseEntity.unprocessableEntity()
+                    .body(new ErrorResponse(bindingResult.getTarget(),
+                            bindingResult.getAllErrors()));
+        }
 
         ApartmentServiceModel apartmentServiceModel =
                 this.apartmentService.add(this.modelMapper.map(apartmentBindingModel,
                         ApartmentServiceModel.class), buildingId);
 
-        if (!apartmentServiceModel.getViolations().isEmpty()) {
+        if (apartmentServiceModel.hasErrors()) {
             ApartmentErrorView apartmentErrorView =
                     this.modelMapper.map(apartmentServiceModel, ApartmentErrorView.class);
             return ResponseEntity.unprocessableEntity().body(apartmentErrorView);

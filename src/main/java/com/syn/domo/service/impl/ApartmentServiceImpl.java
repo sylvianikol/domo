@@ -51,19 +51,8 @@ public class ApartmentServiceImpl implements ApartmentService {
                                      String buildingId) {
 
         if (!this.validationUtil.isValid(apartmentServiceModel)) {
-            Set<ConstraintViolation<ApartmentServiceModel>> constraintViolations =
-                    this.validationUtil.violations(apartmentServiceModel);
-
-            for (ConstraintViolation<ApartmentServiceModel> violation : constraintViolations) {
-                String key = violation.getPropertyPath().toString();
-                String value = violation.getMessage();
-
-                apartmentServiceModel.getViolations().getErrors().putIfAbsent(key, new HashSet<>());
-                apartmentServiceModel.getViolations().getErrors().get(key).add(value);
-
-            }
-
-            return apartmentServiceModel;
+            return collectErrors(apartmentServiceModel,
+                    this.validationUtil.violations(apartmentServiceModel));
         }
 
         Optional<BuildingServiceModel> buildingOpt =
@@ -209,5 +198,18 @@ public class ApartmentServiceImpl implements ApartmentService {
         return this.apartmentRepository
                 .findByNumberAndBuilding_Id(apartmentNumber, buildingId).isPresent();
 
+    }
+
+    private ApartmentServiceModel collectErrors(ApartmentServiceModel apartmentServiceModel,
+                               Set<ConstraintViolation<ApartmentServiceModel>> constraintViolations) {
+        for (ConstraintViolation<ApartmentServiceModel> violation : constraintViolations) {
+            String key = violation.getPropertyPath().toString();
+            String value = violation.getMessage();
+
+            apartmentServiceModel.getViolations().getErrors().putIfAbsent(key, new HashSet<>());
+            apartmentServiceModel.getViolations().getErrors().get(key).add(value);
+        }
+
+        return apartmentServiceModel;
     }
 }

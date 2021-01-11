@@ -20,7 +20,4 @@ public class ViolationContainer {
         this.errors = errors;
     }
 
-    public boolean isEmpty() {
-        return this.errors.isEmpty();
-    }
 }

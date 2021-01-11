@@ -28,6 +28,7 @@ public class ApartmentServiceModel extends BaseServiceModel {
     private ViolationContainer violations;
 
     public ApartmentServiceModel() {
+        this.violations = new ViolationContainer();
     }
 
     @NotNull(message = APARTMENT_NUMBER_NULL)
@@ -123,4 +124,7 @@ public class ApartmentServiceModel extends BaseServiceModel {
         return Objects.hash(super.hashCode(), number, floor, building, pets, addedOn);
     }
 
+    public boolean hasErrors() {
+        return !this.violations.getErrors().isEmpty();
+    }
 }

@@ -13,13 +13,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -67,18 +65,8 @@ public class ApartmentsController implements ApartmentsNamespace {
                                  BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
 
         if (bindingResult.hasErrors()) {
-            ApartmentErrorView apartmentErrorView =
-                    this.modelMapper.map(apartmentBindingModel, ApartmentErrorView.class);
-
-            for (FieldError error : bindingResult.getFieldErrors()) {
-                String key = error.getField();
-                String value = error.getDefaultMessage();
-
-                apartmentErrorView.getViolations().getErrors().putIfAbsent(key, new HashSet<>());
-                apartmentErrorView.getViolations().getErrors().get(key).add(value);
-            }
             return ResponseEntity.unprocessableEntity()
-                    .body(apartmentErrorView);
+                    .body(createErrorView(apartmentBindingModel, bindingResult));
         }
 
         ApartmentServiceModel apartmentServiceModel =
@@ -86,9 +74,8 @@ public class ApartmentsController implements ApartmentsNamespace {
                         ApartmentServiceModel.class), buildingId);
 
         if (apartmentServiceModel.hasErrors()) {
-            ApartmentErrorView apartmentErrorView =
-                    this.modelMapper.map(apartmentServiceModel, ApartmentErrorView.class);
-            return ResponseEntity.unprocessableEntity().body(apartmentErrorView);
+            return ResponseEntity.unprocessableEntity()
+                    .body(this.modelMapper.map(apartmentServiceModel, ApartmentErrorView.class));
         }
 
         return ResponseEntity.created(uriComponentsBuilder
@@ -147,5 +134,20 @@ public class ApartmentsController implements ApartmentsNamespace {
                         .buildAndExpand(buildingId)
                         .toUri())
                 .build();
+    }
+
+    private ApartmentErrorView createErrorView(ApartmentBindingModel apartmentBindingModel,
+                                               BindingResult bindingResult) {
+        ApartmentErrorView apartmentErrorView =
+                this.modelMapper.map(apartmentBindingModel, ApartmentErrorView.class);
+
+        for (FieldError error : bindingResult.getFieldErrors()) {
+            String key = error.getField();
+            String value = error.getDefaultMessage();
+
+            apartmentErrorView.getViolations().getErrors().putIfAbsent(key, new HashSet<>());
+            apartmentErrorView.getViolations().getErrors().get(key).add(value);
+        }
+        return apartmentErrorView;
     }
 }

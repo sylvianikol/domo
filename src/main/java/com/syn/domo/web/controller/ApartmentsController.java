@@ -12,10 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -65,10 +69,16 @@ public class ApartmentsController implements ApartmentsNamespace {
         if (bindingResult.hasErrors()) {
             ApartmentErrorView apartmentErrorView =
                     this.modelMapper.map(apartmentBindingModel, ApartmentErrorView.class);
-            System.out.println();
+
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                String key = error.getField();
+                String value = error.getDefaultMessage();
+
+                apartmentErrorView.getViolations().getErrors().putIfAbsent(key, new HashSet<>());
+                apartmentErrorView.getViolations().getErrors().get(key).add(value);
+            }
             return ResponseEntity.unprocessableEntity()
-                    .body(new ErrorResponse(bindingResult.getTarget(),
-                            bindingResult.getAllErrors()));
+                    .body(apartmentErrorView);
         }
 
         ApartmentServiceModel apartmentServiceModel =

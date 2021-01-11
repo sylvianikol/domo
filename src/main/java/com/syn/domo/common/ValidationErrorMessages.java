@@ -33,6 +33,9 @@ public class ValidationErrorMessages {
     public static final String FLOOR_MAX_INVALID =
             "Floor number can not be more than 100!";
 
+    public static final String BUILDING_NULL =
+            "Building can not be null!";
+
     public static final String PASSWORD_INVALID =
             "Password should be minimum 3 and 30 characters long!";
     public static final String PASSWORD_NULL =
@@ -101,5 +104,4 @@ public class ValidationErrorMessages {
     public static final String SALARY_MIN =
             "Salary can not be a negative number!";
 
-    public static final String PAID_NULL = "Paid can not be null!";
 }

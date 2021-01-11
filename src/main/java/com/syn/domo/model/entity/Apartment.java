@@ -1,10 +1,12 @@
 package com.syn.domo.model.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.Objects;
 import java.util.Set;
 
+import static com.syn.domo.common.RegexPatterns.APARTMENT_NUMBER_REGEX;
+import static com.syn.domo.common.ValidationErrorMessages.*;
 import static javax.persistence.CascadeType.REMOVE;
 import static javax.persistence.FetchType.EAGER;
 
@@ -25,6 +27,10 @@ public class Apartment extends BaseEntity {
     public Apartment() {
     }
 
+    @NotNull(message = APARTMENT_NUMBER_NULL)
+    @NotEmpty(message = APARTMENT_NUMBER_EMPTY)
+    @Size(min = 1, max = 10, message = APARTMENT_LENGTH_INVALID)
+    @Pattern(regexp = APARTMENT_NUMBER_REGEX, message = APARTMENT_INVALID_SYMBOLS)
     @Column(nullable = false)
     public String getNumber() {
         return number;
@@ -34,6 +40,9 @@ public class Apartment extends BaseEntity {
         this.number = number;
     }
 
+    @NotNull(message = FLOOR_NUMBER_NULL)
+    @Min(value = 0, message = FLOOR_MIN_INVALID)
+    @Max(value = 100, message = FLOOR_MAX_INVALID)
     @Column(nullable = false)
     public int getFloor() {
         return floor;
@@ -43,6 +52,7 @@ public class Apartment extends BaseEntity {
         this.floor = floor;
     }
 
+    @NotNull(message = BUILDING_NULL)
     @ManyToOne
     public Building getBuilding() {
         return building;
@@ -52,6 +62,9 @@ public class Apartment extends BaseEntity {
         this.building = building;
     }
 
+    @NotNull(message = PETS_NULL)
+    @Min(value = 0, message = PETS_MIN)
+    @Max(value = 5, message = PETS_MAX)
     @Column
     public int getPets() {
         return pets;
@@ -79,6 +92,8 @@ public class Apartment extends BaseEntity {
         this.children = children;
     }
 
+    @NotNull(message = DATE_NULL)
+    @Future(message = DATE_INVALID)
     @Column(name = "added_on", nullable = false)
     public LocalDate getAddedOn() {
         return addedOn;

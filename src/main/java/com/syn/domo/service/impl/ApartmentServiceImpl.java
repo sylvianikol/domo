@@ -1,5 +1,6 @@
 package com.syn.domo.service.impl;
 
+import com.syn.domo.common.ValidationErrorMessages;
 import com.syn.domo.exception.*;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Building;
@@ -20,6 +21,10 @@ import javax.validation.ConstraintViolation;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.syn.domo.common.ExceptionErrorMessages.APARTMENT_EXISTS;
+import static com.syn.domo.common.ExceptionErrorMessages.BUILDING_NOT_FOUND;
+import static com.syn.domo.common.ValidationErrorMessages.FLOOR_INVALID;
 
 @Service
 public class ApartmentServiceImpl implements ApartmentService {
@@ -59,17 +64,19 @@ public class ApartmentServiceImpl implements ApartmentService {
                 this.buildingService.get(buildingId);
 
         if (buildingOpt.isEmpty()) {
-            throw new EntityNotFoundException("Building does not exists!");
+            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
         }
 
         String apartmentNumber = apartmentServiceModel.getNumber();
         if (this.alreadyExists(apartmentNumber, buildingId)) {
-            throw new EntityExistsException(
-                    String.format("Apartment No.%s already exists in this building!", apartmentNumber));
+            throw new EntityExistsException(String.format(APARTMENT_EXISTS,
+                     apartmentNumber, buildingOpt.get().getName()));
         }
 
         if (apartmentServiceModel.getFloor() > buildingOpt.get().getFloors()) {
-            throw new UnprocessableEntityException("Invalid floor number!");
+            apartmentServiceModel.getErrorContainer().getErrors().putIfAbsent("floor", new HashSet<>());
+            apartmentServiceModel.getErrorContainer().getErrors().get("floor").add(FLOOR_INVALID);
+            return apartmentServiceModel;
         }
 
         Apartment apartment = this.modelMapper.map(apartmentServiceModel, Apartment.class);

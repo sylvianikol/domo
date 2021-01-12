@@ -22,8 +22,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.syn.domo.common.ExceptionErrorMessages.APARTMENT_EXISTS;
-import static com.syn.domo.common.ExceptionErrorMessages.BUILDING_NOT_FOUND;
+import static com.syn.domo.common.ExceptionErrorMessages.*;
 import static com.syn.domo.common.ValidationErrorMessages.FLOOR_INVALID;
 
 @Service
@@ -60,62 +59,68 @@ public class ApartmentServiceImpl implements ApartmentService {
                     this.validationUtil.violations(apartmentServiceModel));
         }
 
-        Optional<BuildingServiceModel> buildingOpt =
-                this.buildingService.get(buildingId);
+        BuildingServiceModel buildingServiceModel =
+                this.buildingService.get(buildingId).orElse(null);
 
-        if (buildingOpt.isEmpty()) {
+        if (buildingServiceModel == null) {
             throw new EntityNotFoundException(BUILDING_NOT_FOUND);
         }
 
         String apartmentNumber = apartmentServiceModel.getNumber();
         if (this.alreadyExists(apartmentNumber, buildingId)) {
             throw new EntityExistsException(String.format(APARTMENT_EXISTS,
-                     apartmentNumber, buildingOpt.get().getName()));
+                     apartmentNumber, buildingServiceModel.getName()));
         }
 
-        if (apartmentServiceModel.getFloor() > buildingOpt.get().getFloors()) {
+        if (apartmentServiceModel.getFloor() > buildingServiceModel.getFloors()) {
             return new ResponseModel<>(apartmentServiceModel, new ErrorContainer(
                     Map.of("floor", Set.of(FLOOR_INVALID))));
         }
 
         Apartment apartment = this.modelMapper.map(apartmentServiceModel, Apartment.class);
         apartment.setAddedOn(LocalDate.now());
-        apartment.setBuilding(this.modelMapper.map(buildingOpt.get(), Building.class));
+        apartment.setBuilding(this.modelMapper.map(buildingServiceModel, Building.class));
 
         this.apartmentRepository.saveAndFlush(apartment);
 
-       return new ResponseModel<>(apartment.getId(), this.modelMapper.map(apartment, ApartmentServiceModel.class));
+       return new ResponseModel<>(apartment.getId(),
+               this.modelMapper.map(apartment, ApartmentServiceModel.class));
     }
 
     @Override
-    public ApartmentServiceModel edit(ApartmentServiceModel apartmentServiceModel,
+    public ResponseModel<ApartmentServiceModel> edit(ApartmentServiceModel apartmentServiceModel,
                                       String buildingId, String apartmentId) {
-        // TODO: validation
 
-        Optional<BuildingServiceModel> buildingOpt = this.buildingService.get(buildingId);
-        if (buildingOpt.isEmpty()) {
-            throw new EntityNotFoundException("Building not found!");
+        if (!this.validationUtil.isValid(apartmentServiceModel)) {
+            return new ResponseModel<>(apartmentServiceModel,
+                    this.validationUtil.violations(apartmentServiceModel));
         }
 
-        if (apartmentServiceModel.getFloor() > buildingOpt.get().getFloors()) {
-            throw new UnprocessableEntityException("Invalid floor number!");
+        BuildingServiceModel buildingServiceModel =
+                this.buildingService.get(buildingId).orElse(null);
+        if (buildingServiceModel == null) {
+            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
+        }
+
+        if (apartmentServiceModel.getFloor() > buildingServiceModel.getFloors()) {
+            return new ResponseModel<>(apartmentServiceModel, new ErrorContainer(
+                    Map.of("floor", Set.of(FLOOR_INVALID))));
         }
 
         Apartment apartment =
                 this.apartmentRepository.findById(apartmentId).orElse(null);
 
         if (apartment == null || !apartment.getBuilding().getId().equals(buildingId)) {
-            throw new EntityNotFoundException("Apartment not found!");
+            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
         }
 
         String newNumber = apartmentServiceModel.getNumber();
         Optional<Apartment> existingApartment = this.apartmentRepository
-                .findByNumberAndBuilding_Id(newNumber, buildingId);
+                .getByNumberAndBuildingId(newNumber, buildingId, apartmentId);
 
-        if (!apartment.getNumber().equals(newNumber) && existingApartment.isPresent()) {
-            throw new EntityExistsException(
-                    String.format("Apartment No:%s already exists in this building!",
-                            apartmentServiceModel.getNumber()));
+        if (existingApartment.isPresent()) {
+            throw new EntityExistsException(String.format(APARTMENT_EXISTS,
+                    newNumber, buildingServiceModel.getName()));
         }
 
         apartment.setNumber(apartmentServiceModel.getNumber());
@@ -123,7 +128,9 @@ public class ApartmentServiceImpl implements ApartmentService {
         apartment.setPets(apartmentServiceModel.getPets());
 
         this.apartmentRepository.saveAndFlush(apartment);
-        return this.modelMapper.map(apartment, ApartmentServiceModel.class);
+//        return this.modelMapper.map(apartment, ApartmentServiceModel.class);
+        return new ResponseModel<>(apartment.getId(),
+                this.modelMapper.map(apartment, ApartmentServiceModel.class));
     }
 
     @Override

@@ -10,7 +10,7 @@ public interface ApartmentService {
 
     ResponseModel<ApartmentServiceModel> add(ApartmentServiceModel addServiceModel, String buildingId);
 
-    ApartmentServiceModel edit(ApartmentServiceModel apartmentServiceModel,
+    ResponseModel<ApartmentServiceModel> edit(ApartmentServiceModel apartmentServiceModel,
                                String buildingId, String apartmentId);
 
     void delete(String apartmentId, String buildingId);

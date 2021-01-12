@@ -89,7 +89,7 @@ public class ApartmentsController implements ApartmentsNamespace {
                     .body(new ResponseModel<>(apartmentBindingModel, bindingResult));
         }
 
-       this.apartmentService
+        ResponseModel<ApartmentServiceModel> responseModel = this.apartmentService
                .edit(this.modelMapper.map(apartmentBindingModel, ApartmentServiceModel.class),
                 buildingId, apartmentId);
 

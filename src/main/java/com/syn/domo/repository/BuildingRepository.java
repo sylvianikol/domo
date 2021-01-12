@@ -16,9 +16,6 @@ public interface BuildingRepository extends JpaRepository<Building, String> {
 
     Optional<Building> findByNameAndNeighbourhood(String buildingName, String neighbourhood);
 
-    Optional<Building> findByNameAndAddressAndNeighbourhood
-            (String buildingName, String buildingAddress, String neighbourhood);
-
     @Query("SELECT b FROM Building b " +
             "JOIN b.staff s " +
             "WHERE s.id = :staffId")

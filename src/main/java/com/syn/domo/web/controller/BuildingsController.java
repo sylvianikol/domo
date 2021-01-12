@@ -87,16 +87,17 @@ public class BuildingsController implements BuildingsNamespace {
 
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
-                    .body(new ErrorView(bindingResult.getTarget(),
-                            bindingResult.getAllErrors()));
+                    .body(new ResponseModel<>(buildingBindingModel, bindingResult));
         }
 
-        this.buildingService.edit(this.modelMapper.map(
+        ResponseModel<BuildingServiceModel> responseModel =
+                this.buildingService.edit(this.modelMapper.map(
                 buildingBindingModel, BuildingServiceModel.class), buildingId);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder
-                        .path(URI_BUILDINGS + "/{buildingId}")
+        return responseModel.hasErrors()
+                ? ResponseEntity.unprocessableEntity().body(responseModel)
+                : ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .location(uriComponentsBuilder.path(URI_BUILDINGS + "/{buildingId}")
                         .buildAndExpand(buildingId)
                         .toUri()).build();
     }

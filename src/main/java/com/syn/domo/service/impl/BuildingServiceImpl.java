@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.syn.domo.common.ExceptionErrorMessages.BUILDING_NOT_FOUND;
 import static com.syn.domo.common.ValidationErrorMessages.*;
 
 @Service
@@ -79,7 +80,7 @@ public class BuildingServiceImpl implements BuildingService {
         String buildingName = buildingServiceModel.getName().trim();
         String neighbourhood = buildingServiceModel.getNeighbourhood().trim();
 
-        if (this.buildingNameExistsInNeighbourhood(buildingName, neighbourhood)) {
+        if (this.buildingNameExistsInNeighbourhood(buildingName, neighbourhood, "")) {
             return new ResponseModel<>(buildingServiceModel, new ErrorContainer(
                     Map.of("name", Set.of(String.format(BUILDING_NAME_EXISTS,
                             buildingName, neighbourhood)))));
@@ -94,34 +95,34 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public BuildingServiceModel edit(BuildingServiceModel buildingServiceModel, String buildingId) {
-        // TODO: validation
+    public ResponseModel<BuildingServiceModel> edit(BuildingServiceModel buildingServiceModel, String buildingId) {
+
+        if (!this.validationUtil.isValid(buildingServiceModel)) {
+            return new ResponseModel<>(buildingServiceModel,
+                    this.validationUtil.violations(buildingServiceModel));
+        }
 
         Building building = this.buildingRepository.findById(buildingId).orElse(null);
 
         if (building == null) {
-            throw new EntityNotFoundException("Building not found!");
+            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
         }
 
-        Optional<Building> duplicate =
-                this.buildingRepository.findByAddress(buildingServiceModel.getAddress());
+        String address = buildingServiceModel.getAddress().trim();
+        Optional<Building> duplicateBuilding = this.buildingRepository.findByAddress(address);
 
-        if (duplicate.isPresent() && !duplicate.get().getId().equals(buildingId)) {
-            throw new UnprocessableEntityException(
-                    String.format("Address \"%s\" is already occupied by another building!",
-                            buildingServiceModel.getAddress()));
+        if (duplicateBuilding.isPresent() && !duplicateBuilding.get().getId().equals(buildingId)) {
+            return new ResponseModel<>(buildingServiceModel, new ErrorContainer(
+                    Map.of("address", Set.of(String.format(ADDRESS_OCCUPIED, address)))));
         }
 
-        duplicate = this.buildingRepository.findByNameAndNeighbourhood(
-                buildingServiceModel.getName().trim(),
-                buildingServiceModel.getNeighbourhood().trim());
+        String buildingName = buildingServiceModel.getName().trim();
+        String neighbourhood = buildingServiceModel.getNeighbourhood().trim();
 
-        if (duplicate.isPresent()
-                && !duplicate.get().getId().equals(buildingId)) {
-            throw new EntityExistsException(
-                    String.format("Building with name \"%s\" already exists in neighbourhood \"%s\"!",
-                            buildingServiceModel.getName(), buildingServiceModel.getNeighbourhood())
-            );
+        if (this.buildingNameExistsInNeighbourhood(buildingName, neighbourhood, buildingId)) {
+            return new ResponseModel<>(buildingServiceModel, new ErrorContainer(
+                    Map.of("name", Set.of(String.format(BUILDING_NAME_EXISTS,
+                            buildingName, neighbourhood)))));
         }
 
         building.setName(buildingServiceModel.getName());
@@ -131,7 +132,8 @@ public class BuildingServiceImpl implements BuildingService {
 
         this.buildingRepository.saveAndFlush(building);
 
-        return this.modelMapper.map(building, BuildingServiceModel.class);
+        return new ResponseModel<>(building.getId(),
+                this.modelMapper.map(building, BuildingServiceModel.class));
     }
 
     @Override
@@ -202,8 +204,10 @@ public class BuildingServiceImpl implements BuildingService {
         return Collections.unmodifiableSet(buildingServiceModels);
     }
 
-    private boolean buildingNameExistsInNeighbourhood(String buildingName, String neighbourhood) {
-        return this.buildingRepository
-                .findByNameAndNeighbourhood(buildingName, neighbourhood).isPresent();
+    private boolean buildingNameExistsInNeighbourhood(String buildingName,
+                                                      String neighbourhood, String buildingId) {
+        Optional<Building> building = this.buildingRepository
+                .findByNameAndNeighbourhood(buildingName, neighbourhood);
+        return building.isPresent() && !building.get().getId().equals(buildingId);
     }
 }

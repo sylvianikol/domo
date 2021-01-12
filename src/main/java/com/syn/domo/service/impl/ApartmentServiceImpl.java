@@ -2,7 +2,6 @@ package com.syn.domo.service.impl;
 
 import com.syn.domo.error.ErrorContainer;
 import com.syn.domo.model.view.ResponseModel;
-import com.syn.domo.exception.*;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.service.ApartmentServiceModel;
@@ -115,10 +114,10 @@ public class ApartmentServiceImpl implements ApartmentService {
         }
 
         String newNumber = apartmentServiceModel.getNumber();
-        Optional<Apartment> existingApartment = this.apartmentRepository
-                .getByNumberAndBuildingId(newNumber, buildingId, apartmentId);
+        Optional<Apartment> duplicateApartment = this.apartmentRepository
+                .getDuplicateApartment(newNumber, buildingId, apartmentId);
 
-        if (existingApartment.isPresent()) {
+        if (duplicateApartment.isPresent()) {
             throw new EntityExistsException(String.format(APARTMENT_EXISTS,
                     newNumber, buildingServiceModel.getName()));
         }
@@ -128,7 +127,7 @@ public class ApartmentServiceImpl implements ApartmentService {
         apartment.setPets(apartmentServiceModel.getPets());
 
         this.apartmentRepository.saveAndFlush(apartment);
-//        return this.modelMapper.map(apartment, ApartmentServiceModel.class);
+
         return new ResponseModel<>(apartment.getId(),
                 this.modelMapper.map(apartment, ApartmentServiceModel.class));
     }

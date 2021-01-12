@@ -93,11 +93,11 @@ public class ApartmentsController implements ApartmentsNamespace {
                .edit(this.modelMapper.map(apartmentBindingModel, ApartmentServiceModel.class),
                 buildingId, apartmentId);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder
-                        .path(URI_APARTMENTS + "/{apartmentId}")
-                        .buildAndExpand(buildingId, apartmentId)
-                        .toUri()).build();
+        return responseModel.hasErrors()
+                ? ResponseEntity.unprocessableEntity().body(responseModel)
+                : ResponseEntity.created(uriComponentsBuilder.path(URI_APARTMENTS + "/{apartmentId}")
+                .buildAndExpand(buildingId, apartmentId)
+                .toUri()).build();
     }
 
     @DeleteMapping

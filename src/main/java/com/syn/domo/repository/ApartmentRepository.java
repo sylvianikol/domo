@@ -18,9 +18,9 @@ public interface ApartmentRepository extends JpaRepository<Apartment, String> {
             "WHERE a.number = :apartmentNumber " +
             "AND a.building.id = :buildingId " +
             "AND a.id NOT like :apartmentId ")
-    Optional<Apartment> getByNumberAndBuildingId(@Param(value = "apartmentNumber") String apartmentNumber,
-                                                 @Param(value = "buildingId") String buildingId,
-                                                 @Param(value = "apartmentId") String apartmentId);
+    Optional<Apartment> getDuplicateApartment(@Param(value = "apartmentNumber") String apartmentNumber,
+                                              @Param(value = "buildingId") String buildingId,
+                                              @Param(value = "apartmentId") String apartmentId);
 
     @Query("SELECT a FROM Apartment a " +
             "WHERE a.building.id = :buildingId " +

@@ -18,7 +18,7 @@ public interface ChildRepository extends JpaRepository<Child, String> {
     Set<Child> getAllByApartmentIdAndBuildingId(@Param(value = "buildingId") String buildingId,
                                                 @Param(value = "apartmentId") String apartmentId);
 
-    Optional<Child> findByFirstNameAndLastNameAndApartment_Id
+    Optional<Child> findByFirstNameAndLastNameAndApartmentId
             (String firstName, String lastName, String apartmentId);
 
     @Query("SELECT c FROM Child c " +

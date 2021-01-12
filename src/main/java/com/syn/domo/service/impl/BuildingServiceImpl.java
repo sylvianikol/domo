@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -102,16 +101,11 @@ public class BuildingServiceImpl implements BuildingService {
                     this.validationUtil.violations(buildingServiceModel));
         }
 
-        Building building = this.buildingRepository.findById(buildingId).orElse(null);
-
-        if (building == null) {
-            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
-        }
+        Building building = this.buildingRepository.findById(buildingId)
+                .orElseThrow(() -> { throw new EntityNotFoundException(BUILDING_NOT_FOUND); });
 
         String address = buildingServiceModel.getAddress().trim();
-        Optional<Building> duplicateBuilding = this.buildingRepository.findByAddress(address);
-
-        if (duplicateBuilding.isPresent() && !duplicateBuilding.get().getId().equals(buildingId)) {
+        if (this.buildingRepository.findByIdAndAddress(buildingId, address).isPresent()) {
             return new ResponseModel<>(buildingServiceModel, new ErrorContainer(
                     Map.of("address", Set.of(String.format(ADDRESS_OCCUPIED, address)))));
         }

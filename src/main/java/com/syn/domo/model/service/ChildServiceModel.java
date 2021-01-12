@@ -6,7 +6,7 @@ import java.util.Set;
 public class ChildServiceModel extends BaseUserServiceModel {
 
     private Set<ApartmentServiceModel> apartments;
-    private Set<UserServiceModel> parents;
+    private Set<ResidentServiceModel> parents;
 
     public ChildServiceModel() {
     }
@@ -19,11 +19,11 @@ public class ChildServiceModel extends BaseUserServiceModel {
         this.apartments = apartments;
     }
 
-    public Set<UserServiceModel> getParents() {
+    public Set<ResidentServiceModel> getParents() {
         return parents;
     }
 
-    public void setParents(Set<UserServiceModel> parents) {
+    public void setParents(Set<ResidentServiceModel> parents) {
         this.parents = parents;
     }
 

@@ -87,11 +87,12 @@ public class ChildServiceImpl implements ChildService {
                     this.validationUtil.violations(childServiceModel));
         }
 
-        BuildingServiceModel building = this.buildingService.get(buildingId)
-                .orElseThrow(() -> { throw new EntityNotFoundException(BUILDING_NOT_FOUND); });
+        if (this.buildingService.get(buildingId).isEmpty()) {
+            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
+        }
 
         ApartmentServiceModel apartmentServiceModel =
-                this.apartmentService.getByIdAndBuildingId(apartmentId, building.getId())
+                this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId)
                 .orElseThrow(() -> { throw new EntityNotFoundException(APARTMENT_NOT_FOUND); });
 
         Set<ResidentServiceModel> parentServiceModels =

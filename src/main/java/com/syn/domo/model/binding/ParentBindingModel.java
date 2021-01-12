@@ -1,7 +1,5 @@
 package com.syn.domo.model.binding;
 
-import com.syn.domo.common.ValidationErrorMessages;
-
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 

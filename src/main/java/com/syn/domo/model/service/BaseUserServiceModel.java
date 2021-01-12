@@ -1,7 +1,13 @@
 package com.syn.domo.model.service;
 
+import javax.validation.constraints.Future;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Objects;
+
+import static com.syn.domo.common.ValidationErrorMessages.*;
 
 public abstract class BaseUserServiceModel extends BaseServiceModel {
 
@@ -12,6 +18,9 @@ public abstract class BaseUserServiceModel extends BaseServiceModel {
     public BaseUserServiceModel() {
     }
 
+    @NotNull(message = FIRST_NAME_NULL)
+    @NotEmpty(message = FIRST_NAME_EMPTY)
+    @Size(min = 2, max = 55, message = FIRST_NAME_INVALID)
     public String getFirstName() {
         return firstName;
     }
@@ -20,6 +29,9 @@ public abstract class BaseUserServiceModel extends BaseServiceModel {
         this.firstName = firstName;
     }
 
+    @NotNull(message = LAST_NAME_NULL)
+    @NotEmpty(message = LAST_NAME_EMPTY)
+    @Size(min = 2, max = 55, message = LAST_NAME_INVALID)
     public String getLastName() {
         return lastName;
     }
@@ -28,6 +40,7 @@ public abstract class BaseUserServiceModel extends BaseServiceModel {
         this.lastName = lastName;
     }
 
+    @Future(message = DATE_FUTURE)
     public LocalDate getAddedOn() {
         return addedOn;
     }

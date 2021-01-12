@@ -1,8 +1,11 @@
 package com.syn.domo.model.service;
 
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
+
+import static com.syn.domo.common.ValidationErrorMessages.*;
 
 public class BuildingServiceModel extends BaseServiceModel {
 
@@ -17,6 +20,9 @@ public class BuildingServiceModel extends BaseServiceModel {
     public BuildingServiceModel() {
     }
 
+    @NotNull(message = BUILDING_NAME_NULL)
+    @NotEmpty(message = BUILDING_NAME_EMPTY)
+    @Size(max = 40, message = BUILDING_NAME_INVALID_LENGTH)
     public String getName() {
         return name;
     }
@@ -25,6 +31,9 @@ public class BuildingServiceModel extends BaseServiceModel {
         this.name = name;
     }
 
+    @NotNull(message = NEIGHBOURHOOD_NULL)
+    @NotEmpty(message = NEIGHBOURHOOD_EMPTY)
+    @Size(max = 40, message = NEIGHBOURHOOD_INVALID_LENGTH)
     public String getNeighbourhood() {
         return neighbourhood;
     }
@@ -33,6 +42,8 @@ public class BuildingServiceModel extends BaseServiceModel {
         this.neighbourhood = neighbourhood;
     }
 
+    @NotNull(message = ADDRESS_NULL)
+    @NotEmpty(message = ADDRESS_EMPTY)
     public String getAddress() {
         return address;
     }
@@ -41,6 +52,9 @@ public class BuildingServiceModel extends BaseServiceModel {
         this.address = address;
     }
 
+    @NotNull(message = FLOOR_NUMBER_NULL)
+    @Min(value = 0, message = FLOOR_MIN_INVALID)
+    @Max(value = 100, message = FLOOR_MAX_INVALID)
     public int getFloors() {
         return floors;
     }
@@ -49,6 +63,7 @@ public class BuildingServiceModel extends BaseServiceModel {
         this.floors = floors;
     }
 
+    @Future(message = DATE_FUTURE)
     public LocalDate getAddedOn() {
         return addedOn;
     }

@@ -1,6 +1,5 @@
 package com.syn.domo.model.service;
 
-import com.syn.domo.error.ErrorContainer;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.*;
@@ -68,7 +67,7 @@ public class ApartmentServiceModel extends BaseServiceModel {
         this.pets = pets;
     }
 
-    @Future(message = DATE_INVALID)
+    @Future(message = DATE_FUTURE)
     public LocalDate getAddedOn() {
         return addedOn;
     }

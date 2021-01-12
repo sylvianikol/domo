@@ -88,7 +88,7 @@ public class ValidationErrorMessages {
 
     public static final String DATE_NULL =
             "Date can not be null!";
-    public static final String DATE_INVALID =
+    public static final String DATE_FUTURE =
             "Date can not be in the future!";
 
     public static final String PETS_NULL =
@@ -106,4 +106,6 @@ public class ValidationErrorMessages {
     public static final String SALARY_MIN =
             "Salary can not be a negative number!";
 
+    public static final String PARENTS_NULL =
+            "Parents should not be null!";
 }

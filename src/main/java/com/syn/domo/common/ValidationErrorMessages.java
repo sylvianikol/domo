@@ -12,6 +12,9 @@ public class ValidationErrorMessages {
     public static final String BUILDING_NAME_INVALID_LENGTH =
             "Building name should not be more than 40 symbols long!";
 
+    public static final String BUILDING_NAME_EXISTS =
+            "Building with name \"%s\" already exists in \"%s\"!";
+
     public static final String NEIGHBOURHOOD_NULL =
             "Neighbourhood should not be null!";
     public static final String NEIGHBOURHOOD_EMPTY =
@@ -23,6 +26,8 @@ public class ValidationErrorMessages {
             "Address should not be null!";
     public static final String ADDRESS_EMPTY =
             "Address should not be empty!";
+    public static final String ADDRESS_OCCUPIED =
+            "Address \"%s\" is already occupied by another building!";
 
     public static final String FLOOR_NUMBER_NULL =
             "Floor number can not be null!";

@@ -1,5 +1,6 @@
 package com.syn.domo.web.controller;
 
+import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.model.view.error.ErrorView;
 import com.syn.domo.model.binding.BuildingBindingModel;
 import com.syn.domo.model.service.BuildingServiceModel;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -61,18 +63,19 @@ public class BuildingsController implements BuildingsNamespace {
     public ResponseEntity<?> add(@Valid @RequestBody BuildingBindingModel buildingBindingModel,
                                  BindingResult bindingResult,
                                  UriComponentsBuilder uriComponentsBuilder) {
+
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
-                    .body(new ErrorView(bindingResult.getTarget(),
-                            bindingResult.getAllErrors()));
+                    .body(new ResponseModel<>(buildingBindingModel, bindingResult));
         }
 
-        String buildingId = this.buildingService.add(
-                this.modelMapper.map(buildingBindingModel, BuildingServiceModel.class)).getId();
+        ResponseModel<BuildingServiceModel> responseModel = this.buildingService.add(
+                this.modelMapper.map(buildingBindingModel, BuildingServiceModel.class));
 
-        return ResponseEntity.created(uriComponentsBuilder
-                .path("/buildings/{buildingId}")
-                .buildAndExpand(buildingId)
+        return responseModel.hasErrors()
+                ? ResponseEntity.unprocessableEntity().body(responseModel)
+                : ResponseEntity.created(uriComponentsBuilder.path(URI_BUILDINGS + "/{buildingId}")
+                .buildAndExpand(responseModel.getId())
                 .toUri()).build();
     }
 

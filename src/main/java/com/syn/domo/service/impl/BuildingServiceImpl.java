@@ -1,11 +1,14 @@
 package com.syn.domo.service.impl;
 
+import com.syn.domo.error.ErrorContainer;
 import com.syn.domo.exception.*;
 import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.entity.Staff;
 import com.syn.domo.model.service.BuildingServiceModel;
+import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.repository.BuildingRepository;
 import com.syn.domo.service.*;
+import com.syn.domo.utils.ValidationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -18,6 +21,8 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.syn.domo.common.ValidationErrorMessages.*;
+
 @Service
 public class BuildingServiceImpl implements BuildingService {
 
@@ -25,16 +30,18 @@ public class BuildingServiceImpl implements BuildingService {
     private final ApartmentService apartmentService;
     private final StaffService staffService;
     private final ModelMapper modelMapper;
+    private final ValidationUtil validationUtil;
 
     @Autowired
     public BuildingServiceImpl(BuildingRepository buildingRepository,
                                ApartmentService apartmentService,
                                @Lazy StaffService staffService,
-                               ModelMapper modelMapper) {
+                               ModelMapper modelMapper, ValidationUtil validationUtil) {
         this.buildingRepository = buildingRepository;
         this.apartmentService = apartmentService;
         this.staffService = staffService;
         this.modelMapper = modelMapper;
+        this.validationUtil = validationUtil;
     }
 
     @Override
@@ -56,27 +63,34 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public BuildingServiceModel add(BuildingServiceModel buildingServiceModel) {
-        // TODO: validation
+    public ResponseModel<BuildingServiceModel> add(BuildingServiceModel buildingServiceModel) {
 
-        Optional<Building> duplicateBuilding = this.buildingRepository
-                .findByNameAndAddressAndNeighbourhood(
-                buildingServiceModel.getName().trim(),
-                buildingServiceModel.getAddress().trim(),
-                buildingServiceModel.getNeighbourhood().trim());
+        if (!this.validationUtil.isValid(buildingServiceModel)) {
+            return new ResponseModel<>(buildingServiceModel,
+                    this.validationUtil.violations(buildingServiceModel));
+        }
 
-        if (duplicateBuilding.isPresent()) {
-            throw new EntityExistsException(String.format(
-                    "Building with name \"%s\" already exists in \"%s\"!",
-                    buildingServiceModel.getName(), buildingServiceModel.getNeighbourhood()));
+        String address = buildingServiceModel.getAddress().trim();
+        if (this.buildingRepository.findByAddress(address).isPresent()) {
+            new ResponseModel<>(buildingServiceModel, new ErrorContainer(
+                    Map.of("address", Set.of(String.format(ADDRESS_OCCUPIED, address)))));
+        }
+
+        String buildingName = buildingServiceModel.getName().trim();
+        String neighbourhood = buildingServiceModel.getNeighbourhood().trim();
+
+        if (this.buildingNameExistsInNeighbourhood(buildingName, neighbourhood)) {
+            return new ResponseModel<>(buildingServiceModel, new ErrorContainer(
+                    Map.of("name", Set.of(String.format(BUILDING_NAME_EXISTS,
+                            buildingName, neighbourhood)))));
         }
 
         Building building = this.modelMapper.map(buildingServiceModel, Building.class);
         building.setAddedOn(LocalDate.now());
-        building.setApartments(new LinkedHashSet<>());
         this.buildingRepository.saveAndFlush(building);
 
-        return this.modelMapper.map(building, BuildingServiceModel.class);
+        return new ResponseModel<>(building.getId(),
+                this.modelMapper.map(building, BuildingServiceModel.class));
     }
 
     @Override
@@ -188,4 +202,8 @@ public class BuildingServiceImpl implements BuildingService {
         return Collections.unmodifiableSet(buildingServiceModels);
     }
 
+    private boolean buildingNameExistsInNeighbourhood(String buildingName, String neighbourhood) {
+        return this.buildingRepository
+                .findByNameAndNeighbourhood(buildingName, neighbourhood).isPresent();
+    }
 }

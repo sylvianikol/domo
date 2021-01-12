@@ -7,6 +7,7 @@ public class UserViewModel extends BaseUserViewModel {
 
     private String email;
     private String phoneNumber;
+    private boolean isActive;
     private Set<RoleViewModel> roles;
 
     public UserViewModel() {
@@ -26,6 +27,14 @@ public class UserViewModel extends BaseUserViewModel {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 
     public Set<RoleViewModel> getRoles() {

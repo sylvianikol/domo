@@ -102,6 +102,8 @@ public class ResidentServiceImpl implements ResidentService  {
 
         this.residentRepository.saveAndFlush(resident);
 
+        // TODO: Send email with link to create password
+
         return this.modelMapper.map(resident, ResidentServiceModel.class);
     }
 

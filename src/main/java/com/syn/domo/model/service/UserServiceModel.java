@@ -8,6 +8,7 @@ public class UserServiceModel extends BaseUserServiceModel {
     //    private String password;
     private String email;
     private String phoneNumber;
+    private boolean isActive;
     private Set<RoleServiceModel> roles;
 
     public UserServiceModel() {
@@ -27,6 +28,14 @@ public class UserServiceModel extends BaseUserServiceModel {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 
     public Set<RoleServiceModel> getRoles() {

@@ -115,6 +115,8 @@ public class StaffServiceImpl implements StaffService {
 
         this.staffRepository.saveAndFlush(staff);
 
+        // TODO: Send email with link to create password
+
         return this.modelMapper.map(staff, StaffServiceModel.class);
     }
 

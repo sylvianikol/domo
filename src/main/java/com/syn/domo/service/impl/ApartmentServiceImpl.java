@@ -50,6 +50,25 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
+    public Set<ApartmentServiceModel> getAll(String buildingId) {
+
+        Set<ApartmentServiceModel> apartmentServiceModels =
+                this.apartmentRepository.getAllByBuildingId(buildingId).stream()
+                        .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
+                        .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return Collections.unmodifiableSet(apartmentServiceModels);
+    }
+
+    @Override
+    public Optional<ApartmentServiceModel> get(String apartmentId) {
+        Optional<Apartment> apartment = this.apartmentRepository.findById(apartmentId);
+        return apartment.isEmpty()
+                ? Optional.empty()
+                : Optional.of(this.modelMapper.map(apartment.get(), ApartmentServiceModel.class));
+    }
+
+    @Override
     public ResponseModel<ApartmentServiceModel> add(ApartmentServiceModel apartmentServiceModel,
                                      String buildingId) {
 
@@ -137,7 +156,7 @@ public class ApartmentServiceImpl implements ApartmentService {
     public void deleteAll(String buildingId) {
 
         if (this.buildingService.get(buildingId).isEmpty()) {
-            throw new EntityNotFoundException("Building not found!");
+            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
         }
 
         Set<Apartment> apartments =
@@ -155,14 +174,14 @@ public class ApartmentServiceImpl implements ApartmentService {
     public void delete(String apartmentId, String buildingId) {
 
         if (this.buildingService.get(buildingId).isEmpty()) {
-            throw new EntityNotFoundException("Building not found!");
+            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
         }
 
         Apartment apartment =
                 this.apartmentRepository.findById(apartmentId).orElse(null);
 
         if (apartment == null || !apartment.getBuilding().getId().equals(buildingId)) {
-            throw new EntityNotFoundException("Apartment not found!");
+            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
         }
 
         this.residentService.deleteAll(buildingId, apartment.getId());
@@ -180,30 +199,12 @@ public class ApartmentServiceImpl implements ApartmentService {
 
     @Override
     public void emptyApartments(String buildingId) {
-        Set<Apartment> apartments = this.apartmentRepository.getAllByBuildingId(buildingId);
+        Set<Apartment> apartments =
+                this.apartmentRepository.getAllByBuildingId(buildingId);
 
         for (Apartment apartment : apartments) {
             this.residentService.deleteAll(buildingId, apartment.getId());
         }
-    }
-
-    @Override
-    public Set<ApartmentServiceModel> getAll(String buildingId) {
-
-        Set<ApartmentServiceModel> apartmentServiceModels =
-                this.apartmentRepository.getAllByBuildingId(buildingId).stream()
-                .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-
-        return Collections.unmodifiableSet(apartmentServiceModels);
-    }
-
-    @Override
-    public Optional<ApartmentServiceModel> get(String apartmentId) {
-        Optional<Apartment> apartment = this.apartmentRepository.findById(apartmentId);
-        return apartment.isEmpty()
-                ? Optional.empty()
-                : Optional.of(this.modelMapper.map(apartment.get(), ApartmentServiceModel.class));
     }
 
     private boolean alreadyExists(String apartmentNumber, String buildingId) {
@@ -211,26 +212,4 @@ public class ApartmentServiceImpl implements ApartmentService {
                 .findByNumberAndBuilding_Id(apartmentNumber, buildingId).isPresent();
 
     }
-
-//    private ApartmentServiceModel collectErrors(ApartmentServiceModel apartmentServiceModel,
-//                               Set<ConstraintViolation<ApartmentServiceModel>> constraintViolations) {
-//        for (ConstraintViolation<ApartmentServiceModel> violation : constraintViolations) {
-//            Map<String, Set<String>> errors = apartmentServiceModel.getErrorContainer().getErrors();
-//            String key = violation.getPropertyPath().toString();
-//            String value = violation.getMessage();
-//
-//            errors.putIfAbsent(key, new HashSet<>());
-//            errors.get(key).add(value);
-//        }
-//
-//        return apartmentServiceModel;
-//    }
-
-//    private ApartmentServiceModel addError(ApartmentServiceModel apartmentServiceModel,
-//                                           String propertyName, String errorMessage) {
-//        Map<String, Set<String>> errors = apartmentServiceModel.getErrorContainer().getErrors();
-//        errors.putIfAbsent(propertyName, new HashSet<>());
-//        errors.get(propertyName).add(errorMessage);
-//        return apartmentServiceModel;
-//    }
 }

@@ -8,18 +8,18 @@ import java.util.Set;
 
 public interface ApartmentService {
 
+    Set<ApartmentServiceModel> getAll(String buildingId);
+
+    Optional<ApartmentServiceModel> get(String apartmentId);
+
     ResponseModel<ApartmentServiceModel> add(ApartmentServiceModel addServiceModel, String buildingId);
 
     ResponseModel<ApartmentServiceModel> edit(ApartmentServiceModel apartmentServiceModel,
                                String buildingId, String apartmentId);
 
-    void delete(String apartmentId, String buildingId);
-
     void deleteAll(String buildingId);
 
-    Set<ApartmentServiceModel> getAll(String buildingId);
-
-    Optional<ApartmentServiceModel> get(String apartmentId);
+    void delete(String apartmentId, String buildingId);
 
     Optional<ApartmentServiceModel> getByIdIn(String id, Set<String> apartmentIds);
 

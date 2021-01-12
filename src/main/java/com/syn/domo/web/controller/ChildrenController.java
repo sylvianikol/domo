@@ -91,19 +91,19 @@ public class ChildrenController implements ChildrenNamespace {
 
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
-                    .body(new ErrorView(bindingResult.getTarget(),
-                            bindingResult.getAllErrors()));
+                    .body(new ResponseModel<>(childEditBindingModel, bindingResult));
         }
 
-        this.childService.edit(this.modelMapper.map(childEditBindingModel, ChildServiceModel.class),
+        ResponseModel<ChildServiceModel> responseModel = this.childService.edit(
+                this.modelMapper.map(childEditBindingModel, ChildServiceModel.class),
                 buildingId, apartmentId, childId);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder.path(URI_CHILDREN + "/{childId}")
-                        .buildAndExpand(buildingId, apartmentId, childId)
-                        .toUri()).build();
+        return responseModel.hasErrors()
+                ? ResponseEntity.unprocessableEntity().body(responseModel)
+                : ResponseEntity.created(uriComponentsBuilder.path(URI_CHILDREN + "/{child_id}")
+                .buildAndExpand(buildingId, apartmentId, childId)
+                .toUri()).build();
     }
-
 
     @DeleteMapping
     public ResponseEntity<?> deleteAll(@PathVariable(value = "buildingId") String buildingId,

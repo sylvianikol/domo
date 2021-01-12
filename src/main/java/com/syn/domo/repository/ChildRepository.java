@@ -12,6 +12,8 @@ import java.util.Set;
 @Repository
 public interface ChildRepository extends JpaRepository<Child, String> {
 
+    Optional<Child> findByIdAndApartmentId(String childId, String apartmentId);
+
     @Query("SELECT c FROM Child c " +
             "WHERE c.apartment.id = :apartmentId " +
             "AND c.apartment.building.id = :buildingId ")

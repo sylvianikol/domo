@@ -16,5 +16,8 @@ public class ExceptionErrorMessages {
     public static final String CHILD_EXISTS =
             "Child with name \"%s %s\" already exists in Apartment No.%s";
 
+    public static final String CHILD_NOT_FOUND =
+            "Child not found!";
+
 
 }

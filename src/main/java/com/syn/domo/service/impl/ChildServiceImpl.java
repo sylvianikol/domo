@@ -122,32 +122,36 @@ public class ChildServiceImpl implements ChildService {
     }
 
     @Override
-    public ChildServiceModel edit(ChildServiceModel childServiceModel,
+    public ResponseModel<ChildServiceModel> edit(ChildServiceModel childServiceModel,
                                   String buildingId, String apartmentId, String childId) {
-        // TODO: validation
 
-        Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
-        if (building.isEmpty()) {
-            throw new EntityNotFoundException("Building not found!");
+        if (!this.validationUtil.isValid(childServiceModel)) {
+            return new ResponseModel<>(childServiceModel,
+                    this.validationUtil.violations(childServiceModel));
         }
 
-        Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
-        if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
-            throw new EntityNotFoundException("Apartment not found!");
+        BuildingServiceModel building = this.buildingService.get(buildingId)
+                .orElseThrow(() -> { throw new EntityNotFoundException(BUILDING_NOT_FOUND); });
+
+        if (this.apartmentService.getByIdAndBuildingId(apartmentId, building.getId()).isEmpty()) {
+            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
         }
 
-        Child child = this.childRepository.findById(childId).orElse(null);
+        Child child = this.childRepository
+                .findByIdAndApartmentId(childId, apartmentId)
+                .orElse(null);
 
-        if (child != null && child.getApartment().getId().equals(apartmentId)) {
+        if (child != null) {
             child.setFirstName(childServiceModel.getFirstName());
             child.setLastName(childServiceModel.getLastName());
 
             this.childRepository.saveAndFlush(child);
         } else {
-            throw new EntityNotFoundException("Child not found!");
+            throw new EntityNotFoundException(CHILD_NOT_FOUND);
         }
 
-        return this.modelMapper.map(child, ChildServiceModel.class);
+        return new ResponseModel<>(child.getId(),
+                this.modelMapper.map(child, ChildServiceModel.class));
     }
 
     @Override

@@ -156,18 +156,18 @@ public class ChildServiceImpl implements ChildService {
 
     @Override
     public void deleteAll(String buildingId, String apartmentId) {
-        Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
-        if (building.isEmpty()) {
-            throw new EntityNotFoundException("Building not found!");
+
+        if (this.buildingService.get(buildingId).isEmpty()) {
+            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
         }
 
-        Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
-        if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
-            throw new EntityNotFoundException("Apartment not found!");
+        if (this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId).isEmpty()) {
+            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
         }
 
         Set<Child> children = this.childRepository
                 .getAllByApartmentIdAndBuildingId(buildingId, apartmentId);
+
         this.childRepository.deleteAll(children);
     }
 

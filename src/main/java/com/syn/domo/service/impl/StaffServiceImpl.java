@@ -1,5 +1,6 @@
 package com.syn.domo.service.impl;
 
+import com.syn.domo.error.ErrorContainer;
 import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.entity.Role;
@@ -8,11 +9,13 @@ import com.syn.domo.model.entity.UserRole;
 import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.model.service.RoleServiceModel;
 import com.syn.domo.model.service.StaffServiceModel;
+import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.repository.StaffRepository;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.RoleService;
 import com.syn.domo.service.StaffService;
 import com.syn.domo.service.UserService;
+import com.syn.domo.utils.ValidationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +28,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.syn.domo.common.DefaultParamValues.DEFAULT_EMPTY;
+import static com.syn.domo.common.ExceptionErrorMessages.ROLE_NOT_FOUND;
+import static com.syn.domo.common.ValidationErrorMessages.EMAIL_ALREADY_USED;
+import static com.syn.domo.common.ValidationErrorMessages.PHONE_ALREADY_USED;
 
 @Service
 public class StaffServiceImpl implements StaffService {
@@ -34,18 +40,20 @@ public class StaffServiceImpl implements StaffService {
     private final BuildingService buildingService;
     private final RoleService roleService;
     private final ModelMapper modelMapper;
+    private final ValidationUtil validationUtil;
 
     @Autowired
     public StaffServiceImpl(StaffRepository staffRepository,
                             UserService userService,
                             BuildingService buildingService,
                             RoleService roleService,
-                            ModelMapper modelMapper) {
+                            ModelMapper modelMapper, ValidationUtil validationUtil) {
         this.staffRepository = staffRepository;
         this.userService = userService;
         this.buildingService = buildingService;
         this.roleService = roleService;
         this.modelMapper = modelMapper;
+        this.validationUtil = validationUtil;
     }
 
     @Override
@@ -79,36 +87,29 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public StaffServiceModel add(StaffServiceModel staffServiceModel) {
-        // TODO: validation
+    public ResponseModel<StaffServiceModel> add(StaffServiceModel staffServiceModel) {
+
+        if (!this.validationUtil.isValid(staffServiceModel)) {
+            return new ResponseModel<>(staffServiceModel,
+                    this.validationUtil.violations(staffServiceModel));
+        }
+
         String email = staffServiceModel.getEmail();
-        Optional<Staff> byEmail =
-                this.staffRepository.findByEmail(email);
-
-        if (byEmail.isPresent()) {
-            throw new EntityExistsException(
-                    String.format("Email \"%s\" is already used by another user", email));
+        if (this.userService.getByEmail(email).isPresent()) {
+            return new ResponseModel<>(staffServiceModel,
+                    new ErrorContainer(Map.of("email",
+                            Set.of(String.format(EMAIL_ALREADY_USED,
+                                    staffServiceModel.getEmail())))
+                    ));
         }
 
-        String phoneNumber = staffServiceModel.getPhoneNumber();
-        Optional<Staff> byPhoneNumber =
-                this.staffRepository.findByPhoneNumber(phoneNumber);
-
-        if (byPhoneNumber.isPresent()) {
-            throw new EntityExistsException(
-                String.format("Phone number \"%s\" is already used by another user", phoneNumber));
-        }
-
-        Optional<RoleServiceModel> roleServiceModel =
-                this.roleService.getByName(UserRole.STAFF);
-
-        if (roleServiceModel.isEmpty()) {
-            throw new EntityNotFoundException("Role not found");
-        }
+        RoleServiceModel roleServiceModel = this.roleService
+                .getByName(UserRole.STAFF)
+                .orElseThrow(() -> { throw new EntityNotFoundException(ROLE_NOT_FOUND); });
 
         Staff staff = this.modelMapper.map(staffServiceModel, Staff.class);
-        staff.setRoles(new LinkedHashSet<>());
-        staff.getRoles().add(this.modelMapper.map(roleServiceModel.get(), Role.class));
+
+        staff.setRoles(Set.of(this.modelMapper.map(roleServiceModel, Role.class)));
         staff.setAddedOn(LocalDate.now());
         staff.setSalary(staffServiceModel.getSalary());
         staff.setJob(staffServiceModel.getJob());
@@ -117,7 +118,8 @@ public class StaffServiceImpl implements StaffService {
 
         // TODO: Send email with link to create password
 
-        return this.modelMapper.map(staff, StaffServiceModel.class);
+        return new ResponseModel<>(staff.getId(),
+                this.modelMapper.map(staff, StaffServiceModel.class));
     }
 
     @Override

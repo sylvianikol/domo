@@ -63,6 +63,8 @@ public class ValidationErrorMessages {
             "Phone number should be in the following format: '0888123456' or '+359888123456'";
     public static final String PHONE_LENGTH =
             "Phone number should be no more than 20 characters long";
+    public static final String PHONE_ALREADY_USED =
+            "Phone number %s is already used by another user";
 
     public static final String FIRST_NAME_INVALID =
             "First name should be between 2 and 55 characters long!";

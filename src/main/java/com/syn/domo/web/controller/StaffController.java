@@ -1,5 +1,6 @@
 package com.syn.domo.web.controller;
 
+import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.model.view.error.ErrorView;
 import com.syn.domo.model.binding.*;
 import com.syn.domo.model.service.StaffServiceModel;
@@ -64,17 +65,17 @@ public class StaffController implements StaffNamespace {
 
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
-                    .body(new ErrorView(bindingResult.getTarget(),
-                            bindingResult.getAllErrors()));
+                    .body(new ResponseModel<>(staffBindingModel, bindingResult));
         }
 
-        String staffId = this.staffService
-                        .add(this.modelMapper.map(staffBindingModel, StaffServiceModel.class))
-                        .getId();
+        ResponseModel<StaffServiceModel> responseModel = this.staffService
+                        .add(this.modelMapper.map(staffBindingModel, StaffServiceModel.class));
 
-        return ResponseEntity.created(uriComponentsBuilder
+        return responseModel.hasErrors()
+                ? ResponseEntity.unprocessableEntity().body(responseModel)
+                : ResponseEntity.created(uriComponentsBuilder
                 .path(URI_STAFF + "/{staffId}")
-                .buildAndExpand(staffId)
+                .buildAndExpand(responseModel.getId())
                 .toUri()).build();
     }
 

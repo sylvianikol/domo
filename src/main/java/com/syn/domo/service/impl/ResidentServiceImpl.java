@@ -88,11 +88,11 @@ public class ResidentServiceImpl implements ResidentService  {
                 .getByIdAndBuildingId(apartmentId, buildingId)
                 .orElseThrow(() -> { throw new EntityNotFoundException(APARTMENT_NOT_FOUND); });
 
-        if (this.userService.getByEmail(residentServiceModel.getEmail()).isPresent()) {
+        String email = residentServiceModel.getEmail();
+        if (this.userService.getByEmail(email).isPresent()) {
             return new ResponseModel<>(residentServiceModel,
                     new ErrorContainer(Map.of("email",
-                            Set.of(String.format(EMAIL_ALREADY_USED,
-                                    residentServiceModel.getEmail())))
+                            Set.of(String.format(EMAIL_ALREADY_USED, email)))
             ));
         }
 

@@ -1,6 +1,7 @@
 package com.syn.domo.service;
 
 import com.syn.domo.model.service.StaffServiceModel;
+import com.syn.domo.model.view.ResponseModel;
 
 import java.util.Optional;
 import java.util.Set;
@@ -11,7 +12,7 @@ public interface StaffService {
 
     Optional<StaffServiceModel> get(String staffId);
 
-    StaffServiceModel add(StaffServiceModel staffServiceModel);
+    ResponseModel<StaffServiceModel> add(StaffServiceModel staffServiceModel);
 
     StaffServiceModel edit(StaffServiceModel staffServiceModel, String staffId);
 

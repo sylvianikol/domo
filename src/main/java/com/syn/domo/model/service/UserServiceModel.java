@@ -1,11 +1,14 @@
 package com.syn.domo.model.service;
 
+import javax.validation.constraints.*;
 import java.util.Objects;
 import java.util.Set;
 
+import static com.syn.domo.common.RegexPatterns.PHONE_REGEX;
+import static com.syn.domo.common.ValidationErrorMessages.*;
+
 public class UserServiceModel extends BaseUserServiceModel {
 
-    //    private String password;
     private String email;
     private String phoneNumber;
     private boolean isActive;
@@ -14,6 +17,9 @@ public class UserServiceModel extends BaseUserServiceModel {
     public UserServiceModel() {
     }
 
+    @NotNull(message = EMAIL_NULL)
+    @NotEmpty(message = EMAIL_EMPTY)
+    @Email(message = EMAIL_INVALID)
     public String getEmail() {
         return email;
     }
@@ -22,6 +28,10 @@ public class UserServiceModel extends BaseUserServiceModel {
         this.email = email;
     }
 
+    @NotNull(message = PHONE_NULL)
+    @NotEmpty(message = PHONE_EMPTY)
+    @Pattern(regexp = PHONE_REGEX, message = PHONE_INVALID)
+    @Size(max = 20, message = PHONE_LENGTH)
     public String getPhoneNumber() {
         return phoneNumber;
     }
@@ -30,6 +40,7 @@ public class UserServiceModel extends BaseUserServiceModel {
         this.phoneNumber = phoneNumber;
     }
 
+    @NotNull(message = ACTIVE_STATUS_NULL)
     public boolean isActive() {
         return isActive;
     }
@@ -52,12 +63,13 @@ public class UserServiceModel extends BaseUserServiceModel {
         if (!(o instanceof UserServiceModel)) return false;
         if (!super.equals(o)) return false;
         UserServiceModel that = (UserServiceModel) o;
-        return Objects.equals(email, that.email) &&
+        return isActive == that.isActive &&
+                Objects.equals(email, that.email) &&
                 Objects.equals(phoneNumber, that.phoneNumber);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), email, phoneNumber);
+        return Objects.hash(super.hashCode(), email, phoneNumber, isActive);
     }
 }

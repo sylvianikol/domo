@@ -86,8 +86,6 @@ public class ValidationErrorMessages {
     public static final String APARTMENT_NUMBER_EMPTY =
             "Apartment number can not be empty!";
 
-    public static final String DATE_NULL =
-            "Date can not be null!";
     public static final String DATE_FUTURE =
             "Date can not be in the future!";
 
@@ -108,4 +106,7 @@ public class ValidationErrorMessages {
 
     public static final String PARENTS_NULL =
             "Parents should not be null!";
+
+    public static final String ACTIVE_STATUS_NULL =
+            "Activation status can not be null!";
 }

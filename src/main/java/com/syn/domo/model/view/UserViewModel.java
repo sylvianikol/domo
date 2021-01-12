@@ -51,13 +51,13 @@ public class UserViewModel extends BaseUserViewModel {
         if (!(o instanceof UserViewModel)) return false;
         if (!super.equals(o)) return false;
         UserViewModel that = (UserViewModel) o;
-        return Objects.equals(email, that.email) &&
-                Objects.equals(phoneNumber, that.phoneNumber) &&
-                Objects.equals(roles, that.roles);
+        return isActive == that.isActive &&
+                Objects.equals(email, that.email) &&
+                Objects.equals(phoneNumber, that.phoneNumber);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), email, phoneNumber, roles);
+        return Objects.hash(super.hashCode(), email, phoneNumber, isActive);
     }
 }

@@ -2,13 +2,14 @@ package com.syn.domo.service;
 
 import com.syn.domo.model.service.ResidentServiceModel;
 import com.syn.domo.model.service.UserServiceModel;
+import com.syn.domo.model.view.ResponseModel;
 
 import java.util.Optional;
 import java.util.Set;
 
 public interface ResidentService {
 
-    ResidentServiceModel add(ResidentServiceModel residentServiceModel, String buildingId, String apartmentId);
+    ResponseModel<ResidentServiceModel> add(ResidentServiceModel residentServiceModel, String buildingId, String apartmentId);
 
     ResidentServiceModel edit(ResidentServiceModel residentServiceModel,
                               String buildingId, String apartmentId, String residentId);

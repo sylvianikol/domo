@@ -52,6 +52,8 @@ public class ValidationErrorMessages {
             "Email can not be null!";
     public static final String EMAIL_EMPTY =
             "Email can not be empty!";
+    public static final String EMAIL_ALREADY_USED =
+            "Email %s is already used by another user!";
 
     public static final String PHONE_NULL =
             "Phone number can not be null!";

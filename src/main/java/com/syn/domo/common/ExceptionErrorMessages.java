@@ -4,6 +4,7 @@ public class ExceptionErrorMessages {
 
     public static final String APARTMENT_EXISTS =
             "Apartment No.%s already exists in %s!";
+
     public static final String APARTMENT_NOT_FOUND =
             "Apartment not found!";
 
@@ -18,6 +19,9 @@ public class ExceptionErrorMessages {
 
     public static final String CHILD_NOT_FOUND =
             "Child not found!";
+
+    public static final String ROLE_NOT_FOUND =
+            "Role not found!";
 
 
 }

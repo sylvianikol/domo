@@ -1,5 +1,6 @@
 package com.syn.domo.web.controller;
 
+import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.model.view.error.ErrorView;
 import com.syn.domo.model.binding.ResidentBindingModel;
 import com.syn.domo.model.service.ResidentServiceModel;
@@ -67,17 +68,18 @@ public class ResidentsController implements ResidentsNamespace {
 
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
-                    .body(new ErrorView(bindingResult.getTarget(),
-                            bindingResult.getAllErrors()));
+                    .body(new ResponseModel<>(residentBindingModel, bindingResult));
         }
 
-        String residentId = this.residentService.add(
+        ResponseModel<ResidentServiceModel> responseModel = this.residentService.add(
                 this.modelMapper.map(residentBindingModel, ResidentServiceModel.class),
-                buildingId, apartmentId).getId();
+                buildingId, apartmentId);
 
-        return ResponseEntity.created(uriComponentsBuilder
+        return responseModel.hasErrors()
+                ? ResponseEntity.unprocessableEntity().body(responseModel)
+                : ResponseEntity.created(uriComponentsBuilder
                 .path(URI_RESIDENTS + "/{residentId}")
-                .buildAndExpand(buildingId, apartmentId, residentId)
+                .buildAndExpand(buildingId, apartmentId, responseModel.getId())
                 .toUri()).build();
     }
 

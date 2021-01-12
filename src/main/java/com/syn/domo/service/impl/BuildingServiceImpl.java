@@ -160,10 +160,11 @@ public class BuildingServiceImpl implements BuildingService {
     @Override
     @Transactional
     public void delete(String buildingId) {
+
         Building building = this.buildingRepository.findById(buildingId).orElse(null);
 
         if (building == null) {
-            throw new EntityNotFoundException("Building not found!");
+            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
         }
 
         Set<String> staffIds = building.getStaff().stream()
@@ -183,7 +184,7 @@ public class BuildingServiceImpl implements BuildingService {
         Building building = this.buildingRepository.findById(buildingId).orElse(null);
 
         if (building == null) {
-            throw new EntityNotFoundException("Building not found!");
+            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
         }
 
         Set<Staff> staff = this.staffService.getAllByIdIn(staffIds).stream()

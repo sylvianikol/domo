@@ -38,6 +38,7 @@ public class UserServiceImpl implements UserService {
             admin.setEmail("admin@domo.bg");
             admin.setPassword("123");
             admin.setPhoneNumber("0888147384573");
+            admin.setActive(true);
             admin.setAddedOn(LocalDate.now());
 
             Set<Role> roles = this.roleService.getAll();

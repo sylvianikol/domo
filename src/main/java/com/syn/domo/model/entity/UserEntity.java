@@ -16,6 +16,7 @@ public class UserEntity extends BaseUserEntity {
     private String email;
     private String password;
     private String phoneNumber;
+    private boolean isActive;
     private Set<Role> roles;
 
     public UserEntity() {
@@ -48,6 +49,16 @@ public class UserEntity extends BaseUserEntity {
         this.phoneNumber = personalNumber;
     }
 
+    @Column(name = "active", nullable = false,
+            columnDefinition = "TINYINT default 0")
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
     @ManyToMany(cascade = { MERGE, REFRESH }, fetch = EAGER)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -60,19 +71,4 @@ public class UserEntity extends BaseUserEntity {
         this.roles = roles;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof UserEntity)) return false;
-        if (!super.equals(o)) return false;
-        UserEntity that = (UserEntity) o;
-        return Objects.equals(email, that.email) &&
-                Objects.equals(password, that.password) &&
-                Objects.equals(phoneNumber, that.phoneNumber);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), email, password, phoneNumber);
-    }
 }

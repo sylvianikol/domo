@@ -87,17 +87,18 @@ public class StaffController implements StaffNamespace {
 
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
-                    .body(new ErrorView(bindingResult.getTarget(),
-                            bindingResult.getAllErrors()));
+                    .body(new ResponseModel<>(staffBindingModel, bindingResult));
         }
 
-        this.staffService.edit(this.modelMapper.map(staffBindingModel, StaffServiceModel.class), staffId);
+        ResponseModel<StaffServiceModel> responseModel = this.staffService
+                .edit(this.modelMapper.map(staffBindingModel, StaffServiceModel.class), staffId);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder
-                        .path(URI_STAFF + "/{staffId}")
-                        .buildAndExpand(staffId)
-                        .toUri()).build();
+        return responseModel.hasErrors()
+                ? ResponseEntity.unprocessableEntity().body(responseModel)
+                : ResponseEntity.created(uriComponentsBuilder
+                .path(URI_STAFF + "/{staffId}")
+                .buildAndExpand(staffId)
+                .toUri()).build();
     }
 
     @DeleteMapping

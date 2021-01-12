@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 
 import static com.syn.domo.common.DefaultParamValues.DEFAULT_EMPTY;
 import static com.syn.domo.common.ExceptionErrorMessages.ROLE_NOT_FOUND;
+import static com.syn.domo.common.ExceptionErrorMessages.STAFF_NOT_FOUND;
 import static com.syn.domo.common.ValidationErrorMessages.EMAIL_ALREADY_USED;
 import static com.syn.domo.common.ValidationErrorMessages.PHONE_ALREADY_USED;
 
@@ -123,37 +124,36 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public StaffServiceModel edit(StaffServiceModel staffServiceModel, String staffId) {
-        // TODO: validation
+    public ResponseModel<StaffServiceModel> edit(StaffServiceModel staffServiceModel, String staffId) {
+
+        if (!this.validationUtil.isValid(staffServiceModel)) {
+            return new ResponseModel<>(staffServiceModel,
+                    this.validationUtil.violations(staffServiceModel));
+        }
 
         if (this.userService.notUniqueEmail(staffServiceModel.getEmail(), staffId)) {
-            throw new UnprocessableEntityException(
-                    String.format("Email '%s' is already used by another user!",
-                            staffServiceModel.getEmail()));
+            return new ResponseModel<>(staffServiceModel,
+                    new ErrorContainer(Map.of("email",
+                            Set.of(String.format(EMAIL_ALREADY_USED,
+                                    staffServiceModel.getEmail())))
+                    ));
         }
 
-        if (this.userService.notUniquePhoneNumber(staffServiceModel.getPhoneNumber(), staffId)) {
-            throw new UnprocessableEntityException(
-                    String.format("Phone number '%s' is already used by another user!",
-                            staffServiceModel.getPhoneNumber()));
-        }
+        Staff staff = this.staffRepository.findById(staffId)
+                .orElseThrow(() -> { throw new EntityNotFoundException(STAFF_NOT_FOUND); });
 
-        Staff staff = this.staffRepository.findById(staffId).orElse(null);
 
-        if (staff != null) {
-            staff.setFirstName(staffServiceModel.getFirstName());
-            staff.setLastName(staffServiceModel.getLastName());
-            staff.setEmail(staffServiceModel.getEmail());
-            staff.setPhoneNumber(staffServiceModel.getPhoneNumber());
-            staff.setSalary(staffServiceModel.getSalary());
-            staff.setJob(staffServiceModel.getJob());
+        staff.setFirstName(staffServiceModel.getFirstName());
+        staff.setLastName(staffServiceModel.getLastName());
+        staff.setEmail(staffServiceModel.getEmail());
+        staff.setPhoneNumber(staffServiceModel.getPhoneNumber());
+        staff.setSalary(staffServiceModel.getSalary());
+        staff.setJob(staffServiceModel.getJob());
 
-            this.staffRepository.saveAndFlush(staff);
-        } else {
-            throw new EntityNotFoundException("Staff not found!");
-        }
+        this.staffRepository.saveAndFlush(staff);
 
-        return this.modelMapper.map(staff, StaffServiceModel.class);
+        return new ResponseModel<>(staff.getId(),
+                this.modelMapper.map(staff, StaffServiceModel.class));
     }
 
     @Override

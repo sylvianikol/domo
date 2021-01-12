@@ -14,7 +14,7 @@ public interface StaffService {
 
     ResponseModel<StaffServiceModel> add(StaffServiceModel staffServiceModel);
 
-    StaffServiceModel edit(StaffServiceModel staffServiceModel, String staffId);
+    ResponseModel<StaffServiceModel> edit(StaffServiceModel staffServiceModel, String staffId);
 
     void deleteAll(String buildingId);
 

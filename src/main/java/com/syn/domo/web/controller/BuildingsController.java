@@ -69,7 +69,6 @@ public class BuildingsController implements BuildingsNamespace {
                     .body(new ResponseModel<>(buildingBindingModel, bindingResult));
         }
 
-        System.out.println();
         ResponseModel<BuildingServiceModel> responseModel = this.buildingService.add(
                 this.modelMapper.map(buildingBindingModel, BuildingServiceModel.class));
 

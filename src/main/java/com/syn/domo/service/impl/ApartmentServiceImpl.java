@@ -207,6 +207,17 @@ public class ApartmentServiceImpl implements ApartmentService {
         }
     }
 
+    @Override
+    public Optional<ApartmentServiceModel> getByIdAndBuildingId(String apartmentId, String buildingId1) {
+
+        Optional<Apartment> apartment = this.apartmentRepository
+                .findByIdAndBuildingId(apartmentId, buildingId1);
+
+        return apartment.isEmpty()
+                ? Optional.empty()
+                : Optional.of(this.modelMapper.map(apartment, ApartmentServiceModel.class));
+    }
+
     private boolean alreadyExists(String apartmentNumber, String buildingId) {
         return this.apartmentRepository
                 .findByNumberAndBuilding_Id(apartmentNumber, buildingId).isPresent();

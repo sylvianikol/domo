@@ -1,5 +1,6 @@
 package com.syn.domo.web.controller;
 
+import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.model.view.error.ErrorView;
 import com.syn.domo.model.binding.ChildAddBindingModel;
 import com.syn.domo.model.binding.ChildEditBindingModel;
@@ -39,7 +40,7 @@ public class ChildrenController implements ChildrenNamespace {
                 .getAll(buildingId, apartmentId)
                 .stream()
                 .map(c -> this.modelMapper.map(c, ChildViewModel.class))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toUnmodifiableSet());
 
         return children.isEmpty()
                 ? ResponseEntity.notFound().build()
@@ -67,17 +68,17 @@ public class ChildrenController implements ChildrenNamespace {
 
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
-                    .body(new ErrorView(bindingResult.getTarget(),
-                            bindingResult.getAllErrors()));
+                    .body(new ResponseModel<>(childAddBindingModel, bindingResult));
         }
 
-        ChildServiceModel childServiceModel =
-                this.modelMapper.map(childAddBindingModel, ChildServiceModel.class);
-        String childId = this.childService.add(childServiceModel, buildingId, apartmentId).getId();
+        ResponseModel<ChildServiceModel> responseModel = this.childService.add(
+                this.modelMapper.map(childAddBindingModel, ChildServiceModel.class),
+                buildingId, apartmentId);
 
-        return ResponseEntity.created(uriComponentsBuilder
-                .path(URI_CHILDREN + "/{child_id}")
-                .buildAndExpand(buildingId, apartmentId, childId)
+        return responseModel.hasErrors()
+                ? ResponseEntity.unprocessableEntity().body(responseModel)
+                : ResponseEntity.created(uriComponentsBuilder.path(URI_CHILDREN + "/{child_id}")
+                .buildAndExpand(buildingId, apartmentId, responseModel.getId())
                 .toUri()).build();
     }
 

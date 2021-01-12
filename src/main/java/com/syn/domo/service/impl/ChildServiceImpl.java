@@ -6,8 +6,10 @@ import com.syn.domo.model.entity.Child;
 import com.syn.domo.model.entity.Resident;
 import com.syn.domo.model.entity.UserEntity;
 import com.syn.domo.model.service.*;
+import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.repository.ChildRepository;
 import com.syn.domo.service.*;
+import com.syn.domo.utils.ValidationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -23,6 +25,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.syn.domo.common.ExceptionErrorMessages.*;
+
 @Service
 public class ChildServiceImpl implements ChildService {
 
@@ -31,18 +35,20 @@ public class ChildServiceImpl implements ChildService {
     private final ApartmentService apartmentService;
     private final ResidentService residentService;
     private final ModelMapper modelMapper;
+    private final ValidationUtil validationUtil;
 
     @Autowired
     public ChildServiceImpl(ChildRepository childRepository,
                             BuildingService buildingService,
                             ApartmentService apartmentService,
                             @Lazy ResidentService residentService,
-                            ModelMapper modelMapper) {
+                            ModelMapper modelMapper, ValidationUtil validationUtil) {
         this.childRepository = childRepository;
         this.buildingService = buildingService;
         this.apartmentService = apartmentService;
         this.residentService = residentService;
         this.modelMapper = modelMapper;
+        this.validationUtil = validationUtil;
     }
 
     @Override
@@ -73,55 +79,55 @@ public class ChildServiceImpl implements ChildService {
 
     @Override
     @Transactional
-    public ChildServiceModel add(ChildServiceModel childServiceModel, String buildingId, String apartmentId) {
-        // TODO: validation
+    public ResponseModel<ChildServiceModel> add(ChildServiceModel childServiceModel,
+                                                String buildingId, String apartmentId) {
+
+        if (!this.validationUtil.isValid(childServiceModel)) {
+            return new ResponseModel<>(childServiceModel,
+                    this.validationUtil.violations(childServiceModel));
+        }
 
         Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
+
         if (building.isEmpty()) {
-            throw new EntityNotFoundException("Building not found!");
+            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
         }
 
-        Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
-        if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
-            throw new EntityNotFoundException("Apartment not found!");
-        }
+        Optional<ApartmentServiceModel> apartment = this.apartmentService
+                .getByIdAndBuildingId(apartmentId, building.get().getId());
 
-        Set<String> ids = childServiceModel.getParents().stream()
-                .map(UserServiceModel::getId)
-                .collect(Collectors.toSet());
+        if (apartment.isEmpty()) {
+            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
+        }
 
         Set<ResidentServiceModel> parentServiceModels =
-                this.residentService.getAllByIdIn(ids);
+                this.residentService.getAllByIdIn(getParentsIds(childServiceModel));
 
         if (parentServiceModels.isEmpty()) {
-            throw new UnprocessableEntityException("Child must have parents!");
+            throw new UnprocessableEntityException(PARENTS_NOT_FOUND);
         }
 
-        Optional<Child> existingChild =
-                this.childRepository.findByFirstNameAndLastNameAndApartment_Id
-                        (childServiceModel.getFirstName(), childServiceModel.getLastName(), apartmentId);
+        String firstName = childServiceModel.getFirstName().trim();
+        String lastName = childServiceModel.getLastName().trim();
 
-        if (existingChild.isPresent() && this.hasSameParents(childServiceModel, existingChild.get())) {
-            throw new EntityExistsException(String.format("Child named '%s %s' already lives in Apartment No.%s",
-                    childServiceModel.getFirstName(),
-                    childServiceModel.getLastName(),
-                    apartment.get().getNumber()));
+        if (this.childExistsInApartment(firstName, lastName, apartmentId, childServiceModel)) {
+            throw new EntityExistsException(
+                    String.format(CHILD_EXISTS, firstName, lastName, apartment.get().getNumber()));
         }
 
         Child child = this.modelMapper.map(childServiceModel, Child.class);
         child.setAddedOn(LocalDate.now());
         child.setApartment(this.modelMapper.map(apartment.get(), Apartment.class));
 
-        Set<Resident> parents = parentServiceModels.stream()
-                .map(p -> this.modelMapper.map(p, Resident.class))
-                .collect(Collectors.toSet());
-
-        child.setParents(parents);
+        child.setParents(getParents(parentServiceModels));
 
         childRepository.saveAndFlush(child);
 
-        return this.modelMapper.map(child, ChildServiceModel.class);
+        return new ResponseModel<>(child.getId(),
+                this.modelMapper.map(child, ChildServiceModel.class));
     }
+
+
 
     @Override
     public ChildServiceModel edit(ChildServiceModel childServiceModel,
@@ -205,4 +211,22 @@ public class ChildServiceImpl implements ChildService {
         return sameParentsCount == existingParents.size() && sameParentsCount == newParents.size();
     }
 
+    private boolean childExistsInApartment(String firstName, String lastName, String apartmentId,
+                                           ChildServiceModel newChild) {
+        Optional<Child> child = this.childRepository
+                .findByFirstNameAndLastNameAndApartment_Id(firstName, lastName, apartmentId);
+        return child.isPresent() && this.hasSameParents(newChild, child.get());
+    }
+
+    private Set<String> getParentsIds(ChildServiceModel childServiceModel) {
+        return childServiceModel.getParents().stream()
+                .map(UserServiceModel::getId)
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    private Set<Resident> getParents(Set<ResidentServiceModel> parentServiceModels) {
+        return parentServiceModels.stream()
+                .map(p -> this.modelMapper.map(p, Resident.class))
+                .collect(Collectors.toUnmodifiableSet());
+    }
  }

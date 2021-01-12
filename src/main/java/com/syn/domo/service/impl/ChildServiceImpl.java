@@ -173,23 +173,19 @@ public class ChildServiceImpl implements ChildService {
 
     @Override
     public void delete(String childId, String buildingId, String apartmentId) {
-        Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
-        if (building.isEmpty()) {
-            throw new EntityNotFoundException("Building not found!");
+
+        if (this.buildingService.get(buildingId).isEmpty()) {
+            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
         }
 
-        Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
-        if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
-            throw new EntityNotFoundException("Apartment not found!");
+        if (this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId).isEmpty()) {
+            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
         }
 
-        Child child = this.childRepository.findById(childId).orElse(null);
+        Child child = this.childRepository.findByIdAndApartmentId(childId, apartmentId)
+                .orElseThrow(() -> { throw new EntityNotFoundException(CHILD_NOT_FOUND); });
 
-        if (child != null && child.getApartment().getId().equals(apartmentId)) {
-            this.childRepository.delete(child);
-        } else {
-            throw new EntityNotFoundException("Child not found!");
-        }
+        this.childRepository.delete(child);
     }
 
     private boolean hasSameParents(ChildServiceModel newChild, Child existingChild) {

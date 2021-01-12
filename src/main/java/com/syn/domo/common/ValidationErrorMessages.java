@@ -23,8 +23,6 @@ public class ValidationErrorMessages {
             "Address should not be null!";
     public static final String ADDRESS_EMPTY =
             "Address should not be empty!";
-    public static final String ADDRESS_INVALID_LENGTH =
-            "Address should not be more than 100 symbols long!";
 
     public static final String FLOOR_NUMBER_NULL =
             "Floor number can not be null!";

@@ -24,7 +24,7 @@ public class Building extends BaseEntity{
     public Building() {
     }
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "VARCHAR(40)")
     public String getName() {
         return name;
     }
@@ -33,7 +33,7 @@ public class Building extends BaseEntity{
         this.name = name;
     }
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "VARCHAR(40)")
     public String getNeighbourhood() {
         return neighbourhood;
     }

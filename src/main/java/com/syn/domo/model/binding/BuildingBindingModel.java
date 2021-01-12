@@ -38,7 +38,6 @@ public class BuildingBindingModel {
 
     @NotNull(message = ADDRESS_NULL)
     @NotEmpty(message = ADDRESS_EMPTY)
-    @Size(max = 40, message = ADDRESS_INVALID_LENGTH)
     public String getAddress() {
         return address;
     }

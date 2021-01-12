@@ -1,7 +1,13 @@
 package com.syn.domo.model.service;
 
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Set;
+
+import static com.syn.domo.common.ValidationErrorMessages.*;
+import static com.syn.domo.common.ValidationErrorMessages.SALARY_MIN;
 
 public class StaffServiceModel extends UserServiceModel {
 
@@ -12,6 +18,8 @@ public class StaffServiceModel extends UserServiceModel {
     public StaffServiceModel() {
     }
 
+    @NotNull(message = JOB_NULL)
+    @NotEmpty(message = JOB_EMPTY)
     public String getJob() {
         return job;
     }
@@ -20,6 +28,8 @@ public class StaffServiceModel extends UserServiceModel {
         this.job = job;
     }
 
+    @NotNull(message = SALARY_NULL)
+    @DecimalMin(value = "0", message = SALARY_MIN)
     public BigDecimal getSalary() {
         return salary;
     }

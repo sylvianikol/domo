@@ -143,10 +143,7 @@ public class ResidentServiceImpl implements ResidentService  {
                 .orElseThrow(() -> { throw new EntityNotFoundException(RESIDENT_NOT_FOUND); });
 
 
-        Optional<ApartmentServiceModel> apartmentServiceModel =
-                this.apartmentService.getByIdIn(apartmentId, this.getApartmentIds(resident));
-
-        if (apartmentServiceModel.isEmpty()) {
+        if (this.apartmentService.getByIdIn(apartmentId, this.getApartmentIds(resident)).isEmpty()) {
             throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
         }
 
@@ -161,56 +158,45 @@ public class ResidentServiceImpl implements ResidentService  {
                 this.modelMapper.map(resident, ResidentServiceModel.class));
     }
 
-
-
     @Override
     public void deleteAll(String buildingId, String apartmentId) {
-        Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
-        if (building.isEmpty()) {
-            throw new EntityNotFoundException("Building not found!");
+
+        if (this.buildingService.get(buildingId).isEmpty()) {
+            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
         }
 
-        Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
-        if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
-            throw new EntityNotFoundException("Apartment not found!");
+        if (this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId).isEmpty()) {
+            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
         }
 
         this.childService.deleteAll(buildingId, apartmentId);
+
         Set<Resident> residents = this.residentRepository
                 .getAllByBuildingIdAndApartmentId(buildingId, apartmentId);
+
         this.residentRepository.deleteAll(residents);
     }
 
     @Override
     public void delete(String buildingId, String apartmentId, String residentId) {
-        Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
-        if (building.isEmpty()) {
-            throw new EntityNotFoundException("Building not found!");
+
+        if (this.buildingService.get(buildingId).isEmpty()) {
+            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
         }
 
-        Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
-        if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
-            throw new EntityNotFoundException("Apartment not found!");
+        if (this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId).isEmpty()) {
+            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
         }
 
-        Resident resident = this.residentRepository.findById(residentId).orElse(null);
+        Resident resident = this.residentRepository.findById(residentId)
+                .orElseThrow(() -> { throw new EntityNotFoundException(RESIDENT_NOT_FOUND); });
 
-        if (resident != null) {
-            Set<String> apartmentIds = resident.getApartments().stream()
-                    .map(Apartment::getId)
-                    .collect(Collectors.toUnmodifiableSet());
 
-            Optional<ApartmentServiceModel> apartmentServiceModel =
-                    this.apartmentService.getByIdIn(apartmentId, apartmentIds);
-
-            if (apartmentServiceModel.isEmpty()) {
-                throw new EntityNotFoundException("Apartment not found");
-            }
-
-            this.residentRepository.delete(resident);
-        } else {
-            throw new EntityNotFoundException("Resident not found!");
+        if (this.apartmentService.getByIdIn(apartmentId, this.getApartmentIds(resident)).isEmpty()) {
+            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
         }
+
+        this.residentRepository.delete(resident);
     }
 
     @Override

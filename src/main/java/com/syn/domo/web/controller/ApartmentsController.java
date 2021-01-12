@@ -122,10 +122,8 @@ public class ApartmentsController implements ApartmentsNamespace {
         this.apartmentService.delete(apartmentId, buildingId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder
-                        .path(URI_APARTMENTS)
-                        .buildAndExpand(buildingId)
-                        .toUri())
+                .location(uriComponentsBuilder.path(URI_APARTMENTS)
+                        .buildAndExpand(buildingId).toUri())
                 .build();
     }
 }

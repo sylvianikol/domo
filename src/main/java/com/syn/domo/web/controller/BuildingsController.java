@@ -103,9 +103,11 @@ public class BuildingsController implements BuildingsNamespace {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteAll() {
+    public ResponseEntity<?> deleteAll(UriComponentsBuilder uriComponentsBuilder) {
         this.buildingService.deleteAll();
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .location(uriComponentsBuilder.path(URI_BUILDINGS).build().toUri())
+                .build();
     }
 
     @DeleteMapping("/{buildingId}")
@@ -115,10 +117,7 @@ public class BuildingsController implements BuildingsNamespace {
         this.buildingService.delete(buildingId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder
-                        .path(URI_BUILDINGS)
-                        .build()
-                        .toUri())
+                .location(uriComponentsBuilder.path(URI_BUILDINGS).build().toUri())
                 .build();
     }
 

@@ -28,8 +28,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.syn.domo.common.DefaultParamValues.DEFAULT_EMPTY;
-import static com.syn.domo.common.ExceptionErrorMessages.ROLE_NOT_FOUND;
-import static com.syn.domo.common.ExceptionErrorMessages.STAFF_NOT_FOUND;
+import static com.syn.domo.common.ExceptionErrorMessages.*;
 import static com.syn.domo.common.ValidationErrorMessages.EMAIL_ALREADY_USED;
 import static com.syn.domo.common.ValidationErrorMessages.PHONE_ALREADY_USED;
 
@@ -178,30 +177,23 @@ public class StaffServiceImpl implements StaffService {
     @Override
     @Transactional
     public void delete(String staffId) {
-        Staff staff = this.staffRepository.findById(staffId).orElse(null);
 
-        if (staff != null) {
+        Staff staff = this.staffRepository.findById(staffId)
+                .orElseThrow(() -> { throw new EntityNotFoundException(STAFF_NOT_FOUND); });
 
-            this.staffRepository.cancelBuildingAssignments(staff.getId());
+        this.staffRepository.cancelBuildingAssignments(staff.getId());
 
-            this.staffRepository.delete(staff);
-        } else {
-            throw new EntityNotFoundException("Staff member not found!");
-        }
+       this.staffRepository.delete(staff);
     }
 
     @Override
     public void assignBuildings(String staffId, Set<String> buildingIds) {
-        Staff staff = this.staffRepository.findById(staffId).orElse(null);
 
-        if (staff == null) {
-            throw new EntityNotFoundException("Staff not found!");
-        }
+        Staff staff = this.staffRepository.findById(staffId)
+                .orElseThrow(() -> { throw new EntityNotFoundException(STAFF_NOT_FOUND); });
 
-        Set<BuildingServiceModel> buildingServiceModels =
-                    this.buildingService.getAllByIdIn(buildingIds);
-
-        Set<Building> buildings = buildingServiceModels.stream()
+        Set<Building> buildings = this.buildingService.getAllByIdIn(buildingIds)
+                .stream()
                 .map(b -> this.modelMapper.map(b, Building.class))
                 .collect(Collectors.toUnmodifiableSet());
 
@@ -212,16 +204,12 @@ public class StaffServiceImpl implements StaffService {
 
     @Override
     public void cancelBuildingAssignments(Set<String> staffIds, String buildingId) {
+
+        BuildingServiceModel buildingServiceModel = this.buildingService.get(buildingId)
+                .orElseThrow(() -> { throw new EntityNotFoundException(BUILDING_NOT_FOUND); });
+
+        Building building = this.modelMapper.map(buildingServiceModel, Building.class);
         Set<Staff> staff = this.staffRepository.findAllByIdIn(staffIds);
-
-        Optional<BuildingServiceModel> buildingServiceModel =
-                this.buildingService.get(buildingId);
-
-        if (buildingServiceModel.isEmpty()) {
-            throw new EntityNotFoundException("Building not found!");
-        }
-
-        Building building = this.modelMapper.map(buildingServiceModel.get(), Building.class);
 
         for (Staff employee : staff) {
             employee.getBuildings().remove(building);

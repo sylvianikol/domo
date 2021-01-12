@@ -71,8 +71,8 @@ public class ResidentsController implements ResidentsNamespace {
                     .body(new ResponseModel<>(residentBindingModel, bindingResult));
         }
 
-        ResponseModel<ResidentServiceModel> responseModel = this.residentService.add(
-                this.modelMapper.map(residentBindingModel, ResidentServiceModel.class),
+        ResponseModel<ResidentServiceModel> responseModel = this.residentService
+                .add(this.modelMapper.map(residentBindingModel, ResidentServiceModel.class),
                 buildingId, apartmentId);
 
         return responseModel.hasErrors()
@@ -92,18 +92,19 @@ public class ResidentsController implements ResidentsNamespace {
 
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
-                    .body(new ErrorView(bindingResult.getTarget(),
-                            bindingResult.getAllErrors()));
+                    .body(new ResponseModel<>(residentBindingModel, bindingResult));
         }
 
-        this.residentService.edit(this.modelMapper.map(residentBindingModel, ResidentServiceModel.class),
+        ResponseModel<ResidentServiceModel> responseModel = this.residentService
+                .edit(this.modelMapper.map(residentBindingModel, ResidentServiceModel.class),
                 buildingId, apartmentId, residentId);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder
-                        .path(URI_RESIDENTS + "/{residentId}")
-                        .buildAndExpand(buildingId, apartmentId, residentId)
-                        .toUri()).build();
+        return responseModel.hasErrors()
+                ? ResponseEntity.unprocessableEntity().body(responseModel)
+                : ResponseEntity.created(uriComponentsBuilder
+                .path(URI_RESIDENTS + "/{residentId}")
+                .buildAndExpand(buildingId, apartmentId, residentId)
+                .toUri()).build();
     }
 
     @DeleteMapping

@@ -1,8 +1,6 @@
 package com.syn.domo.service.impl;
 
-import com.syn.domo.common.ExceptionErrorMessages;
 import com.syn.domo.error.ErrorContainer;
-import com.syn.domo.exception.*;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Resident;
 import com.syn.domo.model.entity.Role;
@@ -117,53 +115,53 @@ public class ResidentServiceImpl implements ResidentService  {
     }
 
     @Override
-    public ResidentServiceModel edit(ResidentServiceModel residentServiceModel,
+    public ResponseModel<ResidentServiceModel> edit(ResidentServiceModel residentServiceModel,
                                      String buildingId, String apartmentId, String residentId) {
-        // TODO: validation
 
-        Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
-        if (building.isEmpty()) {
-            throw new EntityNotFoundException("Building not found!");
+        if (!this.validationUtil.isValid(residentServiceModel)) {
+            return new ResponseModel<>(residentServiceModel,
+                    this.validationUtil.violations(residentServiceModel));
         }
 
-        Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
-        if (apartment.isEmpty() || !apartment.get().getBuilding().getId().equals(building.get().getId())) {
-            throw new EntityNotFoundException("Apartment not found!");
+        if (this.buildingService.get(buildingId).isEmpty()) {
+            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
+        }
+
+        if (this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId).isEmpty()) {
+            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
         }
 
         if (this.userService.notUniqueEmail(residentServiceModel.getEmail(), residentId)) {
-            throw new UnprocessableEntityException(
-                    String.format("Email '%s' is already used by another user!",
-                            residentServiceModel.getEmail()));
+            return new ResponseModel<>(residentServiceModel,
+                    new ErrorContainer(Map.of("email",
+                            Set.of(String.format(EMAIL_ALREADY_USED,
+                                    residentServiceModel.getEmail())))
+                    ));
         }
 
-        Resident resident = this.residentRepository.findById(residentId).orElse(null);
+        Resident resident = this.residentRepository.findById(residentId)
+                .orElseThrow(() -> { throw new EntityNotFoundException(RESIDENT_NOT_FOUND); });
 
-        if (resident != null) {
-            Set<String> apartmentIds = resident.getApartments().stream()
-                    .map(Apartment::getId)
-                    .collect(Collectors.toUnmodifiableSet());
 
-            Optional<ApartmentServiceModel> apartmentServiceModel =
-                    this.apartmentService.getByIdIn(apartmentId, apartmentIds);
+        Optional<ApartmentServiceModel> apartmentServiceModel =
+                this.apartmentService.getByIdIn(apartmentId, this.getApartmentIds(resident));
 
-            if (apartmentServiceModel.isEmpty()) {
-                throw new EntityNotFoundException("Apartment not found");
-            }
-
-            resident.setFirstName(residentServiceModel.getFirstName());
-            resident.setLastName(residentServiceModel.getLastName());
-            resident.setEmail(residentServiceModel.getEmail());
-            resident.setPhoneNumber(residentServiceModel.getPhoneNumber());
-
-            this.residentRepository.saveAndFlush(resident);
-
-        } else {
-            throw new EntityNotFoundException("Resident not found");
+        if (apartmentServiceModel.isEmpty()) {
+            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
         }
 
-        return this.modelMapper.map(resident, ResidentServiceModel.class);
+        resident.setFirstName(residentServiceModel.getFirstName());
+        resident.setLastName(residentServiceModel.getLastName());
+        resident.setEmail(residentServiceModel.getEmail());
+        resident.setPhoneNumber(residentServiceModel.getPhoneNumber());
+
+        this.residentRepository.saveAndFlush(resident);
+
+        return new ResponseModel<>(resident.getId(),
+                this.modelMapper.map(resident, ResidentServiceModel.class));
     }
+
+
 
     @Override
     public void deleteAll(String buildingId, String apartmentId) {
@@ -223,5 +221,11 @@ public class ResidentServiceImpl implements ResidentService  {
                         .collect(Collectors.toCollection(LinkedHashSet::new));
 
         return Collections.unmodifiableSet(residentServiceModels);
+    }
+
+    private Set<String> getApartmentIds(Resident resident) {
+        return resident.getApartments().stream()
+                .map(Apartment::getId)
+                .collect(Collectors.toUnmodifiableSet());
     }
 }

@@ -11,7 +11,7 @@ public interface ResidentService {
 
     ResponseModel<ResidentServiceModel> add(ResidentServiceModel residentServiceModel, String buildingId, String apartmentId);
 
-    ResidentServiceModel edit(ResidentServiceModel residentServiceModel,
+    ResponseModel<ResidentServiceModel> edit(ResidentServiceModel residentServiceModel,
                               String buildingId, String apartmentId, String residentId);
 
     void deleteAll(String buildingId, String apartmentId);

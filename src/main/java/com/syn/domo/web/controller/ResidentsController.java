@@ -107,17 +107,16 @@ public class ResidentsController implements ResidentsNamespace {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteAll(@PathVariable(value = "buildingId") String buildingId,
-                                       @PathVariable(value = "apartmentId") String apartmentId,
+    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = DEFAULT_ALL,
+                                                     name = "buildingId") String buildingId,
+                                       @RequestParam(required = false, defaultValue = DEFAULT_ALL,
+                                                     name = "apartmentId") String apartmentId,
                                        UriComponentsBuilder uriComponentsBuilder) {
 
         this.residentService.deleteAll(buildingId, apartmentId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder
-                        .path(URI_RESIDENTS)
-                        .buildAndExpand(buildingId, apartmentId)
-                        .toUri())
+                .location(uriComponentsBuilder.path(URI_RESIDENTS).build().toUri())
                 .build();
     }
 

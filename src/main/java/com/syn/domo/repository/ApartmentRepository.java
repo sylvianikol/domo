@@ -12,7 +12,7 @@ import java.util.Set;
 @Repository
 public interface ApartmentRepository extends JpaRepository<Apartment, String> {
 
-    Optional<Apartment> findByNumberAndBuilding_Id(String apartmentNumber, String buildingId);
+    Optional<Apartment> findByNumberAndBuildingId(String apartmentNumber, String buildingId);
 
     @Query("SELECT a FROM Apartment a " +
             "WHERE a.number = :apartmentNumber " +

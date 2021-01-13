@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.syn.domo.common.DefaultParamValues.DEFAULT_ALL;
 import static com.syn.domo.common.ExceptionErrorMessages.*;
 import static com.syn.domo.common.ValidationErrorMessages.FLOOR_INVALID;
 
@@ -52,10 +53,24 @@ public class ApartmentServiceImpl implements ApartmentService {
     @Override
     public Set<ApartmentServiceModel> getAll(String buildingId) {
 
-        Set<ApartmentServiceModel> apartmentServiceModels =
-                this.apartmentRepository.getAllByBuildingId(buildingId).stream()
-                        .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
-                        .collect(Collectors.toCollection(LinkedHashSet::new));
+        Set<ApartmentServiceModel> apartmentServiceModels;
+
+        if (buildingId.equals(DEFAULT_ALL)) {
+
+            apartmentServiceModels = this.apartmentRepository.findAll().stream()
+                    .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
+                    .collect(Collectors.toUnmodifiableSet());
+        } else {
+
+            if (this.buildingService.get(buildingId).isEmpty()) {
+                throw new EntityNotFoundException(BUILDING_NOT_FOUND);
+            }
+
+            apartmentServiceModels =
+                    this.apartmentRepository.getAllByBuildingId(buildingId).stream()
+                            .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
+                            .collect(Collectors.toCollection(LinkedHashSet::new));
+        }
 
         return Collections.unmodifiableSet(apartmentServiceModels);
     }
@@ -220,7 +235,7 @@ public class ApartmentServiceImpl implements ApartmentService {
 
     private boolean alreadyExists(String apartmentNumber, String buildingId) {
         return this.apartmentRepository
-                .findByNumberAndBuilding_Id(apartmentNumber, buildingId).isPresent();
+                .findByNumberAndBuildingId(apartmentNumber, buildingId).isPresent();
 
     }
 }

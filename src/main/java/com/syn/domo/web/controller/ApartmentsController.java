@@ -19,6 +19,8 @@ import javax.validation.Valid;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.syn.domo.common.DefaultParamValues.DEFAULT_ALL;
+
 @RestController
 public class ApartmentsController implements ApartmentsNamespace {
 
@@ -33,12 +35,13 @@ public class ApartmentsController implements ApartmentsNamespace {
     }
 
     @GetMapping
-    public ResponseEntity<Set<ApartmentViewModel>> getAll(@PathVariable(value = "buildingId") String buildingId) {
+    public ResponseEntity<Set<ApartmentViewModel>> getAll(@RequestParam(required = false, defaultValue = DEFAULT_ALL,
+                                                                        name = "buildingId") String buildingId) {
 
         Set<ApartmentViewModel> apartments =
                 this.apartmentService.getAll(buildingId).stream()
                 .map(a -> this.modelMapper.map(a, ApartmentViewModel.class))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toUnmodifiableSet());
 
         return apartments.isEmpty()
                 ? ResponseEntity.notFound().build()

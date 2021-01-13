@@ -52,11 +52,10 @@ public class ResidentsController implements ResidentsNamespace {
     }
 
     @GetMapping("/{residentId}")
-    public ResponseEntity<ResidentViewModel> get(@PathVariable(value = "buildingId") String buildingId,
-                                                 @PathVariable(value = "apartmentId") String apartmentId,
-                                                 @PathVariable(value = "residentId") String residentId) {
+    public ResponseEntity<ResidentViewModel> get(@PathVariable(value = "residentId") String residentId) {
+
         Optional<ResidentServiceModel> resident =
-                this.residentService.get(buildingId, apartmentId, residentId);
+                this.residentService.get(residentId);
 
         return resident.isEmpty()
                 ? ResponseEntity.notFound().build()

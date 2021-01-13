@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -51,10 +52,11 @@ public class ApartmentsController implements ApartmentsNamespace {
     @GetMapping("/{apartmentId}")
     public ResponseEntity<ApartmentViewModel> get(@PathVariable(value = "apartmentId") String apartmentId) {
 
-        return this.apartmentService.get(apartmentId)
-                .map(a -> ResponseEntity.ok()
-                        .body(this.modelMapper.map(a, ApartmentViewModel.class)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<ApartmentServiceModel> apartment = this.apartmentService.get(apartmentId);
+
+        return apartment.isEmpty()
+                ? ResponseEntity.notFound().build()
+                : ResponseEntity.ok(this.modelMapper.map(apartment, ApartmentViewModel.class));
 
     }
 

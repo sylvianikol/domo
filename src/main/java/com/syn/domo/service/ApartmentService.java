@@ -14,12 +14,11 @@ public interface ApartmentService {
 
     ResponseModel<ApartmentServiceModel> add(ApartmentServiceModel addServiceModel, String buildingId);
 
-    ResponseModel<ApartmentServiceModel> edit(ApartmentServiceModel apartmentServiceModel,
-                               String buildingId, String apartmentId);
+    ResponseModel<ApartmentServiceModel> edit(ApartmentServiceModel apartmentServiceModel, String apartmentId);
 
     void deleteAll(String buildingId);
 
-    void delete(String apartmentId, String buildingId);
+    void delete(String apartmentId);
 
     Optional<ApartmentServiceModel> getByIdIn(String apartmentId, Set<String> apartmentIds);
 

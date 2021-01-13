@@ -49,11 +49,9 @@ public class ApartmentsController implements ApartmentsNamespace {
     }
 
     @GetMapping("/{apartmentId}")
-    public ResponseEntity<ApartmentViewModel> get(@PathVariable(value = "buildingId") String buildingId,
-                                                  @PathVariable(value = "apartmentId") String apartmentId) {
+    public ResponseEntity<ApartmentViewModel> get(@PathVariable(value = "apartmentId") String apartmentId) {
 
         return this.apartmentService.get(apartmentId)
-                .filter(a -> a.getBuilding().getId().equals(buildingId))
                 .map(a -> ResponseEntity.ok()
                         .body(this.modelMapper.map(a, ApartmentViewModel.class)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -61,7 +59,7 @@ public class ApartmentsController implements ApartmentsNamespace {
     }
 
     @PostMapping
-    public ResponseEntity<?> add(@PathVariable(value = "buildingId") String buildingId,
+    public ResponseEntity<?> add(@RequestParam(name = "buildingId") String buildingId,
                                  @Valid @RequestBody ApartmentBindingModel apartmentBindingModel,
                                  BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
 
@@ -82,8 +80,7 @@ public class ApartmentsController implements ApartmentsNamespace {
     }
 
     @PutMapping("/{apartmentId}")
-    public ResponseEntity<?> edit(@PathVariable(value = "buildingId") String buildingId,
-                                  @PathVariable(value = "apartmentId") String apartmentId,
+    public ResponseEntity<?> edit(@PathVariable(value = "apartmentId") String apartmentId,
                                   @Valid @RequestBody ApartmentBindingModel apartmentBindingModel,
                                   BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
 
@@ -94,39 +91,35 @@ public class ApartmentsController implements ApartmentsNamespace {
 
         ResponseModel<ApartmentServiceModel> responseModel = this.apartmentService
                .edit(this.modelMapper.map(apartmentBindingModel, ApartmentServiceModel.class),
-                buildingId, apartmentId);
+                       apartmentId);
 
         return responseModel.hasErrors()
                 ? ResponseEntity.unprocessableEntity().body(responseModel)
                 : ResponseEntity.created(uriComponentsBuilder.path(URI_APARTMENTS + "/{apartmentId}")
-                .buildAndExpand(buildingId, apartmentId)
+                .buildAndExpand(apartmentId)
                 .toUri()).build();
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteAll(@PathVariable(value = "buildingId") String buildingId,
+    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = DEFAULT_ALL,
+                                                     name = "buildingId") String buildingId,
                                        UriComponentsBuilder uriComponentsBuilder) {
 
         this.apartmentService.deleteAll(buildingId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder
-                        .path(URI_APARTMENTS)
-                        .buildAndExpand(buildingId)
-                        .toUri())
+                .location(uriComponentsBuilder.path(URI_APARTMENTS).build().toUri())
                 .build();
     }
 
     @DeleteMapping("/{apartmentId}")
-    public ResponseEntity<?> delete(@PathVariable(value = "buildingId") String buildingId,
-                                    @PathVariable(value = "apartmentId") String apartmentId,
+    public ResponseEntity<?> delete(@PathVariable(value = "apartmentId") String apartmentId,
                                     UriComponentsBuilder uriComponentsBuilder) {
 
-        this.apartmentService.delete(apartmentId, buildingId);
+        this.apartmentService.delete(apartmentId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder.path(URI_APARTMENTS)
-                        .buildAndExpand(buildingId).toUri())
+                .location(uriComponentsBuilder.path(URI_APARTMENTS).build().toUri())
                 .build();
     }
 }

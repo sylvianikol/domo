@@ -92,12 +92,8 @@ public class ApartmentServiceImpl implements ApartmentService {
                     this.validationUtil.violations(apartmentServiceModel));
         }
 
-        BuildingServiceModel buildingServiceModel =
-                this.buildingService.get(buildingId).orElse(null);
-
-        if (buildingServiceModel == null) {
-            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
-        }
+        BuildingServiceModel buildingServiceModel = this.buildingService.get(buildingId)
+                .orElseThrow(() -> { throw new EntityNotFoundException(BUILDING_NOT_FOUND); });
 
         String apartmentNumber = apartmentServiceModel.getNumber();
         if (this.alreadyExists(apartmentNumber, buildingId)) {
@@ -122,38 +118,31 @@ public class ApartmentServiceImpl implements ApartmentService {
 
     @Override
     public ResponseModel<ApartmentServiceModel> edit(ApartmentServiceModel apartmentServiceModel,
-                                      String buildingId, String apartmentId) {
+                                                     String apartmentId) {
 
         if (!this.validationUtil.isValid(apartmentServiceModel)) {
             return new ResponseModel<>(apartmentServiceModel,
                     this.validationUtil.violations(apartmentServiceModel));
         }
 
-        BuildingServiceModel buildingServiceModel =
-                this.buildingService.get(buildingId).orElse(null);
-        if (buildingServiceModel == null) {
-            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
-        }
+        Apartment apartment =
+                this.apartmentRepository.findById(apartmentId)
+                        .orElseThrow(() -> { throw new EntityNotFoundException(APARTMENT_NOT_FOUND); });
 
-        if (apartmentServiceModel.getFloor() > buildingServiceModel.getFloors()) {
+        Building building = apartment.getBuilding();
+
+        if (apartmentServiceModel.getFloor() > building.getFloors()) {
             return new ResponseModel<>(apartmentServiceModel, new ErrorContainer(
                     Map.of("floor", Set.of(FLOOR_INVALID))));
         }
 
-        Apartment apartment =
-                this.apartmentRepository.findById(apartmentId).orElse(null);
-
-        if (apartment == null || !apartment.getBuilding().getId().equals(buildingId)) {
-            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
-        }
-
         String newNumber = apartmentServiceModel.getNumber();
         Optional<Apartment> duplicateApartment = this.apartmentRepository
-                .getDuplicateApartment(newNumber, buildingId, apartmentId);
+                .getDuplicateApartment(newNumber, building.getId(), apartmentId);
 
         if (duplicateApartment.isPresent()) {
             throw new EntityExistsException(String.format(APARTMENT_EXISTS,
-                    newNumber, buildingServiceModel.getName()));
+                    newNumber, building.getName()));
         }
 
         apartment.setNumber(apartmentServiceModel.getNumber());
@@ -170,12 +159,18 @@ public class ApartmentServiceImpl implements ApartmentService {
     @Transactional
     public void deleteAll(String buildingId) {
 
-        if (this.buildingService.get(buildingId).isEmpty()) {
-            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
-        }
+        Set<Apartment> apartments;
 
-        Set<Apartment> apartments =
-                this.apartmentRepository.getAllByBuildingId(buildingId);
+        if (buildingId.equals(DEFAULT_ALL)) {
+            apartments = new HashSet<>(this.apartmentRepository.findAll());
+        } else {
+
+            if (this.buildingService.get(buildingId).isEmpty()) {
+                throw new EntityNotFoundException(BUILDING_NOT_FOUND);
+            }
+
+            apartments = this.apartmentRepository.getAllByBuildingId(buildingId);
+        }
 
         for (Apartment apartment : apartments) {
             this.childService.deleteAll(buildingId, apartment.getId());
@@ -186,18 +181,12 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
-    public void delete(String apartmentId, String buildingId) {
+    public void delete(String apartmentId) {
 
-        if (this.buildingService.get(buildingId).isEmpty()) {
-            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
-        }
+        Apartment apartment = this.apartmentRepository.findById(apartmentId)
+                .orElseThrow(() -> { throw new EntityNotFoundException(APARTMENT_NOT_FOUND); });
 
-        Apartment apartment =
-                this.apartmentRepository.findById(apartmentId).orElse(null);
-
-        if (apartment == null || !apartment.getBuilding().getId().equals(buildingId)) {
-            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
-        }
+        String buildingId = apartment.getBuilding().getId();
 
         this.residentService.deleteAll(buildingId, apartment.getId());
         this.childService.deleteAll(buildingId, apartment.getId());

@@ -103,6 +103,15 @@ public class StaffServiceImpl implements StaffService {
                     ));
         }
 
+        String phoneNumber = staffServiceModel.getPhoneNumber();
+        if (this.userService.getByPhoneNumber(phoneNumber).isPresent()) {
+            return new ResponseModel<>(staffServiceModel,
+                    new ErrorContainer(Map.of("phoneNumber",
+                            Set.of(String.format(PHONE_ALREADY_USED,
+                                    staffServiceModel.getPhoneNumber())))
+                    ));
+        }
+
         RoleServiceModel roleServiceModel = this.roleService
                 .getByName(UserRole.STAFF)
                 .orElseThrow(() -> { throw new EntityNotFoundException(ROLE_NOT_FOUND); });
@@ -130,11 +139,19 @@ public class StaffServiceImpl implements StaffService {
                     this.validationUtil.violations(staffServiceModel));
         }
 
-        if (this.userService.notUniqueEmail(staffServiceModel.getEmail(), staffId)) {
+        String email = staffServiceModel.getEmail();
+        if (this.userService.notUniqueEmail(email, staffId)) {
             return new ResponseModel<>(staffServiceModel,
                     new ErrorContainer(Map.of("email",
-                            Set.of(String.format(EMAIL_ALREADY_USED,
-                                    staffServiceModel.getEmail())))
+                            Set.of(String.format(EMAIL_ALREADY_USED, email)))
+                    ));
+        }
+
+        String phoneNumber = staffServiceModel.getPhoneNumber();
+        if (this.userService.notUniquePhoneNumber(phoneNumber, staffId)) {
+            return new ResponseModel<>(staffServiceModel,
+                    new ErrorContainer(Map.of("phoneNumber",
+                            Set.of(String.format(PHONE_ALREADY_USED, phoneNumber)))
                     ));
         }
 
@@ -224,5 +241,4 @@ public class StaffServiceImpl implements StaffService {
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         return Collections.unmodifiableSet(staffServiceModels);
     }
-
 }

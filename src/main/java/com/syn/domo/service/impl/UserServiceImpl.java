@@ -57,14 +57,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<UserServiceModel> getByPhoneNumber(String phoneNumber) {
+        Optional<UserEntity> user = this.userRepository.findByPhoneNumber(phoneNumber);
+        return user.isEmpty()
+                ? Optional.empty()
+                : Optional.of(this.modelMapper.map(user, UserServiceModel.class));
+    }
+
+    @Override
     public boolean notUniqueEmail(String email, String id) {
-        Optional<UserEntity> user = this.userRepository.findByEmail(email);
+        Optional<UserServiceModel> user = this.getByEmail(email);
         return user.isPresent() && !user.get().getId().equals(id);
     }
 
     @Override
     public boolean notUniquePhoneNumber(String phoneNumber, String id) {
-        Optional<UserEntity> user = this.userRepository.findByPhoneNumber(phoneNumber);
+        Optional<UserServiceModel> user = this.getByPhoneNumber(phoneNumber);
         return user.isPresent() && !user.get().getId().equals(id);
     }
 

@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import static com.syn.domo.common.DefaultParamValues.DEFAULT_ALL;
 import static com.syn.domo.common.ExceptionErrorMessages.*;
 import static com.syn.domo.common.ValidationErrorMessages.EMAIL_ALREADY_USED;
+import static com.syn.domo.common.ValidationErrorMessages.PHONE_ALREADY_USED;
 
 @Service
 public class ResidentServiceImpl implements ResidentService  {
@@ -125,6 +126,14 @@ public class ResidentServiceImpl implements ResidentService  {
             ));
         }
 
+        String phoneNumber = residentServiceModel.getPhoneNumber();
+        if (this.userService.getByPhoneNumber(phoneNumber).isPresent()) {
+            return new ResponseModel<>(residentServiceModel,
+                    new ErrorContainer(Map.of("phoneNumber",
+                            Set.of(String.format(PHONE_ALREADY_USED, phoneNumber)))
+                    ));
+        }
+
         RoleServiceModel roleServiceModel = this.roleService
                 .getByName(UserRole.RESIDENT)
                 .orElseThrow(() -> { throw new EntityNotFoundException(ROLE_NOT_FOUND); });
@@ -145,19 +154,11 @@ public class ResidentServiceImpl implements ResidentService  {
 
     @Override
     public ResponseModel<ResidentServiceModel> edit(ResidentServiceModel residentServiceModel,
-                                     String buildingId, String apartmentId, String residentId) {
+                                                    String residentId) {
 
         if (!this.validationUtil.isValid(residentServiceModel)) {
             return new ResponseModel<>(residentServiceModel,
                     this.validationUtil.violations(residentServiceModel));
-        }
-
-        if (this.buildingService.get(buildingId).isEmpty()) {
-            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
-        }
-
-        if (this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId).isEmpty()) {
-            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
         }
 
         if (this.userService.notUniqueEmail(residentServiceModel.getEmail(), residentId)) {
@@ -168,13 +169,16 @@ public class ResidentServiceImpl implements ResidentService  {
                     ));
         }
 
+        if (this.userService.notUniquePhoneNumber(residentServiceModel.getPhoneNumber(), residentId)) {
+            return new ResponseModel<>(residentServiceModel,
+                    new ErrorContainer(Map.of("phoneNumber",
+                            Set.of(String.format(PHONE_ALREADY_USED,
+                                    residentServiceModel.getPhoneNumber())))
+                    ));
+        }
+
         Resident resident = this.residentRepository.findById(residentId)
                 .orElseThrow(() -> { throw new EntityNotFoundException(RESIDENT_NOT_FOUND); });
-
-
-        if (this.apartmentService.getByIdIn(apartmentId, this.getApartmentIds(resident)).isEmpty()) {
-            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
-        }
 
         resident.setFirstName(residentServiceModel.getFirstName());
         resident.setLastName(residentServiceModel.getLastName());

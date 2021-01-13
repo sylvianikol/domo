@@ -87,9 +87,7 @@ public class ResidentsController implements ResidentsNamespace {
     }
 
     @PutMapping("/{residentId}")
-    public ResponseEntity<?> edit(@PathVariable(value = "buildingId") String buildingId,
-                                  @PathVariable(value = "apartmentId") String apartmentId,
-                                  @PathVariable(value = "residentId") String residentId,
+    public ResponseEntity<?> edit(@PathVariable(value = "residentId") String residentId,
                                   @Valid @RequestBody ResidentBindingModel residentBindingModel,
                                   BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
 
@@ -99,15 +97,13 @@ public class ResidentsController implements ResidentsNamespace {
         }
 
         ResponseModel<ResidentServiceModel> responseModel = this.residentService
-                .edit(this.modelMapper.map(residentBindingModel, ResidentServiceModel.class),
-                buildingId, apartmentId, residentId);
+                .edit(this.modelMapper.map(residentBindingModel, ResidentServiceModel.class), residentId);
 
         return responseModel.hasErrors()
                 ? ResponseEntity.unprocessableEntity().body(responseModel)
-                : ResponseEntity.created(uriComponentsBuilder
-                .path(URI_RESIDENTS + "/{residentId}")
-                .buildAndExpand(buildingId, apartmentId, residentId)
-                .toUri()).build();
+                : ResponseEntity.created(uriComponentsBuilder.path(URI_RESIDENTS + "/{residentId}")
+                .buildAndExpand(residentId).toUri())
+                .build();
     }
 
     @DeleteMapping

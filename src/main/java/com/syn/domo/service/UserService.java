@@ -10,6 +10,8 @@ public interface UserService {
 
     Optional<UserServiceModel> getByEmail(String email);
 
+    Optional<UserServiceModel> getByPhoneNumber(String phoneNumber);
+
     boolean notUniqueEmail(String email, String id);
 
     boolean notUniquePhoneNumber(String phoneNumber, String id);

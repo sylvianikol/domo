@@ -56,7 +56,7 @@ public class ApartmentsController implements ApartmentsNamespace {
 
         return apartment.isEmpty()
                 ? ResponseEntity.notFound().build()
-                : ResponseEntity.ok(this.modelMapper.map(apartment, ApartmentViewModel.class));
+                : ResponseEntity.ok(this.modelMapper.map(apartment.get(), ApartmentViewModel.class));
 
     }
 

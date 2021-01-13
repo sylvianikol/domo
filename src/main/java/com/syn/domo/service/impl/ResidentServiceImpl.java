@@ -14,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -100,7 +101,8 @@ public class ResidentServiceImpl implements ResidentService  {
     }
 
     @Override
-    public ResponseModel<ResidentServiceModel> add(ResidentServiceModel residentServiceModel, String buildingId, String apartmentId) {
+    public ResponseModel<ResidentServiceModel> add(ResidentServiceModel residentServiceModel,
+                                                   String buildingId, String apartmentId) {
 
         if (!this.validationUtil.isValid(residentServiceModel)) {
             return new ResponseModel<>(residentServiceModel,

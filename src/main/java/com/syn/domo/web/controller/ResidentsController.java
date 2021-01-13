@@ -63,8 +63,8 @@ public class ResidentsController implements ResidentsNamespace {
     }
 
     @PostMapping
-    public ResponseEntity<?> add(@PathVariable(value = "buildingId") String buildingId,
-                                 @PathVariable(value = "apartmentId") String apartmentId,
+    public ResponseEntity<?> add(@RequestParam(value = "buildingId") String buildingId,
+                                 @RequestParam(value = "apartmentId") String apartmentId,
                                  @Valid @RequestBody ResidentBindingModel residentBindingModel,
                                  BindingResult bindingResult,
                                  UriComponentsBuilder uriComponentsBuilder) {
@@ -82,7 +82,7 @@ public class ResidentsController implements ResidentsNamespace {
                 ? ResponseEntity.unprocessableEntity().body(responseModel)
                 : ResponseEntity.created(uriComponentsBuilder
                 .path(URI_RESIDENTS + "/{residentId}")
-                .buildAndExpand(buildingId, apartmentId, responseModel.getId())
+                .buildAndExpand(responseModel.getId())
                 .toUri()).build();
     }
 

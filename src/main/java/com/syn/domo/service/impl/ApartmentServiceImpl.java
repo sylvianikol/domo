@@ -219,7 +219,7 @@ public class ApartmentServiceImpl implements ApartmentService {
 
         return apartment.isEmpty()
                 ? Optional.empty()
-                : Optional.of(this.modelMapper.map(apartment, ApartmentServiceModel.class));
+                : Optional.of(this.modelMapper.map(apartment.get(), ApartmentServiceModel.class));
     }
 
     private boolean alreadyExists(String apartmentNumber, String buildingId) {

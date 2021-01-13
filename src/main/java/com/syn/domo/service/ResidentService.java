@@ -19,7 +19,7 @@ public interface ResidentService {
 
     void deleteAll(String buildingId, String apartmentId);
 
-    void delete(String buildingId, String apartmentId, String residentId);
+    void delete(String residentId);
 
     Set<ResidentServiceModel> getAllByIdIn(Set<String> ids);
 }

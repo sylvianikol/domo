@@ -121,18 +121,13 @@ public class ResidentsController implements ResidentsNamespace {
     }
 
     @DeleteMapping("/{residentId}")
-    public ResponseEntity<?> delete(@PathVariable(value = "buildingId") String buildingId,
-                                    @PathVariable(value = "apartmentId") String apartmentId,
-                                    @PathVariable(value = "residentId") String residentId,
+    public ResponseEntity<?> delete(@PathVariable(value = "residentId") String residentId,
                                     UriComponentsBuilder uriComponentsBuilder) {
 
-        this.residentService.delete(buildingId, apartmentId, residentId);
+        this.residentService.delete(residentId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder
-                        .path(URI_RESIDENTS)
-                        .buildAndExpand(buildingId, apartmentId)
-                        .toUri())
+                .location(uriComponentsBuilder.path(URI_RESIDENTS).build().toUri())
                 .build();
     }
 }

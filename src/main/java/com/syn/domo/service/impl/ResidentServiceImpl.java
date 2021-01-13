@@ -226,23 +226,10 @@ public class ResidentServiceImpl implements ResidentService  {
     }
 
     @Override
-    public void delete(String buildingId, String apartmentId, String residentId) {
-
-        if (this.buildingService.get(buildingId).isEmpty()) {
-            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
-        }
-
-        if (this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId).isEmpty()) {
-            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
-        }
+    public void delete(String residentId) {
 
         Resident resident = this.residentRepository.findById(residentId)
                 .orElseThrow(() -> { throw new EntityNotFoundException(RESIDENT_NOT_FOUND); });
-
-
-        if (this.apartmentService.getByIdIn(apartmentId, this.getApartmentIds(resident)).isEmpty()) {
-            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
-        }
 
         this.residentRepository.delete(resident);
     }

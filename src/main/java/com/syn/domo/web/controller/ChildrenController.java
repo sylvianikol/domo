@@ -1,7 +1,6 @@
 package com.syn.domo.web.controller;
 
 import com.syn.domo.model.view.ResponseModel;
-import com.syn.domo.model.view.error.ErrorView;
 import com.syn.domo.model.binding.ChildAddBindingModel;
 import com.syn.domo.model.binding.ChildEditBindingModel;
 import com.syn.domo.model.service.ChildServiceModel;
@@ -21,6 +20,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.syn.domo.common.DefaultParamValues.EMPTY_URL;
+
 @RestController
 public class ChildrenController implements ChildrenNamespace {
 
@@ -34,10 +35,14 @@ public class ChildrenController implements ChildrenNamespace {
     }
 
     @GetMapping
-    public ResponseEntity<Set<ChildViewModel>> getAll(@PathVariable(value = "buildingId") String buildingId,
-                                                      @PathVariable(value = "apartmentId") String apartmentId) {
+    public ResponseEntity<Set<ChildViewModel>> getAll(@RequestParam(required = false, defaultValue = EMPTY_URL,
+                                                                    name = "buildingId") String buildingId,
+                                                      @RequestParam(required = false, defaultValue = EMPTY_URL,
+                                                                    name = "apartmentId") String apartmentId,
+                                                      @RequestParam(required = false, defaultValue = EMPTY_URL,
+                                                                    name = "parentId") String parentId) {
         Set<ChildViewModel> children = this.childService
-                .getAll(buildingId, apartmentId)
+                .getAll(buildingId, apartmentId, parentId)
                 .stream()
                 .map(c -> this.modelMapper.map(c, ChildViewModel.class))
                 .collect(Collectors.toUnmodifiableSet());

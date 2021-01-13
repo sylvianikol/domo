@@ -17,6 +17,13 @@ public interface ResidentRepository extends JpaRepository<Resident, String> {
     @Query("SELECT r FROM Resident r " +
             "JOIN r.apartments a " +
             "WHERE a.id = :apartmentId " +
+            "AND r.id = :residentId ")
+    Optional<Resident> getOneByIdAndApartmentId(@Param(value = "apartmentId") String apartmentId,
+                                                @Param(value = "residentId") String residentId);
+
+    @Query("SELECT r FROM Resident r " +
+            "JOIN r.apartments a " +
+            "WHERE a.id = :apartmentId " +
             "AND a.building.id = :buildingId ")
     Set<Resident> getAllByBuildingIdAndApartmentId
             (@Param(value = "buildingId") String buildingId,
@@ -44,4 +51,11 @@ public interface ResidentRepository extends JpaRepository<Resident, String> {
             "JOIN r.apartments a " +
             "WHERE a.id = :apartmentId ")
     Set<Resident> getAllByApartmentId(@Param(value = "apartmentId") String apartmentId);
+
+    @Query("SELECT r FROM Resident r " +
+            "JOIN r.apartments a " +
+            "WHERE r.id = :residentId " +
+            "AND a.building.id = :buildingId")
+    Optional<Resident> getOneByIdAndBuildingId(@Param(value = "residentId") String residentId,
+                                               @Param(value = "buildingId") String buildingId);
 }

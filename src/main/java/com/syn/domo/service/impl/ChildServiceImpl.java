@@ -4,7 +4,6 @@ import com.syn.domo.exception.*;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Child;
 import com.syn.domo.model.entity.Resident;
-import com.syn.domo.model.entity.UserEntity;
 import com.syn.domo.model.service.*;
 import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.repository.ChildRepository;
@@ -19,12 +18,10 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.syn.domo.common.DefaultParamValues.EMPTY_URL;
 import static com.syn.domo.common.ExceptionErrorMessages.*;
 
 @Service
@@ -52,14 +49,48 @@ public class ChildServiceImpl implements ChildService {
     }
 
     @Override
-    public Set<ChildServiceModel> getAll(String buildingId, String apartmentId) {
-        Set<ChildServiceModel> childServiceModels = this.childRepository
-                .getAllByApartmentIdAndBuildingId(buildingId, apartmentId)
-                .stream()
-                .map(c -> this.modelMapper.map(c, ChildServiceModel.class))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+    public Set<ChildServiceModel> getAll(String buildingId, String apartmentId, String parentId) {
 
-        return Collections.unmodifiableSet(childServiceModels);
+        if (this.areEmptyUrls(buildingId, apartmentId, parentId)) {
+            return this.childRepository.findAll().stream()
+                    .map(c -> this.modelMapper.map(c, ChildServiceModel.class))
+                    .collect(Collectors.toUnmodifiableSet());
+        }
+
+        if (this.areEmptyUrls(apartmentId, parentId)) {
+            if (this.buildingService.get(buildingId).isEmpty()) {
+                throw new EntityNotFoundException(BUILDING_NOT_FOUND);
+            }
+
+            return this.childRepository.getAllByBuildingId(buildingId).stream()
+                    .map(c -> this.modelMapper.map(c, ChildServiceModel.class))
+                    .collect(Collectors.toUnmodifiableSet());
+        }
+
+        if (this.areEmptyUrls(parentId)) {
+            if (!areEmptyUrls(buildingId)) {
+                if (this.buildingService.get(buildingId).isEmpty()) {
+                    throw new EntityNotFoundException(BUILDING_NOT_FOUND);
+                }
+
+                if (this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId).isEmpty()) {
+                    throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
+                }
+            }
+
+            return this.childRepository.findAllByApartmentId(apartmentId)
+                    .stream()
+                    .map(c -> this.modelMapper.map(c, ChildServiceModel.class))
+                    .collect(Collectors.toUnmodifiableSet());
+        }
+
+        if (this.notFoundInBuildingAndOrApartment(buildingId, apartmentId, parentId)) {
+            throw new EntityNotFoundException(PARENT_NOT_FOUND);
+        }
+
+        return this.childRepository.getAllByParentId(parentId).stream()
+                .map(c -> this.modelMapper.map(c, ChildServiceModel.class))
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
@@ -221,5 +252,30 @@ public class ChildServiceImpl implements ChildService {
         return parentServiceModels.stream()
                 .map(p -> this.modelMapper.map(p, Resident.class))
                 .collect(Collectors.toUnmodifiableSet());
+    }
+
+    private boolean areEmptyUrls(String ...urls) {
+        return Arrays.stream(urls).filter(url -> !url.equals(EMPTY_URL)).findFirst().isEmpty();
+    }
+
+    private boolean notValidRelations(String buildingId, String apartmentId, String parentId) {
+        return this.residentService.getOneByIdAndBuildingIdAndApartmentId(buildingId, apartmentId, parentId).isEmpty();
+    }
+
+    private boolean notFoundInBuildingAndOrApartment(String buildingId, String apartmentId, String parentId) {
+
+        boolean result = false;
+
+        if (!this.areEmptyUrls(buildingId, apartmentId)) {
+            result = notValidRelations(buildingId, apartmentId, parentId);
+        } else if (this.areEmptyUrls(buildingId, apartmentId)) {
+            result = this.residentService.get(parentId).isEmpty();
+        } else if (areEmptyUrls(buildingId)) {
+            result = this.residentService.getOneByIdAndApartmentId(parentId, apartmentId).isEmpty();
+        } else if (areEmptyUrls(apartmentId)) {
+            result = this.residentService.getOneByIdAndBuildingId(parentId, buildingId).isEmpty();
+        }
+
+        return result;
     }
  }

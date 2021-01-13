@@ -9,7 +9,7 @@ import java.util.Set;
 
 public interface ChildService {
 
-    Set<ChildServiceModel> getAll(String buildingId, String apartmentId);
+    Set<ChildServiceModel> getAll(String buildingId, String apartmentId, String parentId);
 
     Optional<ChildServiceModel> get(String buildingId, String apartmentId, String childId);
 

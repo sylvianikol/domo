@@ -1,5 +1,6 @@
 package com.syn.domo.service.impl;
 
+import com.syn.domo.common.DefaultParamValues;
 import com.syn.domo.error.ErrorContainer;
 import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.Building;
@@ -20,14 +21,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.syn.domo.common.DefaultParamValues.DEFAULT_EMPTY;
+import static com.syn.domo.common.DefaultParamValues.EMPTY_URL;
 import static com.syn.domo.common.ExceptionErrorMessages.*;
 import static com.syn.domo.common.ValidationErrorMessages.EMAIL_ALREADY_USED;
 import static com.syn.domo.common.ValidationErrorMessages.PHONE_ALREADY_USED;
@@ -61,7 +61,7 @@ public class StaffServiceImpl implements StaffService {
 
         Set<StaffServiceModel> staff;
 
-        if (buildingId.equals(DEFAULT_EMPTY)) {
+        if (buildingId.equals(EMPTY_URL)) {
             staff = this.staffRepository.findAll().stream()
                     .map(s -> this.modelMapper.map(s, StaffServiceModel.class))
                     .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -178,7 +178,7 @@ public class StaffServiceImpl implements StaffService {
 
         List<Staff> staff;
 
-        if (buildingId.equals(DEFAULT_EMPTY)) {
+        if (buildingId.equals(EMPTY_URL)) {
             staff = this.staffRepository.findAll();
         } else {
             staff = this.staffRepository.getAllByBuildingId(buildingId);

@@ -1,6 +1,5 @@
 package com.syn.domo.web.controller;
 
-import com.syn.domo.model.view.error.ErrorView;
 import com.syn.domo.model.binding.ApartmentBindingModel;
 import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.model.view.ApartmentViewModel;
@@ -20,7 +19,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.syn.domo.common.DefaultParamValues.DEFAULT_ALL;
+import static com.syn.domo.common.DefaultParamValues.EMPTY_URL;
 
 @RestController
 public class ApartmentsController implements ApartmentsNamespace {
@@ -36,7 +35,7 @@ public class ApartmentsController implements ApartmentsNamespace {
     }
 
     @GetMapping
-    public ResponseEntity<Set<ApartmentViewModel>> getAll(@RequestParam(required = false, defaultValue = DEFAULT_ALL,
+    public ResponseEntity<Set<ApartmentViewModel>> getAll(@RequestParam(required = false, defaultValue = EMPTY_URL,
                                                                         name = "buildingId") String buildingId) {
 
         Set<ApartmentViewModel> apartments =
@@ -103,7 +102,7 @@ public class ApartmentsController implements ApartmentsNamespace {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = DEFAULT_ALL,
+    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = EMPTY_URL,
                                                      name = "buildingId") String buildingId,
                                        UriComponentsBuilder uriComponentsBuilder) {
 

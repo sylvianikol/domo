@@ -14,12 +14,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.syn.domo.common.DefaultParamValues.DEFAULT_ALL;
+import static com.syn.domo.common.DefaultParamValues.EMPTY_URL;
 import static com.syn.domo.common.ExceptionErrorMessages.*;
 import static com.syn.domo.common.ValidationErrorMessages.EMAIL_ALREADY_USED;
 import static com.syn.domo.common.ValidationErrorMessages.PHONE_ALREADY_USED;
@@ -57,7 +56,7 @@ public class ResidentServiceImpl implements ResidentService  {
     @Override
     public Set<ResidentServiceModel> getAll(String buildingId, String apartmentId) {
 
-        if (buildingId.equals(DEFAULT_ALL) && apartmentId.equals(DEFAULT_ALL)) {
+        if (buildingId.equals(EMPTY_URL) && apartmentId.equals(EMPTY_URL)) {
 
             return this.residentRepository.findAll().stream()
                     .map(r -> this.modelMapper.map(r, ResidentServiceModel.class))
@@ -65,7 +64,7 @@ public class ResidentServiceImpl implements ResidentService  {
 
         }
 
-        if (apartmentId.equals(DEFAULT_ALL)) {
+        if (apartmentId.equals(EMPTY_URL)) {
 
             if (this.buildingService.get(buildingId).isEmpty()) {
                 throw new EntityNotFoundException(BUILDING_NOT_FOUND);
@@ -81,7 +80,7 @@ public class ResidentServiceImpl implements ResidentService  {
             throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
         }
 
-        if (!buildingId.equals(DEFAULT_ALL)
+        if (!buildingId.equals(EMPTY_URL)
                 && this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId).isEmpty()) {
             throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
         }
@@ -196,9 +195,9 @@ public class ResidentServiceImpl implements ResidentService  {
 
         Set<Resident> residents;
 
-        if (buildingId.equals(DEFAULT_ALL) && apartmentId.equals(DEFAULT_ALL)) {
+        if (buildingId.equals(EMPTY_URL) && apartmentId.equals(EMPTY_URL)) {
             residents = new HashSet<>(this.residentRepository.findAll());
-        } else if (apartmentId.equals(DEFAULT_ALL)) {
+        } else if (apartmentId.equals(EMPTY_URL)) {
 
             if (this.buildingService.get(buildingId).isEmpty()) {
                 throw new EntityNotFoundException(BUILDING_NOT_FOUND);
@@ -212,7 +211,7 @@ public class ResidentServiceImpl implements ResidentService  {
                 throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
             }
 
-            if (!buildingId.equals(DEFAULT_ALL)
+            if (!buildingId.equals(EMPTY_URL)
                     && this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId).isEmpty()) {
                 throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
             }
@@ -242,6 +241,34 @@ public class ResidentServiceImpl implements ResidentService  {
                         .collect(Collectors.toCollection(LinkedHashSet::new));
 
         return Collections.unmodifiableSet(residentServiceModels);
+    }
+
+    @Override
+    public Optional<ResidentServiceModel> getOneByIdAndBuildingIdAndApartmentId(String buildingId, String apartmentId,
+                                                                                String residentId) {
+        Optional<Resident> resident = this.residentRepository
+                .getOneByIdAndBuildingIdAndApartmentId(residentId, buildingId, apartmentId);
+        return resident.isEmpty()
+                ? Optional.empty()
+                : Optional.of(this.modelMapper.map(resident, ResidentServiceModel.class));
+    }
+
+    @Override
+    public Optional<ResidentServiceModel> getOneByIdAndBuildingId(String residentId, String buildingId) {
+        Optional<Resident> resident = this.residentRepository
+                .getOneByIdAndBuildingId(residentId, buildingId);
+        return resident.isEmpty()
+                ? Optional.empty()
+                : Optional.of(this.modelMapper.map(resident, ResidentServiceModel.class));
+    }
+
+    @Override
+    public Optional<ResidentServiceModel> getOneByIdAndApartmentId(String residentId, String apartmentId) {
+        Optional<Resident> resident = this.residentRepository
+                .getOneByIdAndApartmentId(residentId, apartmentId);
+        return resident.isEmpty()
+                ? Optional.empty()
+                : Optional.of(this.modelMapper.map(resident, ResidentServiceModel.class));
     }
 
     private Set<String> getApartmentIds(Resident resident) {

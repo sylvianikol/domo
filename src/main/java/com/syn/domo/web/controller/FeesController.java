@@ -30,7 +30,7 @@ public class FeesController implements FeesNamespace {
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAll(@RequestParam(required = false,
-                                                                 defaultValue = DEFAULT_ALL) String buildingId,
+                                                                 defaultValue = EMPTY_URL) String buildingId,
                                                       @RequestParam(defaultValue = DEFAULT_PAGE_NUMBER) int page,
                                                       @RequestParam(defaultValue = DEFAULT_FEE_PAGE_SIZE) int size,
                                                       @RequestParam(defaultValue = DEFAULT_FEE_PAGE_SORT) String[] sort) {
@@ -80,7 +80,7 @@ public class FeesController implements FeesNamespace {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = DEFAULT_ALL) String buildingId,
+    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = EMPTY_URL) String buildingId,
                                        UriComponentsBuilder uriComponentsBuilder) {
 
         this.feeService.deleteAll(buildingId);

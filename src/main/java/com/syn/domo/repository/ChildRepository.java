@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 
@@ -13,6 +14,8 @@ import java.util.Set;
 public interface ChildRepository extends JpaRepository<Child, String> {
 
     Optional<Child> findByIdAndApartmentId(String childId, String apartmentId);
+
+    Set<Child> findAllByApartmentId(String apartmentId);
 
     @Query("SELECT c FROM Child c " +
             "WHERE c.apartment.id = :apartmentId " +
@@ -30,4 +33,14 @@ public interface ChildRepository extends JpaRepository<Child, String> {
     Optional<Child> getOneByIdAndParentsIds
             (@Param(value = "id") String id,
              @Param(value = "ids") Set<String> ids);
+
+    @Query("SELECT c FROM Child c " +
+            "JOIN c.parents p " +
+            "WHERE p.id = :parentId ")
+    Optional<Child> getAllByParentId
+            (@Param(value = "parentId") String parentId);
+
+    @Query("SELECT c FROM Child c " +
+            "WHERE c.apartment.building.id = :buildingId")
+    Set<Child> getAllByBuildingId(@Param(value = "buildingId") String buildingId);
 }

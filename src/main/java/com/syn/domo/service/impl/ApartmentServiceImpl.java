@@ -21,7 +21,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.syn.domo.common.DefaultParamValues.DEFAULT_ALL;
+import static com.syn.domo.common.DefaultParamValues.EMPTY_URL;
 import static com.syn.domo.common.ExceptionErrorMessages.*;
 import static com.syn.domo.common.ValidationErrorMessages.FLOOR_INVALID;
 
@@ -55,7 +55,7 @@ public class ApartmentServiceImpl implements ApartmentService {
 
         Set<ApartmentServiceModel> apartmentServiceModels;
 
-        if (buildingId.equals(DEFAULT_ALL)) {
+        if (buildingId.equals(EMPTY_URL)) {
 
             apartmentServiceModels = this.apartmentRepository.findAll().stream()
                     .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
@@ -161,7 +161,7 @@ public class ApartmentServiceImpl implements ApartmentService {
 
         Set<Apartment> apartments;
 
-        if (buildingId.equals(DEFAULT_ALL)) {
+        if (buildingId.equals(EMPTY_URL)) {
             apartments = new HashSet<>(this.apartmentRepository.findAll());
         } else {
 

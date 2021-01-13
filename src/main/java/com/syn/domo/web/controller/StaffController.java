@@ -20,7 +20,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.syn.domo.common.DefaultParamValues.DEFAULT_EMPTY;
+import static com.syn.domo.common.DefaultParamValues.EMPTY_URL;
 
 @RestController
 public class StaffController implements StaffNamespace {
@@ -35,7 +35,7 @@ public class StaffController implements StaffNamespace {
     }
 
     @GetMapping
-    public ResponseEntity<Set<StaffViewModel>> getAll(@RequestParam(required = false, defaultValue = DEFAULT_EMPTY,
+    public ResponseEntity<Set<StaffViewModel>> getAll(@RequestParam(required = false, defaultValue = EMPTY_URL,
                                                                  name = "buildingId") String buildingId) {
 
         Set<StaffViewModel> staff =
@@ -102,7 +102,7 @@ public class StaffController implements StaffNamespace {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = DEFAULT_EMPTY,
+    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = EMPTY_URL,
                                                      name = "buildingId") String buildingId,
                                        UriComponentsBuilder uriComponentsBuilder) {
 

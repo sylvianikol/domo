@@ -1,7 +1,6 @@
 package com.syn.domo.web.controller;
 
 import com.syn.domo.model.view.ResponseModel;
-import com.syn.domo.model.view.error.ErrorView;
 import com.syn.domo.model.binding.ResidentBindingModel;
 import com.syn.domo.model.service.ResidentServiceModel;
 import com.syn.domo.model.view.ResidentViewModel;
@@ -20,7 +19,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.syn.domo.common.DefaultParamValues.DEFAULT_ALL;
+import static com.syn.domo.common.DefaultParamValues.EMPTY_URL;
 
 @RestController
 public class ResidentsController implements ResidentsNamespace {
@@ -35,9 +34,9 @@ public class ResidentsController implements ResidentsNamespace {
     }
 
     @GetMapping
-    public ResponseEntity<Set<ResidentViewModel>> getAll(@RequestParam(required = false, defaultValue = DEFAULT_ALL,
+    public ResponseEntity<Set<ResidentViewModel>> getAll(@RequestParam(required = false, defaultValue = EMPTY_URL,
                                                                        name = "buildingId") String buildingId,
-                                                         @RequestParam(required = false, defaultValue = DEFAULT_ALL,
+                                                         @RequestParam(required = false, defaultValue = EMPTY_URL,
                                                                        name = "apartmentId") String apartmentId) {
 
         Set<ResidentViewModel> residents = this.residentService
@@ -107,9 +106,9 @@ public class ResidentsController implements ResidentsNamespace {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = DEFAULT_ALL,
+    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = EMPTY_URL,
                                                      name = "buildingId") String buildingId,
-                                       @RequestParam(required = false, defaultValue = DEFAULT_ALL,
+                                       @RequestParam(required = false, defaultValue = EMPTY_URL,
                                                      name = "apartmentId") String apartmentId,
                                        UriComponentsBuilder uriComponentsBuilder) {
 

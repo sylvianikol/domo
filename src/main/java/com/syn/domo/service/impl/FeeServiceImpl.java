@@ -64,7 +64,7 @@ public class FeeServiceImpl implements FeeService {
 
         Page<Fee> pageFees;
 
-        if (buildingId.equals(DEFAULT_ALL)) {
+        if (buildingId.equals(EMPTY_URL)) {
             pageFees = this.feeRepository.findAllBy(pagingSort);
         } else {
 
@@ -140,7 +140,7 @@ public class FeeServiceImpl implements FeeService {
 
         Set<Fee> fees;
 
-        if (buildingId.equals(DEFAULT_ALL)) {
+        if (buildingId.equals(EMPTY_URL)) {
             fees = new HashSet<>(this.feeRepository.findAll());
             this.feeRepository.deleteAll(fees);
         } else {

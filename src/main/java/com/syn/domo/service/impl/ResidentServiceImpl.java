@@ -90,9 +90,9 @@ public class ResidentServiceImpl implements ResidentService  {
     }
 
     @Override
-    public Optional<ResidentServiceModel> get(String buildingId, String apartmentId, String residentId) {
-        Optional<Resident> resident = this.residentRepository
-                .getOneByIdAndBuildingIdAndApartmentId(residentId, buildingId, apartmentId);
+    public Optional<ResidentServiceModel> get(String residentId) {
+
+        Optional<Resident> resident = this.residentRepository.findById(residentId);
 
         return resident.isEmpty()
                 ? Optional.empty()

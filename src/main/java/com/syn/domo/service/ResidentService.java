@@ -9,6 +9,10 @@ import java.util.Set;
 
 public interface ResidentService {
 
+    Set<ResidentServiceModel> getAll(String buildingId, String apartmentId);
+
+    Optional<ResidentServiceModel> get(String residentId);
+
     ResponseModel<ResidentServiceModel> add(ResidentServiceModel residentServiceModel, String buildingId, String apartmentId);
 
     ResponseModel<ResidentServiceModel> edit(ResidentServiceModel residentServiceModel,
@@ -18,10 +22,5 @@ public interface ResidentService {
 
     void delete(String buildingId, String apartmentId, String residentId);
 
-    Set<ResidentServiceModel> getAll(String buildingId, String apartmentId);
-
-    Optional<ResidentServiceModel> get(String buildingId, String apartmentId, String residentId);
-
     Set<ResidentServiceModel> getAllByIdIn(Set<String> ids);
-
 }

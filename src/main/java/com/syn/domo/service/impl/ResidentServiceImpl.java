@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.syn.domo.common.DefaultParamValues.DEFAULT_ALL;
 import static com.syn.domo.common.ExceptionErrorMessages.*;
 import static com.syn.domo.common.ValidationErrorMessages.EMAIL_ALREADY_USED;
 
@@ -53,13 +54,39 @@ public class ResidentServiceImpl implements ResidentService  {
 
     @Override
     public Set<ResidentServiceModel> getAll(String buildingId, String apartmentId) {
-        Set<ResidentServiceModel> residents = this.residentRepository
-                .getAllByBuildingIdAndApartmentId(buildingId, apartmentId)
-                .stream()
-                .map(r -> this.modelMapper.map(r, ResidentServiceModel.class))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
 
-        return Collections.unmodifiableSet(residents);
+        if (buildingId.equals(DEFAULT_ALL) && apartmentId.equals(DEFAULT_ALL)) {
+
+            return this.residentRepository.findAll().stream()
+                    .map(r -> this.modelMapper.map(r, ResidentServiceModel.class))
+                    .collect(Collectors.toUnmodifiableSet());
+
+        }
+
+        if (apartmentId.equals(DEFAULT_ALL)) {
+
+            if (this.buildingService.get(buildingId).isEmpty()) {
+                throw new EntityNotFoundException(BUILDING_NOT_FOUND);
+            }
+
+            return this.residentRepository.getAllByBuildingId(buildingId).stream()
+                    .map(r -> this.modelMapper.map(r, ResidentServiceModel.class))
+                    .collect(Collectors.toUnmodifiableSet());
+
+        }
+
+        if (this.apartmentService.get(apartmentId).isEmpty()) {
+            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
+        }
+
+        if (!buildingId.equals(DEFAULT_ALL)
+                && this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId).isEmpty()) {
+            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
+        }
+
+        return this.residentRepository.getAllByApartmentId(apartmentId).stream()
+                .map(r -> this.modelMapper.map(r, ResidentServiceModel.class))
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override

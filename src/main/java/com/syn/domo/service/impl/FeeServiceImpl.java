@@ -30,6 +30,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.syn.domo.common.DefaultParamValues.*;
+import static com.syn.domo.common.ExceptionErrorMessages.BUILDING_NOT_FOUND;
 import static com.syn.domo.model.entity.Fee.BASE_FEE;
 
 @Service
@@ -69,7 +70,7 @@ public class FeeServiceImpl implements FeeService {
         } else {
 
             if (this.buildingService.get(buildingId).isEmpty()) {
-                throw new EntityNotFoundException("Building not found!");
+                throw new EntityNotFoundException(BUILDING_NOT_FOUND);
             }
 
             pageFees = this.feeRepository
@@ -142,16 +143,15 @@ public class FeeServiceImpl implements FeeService {
 
         if (buildingId.equals(EMPTY_URL)) {
             fees = new HashSet<>(this.feeRepository.findAll());
-            this.feeRepository.deleteAll(fees);
         } else {
-            Optional<BuildingServiceModel> building = this.buildingService.get(buildingId);
-            if (building.isEmpty()) {
-                throw new EntityNotFoundException("Building not found!");
+            if (this.buildingService.get(buildingId).isEmpty()) {
+                throw new EntityNotFoundException(BUILDING_NOT_FOUND);
             }
 
             fees = this.feeRepository.getAllByBuildingId(buildingId);
-            this.feeRepository.deleteAll(fees);
         }
+
+        this.feeRepository.deleteAll(fees);
     }
 
     @Override

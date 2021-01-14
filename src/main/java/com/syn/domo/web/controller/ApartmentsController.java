@@ -76,7 +76,7 @@ public class ApartmentsController implements ApartmentsNamespace {
         return  responseModel.hasErrors()
                 ? ResponseEntity.unprocessableEntity().body(responseModel)
                 : ResponseEntity.created(uriComponentsBuilder.path(URI_APARTMENTS + "/{apartmentId}")
-                .buildAndExpand(buildingId, responseModel.getId())
+                .buildAndExpand(responseModel.getId())
                 .toUri()).build();
     }
 
@@ -96,9 +96,10 @@ public class ApartmentsController implements ApartmentsNamespace {
 
         return responseModel.hasErrors()
                 ? ResponseEntity.unprocessableEntity().body(responseModel)
-                : ResponseEntity.created(uriComponentsBuilder.path(URI_APARTMENTS + "/{apartmentId}")
-                .buildAndExpand(apartmentId)
-                .toUri()).build();
+                : ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .location(uriComponentsBuilder.path(URI_APARTMENTS + "/{apartmentId}")
+                        .buildAndExpand(responseModel.getId())
+                        .toUri()).build();
     }
 
     @DeleteMapping

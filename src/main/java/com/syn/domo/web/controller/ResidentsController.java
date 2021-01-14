@@ -100,8 +100,9 @@ public class ResidentsController implements ResidentsNamespace {
 
         return responseModel.hasErrors()
                 ? ResponseEntity.unprocessableEntity().body(responseModel)
-                : ResponseEntity.created(uriComponentsBuilder.path(URI_RESIDENTS + "/{residentId}")
-                .buildAndExpand(residentId).toUri())
+                : ResponseEntity.status(HttpStatus.NO_CONTENT)
+                    .location(uriComponentsBuilder.path(URI_RESIDENTS + "/{residentId}")
+                    .buildAndExpand(residentId).toUri())
                 .build();
     }
 

@@ -1,7 +1,6 @@
 package com.syn.domo.web.controller;
 
 import com.syn.domo.model.view.ResponseModel;
-import com.syn.domo.model.view.error.ErrorView;
 import com.syn.domo.model.binding.*;
 import com.syn.domo.model.service.StaffServiceModel;
 import com.syn.domo.model.view.StaffViewModel;
@@ -38,10 +37,9 @@ public class StaffController implements StaffNamespace {
     public ResponseEntity<Set<StaffViewModel>> getAll(@RequestParam(required = false, defaultValue = EMPTY_URL,
                                                                  name = "buildingId") String buildingId) {
 
-        Set<StaffViewModel> staff =
-                this.staffService.getAll(buildingId).stream()
-                        .map(s -> this.modelMapper.map(s, StaffViewModel.class))
-                        .collect(Collectors.toSet());
+        Set<StaffViewModel> staff = this.staffService.getAll(buildingId).stream()
+                .map(s -> this.modelMapper.map(s, StaffViewModel.class))
+                .collect(Collectors.toSet());
 
         return staff.isEmpty()
                 ? ResponseEntity.notFound().build()
@@ -68,15 +66,14 @@ public class StaffController implements StaffNamespace {
                     .body(new ResponseModel<>(staffBindingModel, bindingResult));
         }
 
-        ResponseModel<StaffServiceModel> responseModel = this.staffService
-                        .add(this.modelMapper.map(staffBindingModel, StaffServiceModel.class));
+        ResponseModel<StaffServiceModel> responseModel =
+                this.staffService.add(this.modelMapper.map(staffBindingModel, StaffServiceModel.class));
 
         return responseModel.hasErrors()
                 ? ResponseEntity.unprocessableEntity().body(responseModel)
-                : ResponseEntity.created(uriComponentsBuilder
-                .path(URI_STAFF + "/{staffId}")
-                .buildAndExpand(responseModel.getId())
-                .toUri()).build();
+                : ResponseEntity.created(uriComponentsBuilder.path(URI_STAFF + "/{staffId}")
+                .buildAndExpand(responseModel.getId()).toUri())
+                .build();
     }
 
     @PutMapping("/{staffId}")
@@ -95,10 +92,10 @@ public class StaffController implements StaffNamespace {
 
         return responseModel.hasErrors()
                 ? ResponseEntity.unprocessableEntity().body(responseModel)
-                : ResponseEntity.created(uriComponentsBuilder
-                .path(URI_STAFF + "/{staffId}")
-                .buildAndExpand(staffId)
-                .toUri()).build();
+                : ResponseEntity.status(HttpStatus.NO_CONTENT)
+                    .location(uriComponentsBuilder.path(URI_STAFF + "/{staffId}")
+                    .buildAndExpand(staffId).toUri())
+                .build();
     }
 
     @DeleteMapping
@@ -109,8 +106,7 @@ public class StaffController implements StaffNamespace {
         this.staffService.deleteAll(buildingId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder
-                        .path(URI_STAFF).build().toUri())
+                .location(uriComponentsBuilder.path(URI_STAFF).build().toUri())
                 .build();
     }
 
@@ -121,8 +117,7 @@ public class StaffController implements StaffNamespace {
         this.staffService.delete(staffId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder
-                        .path(URI_STAFF).build().toUri())
+                .location(uriComponentsBuilder.path(URI_STAFF).build().toUri())
                 .build();
     }
 
@@ -134,9 +129,8 @@ public class StaffController implements StaffNamespace {
         this.staffService.assignBuildings(staffId, buildingIds);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder
-                        .path(URI_STAFF + "/{staffId}")
-                        .buildAndExpand(staffId)
-                        .toUri()).build();
+                .location(uriComponentsBuilder.path(URI_STAFF + "/{staffId}")
+                        .buildAndExpand(staffId).toUri())
+                .build();
     }
 }

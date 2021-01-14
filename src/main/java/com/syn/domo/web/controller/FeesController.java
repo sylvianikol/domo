@@ -72,10 +72,7 @@ public class FeesController implements FeesNamespace {
         this.feeService.delete(feeId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder
-                        .path(URI_FEES)
-                        .build()
-                        .toUri())
+                .location(uriComponentsBuilder.path(URI_FEES).build().toUri())
                 .build();
     }
 
@@ -86,10 +83,7 @@ public class FeesController implements FeesNamespace {
         this.feeService.deleteAll(buildingId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder
-                        .path(URI_FEES)
-                        .build()
-                        .toUri())
+                .location(uriComponentsBuilder.path(URI_FEES).build().toUri())
                 .build();
     }
 }

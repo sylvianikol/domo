@@ -18,7 +18,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.syn.domo.common.DefaultParamValues.EMPTY_URL;
+import static com.syn.domo.common.DefaultParamValues.EMPTY_VALUE;
 import static com.syn.domo.common.ExceptionErrorMessages.*;
 import static com.syn.domo.common.ValidationErrorMessages.EMAIL_ALREADY_USED;
 import static com.syn.domo.common.ValidationErrorMessages.PHONE_ALREADY_USED;
@@ -56,7 +56,7 @@ public class ResidentServiceImpl implements ResidentService  {
     @Override
     public Set<ResidentServiceModel> getAll(String buildingId, String apartmentId) {
 
-        if (buildingId.equals(EMPTY_URL) && apartmentId.equals(EMPTY_URL)) {
+        if (buildingId.equals(EMPTY_VALUE) && apartmentId.equals(EMPTY_VALUE)) {
 
             return this.residentRepository.findAll().stream()
                     .map(r -> this.modelMapper.map(r, ResidentServiceModel.class))
@@ -64,7 +64,7 @@ public class ResidentServiceImpl implements ResidentService  {
 
         }
 
-        if (apartmentId.equals(EMPTY_URL)) {
+        if (apartmentId.equals(EMPTY_VALUE)) {
 
             if (this.buildingService.get(buildingId).isEmpty()) {
                 throw new EntityNotFoundException(BUILDING_NOT_FOUND);
@@ -80,7 +80,7 @@ public class ResidentServiceImpl implements ResidentService  {
             throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
         }
 
-        if (!buildingId.equals(EMPTY_URL)
+        if (!buildingId.equals(EMPTY_VALUE)
                 && this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId).isEmpty()) {
             throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
         }
@@ -195,9 +195,9 @@ public class ResidentServiceImpl implements ResidentService  {
 
         Set<Resident> residents;
 
-        if (buildingId.equals(EMPTY_URL) && apartmentId.equals(EMPTY_URL)) {
+        if (buildingId.equals(EMPTY_VALUE) && apartmentId.equals(EMPTY_VALUE)) {
             residents = new HashSet<>(this.residentRepository.findAll());
-        } else if (apartmentId.equals(EMPTY_URL)) {
+        } else if (apartmentId.equals(EMPTY_VALUE)) {
 
             if (this.buildingService.get(buildingId).isEmpty()) {
                 throw new EntityNotFoundException(BUILDING_NOT_FOUND);
@@ -211,12 +211,12 @@ public class ResidentServiceImpl implements ResidentService  {
                 throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
             }
 
-            if (!buildingId.equals(EMPTY_URL)
+            if (!buildingId.equals(EMPTY_VALUE)
                     && this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId).isEmpty()) {
                 throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
             }
 
-            this.childService.deleteAll(buildingId, apartmentId, EMPTY_URL);
+            this.childService.deleteAll(buildingId, apartmentId, EMPTY_VALUE);
 
             residents = this.residentRepository.getAllByApartmentId(apartmentId);
         }

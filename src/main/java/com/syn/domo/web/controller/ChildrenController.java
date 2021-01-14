@@ -2,7 +2,6 @@ package com.syn.domo.web.controller;
 
 import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.model.binding.ChildBindingModel;
-import com.syn.domo.model.binding.ChildEditBindingModel;
 import com.syn.domo.model.service.ChildServiceModel;
 import com.syn.domo.model.view.ChildViewModel;
 import com.syn.domo.service.ChildService;
@@ -20,7 +19,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.syn.domo.common.DefaultParamValues.EMPTY_URL;
+import static com.syn.domo.common.DefaultParamValues.EMPTY_VALUE;
 
 @RestController
 public class ChildrenController implements ChildrenNamespace {
@@ -35,11 +34,11 @@ public class ChildrenController implements ChildrenNamespace {
     }
 
     @GetMapping
-    public ResponseEntity<Set<ChildViewModel>> getAll(@RequestParam(required = false, defaultValue = EMPTY_URL,
+    public ResponseEntity<Set<ChildViewModel>> getAll(@RequestParam(required = false, defaultValue = EMPTY_VALUE,
                                                                     name = "buildingId") String buildingId,
-                                                      @RequestParam(required = false, defaultValue = EMPTY_URL,
+                                                      @RequestParam(required = false, defaultValue = EMPTY_VALUE,
                                                                     name = "apartmentId") String apartmentId,
-                                                      @RequestParam(required = false, defaultValue = EMPTY_URL,
+                                                      @RequestParam(required = false, defaultValue = EMPTY_VALUE,
                                                                     name = "parentId") String parentId) {
         Set<ChildViewModel> children = this.childService
                 .getAll(buildingId, apartmentId, parentId)
@@ -87,16 +86,16 @@ public class ChildrenController implements ChildrenNamespace {
 
     @PutMapping("/{childId}")
     public ResponseEntity<?> edit(@PathVariable(value = "childId") String childId,
-                                  @Valid @RequestBody ChildEditBindingModel childEditBindingModel,
+                                  @Valid @RequestBody ChildBindingModel childBindingModel,
                                   BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
 
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
-                    .body(new ResponseModel<>(childEditBindingModel, bindingResult));
+                    .body(new ResponseModel<>(childBindingModel, bindingResult));
         }
 
         ResponseModel<ChildServiceModel> responseModel = this.childService.edit(
-                this.modelMapper.map(childEditBindingModel, ChildServiceModel.class), childId);
+                this.modelMapper.map(childBindingModel, ChildServiceModel.class), childId);
 
         return responseModel.hasErrors()
                 ? ResponseEntity.unprocessableEntity().body(responseModel)
@@ -107,11 +106,11 @@ public class ChildrenController implements ChildrenNamespace {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = EMPTY_URL,
+    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = EMPTY_VALUE,
                                               name = "buildingId") String buildingId,
-                                       @RequestParam(required = false, defaultValue = EMPTY_URL,
+                                       @RequestParam(required = false, defaultValue = EMPTY_VALUE,
                                                name = "apartmentId") String apartmentId,
-                                       @RequestParam(required = false, defaultValue = EMPTY_URL,
+                                       @RequestParam(required = false, defaultValue = EMPTY_VALUE,
                                                name = "parentId") String parentId,
                                        UriComponentsBuilder uriComponentsBuilder) {
 

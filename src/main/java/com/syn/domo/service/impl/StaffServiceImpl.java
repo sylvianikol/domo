@@ -1,8 +1,6 @@
 package com.syn.domo.service.impl;
 
-import com.syn.domo.common.DefaultParamValues;
 import com.syn.domo.error.ErrorContainer;
-import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.entity.Role;
 import com.syn.domo.model.entity.Staff;
@@ -27,7 +25,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.syn.domo.common.DefaultParamValues.EMPTY_URL;
+import static com.syn.domo.common.DefaultParamValues.EMPTY_VALUE;
 import static com.syn.domo.common.ExceptionErrorMessages.*;
 import static com.syn.domo.common.ValidationErrorMessages.EMAIL_ALREADY_USED;
 import static com.syn.domo.common.ValidationErrorMessages.PHONE_ALREADY_USED;
@@ -61,7 +59,7 @@ public class StaffServiceImpl implements StaffService {
 
         Set<StaffServiceModel> staff;
 
-        if (buildingId.equals(EMPTY_URL)) {
+        if (buildingId.equals(EMPTY_VALUE)) {
             staff = this.staffRepository.findAll().stream()
                     .map(s -> this.modelMapper.map(s, StaffServiceModel.class))
                     .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -178,7 +176,7 @@ public class StaffServiceImpl implements StaffService {
 
         List<Staff> staff;
 
-        if (buildingId.equals(EMPTY_URL)) {
+        if (buildingId.equals(EMPTY_VALUE)) {
             staff = this.staffRepository.findAll();
         } else {
             staff = this.staffRepository.getAllByBuildingId(buildingId);

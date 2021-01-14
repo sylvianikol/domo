@@ -2,7 +2,7 @@ package com.syn.domo.common;
 
 public class DefaultParamValues {
 
-    public static final String EMPTY_URL = "emptyUrl";
+    public static final String EMPTY_VALUE = "emptyValue";
 
     public static final String FEES_RESPONSE_KEY = "fees";
     public static final String DEFAULT_FEE_PAGE_SIZE = "5";

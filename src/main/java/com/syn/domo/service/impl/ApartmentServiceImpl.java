@@ -21,7 +21,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.syn.domo.common.DefaultParamValues.EMPTY_URL;
+import static com.syn.domo.common.DefaultParamValues.EMPTY_VALUE;
 import static com.syn.domo.common.ExceptionErrorMessages.*;
 import static com.syn.domo.common.ValidationErrorMessages.FLOOR_INVALID;
 
@@ -55,7 +55,7 @@ public class ApartmentServiceImpl implements ApartmentService {
 
         Set<ApartmentServiceModel> apartmentServiceModels;
 
-        if (buildingId.equals(EMPTY_URL)) {
+        if (buildingId.equals(EMPTY_VALUE)) {
 
             apartmentServiceModels = this.apartmentRepository.findAll().stream()
                     .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
@@ -161,7 +161,7 @@ public class ApartmentServiceImpl implements ApartmentService {
 
         Set<Apartment> apartments;
 
-        if (buildingId.equals(EMPTY_URL)) {
+        if (buildingId.equals(EMPTY_VALUE)) {
             apartments = new HashSet<>(this.apartmentRepository.findAll());
         } else {
 
@@ -173,7 +173,7 @@ public class ApartmentServiceImpl implements ApartmentService {
         }
 
         for (Apartment apartment : apartments) {
-            this.childService.deleteAll(buildingId, apartment.getId(), EMPTY_URL);
+            this.childService.deleteAll(buildingId, apartment.getId(), EMPTY_VALUE);
             this.residentService.deleteAll(buildingId, apartment.getId());
         }
 
@@ -189,7 +189,7 @@ public class ApartmentServiceImpl implements ApartmentService {
         String buildingId = apartment.getBuilding().getId();
 
         this.residentService.deleteAll(buildingId, apartment.getId());
-        this.childService.deleteAll(buildingId, apartment.getId(), EMPTY_URL);
+        this.childService.deleteAll(buildingId, apartment.getId(), EMPTY_VALUE);
         this.apartmentRepository.delete(apartment);
     }
 

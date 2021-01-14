@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.syn.domo.common.DefaultParamValues.EMPTY_URL;
+import static com.syn.domo.common.DefaultParamValues.EMPTY_VALUE;
 
 @RestController
 public class ApartmentsController implements ApartmentsNamespace {
@@ -35,7 +35,7 @@ public class ApartmentsController implements ApartmentsNamespace {
     }
 
     @GetMapping
-    public ResponseEntity<Set<ApartmentViewModel>> getAll(@RequestParam(required = false, defaultValue = EMPTY_URL,
+    public ResponseEntity<Set<ApartmentViewModel>> getAll(@RequestParam(required = false, defaultValue = EMPTY_VALUE,
                                                                         name = "buildingId") String buildingId) {
 
         Set<ApartmentViewModel> apartments =
@@ -103,7 +103,7 @@ public class ApartmentsController implements ApartmentsNamespace {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = EMPTY_URL,
+    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = EMPTY_VALUE,
                                                      name = "buildingId") String buildingId,
                                        UriComponentsBuilder uriComponentsBuilder) {
 

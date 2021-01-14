@@ -4,7 +4,6 @@ import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Fee;
 import com.syn.domo.model.service.ApartmentServiceModel;
-import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.model.service.FeeServiceModel;
 import com.syn.domo.model.service.UserServiceModel;
 import com.syn.domo.model.view.FeeViewModel;
@@ -189,7 +188,7 @@ public class FeeServiceImpl implements FeeService {
     @Override
     public void generateMonthlyFees() {
 
-        Set<ApartmentServiceModel> apartments = this.apartmentService.getAll(EMPTY_URL);
+        Set<ApartmentServiceModel> apartments = this.apartmentService.getAll(EMPTY_VALUE);
 
         for (ApartmentServiceModel apartment : apartments) {
             Fee fee = new Fee();

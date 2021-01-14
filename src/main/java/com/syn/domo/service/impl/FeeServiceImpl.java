@@ -203,7 +203,7 @@ public class FeeServiceImpl implements FeeService {
             this.feeRepository.saveAndFlush(fee);
 
             for (UserServiceModel resident : apartment.getResidents()) {
-                this.notificationService.sendEmail(resident);
+                this.notificationService.sendNewFeeNotificationEmail(resident);
             }
         }
 

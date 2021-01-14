@@ -7,12 +7,14 @@ import com.syn.domo.model.entity.Role;
 import com.syn.domo.model.entity.UserRole;
 import com.syn.domo.model.service.*;
 import com.syn.domo.model.view.ResponseModel;
+import com.syn.domo.notification.service.NotificationService;
 import com.syn.domo.repository.ResidentRepository;
 import com.syn.domo.service.*;
 import com.syn.domo.utils.ValidationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.*;
@@ -34,6 +36,7 @@ public class ResidentServiceImpl implements ResidentService  {
     private final RoleService roleService;
     private final ModelMapper modelMapper;
     private final ValidationUtil validationUtil;
+    private final NotificationService notificationService;
 
     public ResidentServiceImpl(ResidentRepository residentRepository,
                                UserService userService,
@@ -42,7 +45,8 @@ public class ResidentServiceImpl implements ResidentService  {
                                ChildService childService,
                                RoleService roleService,
                                ModelMapper modelMapper,
-                               ValidationUtil validationUtil) {
+                               ValidationUtil validationUtil,
+                               NotificationService notificationService) {
         this.residentRepository = residentRepository;
         this.userService = userService;
         this.buildingService = buildingService;
@@ -51,6 +55,7 @@ public class ResidentServiceImpl implements ResidentService  {
         this.roleService = roleService;
         this.modelMapper = modelMapper;
         this.validationUtil = validationUtil;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -101,12 +106,12 @@ public class ResidentServiceImpl implements ResidentService  {
     }
 
     @Override
-    public ResponseModel<ResidentServiceModel> add(ResidentServiceModel residentServiceModel,
-                                                   String buildingId, String apartmentId) {
+    public ResponseModel<ResidentServiceModel> add(ResidentServiceModel residentToAdd,
+                                                   String buildingId, String apartmentId) throws MessagingException {
 
-        if (!this.validationUtil.isValid(residentServiceModel)) {
-            return new ResponseModel<>(residentServiceModel,
-                    this.validationUtil.violations(residentServiceModel));
+        if (!this.validationUtil.isValid(residentToAdd)) {
+            return new ResponseModel<>(residentToAdd,
+                    this.validationUtil.violations(residentToAdd));
         }
 
         if (this.buildingService.get(buildingId).isEmpty()) {
@@ -117,17 +122,17 @@ public class ResidentServiceImpl implements ResidentService  {
                 .getByIdAndBuildingId(apartmentId, buildingId)
                 .orElseThrow(() -> { throw new EntityNotFoundException(APARTMENT_NOT_FOUND); });
 
-        String email = residentServiceModel.getEmail();
+        String email = residentToAdd.getEmail();
         if (this.userService.getByEmail(email).isPresent()) {
-            return new ResponseModel<>(residentServiceModel,
+            return new ResponseModel<>(residentToAdd,
                     new ErrorContainer(Map.of("email",
                             Set.of(String.format(EMAIL_ALREADY_USED, email)))
             ));
         }
 
-        String phoneNumber = residentServiceModel.getPhoneNumber();
+        String phoneNumber = residentToAdd.getPhoneNumber();
         if (this.userService.getByPhoneNumber(phoneNumber).isPresent()) {
-            return new ResponseModel<>(residentServiceModel,
+            return new ResponseModel<>(residentToAdd,
                     new ErrorContainer(Map.of("phoneNumber",
                             Set.of(String.format(PHONE_ALREADY_USED, phoneNumber)))
                     ));
@@ -137,7 +142,7 @@ public class ResidentServiceImpl implements ResidentService  {
                 .getByName(UserRole.RESIDENT)
                 .orElseThrow(() -> { throw new EntityNotFoundException(ROLE_NOT_FOUND); });
 
-        Resident resident = this.modelMapper.map(residentServiceModel, Resident.class);
+        Resident resident = this.modelMapper.map(residentToAdd, Resident.class);
 
         resident.setRoles(Set.of(this.modelMapper.map(roleServiceModel, Role.class)));
         resident.setAddedOn(LocalDate.now());
@@ -145,10 +150,12 @@ public class ResidentServiceImpl implements ResidentService  {
 
         this.residentRepository.saveAndFlush(resident);
 
-        // TODO: Send email with link to create password
+        ResidentServiceModel addedResident =
+                this.modelMapper.map(resident, ResidentServiceModel.class);
 
-        return new ResponseModel<>(resident.getId(),
-                this.modelMapper.map(resident, ResidentServiceModel.class));
+        this.notificationService.sendActivationEmail(addedResident);
+
+        return new ResponseModel<>(resident.getId(), addedResident);
     }
 
     @Override

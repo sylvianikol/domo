@@ -4,6 +4,7 @@ import com.syn.domo.model.service.ResidentServiceModel;
 import com.syn.domo.model.service.UserServiceModel;
 import com.syn.domo.model.view.ResponseModel;
 
+import javax.mail.MessagingException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -15,7 +16,7 @@ public interface ResidentService {
     Optional<ResidentServiceModel> get(String residentId);
 
     ResponseModel<ResidentServiceModel> add(ResidentServiceModel residentServiceModel,
-                                            String buildingId, String apartmentId);
+                                            String buildingId, String apartmentId) throws MessagingException;
 
     ResponseModel<ResidentServiceModel> edit(ResidentServiceModel residentServiceModel,
                                              String residentId);

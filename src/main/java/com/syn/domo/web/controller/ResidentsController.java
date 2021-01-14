@@ -14,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.util.Optional;
 import java.util.Set;
@@ -66,7 +67,7 @@ public class ResidentsController implements ResidentsNamespace {
                                  @RequestParam(value = "apartmentId") String apartmentId,
                                  @Valid @RequestBody ResidentBindingModel residentBindingModel,
                                  BindingResult bindingResult,
-                                 UriComponentsBuilder uriComponentsBuilder) {
+                                 UriComponentsBuilder uriComponentsBuilder) throws MessagingException {
 
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()

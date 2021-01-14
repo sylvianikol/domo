@@ -21,6 +21,6 @@ public interface ChildService {
 
     void deleteAll(String buildingId, String apartmentId, String parentId);
 
-    void delete(String childId, String buildingId, String apartmentId);
+    void delete(String childId);
 
 }

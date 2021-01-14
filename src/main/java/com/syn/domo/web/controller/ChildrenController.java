@@ -123,17 +123,13 @@ public class ChildrenController implements ChildrenNamespace {
     }
 
     @DeleteMapping("/{childId}")
-    public ResponseEntity<?> delete(@PathVariable(value = "buildingId") String buildingId,
-                                    @PathVariable(value = "apartmentId") String apartmentId,
-                                    @PathVariable(value = "childId") String childId,
+    public ResponseEntity<?> delete(@PathVariable(value = "childId") String childId,
                                     UriComponentsBuilder uriComponentsBuilder) {
 
-        this.childService.delete(childId, buildingId, apartmentId);
+        this.childService.delete(childId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder
-                        .path(URI_CHILDREN)
-                        .buildAndExpand(buildingId, apartmentId)
-                        .toUri()).build();
+                .location(uriComponentsBuilder.path(URI_CHILDREN).build().toUri())
+                .build();
     }
 }

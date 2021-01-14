@@ -31,11 +31,13 @@ public class FeesController implements FeesNamespace {
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAll(@RequestParam(required = false,
                                                                  defaultValue = EMPTY_URL) String buildingId,
+                                                      @RequestParam(required = false,
+                                                              defaultValue = EMPTY_URL) String apartmentId,
                                                       @RequestParam(defaultValue = DEFAULT_PAGE_NUMBER) int page,
                                                       @RequestParam(defaultValue = DEFAULT_FEE_PAGE_SIZE) int size,
                                                       @RequestParam(defaultValue = DEFAULT_FEE_PAGE_SORT) String[] sort) {
         Map<String, Object> response =
-                this.feeService.getAll(buildingId, page, size, sort);
+                this.feeService.getAll(buildingId, apartmentId, page, size, sort);
 
         return response.get(FEES_RESPONSE_KEY) == null
                 ? ResponseEntity.noContent().build()

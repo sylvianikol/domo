@@ -1,5 +1,7 @@
 package com.syn.domo.config;
 
+import com.syn.domo.utils.UrlCheckerUtil;
+import com.syn.domo.utils.UrlCheckerUtilImpl;
 import com.syn.domo.utils.ValidationUtil;
 import com.syn.domo.utils.ValidationUtilImpl;
 import org.modelmapper.ModelMapper;
@@ -17,5 +19,10 @@ public class ApplicationBeanConfiguration {
     @Bean
     public ValidationUtil validationUtil() {
         return new ValidationUtilImpl();
+    }
+
+    @Bean
+    public UrlCheckerUtil urlCheckerUtil() {
+        return new UrlCheckerUtilImpl();
     }
 }

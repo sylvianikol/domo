@@ -8,6 +8,7 @@ import com.syn.domo.model.service.*;
 import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.repository.ChildRepository;
 import com.syn.domo.service.*;
+import com.syn.domo.utils.UrlCheckerUtil;
 import com.syn.domo.utils.ValidationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,6 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.syn.domo.common.DefaultParamValues.EMPTY_URL;
 import static com.syn.domo.common.ExceptionErrorMessages.*;
 
 @Service
@@ -33,31 +33,35 @@ public class ChildServiceImpl implements ChildService {
     private final ResidentService residentService;
     private final ModelMapper modelMapper;
     private final ValidationUtil validationUtil;
+    private final UrlCheckerUtil urlCheckerUtil;
 
     @Autowired
     public ChildServiceImpl(ChildRepository childRepository,
                             BuildingService buildingService,
                             ApartmentService apartmentService,
                             @Lazy ResidentService residentService,
-                            ModelMapper modelMapper, ValidationUtil validationUtil) {
+                            ModelMapper modelMapper,
+                            ValidationUtil validationUtil,
+                            UrlCheckerUtil urlCheckerUtil) {
         this.childRepository = childRepository;
         this.buildingService = buildingService;
         this.apartmentService = apartmentService;
         this.residentService = residentService;
         this.modelMapper = modelMapper;
         this.validationUtil = validationUtil;
+        this.urlCheckerUtil = urlCheckerUtil;
     }
 
     @Override
     public Set<ChildServiceModel> getAll(String buildingId, String apartmentId, String parentId) {
 
-        if (this.areEmptyUrls(buildingId, apartmentId, parentId)) {
+        if (this.urlCheckerUtil.areEmpty(buildingId, apartmentId, parentId)) {
             return this.childRepository.findAll().stream()
                     .map(c -> this.modelMapper.map(c, ChildServiceModel.class))
                     .collect(Collectors.toUnmodifiableSet());
         }
 
-        if (this.areEmptyUrls(apartmentId, parentId)) {
+        if (this.urlCheckerUtil.areEmpty(apartmentId, parentId)) {
             if (this.buildingService.get(buildingId).isEmpty()) {
                 throw new EntityNotFoundException(BUILDING_NOT_FOUND);
             }
@@ -67,8 +71,8 @@ public class ChildServiceImpl implements ChildService {
                     .collect(Collectors.toUnmodifiableSet());
         }
 
-        if (this.areEmptyUrls(parentId)) {
-            if (!areEmptyUrls(buildingId)) {
+        if (this.urlCheckerUtil.areEmpty(parentId)) {
+            if (!this.urlCheckerUtil.areEmpty(buildingId)) {
                 if (this.buildingService.get(buildingId).isEmpty()) {
                     throw new EntityNotFoundException(BUILDING_NOT_FOUND);
                 }
@@ -178,11 +182,11 @@ public class ChildServiceImpl implements ChildService {
 
         Set<Child> children;
 
-        if (this.areEmptyUrls(buildingId, apartmentId, parentId)) {
+        if (this.urlCheckerUtil.areEmpty(buildingId, apartmentId, parentId)) {
 
             children = new HashSet<>(this.childRepository.findAll());
 
-        } else if (this.areEmptyUrls(apartmentId, parentId)) {
+        } else if (this.urlCheckerUtil.areEmpty(apartmentId, parentId)) {
 
             if (this.buildingService.get(buildingId).isEmpty()) {
                 throw new EntityNotFoundException(BUILDING_NOT_FOUND);
@@ -190,8 +194,8 @@ public class ChildServiceImpl implements ChildService {
 
             children = this.childRepository.getAllByBuildingId(buildingId);
 
-        } else if (this.areEmptyUrls(parentId)) {
-            if (!areEmptyUrls(buildingId)) {
+        } else if (this.urlCheckerUtil.areEmpty(parentId)) {
+            if (!this.urlCheckerUtil.areEmpty(buildingId)) {
 
                 if (this.buildingService.get(buildingId).isEmpty()) {
                     throw new EntityNotFoundException(BUILDING_NOT_FOUND);
@@ -258,10 +262,6 @@ public class ChildServiceImpl implements ChildService {
                 .collect(Collectors.toUnmodifiableSet());
     }
 
-    private boolean areEmptyUrls(String ...urls) {
-        return Arrays.stream(urls).filter(url -> !url.equals(EMPTY_URL)).findFirst().isEmpty();
-    }
-
     private boolean notValidRelations(String buildingId, String apartmentId, String parentId) {
         return this.residentService.getOneByIdAndBuildingIdAndApartmentId(buildingId, apartmentId, parentId).isEmpty();
     }
@@ -270,13 +270,13 @@ public class ChildServiceImpl implements ChildService {
 
         boolean result = false;
 
-        if (!this.areEmptyUrls(buildingId, apartmentId)) {
+        if (!this.urlCheckerUtil.areEmpty(buildingId, apartmentId)) {
             result = notValidRelations(buildingId, apartmentId, parentId);
-        } else if (this.areEmptyUrls(buildingId, apartmentId)) {
+        } else if (this.urlCheckerUtil.areEmpty(buildingId, apartmentId)) {
             result = this.residentService.get(parentId).isEmpty();
-        } else if (areEmptyUrls(buildingId)) {
+        } else if (this.urlCheckerUtil.areEmpty(buildingId)) {
             result = this.residentService.getOneByIdAndApartmentId(parentId, apartmentId).isEmpty();
-        } else if (areEmptyUrls(apartmentId)) {
+        } else if (this.urlCheckerUtil.areEmpty(apartmentId)) {
             result = this.residentService.getOneByIdAndBuildingId(parentId, buildingId).isEmpty();
         }
 

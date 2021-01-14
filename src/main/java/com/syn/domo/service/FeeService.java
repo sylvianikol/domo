@@ -7,7 +7,8 @@ import java.util.Optional;
 
 public interface FeeService {
 
-    Map<String, Object> getAll(String buildingId, int page, int size, String[] sort);
+    Map<String, Object> getAll(String buildingId, String apartmentId,
+                               int page, int size, String[] sort);
 
     Optional<FeeServiceModel> get(String feeId);
 

@@ -12,6 +12,7 @@ import com.syn.domo.notification.service.NotificationService;
 import com.syn.domo.repository.FeeRepository;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.FeeService;
+import com.syn.domo.utils.UrlCheckerUtil;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,20 +44,22 @@ public class FeeServiceImpl implements FeeService {
     private final BuildingService buildingService;
     private final NotificationService notificationService;
     private final ModelMapper modelMapper;
+    private final UrlCheckerUtil urlCheckerUtil;
 
     @Autowired
     public FeeServiceImpl(FeeRepository feeRepository,
                           BuildingService buildingService,
                           NotificationService notificationService,
-                          ModelMapper modelMapper) {
+                          ModelMapper modelMapper, UrlCheckerUtil urlCheckerUtil) {
         this.feeRepository = feeRepository;
         this.buildingService = buildingService;
         this.notificationService = notificationService;
         this.modelMapper = modelMapper;
+        this.urlCheckerUtil = urlCheckerUtil;
     }
 
     @Override
-    public Map<String, Object> getAll(String buildingId,
+    public Map<String, Object> getAll(String buildingId, String apartmentId,
                                       int page, int size, String[] sort) {
 
         List<Order> orders = this.createOrders(sort);
@@ -65,7 +68,7 @@ public class FeeServiceImpl implements FeeService {
 
         Page<Fee> pageFees;
 
-        if (buildingId.equals(EMPTY_URL)) {
+        if (this.urlCheckerUtil.areEmpty(buildingId, apartmentId)) {
             pageFees = this.feeRepository.findAllBy(pagingSort);
         } else {
 

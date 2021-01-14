@@ -188,28 +188,27 @@ public class FeeServiceImpl implements FeeService {
 
     @Override
     public void generateMonthlyFees() {
-        Set<BuildingServiceModel> buildingServiceModels = this.buildingService.getAll();
 
-        for (BuildingServiceModel building : buildingServiceModels) {
-            Set<ApartmentServiceModel> apartments = building.getApartments();
-            for (ApartmentServiceModel apartment : apartments) {
-                Fee fee = new Fee();
-                fee.setIssueDate(LocalDate.now());
-                fee.setDueDate(LocalDate.now().plusMonths(1));
-                fee.setApartment(this.modelMapper.map(apartment, Apartment.class));
+        Set<ApartmentServiceModel> apartments = this.apartmentService.getAll(EMPTY_URL);
 
-                BigDecimal total = this.calculateFeeTotal(apartment);
+        for (ApartmentServiceModel apartment : apartments) {
+            Fee fee = new Fee();
+            fee.setIssueDate(LocalDate.now());
+            fee.setDueDate(LocalDate.now().plusMonths(1));
+            fee.setApartment(this.modelMapper.map(apartment, Apartment.class));
 
-                fee.setTotal(total);
+            BigDecimal total = this.calculateFeeTotal(apartment);
 
-                this.feeRepository.saveAndFlush(fee);
+            fee.setTotal(total);
 
-                for (UserServiceModel resident : apartment.getResidents()) {
-                    this.notificationService.sendEmail(resident);
-                }
+            this.feeRepository.saveAndFlush(fee);
+
+            for (UserServiceModel resident : apartment.getResidents()) {
+                this.notificationService.sendEmail(resident);
             }
         }
-        log.info("*******    FEES GENERATED   *******");
+
+        log.info("******* FEES GENERATED *******");
     }
 
     private BigDecimal calculateFeeTotal(ApartmentServiceModel apartment) {

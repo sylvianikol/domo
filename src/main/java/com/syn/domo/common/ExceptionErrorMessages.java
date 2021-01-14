@@ -23,4 +23,6 @@ public class ExceptionErrorMessages {
     public static final String RESIDENT_NOT_FOUND = "Resident not found!";
 
     public static final String STAFF_NOT_FOUND = "Staff not found!";
+
+    public static final String FEE_NOT_FOUND = "Fee not found!";
 }

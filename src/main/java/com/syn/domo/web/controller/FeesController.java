@@ -79,10 +79,13 @@ public class FeesController implements FeesNamespace {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = EMPTY_URL) String buildingId,
+    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = EMPTY_URL)
+                                                   String buildingId,
+                                       @RequestParam(required = false, defaultValue = EMPTY_URL)
+                                               String apartmentId,
                                        UriComponentsBuilder uriComponentsBuilder) {
 
-        this.feeService.deleteAll(buildingId);
+        this.feeService.deleteAll(buildingId, apartmentId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder.path(URI_FEES).build().toUri())

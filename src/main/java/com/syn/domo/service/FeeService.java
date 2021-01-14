@@ -18,6 +18,6 @@ public interface FeeService {
 
     void generateMonthlyFees();
 
-    void deleteAll(String buildingId);
+    void deleteAll(String buildingId, String apartmentId);
 
 }

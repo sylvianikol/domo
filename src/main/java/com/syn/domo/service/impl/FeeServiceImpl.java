@@ -32,8 +32,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.syn.domo.common.DefaultParamValues.*;
-import static com.syn.domo.common.ExceptionErrorMessages.APARTMENT_NOT_FOUND;
-import static com.syn.domo.common.ExceptionErrorMessages.BUILDING_NOT_FOUND;
+import static com.syn.domo.common.ExceptionErrorMessages.*;
 import static com.syn.domo.model.entity.Fee.BASE_FEE;
 
 @Service
@@ -150,25 +149,38 @@ public class FeeServiceImpl implements FeeService {
         Fee fee = this.feeRepository.findById(feeId).orElse(null);
 
         if (fee == null) {
-            throw new EntityNotFoundException("Fee not found!");
+            throw new EntityNotFoundException(FEE_NOT_FOUND);
         }
 
         this.feeRepository.delete(fee);
     }
 
     @Override
-    public void deleteAll(String buildingId) {
+    public void deleteAll(String buildingId, String apartmentId) {
 
         Set<Fee> fees;
 
-        if (buildingId.equals(EMPTY_URL)) {
+        if (this.urlCheckerUtil.areEmpty(buildingId, apartmentId)) {
             fees = new HashSet<>(this.feeRepository.findAll());
-        } else {
+        } else if (this.urlCheckerUtil.areEmpty(apartmentId)){
+
             if (this.buildingService.get(buildingId).isEmpty()) {
                 throw new EntityNotFoundException(BUILDING_NOT_FOUND);
             }
 
             fees = this.feeRepository.getAllByBuildingId(buildingId);
+
+        } else {
+            if (!this.urlCheckerUtil.areEmpty(buildingId)
+                    && this.buildingService.get(buildingId).isEmpty()) {
+                throw new EntityNotFoundException(BUILDING_NOT_FOUND);
+            }
+
+            if (this.apartmentService.get(apartmentId).isEmpty()) {
+                throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
+            }
+
+            fees = this.feeRepository.findAllByApartmentId(apartmentId);
         }
 
         this.feeRepository.deleteAll(fees);
@@ -242,5 +254,4 @@ public class FeeServiceImpl implements FeeService {
 
         return orders;
     }
-
 }

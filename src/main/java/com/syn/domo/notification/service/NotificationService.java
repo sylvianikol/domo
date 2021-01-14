@@ -15,8 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import static com.syn.domo.common.EmailTemplates.EMAIL_ACTIVATION_SUBJECT;
-import static com.syn.domo.common.EmailTemplates.EMAIL_ACTIVATION_TEMPLATE;
+import static com.syn.domo.common.EmailTemplates.*;
 
 @Service
 public class NotificationService {
@@ -36,7 +35,7 @@ public class NotificationService {
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setTo(resident.getEmail());
         mail.setFrom("MAIL_USER");
-        mail.setSubject("New apartment fee");
+        mail.setSubject(NEW_FEE_SUBJECT);
         mail.setText("Fee total, due date, etc");
 
         this.javaMailSender.send(mail);

@@ -3,6 +3,7 @@ package com.syn.domo.common;
 public class EmailTemplates {
 
     public static final String EMAIL_ACTIVATION_SUBJECT = "Domo Activation Email";
+    public static final String NEW_FEE_SUBJECT = "New monthly fee generated";
 
     public static final String EMAIL_ACTIVATION_TEMPLATE =
             "<h3>Welcome to Domo %s %s!</h3><br/><br/>" +

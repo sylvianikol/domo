@@ -1,7 +1,7 @@
 package com.syn.domo.web.controller;
 
 import com.syn.domo.model.view.ResponseModel;
-import com.syn.domo.model.binding.ChildAddBindingModel;
+import com.syn.domo.model.binding.ChildBindingModel;
 import com.syn.domo.model.binding.ChildEditBindingModel;
 import com.syn.domo.model.service.ChildServiceModel;
 import com.syn.domo.model.view.ChildViewModel;
@@ -53,12 +53,9 @@ public class ChildrenController implements ChildrenNamespace {
     }
 
     @GetMapping("/{childId}")
-    public ResponseEntity<ChildViewModel> get(@PathVariable(value = "buildingId") String buildingId,
-                                              @PathVariable(value = "apartmentId") String apartmentId,
-                                              @PathVariable(value = "childId") String childId) {
+    public ResponseEntity<ChildViewModel> get(@PathVariable(value = "childId") String childId) {
 
-        Optional<ChildServiceModel> child =
-                this.childService.get(buildingId, apartmentId, childId);
+        Optional<ChildServiceModel> child = this.childService.get(childId);
 
         return child.isEmpty()
                 ? ResponseEntity.notFound().build()
@@ -66,24 +63,25 @@ public class ChildrenController implements ChildrenNamespace {
     }
 
     @PostMapping
-    public ResponseEntity<?> add(@PathVariable(value = "buildingId") String buildingId,
-                                 @PathVariable(value = "apartmentId") String apartmentId,
-                                 @Valid @RequestBody ChildAddBindingModel childAddBindingModel,
+    public ResponseEntity<?> add(@RequestParam(name = "buildingId") String buildingId,
+                                 @RequestParam(name = "apartmentId") String apartmentId,
+                                 @RequestParam(name = "parentIds") Set<String> parentIds,
+                                 @Valid @RequestBody ChildBindingModel childBindingModel,
                                  BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
 
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
-                    .body(new ResponseModel<>(childAddBindingModel, bindingResult));
+                    .body(new ResponseModel<>(childBindingModel, bindingResult));
         }
 
         ResponseModel<ChildServiceModel> responseModel = this.childService.add(
-                this.modelMapper.map(childAddBindingModel, ChildServiceModel.class),
-                buildingId, apartmentId);
+                this.modelMapper.map(childBindingModel, ChildServiceModel.class),
+                buildingId, apartmentId, parentIds);
 
         return responseModel.hasErrors()
                 ? ResponseEntity.unprocessableEntity().body(responseModel)
-                : ResponseEntity.created(uriComponentsBuilder.path(URI_CHILDREN + "/{child_id}")
-                .buildAndExpand(buildingId, apartmentId, responseModel.getId())
+                : ResponseEntity.created(uriComponentsBuilder.path(URI_CHILDREN + "/{childId}")
+                .buildAndExpand(responseModel.getId())
                 .toUri()).build();
     }
 

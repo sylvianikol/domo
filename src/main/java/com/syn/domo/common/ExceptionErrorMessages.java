@@ -13,7 +13,7 @@ public class ExceptionErrorMessages {
 
     public static final String PARENT_NOT_FOUND = "Parent not found!";
 
-    public static final String CHILD_EXISTS =
+    public static final String CHILD_ALREADY_EXISTS =
             "Child with name \"%s %s\" already exists in Apartment No.%s";
 
     public static final String CHILD_NOT_FOUND = "Child not found!";

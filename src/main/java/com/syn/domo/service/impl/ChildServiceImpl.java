@@ -94,14 +94,9 @@ public class ChildServiceImpl implements ChildService {
     }
 
     @Override
-    public Optional<ChildServiceModel> get(String buildingId, String apartmentId, String childId) {
-        Set<String> parentsIds =
-                this.residentService.getAll(buildingId, apartmentId)
-                        .stream().map(BaseServiceModel::getId)
-                        .collect(Collectors.toCollection(LinkedHashSet::new));
+    public Optional<ChildServiceModel> get(String childId) {
 
-        Optional<Child> child = this.childRepository
-                .getOneByIdAndParentsIds(childId, parentsIds);
+        Optional<Child> child = this.childRepository.findById(childId);
 
         return child.isEmpty()
                 ? Optional.empty()
@@ -111,7 +106,8 @@ public class ChildServiceImpl implements ChildService {
     @Override
     @Transactional
     public ResponseModel<ChildServiceModel> add(ChildServiceModel childServiceModel,
-                                                String buildingId, String apartmentId) {
+                                                String buildingId, String apartmentId,
+                                                Set<String> parentIds) {
 
         if (!this.validationUtil.isValid(childServiceModel)) {
             return new ResponseModel<>(childServiceModel,
@@ -126,8 +122,7 @@ public class ChildServiceImpl implements ChildService {
                 this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId)
                 .orElseThrow(() -> { throw new EntityNotFoundException(APARTMENT_NOT_FOUND); });
 
-        Set<ResidentServiceModel> parentServiceModels =
-                this.residentService.getAllByIdIn(this.getParentsIds(childServiceModel));
+        Set<ResidentServiceModel> parentServiceModels = this.residentService.getAllByIdIn(parentIds);
 
         if (parentServiceModels.isEmpty()) {
             throw new UnprocessableEntityException(PARENTS_NOT_FOUND);
@@ -136,16 +131,16 @@ public class ChildServiceImpl implements ChildService {
         String firstName = childServiceModel.getFirstName().trim();
         String lastName = childServiceModel.getLastName().trim();
 
-        if (this.childExistsInApartment(firstName, lastName, apartmentId, childServiceModel)) {
-            throw new EntityExistsException(
-                    String.format(CHILD_EXISTS, firstName, lastName, apartmentServiceModel.getNumber()));
+        if (this.childExistsInApartment(firstName, lastName, apartmentId, parentServiceModels)) {
+            throw new EntityExistsException(String.format(CHILD_ALREADY_EXISTS,
+                    firstName, lastName, apartmentServiceModel.getNumber()));
         }
 
         Child child = this.modelMapper.map(childServiceModel, Child.class);
         child.setAddedOn(LocalDate.now());
         child.setApartment(this.modelMapper.map(apartmentServiceModel, Apartment.class));
 
-        child.setParents(this.getParents(parentServiceModels));
+        child.setParents(this.mapToResidents(parentServiceModels));
 
         childRepository.saveAndFlush(child);
 
@@ -220,10 +215,10 @@ public class ChildServiceImpl implements ChildService {
         this.childRepository.delete(child);
     }
 
-    private boolean hasSameParents(ChildServiceModel newChild, Child existingChild) {
+
+    private boolean hasSameParents(Set<Resident> existingParents,
+                                   Set<ResidentServiceModel> newParents) {
         int sameParentsCount = 0;
-        Set<Resident> existingParents = existingChild.getParents();
-        Set<ResidentServiceModel> newParents = newChild.getParents();
 
         for (Resident parent : existingParents) {
             for (ResidentServiceModel newChildParent : newParents) {
@@ -232,23 +227,18 @@ public class ChildServiceImpl implements ChildService {
                 }
             }
         }
-        return sameParentsCount == existingParents.size() && sameParentsCount == newParents.size();
+        return sameParentsCount == existingParents.size()
+                && sameParentsCount == newParents.size();
     }
 
     private boolean childExistsInApartment(String firstName, String lastName, String apartmentId,
-                                           ChildServiceModel newChild) {
+                                           Set<ResidentServiceModel> parents) {
         Optional<Child> child = this.childRepository
                 .findByFirstNameAndLastNameAndApartmentId(firstName, lastName, apartmentId);
-        return child.isPresent() && this.hasSameParents(newChild, child.get());
+        return child.isPresent() && this.hasSameParents(child.get().getParents(), parents);
     }
 
-    private Set<String> getParentsIds(ChildServiceModel childServiceModel) {
-        return childServiceModel.getParents().stream()
-                .map(UserServiceModel::getId)
-                .collect(Collectors.toUnmodifiableSet());
-    }
-
-    private Set<Resident> getParents(Set<ResidentServiceModel> parentServiceModels) {
+    private Set<Resident> mapToResidents(Set<ResidentServiceModel> parentServiceModels) {
         return parentServiceModels.stream()
                 .map(p -> this.modelMapper.map(p, Resident.class))
                 .collect(Collectors.toUnmodifiableSet());

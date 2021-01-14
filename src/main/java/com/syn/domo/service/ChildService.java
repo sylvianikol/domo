@@ -11,9 +11,11 @@ public interface ChildService {
 
     Set<ChildServiceModel> getAll(String buildingId, String apartmentId, String parentId);
 
-    Optional<ChildServiceModel> get(String buildingId, String apartmentId, String childId);
+    Optional<ChildServiceModel> get(String childId);
 
-    ResponseModel<ChildServiceModel> add(ChildServiceModel childServiceModel, String buildingId, String apartmentId);
+    ResponseModel<ChildServiceModel> add(ChildServiceModel childServiceModel,
+                                         String buildingId, String apartmentId,
+                                         Set<String> parentIds);
 
     ResponseModel<ChildServiceModel> edit(ChildServiceModel childServiceModel,
                            String buildingId, String apartmentId, String childId);

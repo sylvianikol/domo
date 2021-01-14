@@ -235,12 +235,10 @@ public class ResidentServiceImpl implements ResidentService  {
 
     @Override
     public Set<ResidentServiceModel> getAllByIdIn(Set<String> ids) {
-        Set<ResidentServiceModel> residentServiceModels =
-                this.residentRepository.findAllByIdIn(ids).stream()
-                        .map(r -> this.modelMapper.map(r, ResidentServiceModel.class))
-                        .collect(Collectors.toCollection(LinkedHashSet::new));
 
-        return Collections.unmodifiableSet(residentServiceModels);
+        return this.residentRepository.findAllByIdIn(ids).stream()
+                        .map(r -> this.modelMapper.map(r, ResidentServiceModel.class))
+                        .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override

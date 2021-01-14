@@ -8,11 +8,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 @Repository
 public interface ResidentRepository extends JpaRepository<Resident, String> {
+
+    Set<Resident> findAllByIdIn(Set<String> ids);
 
     @Query("SELECT r FROM Resident r " +
             "JOIN r.apartments a " +
@@ -38,8 +41,6 @@ public interface ResidentRepository extends JpaRepository<Resident, String> {
             (@Param(value = "id") String id,
              @Param(value = "buildingId") String buildingId,
              @Param(value = "apartmentId") String apartmentId);
-
-    Set<Resident> findAllByIdIn(Set<String> ids);
 
     @Query("SELECT r FROM Resident r " +
             "JOIN r.apartments a " +

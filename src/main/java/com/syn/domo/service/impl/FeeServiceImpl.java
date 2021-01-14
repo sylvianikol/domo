@@ -10,6 +10,7 @@ import com.syn.domo.model.service.UserServiceModel;
 import com.syn.domo.model.view.FeeViewModel;
 import com.syn.domo.notification.service.NotificationService;
 import com.syn.domo.repository.FeeRepository;
+import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.FeeService;
 import com.syn.domo.utils.UrlCheckerUtil;
@@ -31,6 +32,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.syn.domo.common.DefaultParamValues.*;
+import static com.syn.domo.common.ExceptionErrorMessages.APARTMENT_NOT_FOUND;
 import static com.syn.domo.common.ExceptionErrorMessages.BUILDING_NOT_FOUND;
 import static com.syn.domo.model.entity.Fee.BASE_FEE;
 
@@ -42,6 +44,7 @@ public class FeeServiceImpl implements FeeService {
 
     private final FeeRepository feeRepository;
     private final BuildingService buildingService;
+    private final ApartmentService apartmentService;
     private final NotificationService notificationService;
     private final ModelMapper modelMapper;
     private final UrlCheckerUtil urlCheckerUtil;
@@ -49,10 +52,13 @@ public class FeeServiceImpl implements FeeService {
     @Autowired
     public FeeServiceImpl(FeeRepository feeRepository,
                           BuildingService buildingService,
+                          ApartmentService apartmentService,
                           NotificationService notificationService,
-                          ModelMapper modelMapper, UrlCheckerUtil urlCheckerUtil) {
+                          ModelMapper modelMapper,
+                          UrlCheckerUtil urlCheckerUtil) {
         this.feeRepository = feeRepository;
         this.buildingService = buildingService;
+        this.apartmentService = apartmentService;
         this.notificationService = notificationService;
         this.modelMapper = modelMapper;
         this.urlCheckerUtil = urlCheckerUtil;
@@ -70,7 +76,7 @@ public class FeeServiceImpl implements FeeService {
 
         if (this.urlCheckerUtil.areEmpty(buildingId, apartmentId)) {
             pageFees = this.feeRepository.findAllBy(pagingSort);
-        } else {
+        } else if (this.urlCheckerUtil.areEmpty(apartmentId)){
 
             if (this.buildingService.get(buildingId).isEmpty()) {
                 throw new EntityNotFoundException(BUILDING_NOT_FOUND);
@@ -78,11 +84,21 @@ public class FeeServiceImpl implements FeeService {
 
             pageFees = this.feeRepository
                     .getAllByBuildingIdWithPagingSort(buildingId, pagingSort);
+        } else {
+            if (this.buildingService.get(buildingId).isEmpty()) {
+                throw new EntityNotFoundException(BUILDING_NOT_FOUND);
+            }
+
+            if (this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId).isEmpty()) {
+                throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
+            }
+
+            pageFees = this.feeRepository.findAllByApartmentId(apartmentId, pagingSort);
         }
 
         List<FeeViewModel> fees = pageFees.getContent().stream()
                 .map(fee -> this.modelMapper.map(fee, FeeViewModel.class))
-                .collect(Collectors.toList());
+                .collect(Collectors.toUnmodifiableList());
 
         Map<String, Object> response = new HashMap<>();
 

@@ -14,12 +14,14 @@ import java.util.Set;
 @Repository
 public interface FeeRepository extends JpaRepository<Fee, String> {
 
+    Page<Fee> findAllByApartmentId(String apartmentId, Pageable pagingSort);
+
+    Page<Fee> findAllBy(Pageable pagingSort);
+
     @Query("SELECT f FROM Fee f " +
             "WHERE f.apartment.building.id = :buildingId ")
     Page<Fee> getAllByBuildingIdWithPagingSort(@Param(value = "buildingId") String buildingId,
                                                Pageable pagingSort);
-
-    Page<Fee> findAllBy(Pageable pagingSort);
 
     @Query("SELECT f FROM Fee f " +
             "WHERE f.apartment.building.id = :buildingId ")

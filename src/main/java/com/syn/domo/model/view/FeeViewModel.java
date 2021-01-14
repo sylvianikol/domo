@@ -9,7 +9,7 @@ public class FeeViewModel {
     private LocalDate issueDate;
     private LocalDate dueDate;
     private boolean isPaid;
-    private int apartmentNumber;
+    private String apartmentNumber;
 
     public FeeViewModel() {
     }
@@ -46,11 +46,11 @@ public class FeeViewModel {
         isPaid = paid;
     }
 
-    public int getApartmentNumber() {
+    public String getApartmentNumber() {
         return apartmentNumber;
     }
 
-    public void setApartmentNumber(int apartmentNumber) {
+    public void setApartmentNumber(String apartmentNumber) {
         this.apartmentNumber = apartmentNumber;
     }
 }

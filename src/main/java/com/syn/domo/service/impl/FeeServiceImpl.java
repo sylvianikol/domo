@@ -84,12 +84,13 @@ public class FeeServiceImpl implements FeeService {
 
             pageFees = this.feeRepository
                     .getAllByBuildingIdWithPagingSort(buildingId, pagingSort);
+
         } else {
-            if (this.buildingService.get(buildingId).isEmpty()) {
+            if (!this.urlCheckerUtil.areEmpty(buildingId) && this.buildingService.get(buildingId).isEmpty()) {
                 throw new EntityNotFoundException(BUILDING_NOT_FOUND);
             }
 
-            if (this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId).isEmpty()) {
+            if (this.apartmentService.get(apartmentId).isEmpty()) {
                 throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
             }
 

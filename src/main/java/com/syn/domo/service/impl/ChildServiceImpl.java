@@ -84,7 +84,7 @@ public class ChildServiceImpl implements ChildService {
                     .collect(Collectors.toUnmodifiableSet());
         }
 
-        if (this.notFoundInBuildingAndOrApartment(buildingId, apartmentId, parentId)) {
+        if (this.parentNotFoundIn(buildingId, apartmentId, parentId)) {
             throw new EntityNotFoundException(PARENT_NOT_FOUND);
         }
 
@@ -149,30 +149,21 @@ public class ChildServiceImpl implements ChildService {
     }
 
     @Override
-    public ResponseModel<ChildServiceModel> edit(ChildServiceModel childServiceModel,
-                                  String buildingId, String apartmentId, String childId) {
+    public ResponseModel<ChildServiceModel> edit(ChildServiceModel childServiceModel, String childId) {
 
         if (!this.validationUtil.isValid(childServiceModel)) {
             return new ResponseModel<>(childServiceModel,
                     this.validationUtil.violations(childServiceModel));
         }
 
-        BuildingServiceModel building = this.buildingService.get(buildingId)
-                .orElseThrow(() -> { throw new EntityNotFoundException(BUILDING_NOT_FOUND); });
-
-        if (this.apartmentService.getByIdAndBuildingId(apartmentId, building.getId()).isEmpty()) {
-            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
-        }
-
-        Child child = this.childRepository
-                .findByIdAndApartmentId(childId, apartmentId)
-                .orElse(null);
+        Child child = this.childRepository.findById(childId).orElse(null);
 
         if (child != null) {
             child.setFirstName(childServiceModel.getFirstName());
             child.setLastName(childServiceModel.getLastName());
 
             this.childRepository.saveAndFlush(child);
+
         } else {
             throw new EntityNotFoundException(CHILD_NOT_FOUND);
         }
@@ -182,18 +173,49 @@ public class ChildServiceImpl implements ChildService {
     }
 
     @Override
-    public void deleteAll(String buildingId, String apartmentId) {
+    @Transactional
+    public void deleteAll(String buildingId, String apartmentId, String parentId) {
 
-        if (this.buildingService.get(buildingId).isEmpty()) {
-            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
+        Set<Child> children;
+
+        if (this.areEmptyUrls(buildingId, apartmentId, parentId)) {
+
+            children = new HashSet<>(this.childRepository.findAll());
+
+        } else if (this.areEmptyUrls(apartmentId, parentId)) {
+
+            if (this.buildingService.get(buildingId).isEmpty()) {
+                throw new EntityNotFoundException(BUILDING_NOT_FOUND);
+            }
+
+            children = this.childRepository.getAllByBuildingId(buildingId);
+
+        } else if (this.areEmptyUrls(parentId)) {
+            if (!areEmptyUrls(buildingId)) {
+
+                if (this.buildingService.get(buildingId).isEmpty()) {
+                    throw new EntityNotFoundException(BUILDING_NOT_FOUND);
+                }
+
+                if (this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId).isEmpty()) {
+                    throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
+                }
+            }
+
+            children = this.childRepository.findAllByApartmentId(apartmentId);
+
+        } else {
+
+            if (this.parentNotFoundIn(buildingId, apartmentId, parentId)) {
+                throw new EntityNotFoundException(PARENT_NOT_FOUND);
+            }
+
+            children = this.childRepository.getAllByParentId(parentId);
         }
 
-        if (this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId).isEmpty()) {
-            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
+        for (Child child : children) {
+            this.childRepository.severRelations(child.getId());
         }
-
-        Set<Child> children = this.childRepository
-                .getAllByApartmentIdAndBuildingId(buildingId, apartmentId);
 
         this.childRepository.deleteAll(children);
     }
@@ -252,7 +274,7 @@ public class ChildServiceImpl implements ChildService {
         return this.residentService.getOneByIdAndBuildingIdAndApartmentId(buildingId, apartmentId, parentId).isEmpty();
     }
 
-    private boolean notFoundInBuildingAndOrApartment(String buildingId, String apartmentId, String parentId) {
+    private boolean parentNotFoundIn(String buildingId, String apartmentId, String parentId) {
 
         boolean result = false;
 

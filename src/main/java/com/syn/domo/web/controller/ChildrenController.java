@@ -86,9 +86,7 @@ public class ChildrenController implements ChildrenNamespace {
     }
 
     @PutMapping("/{childId}")
-    public ResponseEntity<?> edit(@PathVariable(value = "buildingId") String buildingId,
-                                  @PathVariable(value = "apartmentId") String apartmentId,
-                                  @PathVariable(value = "childId") String childId,
+    public ResponseEntity<?> edit(@PathVariable(value = "childId") String childId,
                                   @Valid @RequestBody ChildEditBindingModel childEditBindingModel,
                                   BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
 
@@ -98,28 +96,30 @@ public class ChildrenController implements ChildrenNamespace {
         }
 
         ResponseModel<ChildServiceModel> responseModel = this.childService.edit(
-                this.modelMapper.map(childEditBindingModel, ChildServiceModel.class),
-                buildingId, apartmentId, childId);
+                this.modelMapper.map(childEditBindingModel, ChildServiceModel.class), childId);
 
         return responseModel.hasErrors()
                 ? ResponseEntity.unprocessableEntity().body(responseModel)
-                : ResponseEntity.created(uriComponentsBuilder.path(URI_CHILDREN + "/{child_id}")
-                .buildAndExpand(buildingId, apartmentId, childId)
-                .toUri()).build();
+                : ResponseEntity.status(HttpStatus.NO_CONTENT)
+                    .location(uriComponentsBuilder.path(URI_CHILDREN + "/{childId}")
+                        .buildAndExpand(childId)
+                        .toUri()).build();
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteAll(@PathVariable(value = "buildingId") String buildingId,
-                                       @PathVariable(value = "apartmentId") String apartmentId,
+    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = EMPTY_URL,
+                                              name = "buildingId") String buildingId,
+                                       @RequestParam(required = false, defaultValue = EMPTY_URL,
+                                               name = "apartmentId") String apartmentId,
+                                       @RequestParam(required = false, defaultValue = EMPTY_URL,
+                                               name = "parentId") String parentId,
                                        UriComponentsBuilder uriComponentsBuilder) {
 
-        this.childService.deleteAll(buildingId, apartmentId);
+        this.childService.deleteAll(buildingId, apartmentId, parentId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder
-                        .path(URI_CHILDREN)
-                        .buildAndExpand(buildingId, apartmentId)
-                        .toUri()).build();
+                .location(uriComponentsBuilder.path(URI_CHILDREN).build().toUri())
+                .build();
     }
 
     @DeleteMapping("/{childId}")

@@ -2,6 +2,7 @@ package com.syn.domo.repository;
 
 import com.syn.domo.model.entity.Child;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -17,30 +18,20 @@ public interface ChildRepository extends JpaRepository<Child, String> {
 
     Set<Child> findAllByApartmentId(String apartmentId);
 
-    @Query("SELECT c FROM Child c " +
-            "WHERE c.apartment.id = :apartmentId " +
-            "AND c.apartment.building.id = :buildingId ")
-    Set<Child> getAllByApartmentIdAndBuildingId(@Param(value = "buildingId") String buildingId,
-                                                @Param(value = "apartmentId") String apartmentId);
-
     Optional<Child> findByFirstNameAndLastNameAndApartmentId
             (String firstName, String lastName, String apartmentId);
 
     @Query("SELECT c FROM Child c " +
             "JOIN c.parents p " +
-            "WHERE c.id = :id AND " +
-            "p.id IN :ids ")
-    Optional<Child> getOneByIdAndParentsIds
-            (@Param(value = "id") String id,
-             @Param(value = "ids") Set<String> ids);
-
-    @Query("SELECT c FROM Child c " +
-            "JOIN c.parents p " +
             "WHERE p.id = :parentId ")
-    Optional<Child> getAllByParentId
-            (@Param(value = "parentId") String parentId);
+    Set<Child> getAllByParentId(@Param(value = "parentId") String parentId);
 
     @Query("SELECT c FROM Child c " +
             "WHERE c.apartment.building.id = :buildingId")
     Set<Child> getAllByBuildingId(@Param(value = "buildingId") String buildingId);
+
+    @Modifying
+    @Query(value = "DELETE FROM `children_parents` " +
+            "WHERE `child_id` = ?1 ", nativeQuery = true)
+    void severRelations(String childId);
 }

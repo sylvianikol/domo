@@ -173,7 +173,7 @@ public class ApartmentServiceImpl implements ApartmentService {
         }
 
         for (Apartment apartment : apartments) {
-            this.childService.deleteAll(buildingId, apartment.getId());
+            this.childService.deleteAll(buildingId, apartment.getId(), EMPTY_URL);
             this.residentService.deleteAll(buildingId, apartment.getId());
         }
 
@@ -189,7 +189,7 @@ public class ApartmentServiceImpl implements ApartmentService {
         String buildingId = apartment.getBuilding().getId();
 
         this.residentService.deleteAll(buildingId, apartment.getId());
-        this.childService.deleteAll(buildingId, apartment.getId());
+        this.childService.deleteAll(buildingId, apartment.getId(), EMPTY_URL);
         this.apartmentRepository.delete(apartment);
     }
 

@@ -17,10 +17,9 @@ public interface ChildService {
                                          String buildingId, String apartmentId,
                                          Set<String> parentIds);
 
-    ResponseModel<ChildServiceModel> edit(ChildServiceModel childServiceModel,
-                           String buildingId, String apartmentId, String childId);
+    ResponseModel<ChildServiceModel> edit(ChildServiceModel childServiceModel, String childId);
 
-    void deleteAll(String buildingId, String apartmentId);
+    void deleteAll(String buildingId, String apartmentId, String parentId);
 
     void delete(String childId, String buildingId, String apartmentId);
 

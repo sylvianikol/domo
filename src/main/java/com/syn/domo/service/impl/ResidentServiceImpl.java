@@ -216,7 +216,7 @@ public class ResidentServiceImpl implements ResidentService  {
                 throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
             }
 
-            this.childService.deleteAll(buildingId, apartmentId);
+            this.childService.deleteAll(buildingId, apartmentId, EMPTY_URL);
 
             residents = this.residentRepository.getAllByApartmentId(apartmentId);
         }

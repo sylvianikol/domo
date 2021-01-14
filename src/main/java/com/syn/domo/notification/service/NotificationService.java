@@ -35,7 +35,7 @@ public class NotificationService {
 
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setTo(resident.getEmail());
-        mail.setFrom("silviaadvert@gmail.com");
+        mail.setFrom("MAIL_USER");
         mail.setSubject("New apartment fee");
         mail.setText("Fee total, due date, etc");
 

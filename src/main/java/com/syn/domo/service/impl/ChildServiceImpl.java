@@ -55,44 +55,7 @@ public class ChildServiceImpl implements ChildService {
     @Override
     public Set<ChildServiceModel> getAll(String buildingId, String apartmentId, String parentId) {
 
-        if (this.urlCheckerUtil.areEmpty(buildingId, apartmentId, parentId)) {
-            return this.childRepository.findAll().stream()
-                    .map(c -> this.modelMapper.map(c, ChildServiceModel.class))
-                    .collect(Collectors.toUnmodifiableSet());
-        }
-
-        if (this.urlCheckerUtil.areEmpty(apartmentId, parentId)) {
-            if (this.buildingService.get(buildingId).isEmpty()) {
-                throw new EntityNotFoundException(BUILDING_NOT_FOUND);
-            }
-
-            return this.childRepository.getAllByBuildingId(buildingId).stream()
-                    .map(c -> this.modelMapper.map(c, ChildServiceModel.class))
-                    .collect(Collectors.toUnmodifiableSet());
-        }
-
-        if (this.urlCheckerUtil.areEmpty(parentId)) {
-            if (!this.urlCheckerUtil.areEmpty(buildingId)) {
-                if (this.buildingService.get(buildingId).isEmpty()) {
-                    throw new EntityNotFoundException(BUILDING_NOT_FOUND);
-                }
-
-                if (this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId).isEmpty()) {
-                    throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
-                }
-            }
-
-            return this.childRepository.findAllByApartmentId(apartmentId)
-                    .stream()
-                    .map(c -> this.modelMapper.map(c, ChildServiceModel.class))
-                    .collect(Collectors.toUnmodifiableSet());
-        }
-
-        if (this.parentNotFoundIn(buildingId, apartmentId, parentId)) {
-            throw new EntityNotFoundException(PARENT_NOT_FOUND);
-        }
-
-        return this.childRepository.getAllByParentId(parentId).stream()
+        return getChildrenBy(buildingId, apartmentId, parentId).stream()
                 .map(c -> this.modelMapper.map(c, ChildServiceModel.class))
                 .collect(Collectors.toUnmodifiableSet());
     }
@@ -126,16 +89,18 @@ public class ChildServiceImpl implements ChildService {
                 this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId)
                 .orElseThrow(() -> { throw new EntityNotFoundException(APARTMENT_NOT_FOUND); });
 
-        Set<ResidentServiceModel> parentServiceModels = this.residentService.getAllByIdIn(parentIds);
+        Set<Resident> parents = this.residentService.getAllByIdIn(parentIds).stream()
+                .map(r -> this.modelMapper.map(r, Resident.class))
+                .collect(Collectors.toSet());
 
-        if (parentServiceModels.isEmpty()) {
+        if (parents.isEmpty()) {
             throw new UnprocessableEntityException(PARENTS_NOT_FOUND);
         }
 
         String firstName = childServiceModel.getFirstName().trim();
         String lastName = childServiceModel.getLastName().trim();
 
-        if (this.childExistsInApartment(firstName, lastName, apartmentId, parentServiceModels)) {
+        if (this.childExistsInApartment(firstName, lastName, apartmentId, parents)) {
             throw new EntityExistsException(String.format(CHILD_ALREADY_EXISTS,
                     firstName, lastName, apartmentServiceModel.getNumber()));
         }
@@ -144,7 +109,7 @@ public class ChildServiceImpl implements ChildService {
         child.setAddedOn(LocalDate.now());
         child.setApartment(this.modelMapper.map(apartmentServiceModel, Apartment.class));
 
-        child.setParents(this.mapToResidents(parentServiceModels));
+        child.setParents(parents);
 
         childRepository.saveAndFlush(child);
 
@@ -180,45 +145,10 @@ public class ChildServiceImpl implements ChildService {
     @Transactional
     public void deleteAll(String buildingId, String apartmentId, String parentId) {
 
-        Set<Child> children;
-
-        if (this.urlCheckerUtil.areEmpty(buildingId, apartmentId, parentId)) {
-
-            children = new HashSet<>(this.childRepository.findAll());
-
-        } else if (this.urlCheckerUtil.areEmpty(apartmentId, parentId)) {
-
-            if (this.buildingService.get(buildingId).isEmpty()) {
-                throw new EntityNotFoundException(BUILDING_NOT_FOUND);
-            }
-
-            children = this.childRepository.getAllByBuildingId(buildingId);
-
-        } else if (this.urlCheckerUtil.areEmpty(parentId)) {
-            if (!this.urlCheckerUtil.areEmpty(buildingId)) {
-
-                if (this.buildingService.get(buildingId).isEmpty()) {
-                    throw new EntityNotFoundException(BUILDING_NOT_FOUND);
-                }
-
-                if (this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId).isEmpty()) {
-                    throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
-                }
-            }
-
-            children = this.childRepository.findAllByApartmentId(apartmentId);
-
-        } else {
-
-            if (this.parentNotFoundIn(buildingId, apartmentId, parentId)) {
-                throw new EntityNotFoundException(PARENT_NOT_FOUND);
-            }
-
-            children = this.childRepository.getAllByParentId(parentId);
-        }
+        Set<Child> children = this.getChildrenBy(buildingId, apartmentId, parentId);
 
         for (Child child : children) {
-            this.childRepository.severRelations(child.getId());
+            this.childRepository.severParentRelations(child.getId());
         }
 
         this.childRepository.deleteAll(children);
@@ -235,31 +165,28 @@ public class ChildServiceImpl implements ChildService {
 
 
     private boolean hasSameParents(Set<Resident> existingParents,
-                                   Set<ResidentServiceModel> newParents) {
+                                   Set<Resident> newParents) {
         int sameParentsCount = 0;
 
         for (Resident parent : existingParents) {
-            for (ResidentServiceModel newChildParent : newParents) {
+            for (Resident newChildParent : newParents) {
                 if (parent.getId().equals(newChildParent.getId())) {
                     ++sameParentsCount;
                 }
             }
         }
+
+
         return sameParentsCount == existingParents.size()
                 && sameParentsCount == newParents.size();
     }
 
     private boolean childExistsInApartment(String firstName, String lastName, String apartmentId,
-                                           Set<ResidentServiceModel> parents) {
+                                           Set<Resident> parents) {
         Optional<Child> child = this.childRepository
                 .findByFirstNameAndLastNameAndApartmentId(firstName, lastName, apartmentId);
-        return child.isPresent() && this.hasSameParents(child.get().getParents(), parents);
-    }
-
-    private Set<Resident> mapToResidents(Set<ResidentServiceModel> parentServiceModels) {
-        return parentServiceModels.stream()
-                .map(p -> this.modelMapper.map(p, Resident.class))
-                .collect(Collectors.toUnmodifiableSet());
+//        return child.isPresent() && this.hasSameParents(child.get().getParents(), parents);
+        return child.isPresent() && parents.equals(child.get().getParents());
     }
 
     private boolean notValidRelations(String buildingId, String apartmentId, String parentId) {
@@ -281,5 +208,41 @@ public class ChildServiceImpl implements ChildService {
         }
 
         return result;
+    }
+
+    private Set<Child> getChildrenBy(String buildingId, String apartmentId, String parentId) {
+
+        if (this.urlCheckerUtil.areEmpty(buildingId, apartmentId, parentId)) {
+            return this.childRepository.findAll().stream()
+                    .collect(Collectors.toUnmodifiableSet());
+        }
+
+        if (this.urlCheckerUtil.areEmpty(apartmentId, parentId)) {
+            if (this.buildingService.get(buildingId).isEmpty()) {
+                throw new EntityNotFoundException(BUILDING_NOT_FOUND);
+            }
+
+            return this.childRepository.getAllByBuildingId(buildingId);
+        }
+
+        if (this.urlCheckerUtil.areEmpty(parentId)) {
+            if (!this.urlCheckerUtil.areEmpty(buildingId)) {
+                if (this.buildingService.get(buildingId).isEmpty()) {
+                    throw new EntityNotFoundException(BUILDING_NOT_FOUND);
+                }
+
+                if (this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId).isEmpty()) {
+                    throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
+                }
+            }
+
+            return this.childRepository.findAllByApartmentId(apartmentId);
+        }
+
+        if (this.parentNotFoundIn(buildingId, apartmentId, parentId)) {
+            throw new EntityNotFoundException(PARENT_NOT_FOUND);
+        }
+
+        return this.childRepository.getAllByParentId(parentId);
     }
  }

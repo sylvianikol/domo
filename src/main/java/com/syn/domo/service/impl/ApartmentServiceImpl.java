@@ -53,27 +53,12 @@ public class ApartmentServiceImpl implements ApartmentService {
     @Override
     public Set<ApartmentServiceModel> getAll(String buildingId) {
 
-        Set<ApartmentServiceModel> apartmentServiceModels;
-
-        if (buildingId.equals(EMPTY_VALUE)) {
-
-            apartmentServiceModels = this.apartmentRepository.findAll().stream()
-                    .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
-                    .collect(Collectors.toUnmodifiableSet());
-        } else {
-
-            if (this.buildingService.get(buildingId).isEmpty()) {
-                throw new EntityNotFoundException(BUILDING_NOT_FOUND);
-            }
-
-            apartmentServiceModels =
-                    this.apartmentRepository.getAllByBuildingId(buildingId).stream()
-                            .map(apartment -> this.modelMapper.map(apartment, ApartmentServiceModel.class))
-                            .collect(Collectors.toCollection(LinkedHashSet::new));
-        }
-
-        return Collections.unmodifiableSet(apartmentServiceModels);
+        return getApartmentsBy(buildingId).stream()
+                .map(a -> this.modelMapper.map(a, ApartmentServiceModel.class))
+                .collect(Collectors.toUnmodifiableSet());
     }
+
+
 
     @Override
     public Optional<ApartmentServiceModel> get(String apartmentId) {
@@ -96,7 +81,7 @@ public class ApartmentServiceImpl implements ApartmentService {
                 .orElseThrow(() -> { throw new EntityNotFoundException(BUILDING_NOT_FOUND); });
 
         String apartmentNumber = apartmentServiceModel.getNumber();
-        if (this.alreadyExists(apartmentNumber, buildingId)) {
+        if (this.alreadyExistsApartmentNumber(apartmentNumber, buildingId)) {
             throw new EntityExistsException(String.format(APARTMENT_EXISTS,
                      apartmentNumber, buildingServiceModel.getName()));
         }
@@ -125,9 +110,8 @@ public class ApartmentServiceImpl implements ApartmentService {
                     this.validationUtil.violations(apartmentServiceModel));
         }
 
-        Apartment apartment =
-                this.apartmentRepository.findById(apartmentId)
-                        .orElseThrow(() -> { throw new EntityNotFoundException(APARTMENT_NOT_FOUND); });
+        Apartment apartment = this.apartmentRepository.findById(apartmentId)
+                .orElseThrow(() -> { throw new EntityNotFoundException(APARTMENT_NOT_FOUND); });
 
         Building building = apartment.getBuilding();
 
@@ -159,18 +143,7 @@ public class ApartmentServiceImpl implements ApartmentService {
     @Transactional
     public void deleteAll(String buildingId) {
 
-        Set<Apartment> apartments;
-
-        if (buildingId.equals(EMPTY_VALUE)) {
-            apartments = new HashSet<>(this.apartmentRepository.findAll());
-        } else {
-
-            if (this.buildingService.get(buildingId).isEmpty()) {
-                throw new EntityNotFoundException(BUILDING_NOT_FOUND);
-            }
-
-            apartments = this.apartmentRepository.getAllByBuildingId(buildingId);
-        }
+        Set<Apartment> apartments = this.getApartmentsBy(buildingId);
 
         for (Apartment apartment : apartments) {
             this.childService.deleteAll(buildingId, apartment.getId(), EMPTY_VALUE);
@@ -194,7 +167,7 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
-    public void emptyApartments(String buildingId) {
+    public void evacuateApartments(String buildingId) {
         Set<Apartment> apartments =
                 this.apartmentRepository.getAllByBuildingId(buildingId);
 
@@ -214,9 +187,23 @@ public class ApartmentServiceImpl implements ApartmentService {
                 : Optional.of(this.modelMapper.map(apartment.get(), ApartmentServiceModel.class));
     }
 
-    private boolean alreadyExists(String apartmentNumber, String buildingId) {
+    private boolean alreadyExistsApartmentNumber(String apartmentNumber, String buildingId) {
         return this.apartmentRepository
                 .findByNumberAndBuildingId(apartmentNumber, buildingId).isPresent();
 
+    }
+
+    private Set<Apartment> getApartmentsBy(String buildingId) {
+
+        if (buildingId.equals(EMPTY_VALUE)) {
+
+            return new HashSet<>(this.apartmentRepository.findAll());
+        }
+
+        if (this.buildingService.get(buildingId).isEmpty()) {
+            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
+        }
+
+        return new HashSet<>(this.apartmentRepository.getAllByBuildingId(buildingId));
     }
 }

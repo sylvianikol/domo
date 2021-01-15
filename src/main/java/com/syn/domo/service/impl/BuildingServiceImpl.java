@@ -1,7 +1,6 @@
 package com.syn.domo.service.impl;
 
 import com.syn.domo.error.ErrorContainer;
-import com.syn.domo.exception.*;
 import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.entity.Staff;
 import com.syn.domo.model.service.BuildingServiceModel;
@@ -47,11 +46,9 @@ public class BuildingServiceImpl implements BuildingService {
     @Override
     public Set<BuildingServiceModel> getAll() {
 
-        Set<BuildingServiceModel> buildingServiceModels =
-                this.buildingRepository.findAll().stream()
-                        .map(building -> this.modelMapper.map(building, BuildingServiceModel.class))
-                        .collect(Collectors.toCollection(LinkedHashSet::new));
-        return Collections.unmodifiableSet(buildingServiceModels);
+        return this.buildingRepository.findAll().stream()
+                .map(building -> this.modelMapper.map(building, BuildingServiceModel.class))
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
@@ -137,15 +134,13 @@ public class BuildingServiceImpl implements BuildingService {
         for (Building building : buildings) {
             String buildingId = building.getId();
 
-            Set<String> staffIds = building.getStaff().stream()
-                    .map(Staff::getId)
-                    .collect(Collectors.toUnmodifiableSet());
+            Set<String> staffIds = getStaffIds(building.getStaff());
 
             if (!staffIds.isEmpty()) {
                 this.staffService.cancelBuildingAssignments(staffIds, buildingId);
             }
 
-            this.apartmentService.emptyApartments(buildingId);
+            this.apartmentService.evacuateApartments(buildingId);
         }
 
         this.buildingRepository.deleteAll(buildings);
@@ -155,29 +150,23 @@ public class BuildingServiceImpl implements BuildingService {
     @Transactional
     public void delete(String buildingId) {
 
-        Building building = this.buildingRepository.findById(buildingId).orElse(null);
+        Building building = this.buildingRepository.findById(buildingId)
+                .orElseThrow(() -> { throw new EntityNotFoundException(BUILDING_NOT_FOUND); });
 
-        if (building == null) {
-            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
-        }
-
-        Set<String> staffIds = building.getStaff().stream()
-                .map(Staff::getId)
-                .collect(Collectors.toUnmodifiableSet());
+        Set<String> staffIds = getStaffIds(building.getStaff());
 
         if (!staffIds.isEmpty()) {
             this.staffService.cancelBuildingAssignments(staffIds, buildingId);
         }
 
-        this.apartmentService.emptyApartments(buildingId);
+        this.apartmentService.evacuateApartments(buildingId);
         this.buildingRepository.delete(building);
     }
 
     @Override
     public void assignStaff(String buildingId, Set<String> staffIds) {
-        Building building = this.buildingRepository.findById(buildingId).orElse(null);
 
-        if (building == null) {
+        if(this.buildingRepository.findById(buildingId).isEmpty()) {
             throw new EntityNotFoundException(BUILDING_NOT_FOUND);
         }
 
@@ -192,11 +181,14 @@ public class BuildingServiceImpl implements BuildingService {
 
     @Override
     public Set<BuildingServiceModel> getAllByIdIn(Set<String> ids) {
-        Set<BuildingServiceModel> buildingServiceModels =
-                this.buildingRepository.findAllByIdIn(ids).stream()
-                        .map(building -> this.modelMapper.map(building, BuildingServiceModel.class))
-                        .collect(Collectors.toCollection(LinkedHashSet::new));
-        return Collections.unmodifiableSet(buildingServiceModels);
+
+        return this.buildingRepository.findAllByIdIn(ids).stream()
+                .map(building -> this.modelMapper.map(building, BuildingServiceModel.class))
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    private Set<String> getStaffIds(Set<Staff> staff) {
+        return staff.stream().map(Staff::getId).collect(Collectors.toUnmodifiableSet());
     }
 
     private boolean buildingNameExistsInNeighbourhood(String buildingName,

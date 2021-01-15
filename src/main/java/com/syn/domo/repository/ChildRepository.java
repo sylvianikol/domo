@@ -33,5 +33,5 @@ public interface ChildRepository extends JpaRepository<Child, String> {
     @Modifying
     @Query(value = "DELETE FROM `children_parents` " +
             "WHERE `child_id` = ?1 ", nativeQuery = true)
-    void severRelations(String childId);
+    void severParentRelations(String childId);
 }

@@ -20,7 +20,7 @@ public interface ApartmentService {
 
     void delete(String apartmentId);
 
-    void emptyApartments(String building);
+    void evacuateApartments(String building);
 
     Optional<ApartmentServiceModel> getByIdAndBuildingId(String apartmentId, String buildingId1);
 }

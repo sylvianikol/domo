@@ -8,11 +8,12 @@ public class EmailTemplates {
             "Best regards,<br/> <a href=\"http://localhost:8080/v1\">Domo</a>";
 
     public static final String EMAIL_ACTIVATION_SUBJECT = "Domo Activation Email";
-    public static final String NEW_FEE_SUBJECT = "New building service fee generated at Domo";
+    public static final String NEW_FEE_SUBJECT = "New building service fee generated!";
 
     public static final String EMAIL_ACTIVATION_TEMPLATE =
             "<h3>Welcome to Domo %s %s!</h3><br/><br/>" +
-            "Please follow this link to activate your account:<br/>" +
+            "A user account was created for you by the Administrator of your building. <br/>" +
+            "Please follow this link to activate your account and start using Domo:<br/>" +
             "http://localhost:8080/v1/account/activate?userId=%s" +
             TEMPLATE_SEPARATOR + TEMPLATE_FOOTER;
 

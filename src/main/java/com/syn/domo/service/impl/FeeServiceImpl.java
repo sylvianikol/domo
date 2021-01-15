@@ -153,7 +153,7 @@ public class FeeServiceImpl implements FeeService {
         fee.setPaid(true);
         this.notificationService.sendFeePaymentReceipt(userServiceModel, fee);
         this.feeRepository.saveAndFlush(fee);
-
+        // TODO: Add income to Building's budget
         return this.modelMapper.map(fee, FeeServiceModel.class);
     }
 

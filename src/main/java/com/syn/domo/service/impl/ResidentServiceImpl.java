@@ -32,7 +32,6 @@ public class ResidentServiceImpl implements ResidentService  {
     private final UserService userService;
     private final BuildingService buildingService;
     private final ApartmentService apartmentService;
-    private final ChildService childService;
     private final RoleService roleService;
     private final ModelMapper modelMapper;
     private final ValidationUtil validationUtil;
@@ -42,7 +41,6 @@ public class ResidentServiceImpl implements ResidentService  {
                                UserService userService,
                                BuildingService buildingService,
                                ApartmentService apartmentService,
-                               ChildService childService,
                                RoleService roleService,
                                ModelMapper modelMapper,
                                ValidationUtil validationUtil,
@@ -51,7 +49,6 @@ public class ResidentServiceImpl implements ResidentService  {
         this.userService = userService;
         this.buildingService = buildingService;
         this.apartmentService = apartmentService;
-        this.childService = childService;
         this.roleService = roleService;
         this.modelMapper = modelMapper;
         this.validationUtil = validationUtil;

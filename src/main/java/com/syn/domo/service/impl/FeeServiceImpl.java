@@ -148,7 +148,7 @@ public class FeeServiceImpl implements FeeService {
                     throw new EntityNotFoundException(USER_NOT_FOUND);
                 });
 
-        // TODO: make mock payment
+        // TODO: make a mock payment
         fee.setPaidOn(LocalDateTime.now());
         fee.setPaid(true);
         this.notificationService.sendFeePaymentReceipt(userServiceModel, fee);

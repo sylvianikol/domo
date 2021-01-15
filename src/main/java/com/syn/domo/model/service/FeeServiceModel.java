@@ -2,12 +2,14 @@ package com.syn.domo.model.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class FeeServiceModel extends BaseServiceModel {
 
     private BigDecimal total;
     private LocalDate issueDate;
     private LocalDate dueDate;
+    private LocalDateTime paidOn;
     private boolean isPaid;
     private ApartmentServiceModel apartment;
 
@@ -36,6 +38,14 @@ public class FeeServiceModel extends BaseServiceModel {
 
     public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
+    }
+
+    public LocalDateTime getPaidOn() {
+        return paidOn;
+    }
+
+    public void setPaidOn(LocalDateTime paidOn) {
+        this.paidOn = paidOn;
     }
 
     public boolean isPaid() {

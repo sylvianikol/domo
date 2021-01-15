@@ -2,12 +2,14 @@ package com.syn.domo.model.view;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class FeeViewModel {
 
     private BigDecimal total;
     private LocalDate issueDate;
     private LocalDate dueDate;
+    private LocalDateTime paidOn;
     private boolean isPaid;
     private String apartmentNumber;
 
@@ -36,6 +38,14 @@ public class FeeViewModel {
 
     public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
+    }
+
+    public LocalDateTime getPaidOn() {
+        return paidOn;
+    }
+
+    public void setPaidOn(LocalDateTime paidOn) {
+        this.paidOn = paidOn;
     }
 
     public boolean isPaid() {

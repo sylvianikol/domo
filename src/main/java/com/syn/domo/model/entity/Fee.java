@@ -5,6 +5,7 @@ import org.hibernate.annotations.ColumnDefault;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.CascadeType.REFRESH;
@@ -18,6 +19,7 @@ public class Fee extends BaseEntity {
     private BigDecimal total;
     private LocalDate issueDate;
     private LocalDate dueDate;
+    private LocalDateTime paidOn;
     private boolean isPaid;
     private Apartment apartment;
 
@@ -49,6 +51,15 @@ public class Fee extends BaseEntity {
 
     public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
+    }
+
+    @Column(name = "paid_date")
+    public LocalDateTime getPaidOn() {
+        return paidOn;
+    }
+
+    public void setPaidOn(LocalDateTime paidOn) {
+        this.paidOn = paidOn;
     }
 
     @Column(name = "paid")

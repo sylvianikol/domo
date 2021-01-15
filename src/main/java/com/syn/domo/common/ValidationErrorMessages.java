@@ -2,9 +2,6 @@ package com.syn.domo.common;
 
 public class ValidationErrorMessages {
 
-    public static final String ID_NOT_NULL = "ID can not be null!";
-    public static final String ID_NOT_EMPTY = "ID can not by empty!";
-
     public static final String BUILDING_NAME_NOT_NULL =
             "Building name should not be null!";
     public static final String BUILDING_NAME_NOT_EMPTY =
@@ -38,12 +35,14 @@ public class ValidationErrorMessages {
     public static final String FLOOR_INVALID =
             "Invalid floor number!";
 
-    public static final String PASSWORD_INVALID_LENGTH =
-            "Password should be minimum 3 characters long!";
     public static final String PASSWORD_NOT_NULL =
             "Password can not be null!";
     public static final String PASSWORD_NOT_EMPTY =
             "Password can not be empty!";
+    public static final String PASSWORD_INVALID_LENGTH =
+            "Password should be minimum 3 characters long!";
+    public static final String PASSWORDS_DONT_MATCH =
+            "Passwords do not match!";
 
 
     public static final String EMAIL_NOT_NULL =

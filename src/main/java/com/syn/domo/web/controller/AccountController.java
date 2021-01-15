@@ -1,6 +1,7 @@
 package com.syn.domo.web.controller;
 
 import com.syn.domo.model.binding.UserActivateBindingModel;
+import com.syn.domo.model.service.UserActivateServiceModel;
 import com.syn.domo.model.service.UserServiceModel;
 import com.syn.domo.model.view.BaseUserViewModel;
 import com.syn.domo.model.view.ResponseModel;
@@ -47,10 +48,9 @@ public class AccountController implements AccountNamespace {
                     .body(new ResponseModel<>(userActivateBindingModel, bindingResult));
         }
 
-        ResponseModel<UserServiceModel> responseModel = this.userService
-                .createPassword(userId,
-                        userActivateBindingModel.getPassword(),
-                        userActivateBindingModel.getConfirmPassword());
+        ResponseModel<UserActivateServiceModel> responseModel = this.userService
+                .createPassword(userId, this.modelMapper
+                        .map(userActivateBindingModel, UserActivateServiceModel.class));
 
         return responseModel.hasErrors()
                 ? ResponseEntity.unprocessableEntity().body(responseModel)

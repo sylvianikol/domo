@@ -1,5 +1,6 @@
 package com.syn.domo.service.impl;
 
+import com.syn.domo.error.ErrorContainer;
 import com.syn.domo.model.entity.*;
 import com.syn.domo.model.service.*;
 import com.syn.domo.model.view.ResponseModel;
@@ -10,9 +11,14 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
+import static com.syn.domo.common.ExceptionErrorMessages.USER_NOT_FOUND;
+import static com.syn.domo.common.ValidationErrorMessages.PASSWORDS_DONT_MATCH;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -58,8 +64,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseModel<UserServiceModel> createPassword(String userId, String password, String confirmPassword) {
-        return null;
+    public ResponseModel<UserActivateServiceModel> createPassword(String userId,
+                                                                  UserActivateServiceModel userActivateServiceModel) {
+        String password = userActivateServiceModel.getPassword().trim();
+        String confirmPassword = userActivateServiceModel.getConfirmPassword().trim();
+
+        if (!password.equals(confirmPassword)) {
+             return new ResponseModel<>(userActivateServiceModel,
+                     new ErrorContainer(Map.of("password",
+                             Set.of(PASSWORDS_DONT_MATCH))));
+        }
+
+        UserEntity user = this.userRepository.findById(userId).orElseThrow(() -> {
+            throw new EntityNotFoundException(USER_NOT_FOUND);
+        });
+
+        user.setPassword(password);
+        user.setActive(true);
+        this.userRepository.saveAndFlush(user);
+
+        return new ResponseModel<>();
     }
 
     @Override

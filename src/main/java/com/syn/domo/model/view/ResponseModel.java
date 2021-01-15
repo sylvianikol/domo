@@ -14,9 +14,13 @@ public class ResponseModel<T> {
     private T object;
     private ErrorContainer errorContainer;
 
-    public ResponseModel(T object) {
-        this.object = object;
+    public ResponseModel() {
         this.errorContainer = new ErrorContainer();
+    }
+
+    public ResponseModel(T object) {
+        this();
+        this.object = object;
     }
 
     public ResponseModel(String id, T object) {

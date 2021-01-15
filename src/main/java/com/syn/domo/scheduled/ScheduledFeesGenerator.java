@@ -18,8 +18,8 @@ public class ScheduledFeesGenerator {
         this.feeService = feeService;
     }
 
-//    @Scheduled(cron = "0 0 10 1 * ?") // generate fees on the 1st each month
-    @Scheduled(initialDelay = 5000, fixedDelay=Long.MAX_VALUE) // testing
+    @Scheduled(cron = "0 0 10 1 * ?") // generate fees on the 1st each month
+//    @Scheduled(initialDelay = 5000, fixedDelay=Long.MAX_VALUE) // testing
     public void generateMonthlyFees() throws MessagingException {
         this.feeService.generateMonthlyFees();
     }

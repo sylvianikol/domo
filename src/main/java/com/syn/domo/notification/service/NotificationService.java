@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -45,11 +44,6 @@ public class NotificationService {
         helper.setTo(user.getEmail());
         helper.setSubject(NEW_FEE_SUBJECT);
         helper.setFrom(System.getenv("MAIL_USER"));
-//        SimpleMailMessage mail = new SimpleMailMessage();
-//        mail.setTo(user.getEmail());
-//        mail.setFrom(System.getenv("MAIL_USER"));
-//        mail.setSubject(NEW_FEE_SUBJECT);
-//        mail.setText("Fee total, due date, etc");
 
         this.javaMailSender.send(mimeMessage);
 

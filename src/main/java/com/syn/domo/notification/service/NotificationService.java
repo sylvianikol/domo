@@ -1,6 +1,5 @@
 package com.syn.domo.notification.service;
 
-import com.syn.domo.model.service.ResidentServiceModel;
 import com.syn.domo.model.service.UserServiceModel;
 import com.syn.domo.scheduled.ScheduledFeesGenerator;
 import org.slf4j.Logger;
@@ -30,10 +29,10 @@ public class NotificationService {
         this.javaMailSender = javaMailSender;
     }
 
-    public void sendNewFeeNotificationEmail(UserServiceModel resident) throws MailException {
+    public void sendNewFeeNotificationEmail(UserServiceModel user) throws MailException {
 
         SimpleMailMessage mail = new SimpleMailMessage();
-        mail.setTo(resident.getEmail());
+        mail.setTo(user.getEmail());
         mail.setFrom("MAIL_USER");
         mail.setSubject(NEW_FEE_SUBJECT);
         mail.setText("Fee total, due date, etc");
@@ -43,17 +42,17 @@ public class NotificationService {
         log.info("========== EMAIL SENT ============");
     }
 
-    public void sendActivationEmail(ResidentServiceModel resident) throws MailException, MessagingException {
+    public void sendActivationEmail(UserServiceModel user) throws MailException, MessagingException {
 
         MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
         String emailTemplate = String.format(EMAIL_ACTIVATION_TEMPLATE,
-                resident.getFirstName(), resident.getLastName(), resident.getId());
+                user.getFirstName(), user.getLastName(), user.getId());
 
 //        mimeMessage.setContent(emailTemplate, "text/html");
         helper.setText(emailTemplate, true); // Use this or the above line.
 
-        helper.setTo(resident.getEmail());
+        helper.setTo(user.getEmail());
         helper.setSubject(EMAIL_ACTIVATION_SUBJECT);
         helper.setFrom(System.getenv("MAIL_USER"));
 

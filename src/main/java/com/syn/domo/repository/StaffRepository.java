@@ -28,6 +28,6 @@ public interface StaffRepository extends JpaRepository<Staff, String> {
     @Query("SELECT s FROM Staff s " +
             "JOIN s.buildings b " +
             "WHERE b.id = :buildingId ")
-    List<Staff> getAllByBuildingId(@Param(value = "buildingId") String buildingId);
+    Set<Staff> getAllByBuildingId(@Param(value = "buildingId") String buildingId);
 
 }

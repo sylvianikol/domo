@@ -9,6 +9,7 @@ import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.model.service.RoleServiceModel;
 import com.syn.domo.model.service.StaffServiceModel;
 import com.syn.domo.model.view.ResponseModel;
+import com.syn.domo.notification.service.NotificationService;
 import com.syn.domo.repository.StaffRepository;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.RoleService;
@@ -19,6 +20,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -39,41 +41,31 @@ public class StaffServiceImpl implements StaffService {
     private final RoleService roleService;
     private final ModelMapper modelMapper;
     private final ValidationUtil validationUtil;
+    private final NotificationService notificationService;
 
     @Autowired
     public StaffServiceImpl(StaffRepository staffRepository,
                             UserService userService,
                             BuildingService buildingService,
                             RoleService roleService,
-                            ModelMapper modelMapper, ValidationUtil validationUtil) {
+                            ModelMapper modelMapper,
+                            ValidationUtil validationUtil,
+                            NotificationService notificationService) {
         this.staffRepository = staffRepository;
         this.userService = userService;
         this.buildingService = buildingService;
         this.roleService = roleService;
         this.modelMapper = modelMapper;
         this.validationUtil = validationUtil;
+        this.notificationService = notificationService;
     }
 
     @Override
     public Set<StaffServiceModel> getAll(String buildingId) {
 
-        Set<StaffServiceModel> staff;
-
-        if (buildingId.equals(EMPTY_VALUE)) {
-            staff = this.staffRepository.findAll().stream()
-                    .map(s -> this.modelMapper.map(s, StaffServiceModel.class))
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
-        } else {
-            if (this.buildingService.get(buildingId).isEmpty()) {
-                throw new EntityNotFoundException("Building not found!");
-            }
-
-            staff = this.staffRepository.getAllByBuildingId(buildingId).stream()
-                    .map(s -> this.modelMapper.map(s, StaffServiceModel.class))
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
-        }
-
-        return Collections.unmodifiableSet(staff);
+        return this.getStaffBy(buildingId).stream()
+                .map(s -> this.modelMapper.map(s, StaffServiceModel.class))
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
@@ -85,7 +77,7 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public ResponseModel<StaffServiceModel> add(StaffServiceModel staffServiceModel) {
+    public ResponseModel<StaffServiceModel> add(StaffServiceModel staffServiceModel) throws MessagingException {
 
         if (!this.validationUtil.isValid(staffServiceModel)) {
             return new ResponseModel<>(staffServiceModel,
@@ -123,10 +115,11 @@ public class StaffServiceImpl implements StaffService {
 
         this.staffRepository.saveAndFlush(staff);
 
-        // TODO: Send email with link to create password
+        StaffServiceModel serviceModel = this.modelMapper.map(staff, StaffServiceModel.class);
 
-        return new ResponseModel<>(staff.getId(),
-                this.modelMapper.map(staff, StaffServiceModel.class));
+        this.notificationService.sendActivationEmail(serviceModel);
+
+        return new ResponseModel<>(staff.getId(), serviceModel);
     }
 
     @Override
@@ -174,13 +167,7 @@ public class StaffServiceImpl implements StaffService {
     @Transactional
     public void deleteAll(String buildingId) {
 
-        List<Staff> staff;
-
-        if (buildingId.equals(EMPTY_VALUE)) {
-            staff = this.staffRepository.findAll();
-        } else {
-            staff = this.staffRepository.getAllByBuildingId(buildingId);
-        }
+        Set<Staff> staff = this.getStaffBy(buildingId);
 
         for (Staff employee : staff) {
             this.staffRepository.cancelBuildingAssignments(employee.getId());
@@ -238,5 +225,19 @@ public class StaffServiceImpl implements StaffService {
                 .map(staff -> this.modelMapper.map(staff, StaffServiceModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         return Collections.unmodifiableSet(staffServiceModels);
+    }
+
+    private Set<Staff> getStaffBy(String buildingId) {
+
+        if (buildingId.equals(EMPTY_VALUE)) {
+            return this.staffRepository.findAll().stream()
+                    .collect(Collectors.toUnmodifiableSet());
+        } else {
+            if (this.buildingService.get(buildingId).isEmpty()) {
+                throw new EntityNotFoundException(BUILDING_NOT_FOUND);
+            }
+
+            return this.staffRepository.getAllByBuildingId(buildingId);
+        }
     }
 }

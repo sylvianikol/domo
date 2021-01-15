@@ -173,33 +173,7 @@ public class ResidentServiceImpl implements ResidentService  {
     @Override
     public void deleteAll(String buildingId, String apartmentId) {
 
-        Set<Resident> residents;
-
-        if (buildingId.equals(EMPTY_VALUE) && apartmentId.equals(EMPTY_VALUE)) {
-            residents = new HashSet<>(this.residentRepository.findAll());
-        } else if (apartmentId.equals(EMPTY_VALUE)) {
-
-            if (this.buildingService.get(buildingId).isEmpty()) {
-                throw new EntityNotFoundException(BUILDING_NOT_FOUND);
-            }
-
-            residents = this.residentRepository.getAllByBuildingId(buildingId);
-
-        } else {
-
-            if (this.apartmentService.get(apartmentId).isEmpty()) {
-                throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
-            }
-
-            if (!buildingId.equals(EMPTY_VALUE)
-                    && this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId).isEmpty()) {
-                throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
-            }
-
-            this.childService.deleteAll(buildingId, apartmentId, EMPTY_VALUE);
-
-            residents = this.residentRepository.getAllByApartmentId(apartmentId);
-        }
+        Set<Resident> residents = this.getResidentsBy(buildingId, apartmentId);
 
         this.residentRepository.deleteAll(residents);
     }

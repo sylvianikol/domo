@@ -18,8 +18,8 @@ public class StaffServiceModel extends UserServiceModel {
     public StaffServiceModel() {
     }
 
-    @NotNull(message = JOB_NULL)
-    @NotEmpty(message = JOB_EMPTY)
+    @NotNull(message = JOB_NOT_NULL)
+    @NotEmpty(message = JOB_NOT_EMPTY)
     public String getJob() {
         return job;
     }
@@ -28,7 +28,7 @@ public class StaffServiceModel extends UserServiceModel {
         this.job = job;
     }
 
-    @NotNull(message = SALARY_NULL)
+    @NotNull(message = SALARY_NOT_NULL)
     @DecimalMin(value = "0", message = SALARY_MIN)
     public BigDecimal getSalary() {
         return salary;

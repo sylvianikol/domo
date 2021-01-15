@@ -16,8 +16,8 @@ public class StaffBindingModel extends BaseUserBindingModel {
     public StaffBindingModel() {
     }
 
-    @NotNull(message = EMAIL_NULL)
-    @NotEmpty(message = EMAIL_EMPTY)
+    @NotNull(message = EMAIL_NOT_NULL)
+    @NotEmpty(message = EMAIL_NOT_EMPTY)
     @Email(message = EMAIL_INVALID)
     public String getEmail() {
         return email;
@@ -27,8 +27,8 @@ public class StaffBindingModel extends BaseUserBindingModel {
         this.email = email;
     }
 
-    @NotNull(message = PHONE_NULL)
-    @NotEmpty(message = PHONE_EMPTY)
+    @NotNull(message = PHONE_NOT_NULL)
+    @NotEmpty(message = PHONE_NOT_EMPTY)
     @Pattern(regexp = PHONE_REGEX, message = PHONE_INVALID)
     @Size(max = 20, message = PHONE_LENGTH)
     public String getPhoneNumber() {
@@ -39,8 +39,8 @@ public class StaffBindingModel extends BaseUserBindingModel {
         this.phoneNumber = phoneNumber;
     }
 
-    @NotNull(message = JOB_NULL)
-    @NotEmpty(message = JOB_EMPTY)
+    @NotNull(message = JOB_NOT_NULL)
+    @NotEmpty(message = JOB_NOT_EMPTY)
     public String getJob() {
         return job;
     }
@@ -49,7 +49,7 @@ public class StaffBindingModel extends BaseUserBindingModel {
         this.job = job;
     }
 
-    @NotNull(message = SALARY_NULL)
+    @NotNull(message = SALARY_NOT_NULL)
     @DecimalMin(value = "0", message = SALARY_MIN)
     public BigDecimal getSalary() {
         return salary;

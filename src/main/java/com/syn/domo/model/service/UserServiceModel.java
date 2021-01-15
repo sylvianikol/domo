@@ -17,8 +17,8 @@ public class UserServiceModel extends BaseUserServiceModel {
     public UserServiceModel() {
     }
 
-    @NotNull(message = EMAIL_NULL)
-    @NotEmpty(message = EMAIL_EMPTY)
+    @NotNull(message = EMAIL_NOT_NULL)
+    @NotEmpty(message = EMAIL_NOT_EMPTY)
     @Email(message = EMAIL_INVALID)
     public String getEmail() {
         return email;
@@ -28,8 +28,8 @@ public class UserServiceModel extends BaseUserServiceModel {
         this.email = email;
     }
 
-    @NotNull(message = PHONE_NULL)
-    @NotEmpty(message = PHONE_EMPTY)
+    @NotNull(message = PHONE_NOT_NULL)
+    @NotEmpty(message = PHONE_NOT_EMPTY)
     @Pattern(regexp = PHONE_REGEX, message = PHONE_INVALID)
     @Size(max = 20, message = PHONE_LENGTH)
     public String getPhoneNumber() {
@@ -40,7 +40,7 @@ public class UserServiceModel extends BaseUserServiceModel {
         this.phoneNumber = phoneNumber;
     }
 
-    @NotNull(message = ACTIVE_STATUS_NULL)
+    @NotNull(message = ACTIVE_NOT_NULL)
     public boolean isActive() {
         return isActive;
     }

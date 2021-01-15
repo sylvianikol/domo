@@ -13,7 +13,7 @@ public class EmailTemplates {
     public static final String EMAIL_ACTIVATION_TEMPLATE =
             "<h3>Welcome to Domo %s %s!</h3><br/><br/>" +
             "Please follow this link to activate your account:<br/>" +
-            "http://localhost:8080/v1/activate?userId=%s" +
+            "http://localhost:8080/v1/account/activate?userId=%s" +
             TEMPLATE_SEPARATOR + TEMPLATE_FOOTER;
 
     public static final String FEE_NOTICE_TEMPLATE =

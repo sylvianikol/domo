@@ -14,8 +14,8 @@ public class BuildingBindingModel {
     public BuildingBindingModel() {
     }
 
-    @NotNull(message = BUILDING_NAME_NULL)
-    @NotEmpty(message = BUILDING_NAME_EMPTY)
+    @NotNull(message = BUILDING_NAME_NOT_NULL)
+    @NotEmpty(message = BUILDING_NAME_NOT_EMPTY)
     @Size(max = 40, message = BUILDING_NAME_INVALID_LENGTH)
     public String getName() {
         return name;
@@ -25,8 +25,8 @@ public class BuildingBindingModel {
         this.name = name;
     }
 
-    @NotNull(message = NEIGHBOURHOOD_NULL)
-    @NotEmpty(message = NEIGHBOURHOOD_EMPTY)
+    @NotNull(message = NEIGHBOURHOOD_NOT_NULL)
+    @NotEmpty(message = NEIGHBOURHOOD_NOT_EMPTY)
     @Size(max = 40, message = NEIGHBOURHOOD_INVALID_LENGTH)
     public String getNeighbourhood() {
         return neighbourhood;
@@ -36,8 +36,8 @@ public class BuildingBindingModel {
         this.neighbourhood = neighbourhood;
     }
 
-    @NotNull(message = ADDRESS_NULL)
-    @NotEmpty(message = ADDRESS_EMPTY)
+    @NotNull(message = ADDRESS_NOT_NULL)
+    @NotEmpty(message = ADDRESS_NOT_EMPTY)
     public String getAddress() {
         return address;
     }
@@ -46,7 +46,7 @@ public class BuildingBindingModel {
         this.address = address;
     }
 
-    @NotNull(message = FLOOR_NUMBER_NULL)
+    @NotNull(message = FLOOR_NUMBER_NOT_NULL)
     @Min(value = 0, message = FLOOR_MIN_INVALID)
     @Max(value = 100, message = FLOOR_MAX_INVALID)
     public int getFloors() {

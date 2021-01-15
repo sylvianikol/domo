@@ -2,6 +2,7 @@ package com.syn.domo.service.impl;
 
 import com.syn.domo.model.entity.*;
 import com.syn.domo.model.service.*;
+import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.repository.UserRepository;
 import com.syn.domo.service.RoleService;
 import com.syn.domo.service.UserService;
@@ -46,6 +47,19 @@ public class UserServiceImpl implements UserService {
 
             this.userRepository.saveAndFlush(admin);
         }
+    }
+
+    @Override
+    public Optional<UserServiceModel> get(String userId) {
+        Optional<UserEntity> user = this.userRepository.findById(userId);
+        return user.isEmpty()
+                ? Optional.empty()
+                : Optional.of(this.modelMapper.map(user, UserServiceModel.class));
+    }
+
+    @Override
+    public ResponseModel<UserServiceModel> createPassword(String userId, String password, String confirmPassword) {
+        return null;
     }
 
     @Override

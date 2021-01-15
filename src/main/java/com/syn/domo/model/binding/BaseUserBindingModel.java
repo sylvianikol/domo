@@ -16,8 +16,8 @@ public abstract class BaseUserBindingModel {
     public BaseUserBindingModel() {
     }
 
-    @NotNull(message = FIRST_NAME_NULL)
-    @NotEmpty(message = FIRST_NAME_EMPTY)
+    @NotNull(message = FIRST_NAME_NOT_NULL)
+    @NotEmpty(message = FIRST_NAME_NOT_EMPTY)
     @Size(min = 2, max = 55, message = FIRST_NAME_INVALID)
     public String getFirstName() {
         return firstName;
@@ -27,8 +27,8 @@ public abstract class BaseUserBindingModel {
         this.firstName = firstName;
     }
 
-    @NotNull(message = LAST_NAME_NULL)
-    @NotEmpty(message = LAST_NAME_EMPTY)
+    @NotNull(message = LAST_NAME_NOT_NULL)
+    @NotEmpty(message = LAST_NAME_NOT_EMPTY)
     @Size(min = 2, max = 55, message = LAST_NAME_INVALID)
     public String getLastName() {
         return lastName;

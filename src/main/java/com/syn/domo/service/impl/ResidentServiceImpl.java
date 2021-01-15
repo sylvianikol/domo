@@ -61,39 +61,12 @@ public class ResidentServiceImpl implements ResidentService  {
     @Override
     public Set<ResidentServiceModel> getAll(String buildingId, String apartmentId) {
 
-        if (buildingId.equals(EMPTY_VALUE) && apartmentId.equals(EMPTY_VALUE)) {
-
-            return this.residentRepository.findAll().stream()
-                    .map(r -> this.modelMapper.map(r, ResidentServiceModel.class))
-                    .collect(Collectors.toUnmodifiableSet());
-
-        }
-
-        if (apartmentId.equals(EMPTY_VALUE)) {
-
-            if (this.buildingService.get(buildingId).isEmpty()) {
-                throw new EntityNotFoundException(BUILDING_NOT_FOUND);
-            }
-
-            return this.residentRepository.getAllByBuildingId(buildingId).stream()
-                    .map(r -> this.modelMapper.map(r, ResidentServiceModel.class))
-                    .collect(Collectors.toUnmodifiableSet());
-
-        }
-
-        if (this.apartmentService.get(apartmentId).isEmpty()) {
-            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
-        }
-
-        if (!buildingId.equals(EMPTY_VALUE)
-                && this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId).isEmpty()) {
-            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
-        }
-
-        return this.residentRepository.getAllByApartmentId(apartmentId).stream()
+        return this.getResidentsBy(buildingId, apartmentId).stream()
                 .map(r -> this.modelMapper.map(r, ResidentServiceModel.class))
                 .collect(Collectors.toUnmodifiableSet());
     }
+
+
 
     @Override
     public Optional<ResidentServiceModel> get(String residentId) {
@@ -276,9 +249,32 @@ public class ResidentServiceImpl implements ResidentService  {
                 : Optional.of(this.modelMapper.map(resident, ResidentServiceModel.class));
     }
 
-    private Set<String> getApartmentIds(Resident resident) {
-        return resident.getApartments().stream()
-                .map(Apartment::getId)
-                .collect(Collectors.toUnmodifiableSet());
+    private Set<Resident> getResidentsBy(String buildingId, String apartmentId) {
+
+        if (buildingId.equals(EMPTY_VALUE) && apartmentId.equals(EMPTY_VALUE)) {
+            return this.residentRepository.findAll().stream()
+                    .collect(Collectors.toUnmodifiableSet());
+
+        }
+
+        if (apartmentId.equals(EMPTY_VALUE)) {
+
+            if (this.buildingService.get(buildingId).isEmpty()) {
+                throw new EntityNotFoundException(BUILDING_NOT_FOUND);
+            }
+
+            return this.residentRepository.getAllByBuildingId(buildingId);
+        }
+
+        if (this.apartmentService.get(apartmentId).isEmpty()) {
+            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
+        }
+
+        if (!buildingId.equals(EMPTY_VALUE)
+                && this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId).isEmpty()) {
+            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
+        }
+
+        return this.residentRepository.getAllByApartmentId(apartmentId);
     }
 }

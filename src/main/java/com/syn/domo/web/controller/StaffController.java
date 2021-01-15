@@ -14,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.util.Optional;
 import java.util.Set;
@@ -59,7 +60,7 @@ public class StaffController implements StaffNamespace {
     @PostMapping
     public ResponseEntity<?> add(@Valid @RequestBody StaffBindingModel staffBindingModel,
                                  BindingResult bindingResult,
-                                 UriComponentsBuilder uriComponentsBuilder) {
+                                 UriComponentsBuilder uriComponentsBuilder) throws MessagingException {
 
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()

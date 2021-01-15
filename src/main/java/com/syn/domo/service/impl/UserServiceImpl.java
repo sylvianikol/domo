@@ -33,11 +33,11 @@ public class UserServiceImpl implements UserService {
     public void initAdmin() {
         if (this.userRepository.count() == 0) {
             UserEntity admin = new UserEntity();
-            admin.setFirstName("Admin");
-            admin.setLastName("Admin");
-            admin.setEmail("admin@domo.bg");
-            admin.setPassword("123");
-            admin.setPhoneNumber("0888147384573");
+            admin.setFirstName(System.getenv("ADMIN_FNAME"));
+            admin.setLastName(System.getenv("ADMIN_LNAME"));
+            admin.setEmail(System.getenv("ADMIN_EMAIL"));
+            admin.setPassword(System.getenv("ADMIN_PASS"));
+            admin.setPhoneNumber(System.getenv("ADMIN_PHONE"));
             admin.setActive(true);
             admin.setAddedOn(LocalDate.now());
 

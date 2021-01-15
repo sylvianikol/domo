@@ -33,7 +33,7 @@ public class NotificationService {
 
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setTo(user.getEmail());
-        mail.setFrom("MAIL_USER");
+        mail.setFrom(System.getenv("MAIL_USER"));
         mail.setSubject(NEW_FEE_SUBJECT);
         mail.setText("Fee total, due date, etc");
 

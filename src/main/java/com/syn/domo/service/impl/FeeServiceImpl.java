@@ -30,6 +30,7 @@ import javax.mail.MessagingException;
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -148,6 +149,7 @@ public class FeeServiceImpl implements FeeService {
                 });
 
         // TODO: make mock payment
+        fee.setPaidOn(LocalDateTime.now());
         fee.setPaid(true);
         this.notificationService.sendFeePaymentReceipt(userServiceModel, fee);
         this.feeRepository.saveAndFlush(fee);

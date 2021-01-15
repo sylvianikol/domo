@@ -58,9 +58,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<UserServiceModel> get(String userId) {
         Optional<UserEntity> user = this.userRepository.findById(userId);
+
         return user.isEmpty()
                 ? Optional.empty()
-                : Optional.of(this.modelMapper.map(user, UserServiceModel.class));
+                : Optional.of(this.modelMapper.map(user.get(), UserServiceModel.class));
     }
 
     @Override
@@ -79,6 +80,7 @@ public class UserServiceImpl implements UserService {
             throw new EntityNotFoundException(USER_NOT_FOUND);
         });
 
+        // TODO: encode password with BCryptPasswordEncoder
         user.setPassword(password);
         user.setActive(true);
         this.userRepository.saveAndFlush(user);

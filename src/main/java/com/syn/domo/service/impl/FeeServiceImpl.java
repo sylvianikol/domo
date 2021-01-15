@@ -1,5 +1,6 @@
 package com.syn.domo.service.impl;
 
+import com.syn.domo.common.ExceptionErrorMessages;
 import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Fee;
@@ -12,6 +13,7 @@ import com.syn.domo.repository.FeeRepository;
 import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.FeeService;
+import com.syn.domo.service.UserService;
 import com.syn.domo.utils.UrlCheckerUtil;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -44,6 +46,7 @@ public class FeeServiceImpl implements FeeService {
     private final FeeRepository feeRepository;
     private final BuildingService buildingService;
     private final ApartmentService apartmentService;
+    private final UserService userService;
     private final NotificationService notificationService;
     private final ModelMapper modelMapper;
     private final UrlCheckerUtil urlCheckerUtil;
@@ -52,12 +55,14 @@ public class FeeServiceImpl implements FeeService {
     public FeeServiceImpl(FeeRepository feeRepository,
                           BuildingService buildingService,
                           ApartmentService apartmentService,
+                          UserService userService,
                           NotificationService notificationService,
                           ModelMapper modelMapper,
                           UrlCheckerUtil urlCheckerUtil) {
         this.feeRepository = feeRepository;
         this.buildingService = buildingService;
         this.apartmentService = apartmentService;
+        this.userService = userService;
         this.notificationService = notificationService;
         this.modelMapper = modelMapper;
         this.urlCheckerUtil = urlCheckerUtil;
@@ -125,19 +130,26 @@ public class FeeServiceImpl implements FeeService {
     }
 
     @Override
-    public FeeServiceModel pay(String feeId) {
+    public FeeServiceModel pay(String userId, String feeId) throws MessagingException {
 
         Fee fee = this.feeRepository.findById(feeId).orElse(null);
 
         if (fee == null) {
-            throw new EntityNotFoundException("Fee not found!");
+            throw new EntityNotFoundException(FEE_NOT_FOUND);
         }
 
         if (fee.isPaid()) {
-            throw new UnprocessableEntityException("Fee is already paid!");
+            throw new UnprocessableEntityException(FEE_ALREADY_PAID);
         }
 
+        UserServiceModel userServiceModel = this.userService.get(userId)
+                .orElseThrow(() -> {
+                    throw new EntityNotFoundException(USER_NOT_FOUND);
+                });
+
+        // TODO: make mock payment
         fee.setPaid(true);
+        this.notificationService.sendFeePaymentReceipt(userServiceModel, fee);
         this.feeRepository.saveAndFlush(fee);
 
         return this.modelMapper.map(fee, FeeServiceModel.class);

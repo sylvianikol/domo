@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.mail.MessagingException;
 import java.util.*;
 
 import static com.syn.domo.common.DefaultParamValues.*;
@@ -55,10 +56,11 @@ public class FeesController implements FeesNamespace {
     }
 
     @PostMapping("/{feeId}/pay")
-    public ResponseEntity<?> pay(@PathVariable(value = "feeId") String feeId,
-                                  UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<?> pay(@RequestParam(name = "userId") String userId,
+                                 @PathVariable(value = "feeId") String feeId,
+                                  UriComponentsBuilder uriComponentsBuilder) throws MessagingException {
 
-        this.feeService.pay(feeId);
+        this.feeService.pay(userId, feeId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder

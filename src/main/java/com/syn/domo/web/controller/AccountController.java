@@ -5,6 +5,7 @@ import com.syn.domo.model.service.UserActivateServiceModel;
 import com.syn.domo.model.service.UserServiceModel;
 import com.syn.domo.model.view.BaseUserViewModel;
 import com.syn.domo.model.view.ResponseModel;
+import com.syn.domo.model.view.UserViewModel;
 import com.syn.domo.service.UserService;
 import com.syn.domo.web.controller.namespace.AccountNamespace;
 import com.syn.domo.web.controller.namespace.BaseNamespace;
@@ -33,9 +34,10 @@ public class AccountController implements AccountNamespace {
     public ResponseEntity<?> activate(@RequestParam(name = "userId") String userId) {
 
         Optional<UserServiceModel> user = this.userService.get(userId);
+
         return user.isEmpty()
                 ? ResponseEntity.notFound().build()
-                : ResponseEntity.ok(this.modelMapper.map(user, BaseUserViewModel.class));
+                : ResponseEntity.ok(this.modelMapper.map(user.get(), UserViewModel.class));
     }
 
     @PostMapping("/create-password")

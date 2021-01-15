@@ -9,6 +9,7 @@ public class EmailTemplates {
 
     public static final String EMAIL_ACTIVATION_SUBJECT = "Domo Activation Email";
     public static final String NEW_FEE_SUBJECT = "New building service fee generated!";
+    public static final String FEE_RECEIPT_SUBJECT = "Your Domo Fee Payment Receipt";
 
     public static final String EMAIL_ACTIVATION_TEMPLATE =
             "<h3>Welcome to Domo %s %s!</h3><br/><br/>" +
@@ -25,5 +26,15 @@ public class EmailTemplates {
                     "Due date: %s<br/> " +
                     "Pay online:<br/>" +
                     "http://localhost:8080/v1/fees/%s/pay" +
+                    TEMPLATE_SEPARATOR + TEMPLATE_FOOTER;
+
+    public static final String FEE_RECEIPT_TEMPLATE =
+            "<h3>Thank you %s %s!</h3><br/>" +
+                    TEMPLATE_SEPARATOR +
+                    "YOUR PAYMENT RECEIPT" +
+                    TEMPLATE_SEPARATOR +
+                    "Monthly fee for apartment No.%s in %s" +
+                    "Total: %s<br/>" +
+                    "Time period: %s - %s" +
                     TEMPLATE_SEPARATOR + TEMPLATE_FOOTER;
 }

@@ -15,7 +15,7 @@ public interface FeeService {
 
     void delete(String feeId);
 
-    FeeServiceModel pay(String feeId);
+    FeeServiceModel pay(String userId, String feeId) throws MessagingException;
 
     void generateMonthlyFees() throws MessagingException;
 

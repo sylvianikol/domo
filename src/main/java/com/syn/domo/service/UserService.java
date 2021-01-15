@@ -1,5 +1,6 @@
 package com.syn.domo.service;
 
+import com.syn.domo.model.service.BaseUserServiceModel;
 import com.syn.domo.model.service.UserActivateServiceModel;
 import com.syn.domo.model.service.UserServiceModel;
 import com.syn.domo.model.view.ResponseModel;

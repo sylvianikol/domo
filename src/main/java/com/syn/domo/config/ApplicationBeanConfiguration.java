@@ -25,4 +25,6 @@ public class ApplicationBeanConfiguration {
     public UrlCheckerUtil urlCheckerUtil() {
         return new UrlCheckerUtilImpl();
     }
+
+
 }

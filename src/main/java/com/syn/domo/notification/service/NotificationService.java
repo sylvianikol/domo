@@ -47,7 +47,27 @@ public class NotificationService {
 
         this.javaMailSender.send(mimeMessage);
 
-        log.info("========== EMAIL SENT ============");
+        log.info("========== NEW FEE NOTIFICATION SENT ============");
+    }
+
+    public void sendFeePaymentReceipt(UserServiceModel user, Fee fee) throws MessagingException {
+        MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+
+        String emailTemplate = String.format(FEE_RECEIPT_TEMPLATE,
+                user.getFirstName(), user.getLastName(),
+                fee.getApartment().getNumber(),
+                fee.getApartment().getBuilding().getName(),
+                fee.getTotal(), fee.getDueDate(), fee.getId());
+
+        helper.setText(emailTemplate, true);
+        helper.setTo(user.getEmail());
+        helper.setSubject(FEE_RECEIPT_SUBJECT);
+        helper.setFrom(System.getenv("MAIL_USER"));
+
+        this.javaMailSender.send(mimeMessage);
+
+        log.info("========== FEE RECEIPT SENT ============");
     }
 
     public void sendActivationEmail(UserServiceModel user) throws MailException, MessagingException {
@@ -66,6 +86,6 @@ public class NotificationService {
 
         this.javaMailSender.send(mimeMessage);
 
-        log.info("========== EMAIL SENT ============");
+        log.info("========== EMAIL ACTIVATION SENT ============");
     }
 }

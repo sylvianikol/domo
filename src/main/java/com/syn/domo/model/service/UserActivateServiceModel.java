@@ -26,13 +26,13 @@ public class UserActivateServiceModel {
         this.password = password;
     }
 
+    @NotNull(message = PASSWORD_NOT_NULL)
+    @NotEmpty(message = PASSWORD_NOT_EMPTY)
+    @Size(min = 3, max = 30, message = PASSWORD_INVALID_LENGTH)
     public String getConfirmPassword() {
         return confirmPassword;
     }
 
-    @NotNull(message = PASSWORD_NOT_NULL)
-    @NotEmpty(message = PASSWORD_NOT_EMPTY)
-    @Size(min = 3, max = 30, message = PASSWORD_INVALID_LENGTH)
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
     }

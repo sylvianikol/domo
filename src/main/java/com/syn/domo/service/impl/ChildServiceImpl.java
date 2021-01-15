@@ -163,29 +163,11 @@ public class ChildServiceImpl implements ChildService {
         this.childRepository.delete(child);
     }
 
-
-    private boolean hasSameParents(Set<Resident> existingParents,
-                                   Set<Resident> newParents) {
-        int sameParentsCount = 0;
-
-        for (Resident parent : existingParents) {
-            for (Resident newChildParent : newParents) {
-                if (parent.getId().equals(newChildParent.getId())) {
-                    ++sameParentsCount;
-                }
-            }
-        }
-
-
-        return sameParentsCount == existingParents.size()
-                && sameParentsCount == newParents.size();
-    }
-
-    private boolean childExistsInApartment(String firstName, String lastName, String apartmentId,
-                                           Set<Resident> parents) {
+    private boolean childExistsInApartment(String firstName, String lastName,
+                                           String apartmentId, Set<Resident> parents) {
         Optional<Child> child = this.childRepository
                 .findByFirstNameAndLastNameAndApartmentId(firstName, lastName, apartmentId);
-//        return child.isPresent() && this.hasSameParents(child.get().getParents(), parents);
+
         return child.isPresent() && parents.equals(child.get().getParents());
     }
 

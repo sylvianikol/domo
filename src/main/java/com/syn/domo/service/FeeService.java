@@ -2,6 +2,7 @@ package com.syn.domo.service;
 
 import com.syn.domo.model.service.FeeServiceModel;
 
+import javax.mail.MessagingException;
 import java.util.Map;
 import java.util.Optional;
 
@@ -16,7 +17,7 @@ public interface FeeService {
 
     FeeServiceModel pay(String feeId);
 
-    void generateMonthlyFees();
+    void generateMonthlyFees() throws MessagingException;
 
     void deleteAll(String buildingId, String apartmentId);
 

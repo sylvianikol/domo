@@ -24,6 +24,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -186,7 +187,7 @@ public class FeeServiceImpl implements FeeService {
     }
 
     @Override
-    public void generateMonthlyFees() {
+    public void generateMonthlyFees() throws MessagingException {
 
         Set<ApartmentServiceModel> apartments = this.apartmentService.getAll(EMPTY_VALUE);
 
@@ -203,7 +204,7 @@ public class FeeServiceImpl implements FeeService {
             this.feeRepository.saveAndFlush(fee);
 
             for (UserServiceModel resident : apartment.getResidents()) {
-                this.notificationService.sendNewFeeNotificationEmail(resident);
+                this.notificationService.sendNewFeeNotificationEmail(resident, fee);
             }
         }
 

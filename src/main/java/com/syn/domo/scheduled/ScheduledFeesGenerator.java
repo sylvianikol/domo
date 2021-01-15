@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import javax.mail.MessagingException;
+
 
 @Component
 public class ScheduledFeesGenerator {
@@ -16,9 +18,9 @@ public class ScheduledFeesGenerator {
         this.feeService = feeService;
     }
 
-    @Scheduled(cron = "0 0 10 1 * ?") // generate fees on the 1st each month
-//    @Scheduled(initialDelay = 5000, fixedDelay=Long.MAX_VALUE) // testing
-    public void generateMonthlyFees() {
+//    @Scheduled(cron = "0 0 10 1 * ?") // generate fees on the 1st each month
+    @Scheduled(initialDelay = 5000, fixedDelay=Long.MAX_VALUE) // testing
+    public void generateMonthlyFees() throws MessagingException {
         this.feeService.generateMonthlyFees();
     }
 }

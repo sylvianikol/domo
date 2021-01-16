@@ -154,9 +154,9 @@ public class FeeServiceImpl implements FeeService {
         this.notificationService.sendFeePaymentReceipt(userServiceModel, fee);
         this.feeRepository.saveAndFlush(fee);
 
-        this.buildingService
-                .addToBudget(fee.getTotal(), fee.getApartment().getBuilding().getId());
-        // TODO: Add income to Building's budget
+        this.buildingService.addToBudget(fee.getTotal(),
+                fee.getApartment().getBuilding().getId());
+
         return this.modelMapper.map(fee, FeeServiceModel.class);
     }
 

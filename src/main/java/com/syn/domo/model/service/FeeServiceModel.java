@@ -11,6 +11,7 @@ public class FeeServiceModel extends BaseServiceModel {
     private LocalDate dueDate;
     private LocalDateTime paidOn;
     private boolean isPaid;
+    private String payerId;
     private ApartmentServiceModel apartment;
 
     public FeeServiceModel() {
@@ -50,6 +51,14 @@ public class FeeServiceModel extends BaseServiceModel {
 
     public boolean isPaid() {
         return isPaid;
+    }
+
+    public String getPayerId() {
+        return payerId;
+    }
+
+    public void setPayerId(String payerId) {
+        this.payerId = payerId;
     }
 
     public void setPaid(boolean paid) {

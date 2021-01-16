@@ -21,6 +21,7 @@ public class Fee extends BaseEntity {
     private LocalDate dueDate;
     private LocalDateTime paidOn;
     private boolean isPaid;
+    private String payerId;
     private Apartment apartment;
 
     public Fee() {
@@ -69,6 +70,15 @@ public class Fee extends BaseEntity {
 
     public void setPaid(boolean paid) {
         isPaid = paid;
+    }
+
+    @Column(name = "payer_id")
+    public String getPayerId() {
+        return payerId;
+    }
+
+    public void setPayerId(String payerId) {
+        this.payerId = payerId;
     }
 
     @ManyToOne(cascade = { MERGE, REFRESH })

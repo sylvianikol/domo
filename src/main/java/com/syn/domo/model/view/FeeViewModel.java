@@ -11,6 +11,7 @@ public class FeeViewModel {
     private LocalDate dueDate;
     private LocalDateTime paidOn;
     private boolean isPaid;
+    private String payerId;
     private String apartmentNumber;
 
     public FeeViewModel() {
@@ -54,6 +55,14 @@ public class FeeViewModel {
 
     public void setPaid(boolean paid) {
         isPaid = paid;
+    }
+
+    public String getPayerId() {
+        return payerId;
+    }
+
+    public void setPayerId(String payerId) {
+        this.payerId = payerId;
     }
 
     public String getApartmentNumber() {

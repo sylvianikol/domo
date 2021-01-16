@@ -27,6 +27,14 @@ public class Apartment extends BaseEntity {
     public Apartment() {
     }
 
+    public Apartment(String number, int floor, Building building, int pets, LocalDate addedOn) {
+        this.number = number;
+        this.floor = floor;
+        this.building = building;
+        this.pets = pets;
+        this.addedOn = addedOn;
+    }
+
     @Column(nullable = false, columnDefinition = "VARCHAR(10)")
     public String getNumber() {
         return number;

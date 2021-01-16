@@ -113,11 +113,13 @@ public class BuildingServiceModel extends BaseServiceModel {
                 Objects.equals(name, that.name) &&
                 Objects.equals(address, that.address) &&
                 Objects.equals(neighbourhood, that.neighbourhood) &&
+                Objects.equals(budget, that.budget) &&
+                Objects.equals(baseFee, that.baseFee) &&
                 Objects.equals(addedOn, that.addedOn);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), name, address, neighbourhood, floors, addedOn);
+        return Objects.hash(super.hashCode(), name, address, neighbourhood, floors, budget, baseFee, addedOn);
     }
 }

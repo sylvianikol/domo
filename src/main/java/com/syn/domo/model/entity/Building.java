@@ -130,12 +130,13 @@ public class Building extends BaseEntity{
                 Objects.equals(name, building.name) &&
                 Objects.equals(neighbourhood, building.neighbourhood) &&
                 Objects.equals(address, building.address) &&
+                Objects.equals(baseFee, building.baseFee) &&
                 Objects.equals(budget, building.budget) &&
                 Objects.equals(addedOn, building.addedOn);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), name, neighbourhood, address, floors, budget, addedOn);
+        return Objects.hash(super.hashCode(), name, neighbourhood, address, floors, baseFee, budget, addedOn);
     }
 }

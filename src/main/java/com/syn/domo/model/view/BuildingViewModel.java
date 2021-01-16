@@ -104,11 +104,12 @@ public class BuildingViewModel {
                 Objects.equals(neighbourhood, that.neighbourhood) &&
                 Objects.equals(address, that.address) &&
                 Objects.equals(budget, that.budget) &&
+                Objects.equals(baseFee, that.baseFee) &&
                 Objects.equals(addedOn, that.addedOn);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, neighbourhood, address, floors, budget, addedOn);
+        return Objects.hash(id, name, neighbourhood, address, floors, budget, baseFee, addedOn);
     }
 }

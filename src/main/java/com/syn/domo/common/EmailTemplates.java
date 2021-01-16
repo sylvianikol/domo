@@ -29,11 +29,11 @@ public class EmailTemplates {
                     TEMPLATE_SEPARATOR + TEMPLATE_FOOTER;
 
     public static final String FEE_RECEIPT_TEMPLATE =
-            "<h3>Thank you %s %s!</h3><br/>" +
+            "<h3>Thank you for payment %s %s!</h3><br/>" +
                     TEMPLATE_SEPARATOR +
                     "YOUR PAYMENT RECEIPT" +
                     TEMPLATE_SEPARATOR +
-                    "Monthly fee for apartment No.%s in %s" +
+                    "Monthly fee for apartment No.%s in %s<br/>" +
                     "Total: %s<br/>" +
                     "Time period: %s - %s" +
                     TEMPLATE_SEPARATOR + TEMPLATE_FOOTER;

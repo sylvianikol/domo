@@ -58,7 +58,7 @@ public class NotificationService {
                 user.getFirstName(), user.getLastName(),
                 fee.getApartment().getNumber(),
                 fee.getApartment().getBuilding().getName(),
-                fee.getTotal(), fee.getDueDate(), fee.getId());
+                fee.getTotal(), fee.getIssueDate(), fee.getDueDate());
 
         helper.setText(emailTemplate, true);
         helper.setTo(user.getEmail());

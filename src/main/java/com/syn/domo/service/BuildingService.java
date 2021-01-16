@@ -3,6 +3,7 @@ package com.syn.domo.service;
 import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.model.view.ResponseModel;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.Set;
 
@@ -24,4 +25,6 @@ public interface BuildingService {
     void assignStaff(String buildingId, Set<String> staffIds);
 
     Set<BuildingServiceModel> getAllByIdIn(Set<String> ids);
+
+    void addToBudget(BigDecimal total, String buildingId);
 }

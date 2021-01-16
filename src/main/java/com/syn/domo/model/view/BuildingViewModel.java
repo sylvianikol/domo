@@ -1,5 +1,6 @@
 package com.syn.domo.model.view;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
@@ -11,6 +12,7 @@ public class BuildingViewModel {
     private String neighbourhood;
     private String address;
     private int floors;
+    private BigDecimal budget;
     private LocalDate addedOn;
 
     private Set<ApartmentViewModel> apartments;
@@ -58,6 +60,14 @@ public class BuildingViewModel {
         this.floors = floors;
     }
 
+    public BigDecimal getBudget() {
+        return budget;
+    }
+
+    public void setBudget(BigDecimal budget) {
+        this.budget = budget;
+    }
+
     public LocalDate getAddedOn() {
         return addedOn;
     }
@@ -84,11 +94,12 @@ public class BuildingViewModel {
                 Objects.equals(name, that.name) &&
                 Objects.equals(neighbourhood, that.neighbourhood) &&
                 Objects.equals(address, that.address) &&
+                Objects.equals(budget, that.budget) &&
                 Objects.equals(addedOn, that.addedOn);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, neighbourhood, address, floors, addedOn);
+        return Objects.hash(id, name, neighbourhood, address, floors, budget, addedOn);
     }
 }

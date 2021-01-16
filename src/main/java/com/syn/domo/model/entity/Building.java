@@ -1,6 +1,9 @@
 package com.syn.domo.model.entity;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
@@ -16,6 +19,7 @@ public class Building extends BaseEntity{
     private String neighbourhood;
     private String address;
     private int floors;
+    private BigDecimal budget;
     private LocalDate addedOn;
 
     private Set<Apartment> apartments;
@@ -60,6 +64,15 @@ public class Building extends BaseEntity{
         this.floors = floors;
     }
 
+    @ColumnDefault("0")
+    public BigDecimal getBudget() {
+        return budget;
+    }
+
+    public void setBudget(BigDecimal budget) {
+        this.budget = budget;
+    }
+
     @Column(name = "added_on", nullable = false)
     public LocalDate getAddedOn() {
         return addedOn;
@@ -97,11 +110,12 @@ public class Building extends BaseEntity{
                 Objects.equals(name, building.name) &&
                 Objects.equals(neighbourhood, building.neighbourhood) &&
                 Objects.equals(address, building.address) &&
+                Objects.equals(budget, building.budget) &&
                 Objects.equals(addedOn, building.addedOn);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), name, neighbourhood, address, floors, addedOn);
+        return Objects.hash(super.hashCode(), name, neighbourhood, address, floors, budget, addedOn);
     }
 }

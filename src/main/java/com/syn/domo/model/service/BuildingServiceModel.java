@@ -1,6 +1,7 @@
 package com.syn.domo.model.service;
 
 import javax.validation.constraints.*;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
@@ -13,6 +14,7 @@ public class BuildingServiceModel extends BaseServiceModel {
     private String address;
     private String neighbourhood;
     private int floors;
+    private BigDecimal budget;
     private LocalDate addedOn;
 
     Set<ApartmentServiceModel> apartments;
@@ -61,6 +63,16 @@ public class BuildingServiceModel extends BaseServiceModel {
 
     public void setFloors(int floors) {
         this.floors = floors;
+    }
+
+    @NotNull(message = BUDGET_NOT_NULL)
+    @DecimalMin(value = "0", message = BUDGET_MIN)
+    public BigDecimal getBudget() {
+        return budget;
+    }
+
+    public void setBudget(BigDecimal budget) {
+        this.budget = budget;
     }
 
     @Future(message = DATE_FUTURE)

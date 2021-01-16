@@ -1,5 +1,6 @@
 package com.syn.domo.model.view;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class BuildingInnerViewModel {
@@ -9,6 +10,7 @@ public class BuildingInnerViewModel {
     private String neighbourhood;
     private String address;
     private int floors;
+    private BigDecimal budget;
     private LocalDate addedOn;
 
     public BuildingInnerViewModel() {
@@ -52,6 +54,14 @@ public class BuildingInnerViewModel {
 
     public void setFloors(int floors) {
         this.floors = floors;
+    }
+
+    public BigDecimal getBudget() {
+        return budget;
+    }
+
+    public void setBudget(BigDecimal budget) {
+        this.budget = budget;
     }
 
     public LocalDate getAddedOn() {

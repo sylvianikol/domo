@@ -107,6 +107,11 @@ public class ValidationErrorMessages {
     public static final String SALARY_MIN =
             "Salary can not be a negative number!";
 
+    public static final String BUDGET_NOT_NULL =
+            "Budget can not be null!";
+    public static final String BUDGET_MIN =
+            "Budget can not be a negative number!";
+
     public static final String ACTIVE_NOT_NULL =
             "Activation status can not be null!";
 }

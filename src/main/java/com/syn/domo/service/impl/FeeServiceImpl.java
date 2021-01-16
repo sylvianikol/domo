@@ -1,6 +1,5 @@
 package com.syn.domo.service.impl;
 
-import com.syn.domo.common.ExceptionErrorMessages;
 import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Fee;
@@ -151,8 +150,12 @@ public class FeeServiceImpl implements FeeService {
         // TODO: make a mock payment
         fee.setPaidOn(LocalDateTime.now());
         fee.setPaid(true);
+
         this.notificationService.sendFeePaymentReceipt(userServiceModel, fee);
         this.feeRepository.saveAndFlush(fee);
+
+        this.buildingService
+                .addToBudget(fee.getTotal(), fee.getApartment().getBuilding().getId());
         // TODO: Add income to Building's budget
         return this.modelMapper.map(fee, FeeServiceModel.class);
     }

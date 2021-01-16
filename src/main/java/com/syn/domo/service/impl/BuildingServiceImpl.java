@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -185,6 +186,17 @@ public class BuildingServiceImpl implements BuildingService {
         return this.buildingRepository.findAllByIdIn(ids).stream()
                 .map(building -> this.modelMapper.map(building, BuildingServiceModel.class))
                 .collect(Collectors.toUnmodifiableSet());
+    }
+
+    @Override
+    public void addToBudget(BigDecimal total, String buildingId) {
+        Building building = this.buildingRepository.findById(buildingId)
+                .orElseThrow(() -> {
+                    throw new EntityNotFoundException(BUILDING_NOT_FOUND);
+                });
+
+        building.setBudget(building.getBudget().add(total));
+        this.buildingRepository.saveAndFlush(building);
     }
 
     private Set<String> getStaffIds(Set<Staff> staff) {

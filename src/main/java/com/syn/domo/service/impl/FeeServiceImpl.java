@@ -148,9 +148,9 @@ public class FeeServiceImpl implements FeeService {
                 });
 
         // TODO: make a mock payment
-        fee.setPaidOn(LocalDateTime.now());
+        fee.setPaidDate(LocalDateTime.now());
         fee.setPaid(true);
-
+        fee.setPayerId(userId);
         this.notificationService.sendFeePaymentReceipt(userServiceModel, fee);
         this.feeRepository.saveAndFlush(fee);
 

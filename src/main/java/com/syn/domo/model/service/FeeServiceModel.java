@@ -9,7 +9,7 @@ public class FeeServiceModel extends BaseServiceModel {
     private BigDecimal total;
     private LocalDate issueDate;
     private LocalDate dueDate;
-    private LocalDateTime paidOn;
+    private LocalDateTime paidDate;
     private boolean isPaid;
     private String payerId;
     private ApartmentServiceModel apartment;
@@ -41,12 +41,12 @@ public class FeeServiceModel extends BaseServiceModel {
         this.dueDate = dueDate;
     }
 
-    public LocalDateTime getPaidOn() {
-        return paidOn;
+    public LocalDateTime getPaidDate() {
+        return paidDate;
     }
 
-    public void setPaidOn(LocalDateTime paidOn) {
-        this.paidOn = paidOn;
+    public void setPaidDate(LocalDateTime paidDate) {
+        this.paidDate = paidDate;
     }
 
     public boolean isPaid() {

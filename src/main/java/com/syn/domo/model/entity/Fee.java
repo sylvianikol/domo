@@ -19,7 +19,7 @@ public class Fee extends BaseEntity {
     private BigDecimal total;
     private LocalDate issueDate;
     private LocalDate dueDate;
-    private LocalDateTime paidOn;
+    private LocalDateTime paidDate;
     private boolean isPaid;
     private String payerId;
     private Apartment apartment;
@@ -55,12 +55,12 @@ public class Fee extends BaseEntity {
     }
 
     @Column(name = "paid_date")
-    public LocalDateTime getPaidOn() {
-        return paidOn;
+    public LocalDateTime getPaidDate() {
+        return paidDate;
     }
 
-    public void setPaidOn(LocalDateTime paidOn) {
-        this.paidOn = paidOn;
+    public void setPaidDate(LocalDateTime paidOn) {
+        this.paidDate = paidOn;
     }
 
     @Column(name = "paid")

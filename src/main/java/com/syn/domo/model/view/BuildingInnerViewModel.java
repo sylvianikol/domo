@@ -11,6 +11,7 @@ public class BuildingInnerViewModel {
     private String address;
     private int floors;
     private BigDecimal budget;
+    private BigDecimal baseFee;
     private LocalDate addedOn;
 
     public BuildingInnerViewModel() {
@@ -62,6 +63,14 @@ public class BuildingInnerViewModel {
 
     public void setBudget(BigDecimal budget) {
         this.budget = budget;
+    }
+
+    public BigDecimal getBaseFee() {
+        return baseFee;
+    }
+
+    public void setBaseFee(BigDecimal baseFee) {
+        this.baseFee = baseFee;
     }
 
     public LocalDate getAddedOn() {

@@ -13,6 +13,7 @@ public class BuildingViewModel {
     private String address;
     private int floors;
     private BigDecimal budget;
+    private BigDecimal baseFee;
     private LocalDate addedOn;
 
     private Set<ApartmentViewModel> apartments;
@@ -66,6 +67,14 @@ public class BuildingViewModel {
 
     public void setBudget(BigDecimal budget) {
         this.budget = budget;
+    }
+
+    public BigDecimal getBaseFee() {
+        return baseFee;
+    }
+
+    public void setBaseFee(BigDecimal baseFee) {
+        this.baseFee = baseFee;
     }
 
     public LocalDate getAddedOn() {

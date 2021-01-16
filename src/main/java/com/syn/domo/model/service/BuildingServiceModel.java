@@ -15,6 +15,7 @@ public class BuildingServiceModel extends BaseServiceModel {
     private String neighbourhood;
     private int floors;
     private BigDecimal budget;
+    private BigDecimal baseFee;
     private LocalDate addedOn;
 
     Set<ApartmentServiceModel> apartments;
@@ -73,6 +74,16 @@ public class BuildingServiceModel extends BaseServiceModel {
 
     public void setBudget(BigDecimal budget) {
         this.budget = budget;
+    }
+
+    @NotNull(message = BASE_FEE_NOT_NULL)
+    @DecimalMin(value = "0", message = BASE_FEE_MIN)
+    public BigDecimal getBaseFee() {
+        return baseFee;
+    }
+
+    public void setBaseFee(BigDecimal baseFee) {
+        this.baseFee = baseFee;
     }
 
     @Future(message = DATE_FUTURE)

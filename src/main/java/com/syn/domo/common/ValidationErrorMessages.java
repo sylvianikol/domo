@@ -112,6 +112,11 @@ public class ValidationErrorMessages {
     public static final String BUDGET_MIN =
             "Budget can not be a negative number!";
 
+    public static final String BASE_FEE_NOT_NULL =
+            "Base fee can not be null!";
+    public static final String BASE_FEE_MIN =
+            "Base fee can not be a negative number!";
+
     public static final String ACTIVE_NOT_NULL =
             "Activation status can not be null!";
 }

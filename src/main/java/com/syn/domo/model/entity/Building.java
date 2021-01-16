@@ -19,6 +19,7 @@ public class Building extends BaseEntity{
     private String neighbourhood;
     private String address;
     private int floors;
+    private BigDecimal baseFee;
     private BigDecimal budget;
     private LocalDate addedOn;
 
@@ -62,6 +63,15 @@ public class Building extends BaseEntity{
 
     public void setFloors(int floors) {
         this.floors = floors;
+    }
+
+    @ColumnDefault("0")
+    public BigDecimal getBaseFee() {
+        return baseFee;
+    }
+
+    public void setBaseFee(BigDecimal baseFee) {
+        this.baseFee = baseFee;
     }
 
     @ColumnDefault("0")

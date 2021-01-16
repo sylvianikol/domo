@@ -2,6 +2,8 @@ package com.syn.domo.model.binding;
 
 import javax.validation.constraints.*;
 
+import java.math.BigDecimal;
+
 import static com.syn.domo.common.ValidationErrorMessages.*;
 
 public class BuildingBindingModel {
@@ -10,6 +12,7 @@ public class BuildingBindingModel {
     private String neighbourhood;
     private String address;
     private int floors;
+    private BigDecimal baseFee;
 
     public BuildingBindingModel() {
     }
@@ -57,4 +60,13 @@ public class BuildingBindingModel {
         this.floors = floors;
     }
 
+    @NotNull(message = BASE_FEE_NOT_NULL)
+    @DecimalMin(value = "0", message = BASE_FEE_MIN)
+    public BigDecimal getBaseFee() {
+        return baseFee;
+    }
+
+    public void setBaseFee(BigDecimal baseFee) {
+        this.baseFee = baseFee;
+    }
 }

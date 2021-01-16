@@ -7,6 +7,8 @@ import com.syn.domo.utils.ValidationUtilImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 @Configuration
 public class ApplicationBeanConfiguration {
@@ -26,5 +28,8 @@ public class ApplicationBeanConfiguration {
         return new UrlCheckerUtilImpl();
     }
 
-
+    @Bean
+    public JavaMailSender javaMailSender() {
+        return new JavaMailSenderImpl();
+    }
 }

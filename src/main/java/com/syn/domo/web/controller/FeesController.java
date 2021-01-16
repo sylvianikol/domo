@@ -55,9 +55,9 @@ public class FeesController implements FeesNamespace {
                 : ResponseEntity.ok(this.modelMapper.map(fee.get(), FeeViewModel.class));
     }
 
-    @PostMapping("/{feeId}/pay")
+    @PostMapping("/pay")
     public ResponseEntity<?> pay(@RequestParam(name = "userId") String userId,
-                                 @PathVariable(value = "feeId") String feeId,
+                                 @RequestParam(name = "feeId") String feeId,
                                   UriComponentsBuilder uriComponentsBuilder) throws MessagingException {
 
         this.feeService.pay(userId, feeId);

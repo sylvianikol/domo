@@ -14,8 +14,6 @@ import static javax.persistence.CascadeType.REFRESH;
 @Table(name = "fees")
 public class Fee extends BaseEntity {
 
-    public static final BigDecimal BASE_FEE = new BigDecimal("5");
-
     private BigDecimal total;
     private LocalDate issueDate;
     private LocalDate dueDate;

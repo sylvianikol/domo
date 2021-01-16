@@ -35,7 +35,6 @@ import java.util.stream.Collectors;
 
 import static com.syn.domo.common.DefaultParamValues.*;
 import static com.syn.domo.common.ExceptionErrorMessages.*;
-import static com.syn.domo.model.entity.Fee.BASE_FEE;
 
 @Service
 public class FeeServiceImpl implements FeeService {
@@ -214,7 +213,8 @@ public class FeeServiceImpl implements FeeService {
             fee.setDueDate(LocalDate.now().plusMonths(1));
             fee.setApartment(this.modelMapper.map(apartment, Apartment.class));
 
-            BigDecimal total = this.calculateFeeTotal(apartment);
+            BigDecimal total = this.calculateFeeTotal(apartment,
+                    apartment.getBuilding().getBaseFee());
 
             fee.setTotal(total);
 
@@ -228,18 +228,18 @@ public class FeeServiceImpl implements FeeService {
         log.info("******* FEES GENERATED *******");
     }
 
-    private BigDecimal calculateFeeTotal(ApartmentServiceModel apartment) {
+    private BigDecimal calculateFeeTotal(ApartmentServiceModel apartment, BigDecimal baseFee) {
         BigDecimal total = new BigDecimal("0");
         int inhabitants = apartment.getResidents().size() +
                 apartment.getChildren().size() +
                 apartment.getPets();
 
         if (inhabitants == 0) {
-            total = total.add(BASE_FEE);
+            total = total.add(baseFee);
         } else {
-            total = total.add(BASE_FEE.multiply(BigDecimal.valueOf(inhabitants)));
+            total = total.add(baseFee.multiply(BigDecimal.valueOf(inhabitants)));
             if (apartment.getFloor() > 2) {
-                total = total.add(BASE_FEE);
+                total = total.add(baseFee);
             }
         }
 

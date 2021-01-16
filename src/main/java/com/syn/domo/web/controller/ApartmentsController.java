@@ -59,7 +59,7 @@ public class ApartmentsController implements ApartmentsNamespace {
 
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public ResponseEntity<?> add(@RequestParam(name = "buildingId") String buildingId,
                                  @Valid @RequestBody ApartmentBindingModel apartmentBindingModel,
                                  BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {

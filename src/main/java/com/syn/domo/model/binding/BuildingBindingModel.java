@@ -12,6 +12,7 @@ public class BuildingBindingModel {
     private String neighbourhood;
     private String address;
     private int floors;
+    private BigDecimal budget;
     private BigDecimal baseFee;
 
     public BuildingBindingModel() {
@@ -58,6 +59,16 @@ public class BuildingBindingModel {
 
     public void setFloors(int floors) {
         this.floors = floors;
+    }
+
+    @NotNull(message = BUDGET_NOT_NULL)
+    @DecimalMin(value = "0", message = BUDGET_MIN)
+    public BigDecimal getBudget() {
+        return budget;
+    }
+
+    public void setBudget(BigDecimal budget) {
+        this.budget = budget;
     }
 
     @NotNull(message = BASE_FEE_NOT_NULL)

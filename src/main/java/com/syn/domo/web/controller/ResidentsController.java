@@ -62,7 +62,7 @@ public class ResidentsController implements ResidentsNamespace {
                 : ResponseEntity.ok(this.modelMapper.map(resident.get(), ResidentViewModel.class));
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public ResponseEntity<?> add(@RequestParam(value = "buildingId") String buildingId,
                                  @RequestParam(value = "apartmentId") String apartmentId,
                                  @Valid @RequestBody ResidentBindingModel residentBindingModel,

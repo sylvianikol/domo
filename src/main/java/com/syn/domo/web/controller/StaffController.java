@@ -57,7 +57,7 @@ public class StaffController implements StaffNamespace {
                 : ResponseEntity.ok(this.modelMapper.map(staff.get(), StaffViewModel.class));
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public ResponseEntity<?> add(@Valid @RequestBody StaffBindingModel staffBindingModel,
                                  BindingResult bindingResult,
                                  UriComponentsBuilder uriComponentsBuilder) throws MessagingException {

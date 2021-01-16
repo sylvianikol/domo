@@ -58,7 +58,7 @@ public class BuildingsController implements BuildingsNamespace {
 
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public ResponseEntity<?> add(@Valid @RequestBody BuildingBindingModel buildingBindingModel,
                                  BindingResult bindingResult,
                                  UriComponentsBuilder uriComponentsBuilder) {

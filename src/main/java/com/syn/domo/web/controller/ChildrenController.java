@@ -61,7 +61,7 @@ public class ChildrenController implements ChildrenNamespace {
                 : ResponseEntity.ok(this.modelMapper.map(child.get(), ChildViewModel.class));
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public ResponseEntity<?> add(@RequestParam(name = "buildingId") String buildingId,
                                  @RequestParam(name = "apartmentId") String apartmentId,
                                  @RequestParam(name = "parentIds") Set<String> parentIds,

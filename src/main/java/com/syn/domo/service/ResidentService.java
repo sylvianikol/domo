@@ -33,4 +33,6 @@ public interface ResidentService {
     Optional<ResidentServiceModel> getOneByIdAndBuildingId(String residentId, String buildingId);
 
     Optional<ResidentServiceModel> getOneByIdAndApartmentId(String residentId, String apartmentId);
+
+    Set<ResidentServiceModel> filter(String buildingId, String apartmentId);
 }

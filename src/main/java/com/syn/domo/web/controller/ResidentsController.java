@@ -34,6 +34,21 @@ public class ResidentsController implements ResidentsNamespace {
         this.modelMapper = modelMapper;
     }
 
+    @GetMapping("/filter")
+    public ResponseEntity<Set<ResidentViewModel>> filter(@RequestParam(required = false,
+                                                                 name = "buildingId") String buildingId,
+                                                         @RequestParam(required = false,
+                                                                 name = "apartmentId") String apartmentId) {
+        Set<ResidentViewModel> residents =
+                this.residentService.filter(buildingId, apartmentId).stream()
+                .map(r -> this.modelMapper.map(r, ResidentViewModel.class))
+                .collect(Collectors.toUnmodifiableSet());
+
+        return residents.isEmpty()
+                ? ResponseEntity.notFound().build()
+                : ResponseEntity.ok(residents);
+    }
+
     @GetMapping
     public ResponseEntity<Set<ResidentViewModel>> getAll(@RequestParam(required = false, defaultValue = EMPTY_VALUE,
                                                                        name = "buildingId") String buildingId,

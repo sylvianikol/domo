@@ -1,21 +1,22 @@
 package com.syn.domo.service.impl;
 
 import com.syn.domo.error.ErrorContainer;
-import com.syn.domo.model.entity.Apartment;
-import com.syn.domo.model.entity.Resident;
-import com.syn.domo.model.entity.Role;
-import com.syn.domo.model.entity.UserRole;
+import com.syn.domo.model.entity.*;
 import com.syn.domo.model.service.*;
 import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.notification.service.NotificationService;
 import com.syn.domo.repository.ResidentRepository;
 import com.syn.domo.service.*;
+import com.syn.domo.specification.ResidentFilterSpecification;
 import com.syn.domo.utils.ValidationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -218,6 +219,18 @@ public class ResidentServiceImpl implements ResidentService  {
         return resident.isEmpty()
                 ? Optional.empty()
                 : Optional.of(this.modelMapper.map(resident, ResidentServiceModel.class));
+    }
+
+    @Override
+    public Set<ResidentServiceModel> filter(String buildingId, String apartmentId) {
+
+        ResidentFilterSpecification residentFilterSpecification =
+                new ResidentFilterSpecification(buildingId, apartmentId);
+
+        return this.residentRepository
+                .findAll(residentFilterSpecification).stream()
+                .map(r -> this.modelMapper.map(r, ResidentServiceModel.class))
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     private Set<Resident> getResidentsBy(String buildingId, String apartmentId) {

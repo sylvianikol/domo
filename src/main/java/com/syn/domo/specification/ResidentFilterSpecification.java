@@ -1,6 +1,7 @@
 package com.syn.domo.specification;
 
 import com.syn.domo.model.entity.Apartment;
+import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.entity.Resident;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -20,19 +21,23 @@ public class ResidentFilterSpecification implements Specification<Resident> {
     public Predicate toPredicate(Root<Resident> root, CriteriaQuery<?> query,
                                  CriteriaBuilder cb) {
 
-        if (buildingId == null && apartmentId == null) {
-            return cb.isTrue(cb.literal(true));
-        }
-
         Predicate predicate = cb.conjunction();
 
         if (buildingId != null) {
 
+            Join<Resident, Building> buildings =
+                    root.join("apartments", JoinType.LEFT)
+                            .join("building", JoinType.LEFT);
+
+            predicate.getExpressions().add(cb.equal(buildings.get("id"), this.buildingId));
         }
 
         if (apartmentId != null) {
-            Join<Resident, Apartment> apartments = root.join("apartments", JoinType.LEFT);
-            predicate.getExpressions().add(cb.equal(apartments.get("id"), apartmentId));
+
+            Join<Resident, Apartment> apartments =
+                    root.join("apartments", JoinType.LEFT);
+
+            predicate.getExpressions().add(cb.equal(apartments.get("id"), this.apartmentId));
         }
 
         return predicate;

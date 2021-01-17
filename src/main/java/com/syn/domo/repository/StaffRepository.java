@@ -2,6 +2,7 @@ package com.syn.domo.repository;
 
 import com.syn.domo.model.entity.Staff;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,7 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Repository
-public interface StaffRepository extends JpaRepository<Staff, String> {
+public interface StaffRepository extends JpaRepository<Staff, String>, JpaSpecificationExecutor<Staff> {
 
     Optional<Staff> findByEmail(String email);
 

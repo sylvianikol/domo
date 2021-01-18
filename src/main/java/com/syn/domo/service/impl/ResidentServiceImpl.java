@@ -175,7 +175,11 @@ public class ResidentServiceImpl implements ResidentService  {
     @Override
     public void deleteAll(String buildingId, String apartmentId) {
 
-        Set<Resident> residents = this.getResidentsBy(buildingId, apartmentId);
+        ResidentFilterSpecification residentFilterSpecification =
+                new ResidentFilterSpecification(buildingId, apartmentId);
+
+        List<Resident> residents = this.residentRepository.findAll(residentFilterSpecification);
+//        Set<Resident> residents = this.getResidentsBy(buildingId, apartmentId);
 
         this.residentRepository.deleteAll(residents);
     }

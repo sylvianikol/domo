@@ -61,10 +61,13 @@ public class ResidentServiceImpl implements ResidentService  {
         ResidentFilterSpecification residentFilterSpecification =
                 new ResidentFilterSpecification(buildingId, apartmentId);
 
-        return  this.residentRepository.findAll(residentFilterSpecification, pageable)
+        Set<ResidentServiceModel> residents = this.residentRepository
+                .findAll(residentFilterSpecification, pageable)
                 .getContent().stream()
                 .map(r -> this.modelMapper.map(r, ResidentServiceModel.class))
-                .collect(Collectors.toUnmodifiableSet());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return Collections.unmodifiableSet(residents);
     }
 
     @Override

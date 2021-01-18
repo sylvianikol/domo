@@ -17,6 +17,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.mail.MessagingException;
 import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
+
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -44,7 +46,7 @@ public class ResidentsController implements ResidentsNamespace {
         Set<ResidentViewModel> residents =
                 this.residentService.getAll(buildingId, apartmentId, pageable).stream()
                 .map(r -> this.modelMapper.map(r, ResidentViewModel.class))
-                .collect(Collectors.toUnmodifiableSet());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
 
         return residents.isEmpty()
                 ? ResponseEntity.notFound().build()

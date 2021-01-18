@@ -16,8 +16,6 @@ import java.util.Set;
 @Repository
 public interface ResidentRepository extends JpaRepository<Resident, String>, JpaSpecificationExecutor<Resident> {
 
-//    Page<Resident> findAll(ResidentFilterSpecification residentFilterSpecification, Pageable pageable);
-
     Set<Resident> findAllByIdIn(Set<String> ids);
 
     @Query("SELECT r FROM Resident r " +

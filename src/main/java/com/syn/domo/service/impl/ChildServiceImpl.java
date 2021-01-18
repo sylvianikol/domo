@@ -8,11 +8,13 @@ import com.syn.domo.model.service.*;
 import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.repository.ChildRepository;
 import com.syn.domo.service.*;
+import com.syn.domo.specification.ChildFilterSpecification;
 import com.syn.domo.utils.UrlCheckerUtil;
 import com.syn.domo.utils.ValidationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
@@ -53,11 +55,17 @@ public class ChildServiceImpl implements ChildService {
     }
 
     @Override
-    public Set<ChildServiceModel> getAll(String buildingId, String apartmentId, String parentId) {
+    public Set<ChildServiceModel> getAll(String buildingId, String apartmentId,
+                                         String parentId, Pageable pageable) {
+        ChildFilterSpecification childFilterSpecification =
+                new ChildFilterSpecification(buildingId, apartmentId, parentId);
 
-        return getChildrenBy(buildingId, apartmentId, parentId).stream()
+        Set<ChildServiceModel> children = this.childRepository
+                .findAll(childFilterSpecification, pageable).getContent().stream()
                 .map(c -> this.modelMapper.map(c, ChildServiceModel.class))
-                .collect(Collectors.toUnmodifiableSet());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return Collections.unmodifiableSet(children);
     }
 
     @Override
@@ -144,8 +152,10 @@ public class ChildServiceImpl implements ChildService {
     @Override
     @Transactional
     public void deleteAll(String buildingId, String apartmentId, String parentId) {
+        ChildFilterSpecification childFilterSpecification =
+                new ChildFilterSpecification(buildingId, apartmentId, parentId);
 
-        Set<Child> children = this.getChildrenBy(buildingId, apartmentId, parentId);
+        List<Child> children = this.childRepository.findAll(childFilterSpecification);
 
         for (Child child : children) {
             this.childRepository.severParentRelations(child.getId());
@@ -190,41 +200,5 @@ public class ChildServiceImpl implements ChildService {
         }
 
         return result;
-    }
-
-    private Set<Child> getChildrenBy(String buildingId, String apartmentId, String parentId) {
-
-        if (this.urlCheckerUtil.areEmpty(buildingId, apartmentId, parentId)) {
-            return this.childRepository.findAll().stream()
-                    .collect(Collectors.toUnmodifiableSet());
-        }
-
-        if (this.urlCheckerUtil.areEmpty(apartmentId, parentId)) {
-            if (this.buildingService.get(buildingId).isEmpty()) {
-                throw new EntityNotFoundException(BUILDING_NOT_FOUND);
-            }
-
-            return this.childRepository.getAllByBuildingId(buildingId);
-        }
-
-        if (this.urlCheckerUtil.areEmpty(parentId)) {
-            if (!this.urlCheckerUtil.areEmpty(buildingId)) {
-                if (this.buildingService.get(buildingId).isEmpty()) {
-                    throw new EntityNotFoundException(BUILDING_NOT_FOUND);
-                }
-
-                if (this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId).isEmpty()) {
-                    throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
-                }
-            }
-
-            return this.childRepository.findAllByApartmentId(apartmentId);
-        }
-
-        if (this.parentNotFoundIn(buildingId, apartmentId, parentId)) {
-            throw new EntityNotFoundException(PARENT_NOT_FOUND);
-        }
-
-        return this.childRepository.getAllByParentId(parentId);
     }
  }

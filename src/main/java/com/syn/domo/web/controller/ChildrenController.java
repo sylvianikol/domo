@@ -18,6 +18,7 @@ import javax.validation.Valid;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Pageable;
 
 import static com.syn.domo.common.DefaultParamValues.EMPTY_VALUE;
 
@@ -33,15 +34,17 @@ public class ChildrenController implements ChildrenNamespace {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping
-    public ResponseEntity<Set<ChildViewModel>> getAll(@RequestParam(required = false, defaultValue = EMPTY_VALUE,
-                                                                    name = "buildingId") String buildingId,
-                                                      @RequestParam(required = false, defaultValue = EMPTY_VALUE,
-                                                                    name = "apartmentId") String apartmentId,
-                                                      @RequestParam(required = false, defaultValue = EMPTY_VALUE,
-                                                                    name = "parentId") String parentId) {
+    @GetMapping("/all")
+    public ResponseEntity<Set<ChildViewModel>> getAll(@RequestParam(required = false,
+                                                              name = "buildingId") String buildingId,
+                                                      @RequestParam(required = false,
+                                                              name = "apartmentId") String apartmentId,
+                                                      @RequestParam(required = false,
+                                                              name = "parentId") String parentId,
+                                                      Pageable pageable
+                                                      ) {
         Set<ChildViewModel> children = this.childService
-                .getAll(buildingId, apartmentId, parentId)
+                .getAll(buildingId, apartmentId, parentId, pageable)
                 .stream()
                 .map(c -> this.modelMapper.map(c, ChildViewModel.class))
                 .collect(Collectors.toUnmodifiableSet());
@@ -105,7 +108,7 @@ public class ChildrenController implements ChildrenNamespace {
                         .toUri()).build();
     }
 
-    @DeleteMapping
+    @DeleteMapping("/delete")
     public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = EMPTY_VALUE,
                                               name = "buildingId") String buildingId,
                                        @RequestParam(required = false, defaultValue = EMPTY_VALUE,

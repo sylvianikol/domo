@@ -102,7 +102,7 @@ public class BuildingsController implements BuildingsNamespace {
                         .toUri()).build();
     }
 
-    @DeleteMapping
+    @DeleteMapping("/delete")
     public ResponseEntity<?> deleteAll(UriComponentsBuilder uriComponentsBuilder) {
         this.buildingService.deleteAll();
         return ResponseEntity.status(HttpStatus.NO_CONTENT)

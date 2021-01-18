@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import org.springframework.data.domain.Pageable;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,14 +36,15 @@ public class ApartmentsController implements ApartmentsNamespace {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping
-    public ResponseEntity<Set<ApartmentViewModel>> getAll(@RequestParam(required = false, defaultValue = EMPTY_VALUE,
-                                                                        name = "buildingId") String buildingId) {
+    @GetMapping("/all")
+    public ResponseEntity<Set<ApartmentViewModel>> getAll(@RequestParam(required = false,
+                                                                name = "buildingId") String buildingId,
+                                                          Pageable pageable) {
 
         Set<ApartmentViewModel> apartments =
-                this.apartmentService.getAll(buildingId).stream()
+                this.apartmentService.getAll(buildingId, pageable).stream()
                 .map(a -> this.modelMapper.map(a, ApartmentViewModel.class))
-                .collect(Collectors.toUnmodifiableSet());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
 
         return apartments.isEmpty()
                 ? ResponseEntity.notFound().build()

@@ -23,8 +23,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.syn.domo.common.DefaultParamValues.EMPTY_VALUE;
-
 @RestController
 public class ResidentsController implements ResidentsNamespace {
 
@@ -109,11 +107,9 @@ public class ResidentsController implements ResidentsNamespace {
                 .build();
     }
 
-    @DeleteMapping
-    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = EMPTY_VALUE,
-                                                     name = "buildingId") String buildingId,
-                                       @RequestParam(required = false, defaultValue = EMPTY_VALUE,
-                                                     name = "apartmentId") String apartmentId,
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteAll(@RequestParam(required = false, name = "buildingId") String buildingId,
+                                       @RequestParam(required = false, name = "apartmentId") String apartmentId,
                                        UriComponentsBuilder uriComponentsBuilder) {
 
         this.residentService.deleteAll(buildingId, apartmentId);

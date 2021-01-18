@@ -8,6 +8,7 @@ import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.repository.ApartmentRepository;
 import com.syn.domo.service.*;
+import com.syn.domo.specification.ApartmentFilterSpecification;
 import com.syn.domo.utils.ValidationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -51,14 +53,26 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
-    public Set<ApartmentServiceModel> getAll(String buildingId) {
+    public Set<ApartmentServiceModel> getAll(String buildingId, Pageable pageable) {
 
-        return getApartmentsBy(buildingId).stream()
+        ApartmentFilterSpecification apartmentFilterSpecification =
+                new ApartmentFilterSpecification(buildingId);
+
+        LinkedHashSet<ApartmentServiceModel> apartments = this.apartmentRepository
+                .findAll(apartmentFilterSpecification, pageable)
+                .getContent().stream()
+                .map(a -> this.modelMapper.map(a, ApartmentServiceModel.class))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return Collections.unmodifiableSet(apartments);
+    }
+
+    @Override
+    public Set<ApartmentServiceModel> getAll() {
+        return this.apartmentRepository.findAll().stream()
                 .map(a -> this.modelMapper.map(a, ApartmentServiceModel.class))
                 .collect(Collectors.toUnmodifiableSet());
     }
-
-
 
     @Override
     public Optional<ApartmentServiceModel> get(String apartmentId) {

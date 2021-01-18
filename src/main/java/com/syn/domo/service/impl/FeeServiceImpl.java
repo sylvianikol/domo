@@ -205,7 +205,7 @@ public class FeeServiceImpl implements FeeService {
     @Override
     public void generateMonthlyFees() throws MessagingException {
 
-        Set<ApartmentServiceModel> apartments = this.apartmentService.getAll(EMPTY_VALUE);
+        Set<ApartmentServiceModel> apartments = this.apartmentService.getAll();
 
         for (ApartmentServiceModel apartment : apartments) {
             Fee fee = new Fee();

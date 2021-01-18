@@ -20,7 +20,6 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.syn.domo.common.DefaultParamValues.EMPTY_VALUE;
 import static com.syn.domo.common.ExceptionErrorMessages.*;
 import static com.syn.domo.common.ValidationErrorMessages.EMAIL_ALREADY_USED;
 import static com.syn.domo.common.ValidationErrorMessages.PHONE_ALREADY_USED;
@@ -179,7 +178,6 @@ public class ResidentServiceImpl implements ResidentService  {
                 new ResidentFilterSpecification(buildingId, apartmentId);
 
         List<Resident> residents = this.residentRepository.findAll(residentFilterSpecification);
-//        Set<Resident> residents = this.getResidentsBy(buildingId, apartmentId);
 
         this.residentRepository.deleteAll(residents);
     }
@@ -227,34 +225,5 @@ public class ResidentServiceImpl implements ResidentService  {
         return resident.isEmpty()
                 ? Optional.empty()
                 : Optional.of(this.modelMapper.map(resident, ResidentServiceModel.class));
-    }
-
-    private Set<Resident> getResidentsBy(String buildingId, String apartmentId) {
-
-        if (buildingId.equals(EMPTY_VALUE) && apartmentId.equals(EMPTY_VALUE)) {
-            return this.residentRepository.findAll().stream()
-                    .collect(Collectors.toUnmodifiableSet());
-
-        }
-
-        if (apartmentId.equals(EMPTY_VALUE)) {
-
-            if (this.buildingService.get(buildingId).isEmpty()) {
-                throw new EntityNotFoundException(BUILDING_NOT_FOUND);
-            }
-
-            return this.residentRepository.getAllByBuildingId(buildingId);
-        }
-
-        if (this.apartmentService.get(apartmentId).isEmpty()) {
-            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
-        }
-
-        if (!buildingId.equals(EMPTY_VALUE)
-                && this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId).isEmpty()) {
-            throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
-        }
-
-        return this.residentRepository.getAllByApartmentId(apartmentId);
     }
 }

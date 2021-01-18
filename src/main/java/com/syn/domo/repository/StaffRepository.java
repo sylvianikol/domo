@@ -15,10 +15,6 @@ import java.util.Set;
 @Repository
 public interface StaffRepository extends JpaRepository<Staff, String>, JpaSpecificationExecutor<Staff> {
 
-    Optional<Staff> findByEmail(String email);
-
-    Optional<Staff> findByPhoneNumber(String phoneNumber);
-
     Set<Staff> findAllByIdIn(Set<String> ids);
 
     @Modifying

@@ -16,9 +16,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Pageable;
 
 import static com.syn.domo.common.DefaultParamValues.EMPTY_VALUE;
 
@@ -34,13 +36,14 @@ public class StaffController implements StaffNamespace {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping
-    public ResponseEntity<Set<StaffViewModel>> getAll(@RequestParam(required = false, defaultValue = EMPTY_VALUE,
-                                                                 name = "buildingId") String buildingId) {
+    @GetMapping("/all")
+    public ResponseEntity<Set<StaffViewModel>> getAll(@RequestParam(required = false,
+                                                        name = "buildingId") String buildingId,
+                                                      Pageable pageable) {
 
-        Set<StaffViewModel> staff = this.staffService.getAll(buildingId).stream()
+        Set<StaffViewModel> staff = this.staffService.getAll(buildingId, pageable).stream()
                 .map(s -> this.modelMapper.map(s, StaffViewModel.class))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
 
         return staff.isEmpty()
                 ? ResponseEntity.notFound().build()
@@ -99,7 +102,7 @@ public class StaffController implements StaffNamespace {
                 .build();
     }
 
-    @DeleteMapping
+    @DeleteMapping("/delete")
     public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = EMPTY_VALUE,
                                                      name = "buildingId") String buildingId,
                                        UriComponentsBuilder uriComponentsBuilder) {

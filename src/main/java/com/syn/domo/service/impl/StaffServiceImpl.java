@@ -15,9 +15,11 @@ import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.RoleService;
 import com.syn.domo.service.StaffService;
 import com.syn.domo.service.UserService;
+import com.syn.domo.specification.StaffFilterSpecification;
 import com.syn.domo.utils.ValidationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -61,11 +63,17 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public Set<StaffServiceModel> getAll(String buildingId) {
+    public Set<StaffServiceModel> getAll(String buildingId, Pageable pageable) {
 
-        return this.getStaffBy(buildingId).stream()
+        StaffFilterSpecification staffFilterSpecification =
+                new StaffFilterSpecification(buildingId);
+
+        Set<StaffServiceModel> staff = this.staffRepository
+                .findAll(staffFilterSpecification, pageable).getContent().stream()
                 .map(s -> this.modelMapper.map(s, StaffServiceModel.class))
-                .collect(Collectors.toUnmodifiableSet());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return Collections.unmodifiableSet(staff);
     }
 
     @Override
@@ -167,7 +175,10 @@ public class StaffServiceImpl implements StaffService {
     @Transactional
     public void deleteAll(String buildingId) {
 
-        Set<Staff> staff = this.getStaffBy(buildingId);
+        StaffFilterSpecification staffFilterSpecification =
+                new StaffFilterSpecification(buildingId);
+
+        List<Staff> staff = this.staffRepository.findAll(staffFilterSpecification);
 
         for (Staff employee : staff) {
             this.staffRepository.cancelBuildingAssignments(employee.getId());
@@ -225,19 +236,5 @@ public class StaffServiceImpl implements StaffService {
                 .map(staff -> this.modelMapper.map(staff, StaffServiceModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         return Collections.unmodifiableSet(staffServiceModels);
-    }
-
-    private Set<Staff> getStaffBy(String buildingId) {
-
-        if (buildingId.equals(EMPTY_VALUE)) {
-            return this.staffRepository.findAll().stream()
-                    .collect(Collectors.toUnmodifiableSet());
-        } else {
-            if (this.buildingService.get(buildingId).isEmpty()) {
-                throw new EntityNotFoundException(BUILDING_NOT_FOUND);
-            }
-
-            return this.staffRepository.getAllByBuildingId(buildingId);
-        }
     }
 }

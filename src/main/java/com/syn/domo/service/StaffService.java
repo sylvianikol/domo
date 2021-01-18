@@ -2,6 +2,7 @@ package com.syn.domo.service;
 
 import com.syn.domo.model.service.StaffServiceModel;
 import com.syn.domo.model.view.ResponseModel;
+import org.springframework.data.domain.Pageable;
 
 import javax.mail.MessagingException;
 import java.util.Optional;
@@ -9,7 +10,7 @@ import java.util.Set;
 
 public interface StaffService {
 
-    Set<StaffServiceModel> getAll(String buildingId);
+    Set<StaffServiceModel> getAll(String buildingId, Pageable pageable);
 
     Optional<StaffServiceModel> get(String staffId);
 

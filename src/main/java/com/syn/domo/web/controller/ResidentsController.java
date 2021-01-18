@@ -16,6 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
+import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,9 +39,10 @@ public class ResidentsController implements ResidentsNamespace {
     public ResponseEntity<Set<ResidentViewModel>> getAll(@RequestParam(required = false,
                                                                  name = "buildingId") String buildingId,
                                                          @RequestParam(required = false,
-                                                                 name = "apartmentId") String apartmentId) {
+                                                                 name = "apartmentId") String apartmentId,
+                                                         Pageable pageable) {
         Set<ResidentViewModel> residents =
-                this.residentService.getAll(buildingId, apartmentId).stream()
+                this.residentService.getAll(buildingId, apartmentId, pageable).stream()
                 .map(r -> this.modelMapper.map(r, ResidentViewModel.class))
                 .collect(Collectors.toUnmodifiableSet());
 

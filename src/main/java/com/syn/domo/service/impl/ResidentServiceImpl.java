@@ -10,15 +10,12 @@ import com.syn.domo.service.*;
 import com.syn.domo.specification.ResidentFilterSpecification;
 import com.syn.domo.utils.ValidationUtil;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.persistence.EntityNotFoundException;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -59,13 +56,13 @@ public class ResidentServiceImpl implements ResidentService  {
     }
 
     @Override
-    public Set<ResidentServiceModel> getAll(String buildingId, String apartmentId) {
+    public Set<ResidentServiceModel> getAll(String buildingId, String apartmentId, Pageable pageable) {
 
         ResidentFilterSpecification residentFilterSpecification =
                 new ResidentFilterSpecification(buildingId, apartmentId);
 
-        return this.residentRepository
-                .findAll(residentFilterSpecification).stream()
+        return  this.residentRepository.findAll(residentFilterSpecification, pageable)
+                .getContent().stream()
                 .map(r -> this.modelMapper.map(r, ResidentServiceModel.class))
                 .collect(Collectors.toUnmodifiableSet());
     }

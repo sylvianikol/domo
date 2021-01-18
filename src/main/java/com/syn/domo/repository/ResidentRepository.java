@@ -1,20 +1,22 @@
 package com.syn.domo.repository;
 
 import com.syn.domo.model.entity.Resident;
-import com.syn.domo.model.entity.UserEntity;
-import com.syn.domo.model.service.ResidentServiceModel;
+import com.syn.domo.specification.ResidentFilterSpecification;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 import java.util.Set;
 
 @Repository
 public interface ResidentRepository extends JpaRepository<Resident, String>, JpaSpecificationExecutor<Resident> {
+
+//    Page<Resident> findAll(ResidentFilterSpecification residentFilterSpecification, Pageable pageable);
 
     Set<Resident> findAllByIdIn(Set<String> ids);
 
@@ -52,6 +54,4 @@ public interface ResidentRepository extends JpaRepository<Resident, String>, Jpa
             "JOIN r.apartments a " +
             "WHERE a.id = :apartmentId ")
     Set<Resident> getAllByApartmentId(@Param(value = "apartmentId") String apartmentId);
-
-
 }

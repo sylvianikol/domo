@@ -6,6 +6,7 @@ import com.syn.domo.model.service.ResidentServiceModel;
 import com.syn.domo.model.view.ResidentViewModel;
 import com.syn.domo.service.ResidentService;
 import com.syn.domo.web.controller.namespace.ResidentsNamespace;
+import com.syn.domo.web.filter.ResidentFilter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,7 +43,7 @@ public class ResidentsController implements ResidentsNamespace {
                                                                  name = "apartmentId") String apartmentId,
                                                          Pageable pageable) {
         Set<ResidentViewModel> residents =
-                this.residentService.getAll(buildingId, apartmentId, pageable).stream()
+                this.residentService.getAll(new ResidentFilter(buildingId, apartmentId), pageable).stream()
                 .map(r -> this.modelMapper.map(r, ResidentViewModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
@@ -112,7 +113,7 @@ public class ResidentsController implements ResidentsNamespace {
                                        @RequestParam(required = false, name = "apartmentId") String apartmentId,
                                        UriComponentsBuilder uriComponentsBuilder) {
 
-        this.residentService.deleteAll(buildingId, apartmentId);
+        this.residentService.deleteAll(new ResidentFilter(buildingId, apartmentId));
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder.path(URI_RESIDENTS).build().toUri())

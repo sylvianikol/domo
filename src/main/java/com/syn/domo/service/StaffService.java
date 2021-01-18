@@ -2,6 +2,7 @@ package com.syn.domo.service;
 
 import com.syn.domo.model.service.StaffServiceModel;
 import com.syn.domo.model.view.ResponseModel;
+import com.syn.domo.web.filter.StaffFilter;
 import org.springframework.data.domain.Pageable;
 
 import javax.mail.MessagingException;
@@ -10,7 +11,7 @@ import java.util.Set;
 
 public interface StaffService {
 
-    Set<StaffServiceModel> getAll(String buildingId, Pageable pageable);
+    Set<StaffServiceModel> getAll(StaffFilter staffFilter, Pageable pageable);
 
     Optional<StaffServiceModel> get(String staffId);
 
@@ -18,7 +19,7 @@ public interface StaffService {
 
     ResponseModel<StaffServiceModel> edit(StaffServiceModel staffServiceModel, String staffId);
 
-    void deleteAll(String buildingId);
+    void deleteAll(StaffFilter staffFilter);
 
     void delete(String staffId);
 

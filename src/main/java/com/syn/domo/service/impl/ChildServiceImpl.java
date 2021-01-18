@@ -8,7 +8,7 @@ import com.syn.domo.model.service.*;
 import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.repository.ChildRepository;
 import com.syn.domo.service.*;
-import com.syn.domo.specification.ChildFilterSpecification;
+import com.syn.domo.web.filter.ChildFilter;
 import com.syn.domo.utils.ValidationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,13 +51,10 @@ public class ChildServiceImpl implements ChildService {
     }
 
     @Override
-    public Set<ChildServiceModel> getAll(String buildingId, String apartmentId,
-                                         String parentId, Pageable pageable) {
-        ChildFilterSpecification childFilterSpecification =
-                new ChildFilterSpecification(buildingId, apartmentId, parentId);
+    public Set<ChildServiceModel> getAll(ChildFilter childFilter, Pageable pageable) {
 
         Set<ChildServiceModel> children = this.childRepository
-                .findAll(childFilterSpecification, pageable).getContent().stream()
+                .findAll(childFilter, pageable).getContent().stream()
                 .map(c -> this.modelMapper.map(c, ChildServiceModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
@@ -147,11 +144,9 @@ public class ChildServiceImpl implements ChildService {
 
     @Override
     @Transactional
-    public void deleteAll(String buildingId, String apartmentId, String parentId) {
-        ChildFilterSpecification childFilterSpecification =
-                new ChildFilterSpecification(buildingId, apartmentId, parentId);
+    public void deleteAll(ChildFilter childFilter) {
 
-        List<Child> children = this.childRepository.findAll(childFilterSpecification);
+        List<Child> children = this.childRepository.findAll(childFilter);
 
         for (Child child : children) {
             this.childRepository.severParentRelations(child.getId());

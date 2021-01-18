@@ -1,17 +1,15 @@
-package com.syn.domo.specification;
+package com.syn.domo.web.filter;
 
 import com.syn.domo.model.entity.Apartment;
-import com.syn.domo.model.entity.Building;
-import com.syn.domo.model.entity.Resident;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
 
-public class ApartmentFilterSpecification implements Specification<Apartment> {
+public class ApartmentFilter implements Specification<Apartment> {
 
     private final String buildingId;
 
-    public ApartmentFilterSpecification(String buildingId) {
+    public ApartmentFilter(String buildingId) {
         this.buildingId = buildingId;
     }
 

@@ -5,6 +5,7 @@ import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.model.view.ApartmentViewModel;
 import com.syn.domo.service.ApartmentService;
 import com.syn.domo.model.view.ResponseModel;
+import com.syn.domo.web.filter.ApartmentFilter;
 import com.syn.domo.web.controller.namespace.ApartmentsNamespace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,6 @@ import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static com.syn.domo.common.DefaultParamValues.EMPTY_VALUE;
 
 @RestController
 public class ApartmentsController implements ApartmentsNamespace {
@@ -41,8 +40,8 @@ public class ApartmentsController implements ApartmentsNamespace {
                                                                 name = "buildingId") String buildingId,
                                                           Pageable pageable) {
 
-        Set<ApartmentViewModel> apartments =
-                this.apartmentService.getAll(buildingId, pageable).stream()
+        Set<ApartmentViewModel> apartments = this.apartmentService
+                .getAll(new ApartmentFilter(buildingId), pageable).stream()
                 .map(a -> this.modelMapper.map(a, ApartmentViewModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
@@ -110,7 +109,7 @@ public class ApartmentsController implements ApartmentsNamespace {
                                                      name = "buildingId") String buildingId,
                                        UriComponentsBuilder uriComponentsBuilder) {
 
-        this.apartmentService.deleteAll(buildingId);
+        this.apartmentService.deleteAll(new ApartmentFilter(buildingId));
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder.path(URI_APARTMENTS).build().toUri())

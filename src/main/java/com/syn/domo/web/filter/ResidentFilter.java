@@ -1,4 +1,4 @@
-package com.syn.domo.specification;
+package com.syn.domo.web.filter;
 
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Building;
@@ -7,12 +7,12 @@ import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
 
-public class ResidentFilterSpecification implements Specification<Resident> {
+public class ResidentFilter implements Specification<Resident> {
 
     private final String buildingId;
     private final String apartmentId;
 
-    public ResidentFilterSpecification(String buildingId, String apartmentId) {
+    public ResidentFilter(String buildingId, String apartmentId) {
         this.buildingId = buildingId;
         this.apartmentId = apartmentId;
     }

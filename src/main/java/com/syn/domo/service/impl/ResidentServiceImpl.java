@@ -7,7 +7,7 @@ import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.notification.service.NotificationService;
 import com.syn.domo.repository.ResidentRepository;
 import com.syn.domo.service.*;
-import com.syn.domo.specification.ResidentFilterSpecification;
+import com.syn.domo.web.filter.ResidentFilter;
 import com.syn.domo.utils.ValidationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -55,13 +55,10 @@ public class ResidentServiceImpl implements ResidentService  {
     }
 
     @Override
-    public Set<ResidentServiceModel> getAll(String buildingId, String apartmentId, Pageable pageable) {
-
-        ResidentFilterSpecification residentFilterSpecification =
-                new ResidentFilterSpecification(buildingId, apartmentId);
+    public Set<ResidentServiceModel> getAll(ResidentFilter residentFilter, Pageable pageable) {
 
         Set<ResidentServiceModel> residents = this.residentRepository
-                .findAll(residentFilterSpecification, pageable)
+                .findAll(residentFilter, pageable)
                 .getContent().stream()
                 .map(r -> this.modelMapper.map(r, ResidentServiceModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -127,7 +124,7 @@ public class ResidentServiceImpl implements ResidentService  {
         ResidentServiceModel addedResident =
                 this.modelMapper.map(resident, ResidentServiceModel.class);
 
-        this.notificationService.sendActivationEmail(addedResident);
+//        this.notificationService.sendActivationEmail(addedResident);
 
         return new ResponseModel<>(resident.getId(), addedResident);
     }
@@ -172,12 +169,9 @@ public class ResidentServiceImpl implements ResidentService  {
     }
 
     @Override
-    public void deleteAll(String buildingId, String apartmentId) {
+    public void deleteAll(ResidentFilter residentFilter) {
 
-        ResidentFilterSpecification residentFilterSpecification =
-                new ResidentFilterSpecification(buildingId, apartmentId);
-
-        List<Resident> residents = this.residentRepository.findAll(residentFilterSpecification);
+        List<Resident> residents = this.residentRepository.findAll(residentFilter);
 
         this.residentRepository.deleteAll(residents);
     }
@@ -197,33 +191,5 @@ public class ResidentServiceImpl implements ResidentService  {
         return this.residentRepository.findAllByIdIn(ids).stream()
                         .map(r -> this.modelMapper.map(r, ResidentServiceModel.class))
                         .collect(Collectors.toUnmodifiableSet());
-    }
-
-    @Override
-    public Optional<ResidentServiceModel> getOneByIdAndBuildingIdAndApartmentId(String buildingId, String apartmentId,
-                                                                                String residentId) {
-        Optional<Resident> resident = this.residentRepository
-                .getOneByIdAndBuildingIdAndApartmentId(residentId, buildingId, apartmentId);
-        return resident.isEmpty()
-                ? Optional.empty()
-                : Optional.of(this.modelMapper.map(resident, ResidentServiceModel.class));
-    }
-
-    @Override
-    public Optional<ResidentServiceModel> getOneByIdAndBuildingId(String residentId, String buildingId) {
-        Optional<Resident> resident = this.residentRepository
-                .getOneByIdAndBuildingId(residentId, buildingId);
-        return resident.isEmpty()
-                ? Optional.empty()
-                : Optional.of(this.modelMapper.map(resident, ResidentServiceModel.class));
-    }
-
-    @Override
-    public Optional<ResidentServiceModel> getOneByIdAndApartmentId(String residentId, String apartmentId) {
-        Optional<Resident> resident = this.residentRepository
-                .getOneByIdAndApartmentId(residentId, apartmentId);
-        return resident.isEmpty()
-                ? Optional.empty()
-                : Optional.of(this.modelMapper.map(resident, ResidentServiceModel.class));
     }
 }

@@ -12,8 +12,7 @@ import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.FeeService;
 import com.syn.domo.service.UserService;
-import com.syn.domo.specification.FeeFilterSpecification;
-import com.syn.domo.utils.UrlCheckerUtil;
+import com.syn.domo.web.filter.FeeFilter;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +42,6 @@ public class FeeServiceImpl implements FeeService {
     private final UserService userService;
     private final NotificationService notificationService;
     private final ModelMapper modelMapper;
-    private final UrlCheckerUtil urlCheckerUtil;
 
     @Autowired
     public FeeServiceImpl(FeeRepository feeRepository,
@@ -51,25 +49,20 @@ public class FeeServiceImpl implements FeeService {
                           ApartmentService apartmentService,
                           UserService userService,
                           NotificationService notificationService,
-                          ModelMapper modelMapper,
-                          UrlCheckerUtil urlCheckerUtil) {
+                          ModelMapper modelMapper) {
         this.feeRepository = feeRepository;
         this.buildingService = buildingService;
         this.apartmentService = apartmentService;
         this.userService = userService;
         this.notificationService = notificationService;
         this.modelMapper = modelMapper;
-        this.urlCheckerUtil = urlCheckerUtil;
     }
 
     @Override
-    public Set<FeeServiceModel> getAll(String buildingId, String apartmentId, Pageable pageable) {
-
-        FeeFilterSpecification feeFilterSpecification =
-                new FeeFilterSpecification(buildingId, apartmentId);
+    public Set<FeeServiceModel> getAll(FeeFilter feeFilter, Pageable pageable) {
 
         Set<FeeServiceModel> fees = this.feeRepository
-                .findAll(feeFilterSpecification, pageable).getContent().stream()
+                .findAll(feeFilter, pageable).getContent().stream()
                 .map(f -> this.modelMapper.map(f, FeeServiceModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
@@ -130,12 +123,9 @@ public class FeeServiceImpl implements FeeService {
     }
 
     @Override
-    public void deleteAll(String buildingId, String apartmentId) {
+    public void deleteAll(FeeFilter feeFilter) {
 
-        FeeFilterSpecification feeFilterSpecification =
-                new FeeFilterSpecification(buildingId, apartmentId);
-
-        List<Fee> fees = this.feeRepository.findAll(feeFilterSpecification);
+        List<Fee> fees = this.feeRepository.findAll(feeFilter);
 
         this.feeRepository.deleteAll(fees);
     }

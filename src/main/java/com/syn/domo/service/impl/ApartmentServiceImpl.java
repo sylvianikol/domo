@@ -8,7 +8,7 @@ import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.repository.ApartmentRepository;
 import com.syn.domo.service.*;
-import com.syn.domo.specification.ApartmentFilterSpecification;
+import com.syn.domo.web.filter.ApartmentFilter;
 import com.syn.domo.utils.ValidationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.syn.domo.common.DefaultParamValues.EMPTY_VALUE;
+import static com.syn.domo.common.DefaultParamValues.NULL;
 import static com.syn.domo.common.ExceptionErrorMessages.*;
 import static com.syn.domo.common.ValidationErrorMessages.FLOOR_INVALID;
 
@@ -53,13 +53,10 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
-    public Set<ApartmentServiceModel> getAll(String buildingId, Pageable pageable) {
-
-        ApartmentFilterSpecification apartmentFilterSpecification =
-                new ApartmentFilterSpecification(buildingId);
+    public Set<ApartmentServiceModel> getAll(ApartmentFilter apartmentFilter, Pageable pageable) {
 
         LinkedHashSet<ApartmentServiceModel> apartments = this.apartmentRepository
-                .findAll(apartmentFilterSpecification, pageable)
+                .findAll(apartmentFilter, pageable)
                 .getContent().stream()
                 .map(a -> this.modelMapper.map(a, ApartmentServiceModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -155,16 +152,14 @@ public class ApartmentServiceImpl implements ApartmentService {
 
     @Override
     @Transactional
-    public void deleteAll(String buildingId) {
-
-        ApartmentFilterSpecification apartmentFilterSpecification =
-                new ApartmentFilterSpecification(buildingId);
+    public void deleteAll(ApartmentFilter apartmentFilter) {
 
         List<Apartment> apartments = this.apartmentRepository
-                .findAll(apartmentFilterSpecification);
+                .findAll(apartmentFilter);
 
         for (Apartment apartment : apartments) {
-            this.childService.deleteAll(buildingId, apartment.getId(), EMPTY_VALUE);
+            String buildingId = apartment.getBuilding().getId();
+            this.childService.deleteAll(buildingId, apartment.getId(), NULL);
             this.residentService.deleteAll(buildingId, apartment.getId());
         }
 
@@ -180,7 +175,7 @@ public class ApartmentServiceImpl implements ApartmentService {
         String buildingId = apartment.getBuilding().getId();
 
         this.residentService.deleteAll(buildingId, apartment.getId());
-        this.childService.deleteAll(buildingId, apartment.getId(), EMPTY_VALUE);
+        this.childService.deleteAll(buildingId, apartment.getId(), NULL);
         this.apartmentRepository.delete(apartment);
     }
 

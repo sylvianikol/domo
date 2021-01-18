@@ -6,6 +6,7 @@ import com.syn.domo.model.service.ChildServiceModel;
 import com.syn.domo.model.view.ChildViewModel;
 import com.syn.domo.service.ChildService;
 import com.syn.domo.web.controller.namespace.ChildrenNamespace;
+import com.syn.domo.web.filter.ChildFilter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,8 +20,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Pageable;
-
-import static com.syn.domo.common.DefaultParamValues.EMPTY_VALUE;
 
 @RestController
 public class ChildrenController implements ChildrenNamespace {
@@ -44,7 +43,7 @@ public class ChildrenController implements ChildrenNamespace {
                                                       Pageable pageable
                                                       ) {
         Set<ChildViewModel> children = this.childService
-                .getAll(buildingId, apartmentId, parentId, pageable)
+                .getAll(new ChildFilter(buildingId, apartmentId, parentId), pageable)
                 .stream()
                 .map(c -> this.modelMapper.map(c, ChildViewModel.class))
                 .collect(Collectors.toUnmodifiableSet());
@@ -109,15 +108,15 @@ public class ChildrenController implements ChildrenNamespace {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = EMPTY_VALUE,
+    public ResponseEntity<?> deleteAll(@RequestParam(required = false,
                                               name = "buildingId") String buildingId,
-                                       @RequestParam(required = false, defaultValue = EMPTY_VALUE,
+                                       @RequestParam(required = false,
                                                name = "apartmentId") String apartmentId,
-                                       @RequestParam(required = false, defaultValue = EMPTY_VALUE,
+                                       @RequestParam(required = false,
                                                name = "parentId") String parentId,
                                        UriComponentsBuilder uriComponentsBuilder) {
 
-        this.childService.deleteAll(buildingId, apartmentId, parentId);
+        this.childService.deleteAll(new ChildFilter(buildingId, apartmentId, parentId));
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder.path(URI_CHILDREN).build().toUri())

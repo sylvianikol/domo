@@ -4,6 +4,7 @@ import com.syn.domo.model.service.FeeServiceModel;
 import com.syn.domo.model.view.FeeViewModel;
 import com.syn.domo.service.FeeService;
 import com.syn.domo.web.controller.namespace.FeesNamespace;
+import com.syn.domo.web.filter.FeeFilter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,8 +17,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Pageable;
-
-import static com.syn.domo.common.DefaultParamValues.*;
 
 @RestController
 public class FeesController implements FeesNamespace {
@@ -38,7 +37,7 @@ public class FeesController implements FeesNamespace {
                                                     Pageable pageable) {
 
         Set<FeeViewModel> fees = this.feeService
-                .getAll(buildingId, apartmentId, pageable).stream()
+                .getAll(new FeeFilter(buildingId, apartmentId), pageable).stream()
                 .map(f -> this.modelMapper.map(f, FeeViewModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
@@ -84,13 +83,11 @@ public class FeesController implements FeesNamespace {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = EMPTY_VALUE)
-                                                   String buildingId,
-                                       @RequestParam(required = false, defaultValue = EMPTY_VALUE)
-                                               String apartmentId,
+    public ResponseEntity<?> deleteAll(@RequestParam(required = false) String buildingId,
+                                       @RequestParam(required = false) String apartmentId,
                                        UriComponentsBuilder uriComponentsBuilder) {
 
-        this.feeService.deleteAll(buildingId, apartmentId);
+        this.feeService.deleteAll(new FeeFilter(buildingId, apartmentId));
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder.path(URI_FEES).build().toUri())

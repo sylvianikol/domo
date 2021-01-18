@@ -1,4 +1,4 @@
-package com.syn.domo.specification;
+package com.syn.domo.web.filter;
 
 import com.syn.domo.model.entity.Fee;
 import org.springframework.data.jpa.domain.Specification;
@@ -8,12 +8,12 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-public class FeeFilterSpecification implements Specification<Fee> {
+public class FeeFilter implements Specification<Fee> {
 
     private final String buildingId;
     private final String apartmentId;
 
-    public FeeFilterSpecification(String buildingId, String apartmentId) {
+    public FeeFilter(String buildingId, String apartmentId) {
         this.buildingId = buildingId;
         this.apartmentId = apartmentId;
     }

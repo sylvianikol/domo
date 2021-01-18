@@ -1,4 +1,4 @@
-package com.syn.domo.specification;
+package com.syn.domo.web.filter;
 
 import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.entity.Staff;
@@ -6,11 +6,11 @@ import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
 
-public class StaffFilterSpecification implements Specification<Staff> {
+public class StaffFilter implements Specification<Staff> {
 
     private final String buildingId;
 
-    public StaffFilterSpecification(String buildingId) {
+    public StaffFilter(String buildingId) {
         this.buildingId = buildingId;
     }
 

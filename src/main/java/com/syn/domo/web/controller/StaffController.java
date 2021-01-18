@@ -6,6 +6,7 @@ import com.syn.domo.model.service.StaffServiceModel;
 import com.syn.domo.model.view.StaffViewModel;
 import com.syn.domo.service.StaffService;
 import com.syn.domo.web.controller.namespace.StaffNamespace;
+import com.syn.domo.web.filter.StaffFilter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,8 +22,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Pageable;
-
-import static com.syn.domo.common.DefaultParamValues.EMPTY_VALUE;
 
 @RestController
 public class StaffController implements StaffNamespace {
@@ -41,7 +40,8 @@ public class StaffController implements StaffNamespace {
                                                         name = "buildingId") String buildingId,
                                                       Pageable pageable) {
 
-        Set<StaffViewModel> staff = this.staffService.getAll(buildingId, pageable).stream()
+        Set<StaffViewModel> staff = this.staffService
+                .getAll(new StaffFilter(buildingId), pageable).stream()
                 .map(s -> this.modelMapper.map(s, StaffViewModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
@@ -103,11 +103,11 @@ public class StaffController implements StaffNamespace {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = EMPTY_VALUE,
+    public ResponseEntity<?> deleteAll(@RequestParam(required = false,
                                                      name = "buildingId") String buildingId,
                                        UriComponentsBuilder uriComponentsBuilder) {
 
-        this.staffService.deleteAll(buildingId);
+        this.staffService.deleteAll(new StaffFilter(buildingId));
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder.path(URI_STAFF).build().toUri())

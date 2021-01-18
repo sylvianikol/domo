@@ -15,7 +15,7 @@ import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.RoleService;
 import com.syn.domo.service.StaffService;
 import com.syn.domo.service.UserService;
-import com.syn.domo.specification.StaffFilterSpecification;
+import com.syn.domo.web.filter.StaffFilter;
 import com.syn.domo.utils.ValidationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,6 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.syn.domo.common.DefaultParamValues.EMPTY_VALUE;
 import static com.syn.domo.common.ExceptionErrorMessages.*;
 import static com.syn.domo.common.ValidationErrorMessages.EMAIL_ALREADY_USED;
 import static com.syn.domo.common.ValidationErrorMessages.PHONE_ALREADY_USED;
@@ -63,13 +62,10 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public Set<StaffServiceModel> getAll(String buildingId, Pageable pageable) {
-
-        StaffFilterSpecification staffFilterSpecification =
-                new StaffFilterSpecification(buildingId);
+    public Set<StaffServiceModel> getAll(StaffFilter staffFilter, Pageable pageable) {
 
         Set<StaffServiceModel> staff = this.staffRepository
-                .findAll(staffFilterSpecification, pageable).getContent().stream()
+                .findAll(staffFilter, pageable).getContent().stream()
                 .map(s -> this.modelMapper.map(s, StaffServiceModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
@@ -173,12 +169,9 @@ public class StaffServiceImpl implements StaffService {
 
     @Override
     @Transactional
-    public void deleteAll(String buildingId) {
+    public void deleteAll(StaffFilter staffFilter) {
 
-        StaffFilterSpecification staffFilterSpecification =
-                new StaffFilterSpecification(buildingId);
-
-        List<Staff> staff = this.staffRepository.findAll(staffFilterSpecification);
+        List<Staff> staff = this.staffRepository.findAll(staffFilter);
 
         for (Staff employee : staff) {
             this.staffRepository.cancelBuildingAssignments(employee.getId());

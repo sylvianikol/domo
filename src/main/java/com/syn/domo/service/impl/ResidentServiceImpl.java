@@ -10,6 +10,8 @@ import com.syn.domo.service.*;
 import com.syn.domo.specification.ResidentFilterSpecification;
 import com.syn.domo.utils.ValidationUtil;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -59,12 +61,14 @@ public class ResidentServiceImpl implements ResidentService  {
     @Override
     public Set<ResidentServiceModel> getAll(String buildingId, String apartmentId) {
 
-        return this.getResidentsBy(buildingId, apartmentId).stream()
+        ResidentFilterSpecification residentFilterSpecification =
+                new ResidentFilterSpecification(buildingId, apartmentId);
+
+        return this.residentRepository
+                .findAll(residentFilterSpecification).stream()
                 .map(r -> this.modelMapper.map(r, ResidentServiceModel.class))
                 .collect(Collectors.toUnmodifiableSet());
     }
-
-
 
     @Override
     public Optional<ResidentServiceModel> get(String residentId) {
@@ -219,18 +223,6 @@ public class ResidentServiceImpl implements ResidentService  {
         return resident.isEmpty()
                 ? Optional.empty()
                 : Optional.of(this.modelMapper.map(resident, ResidentServiceModel.class));
-    }
-
-    @Override
-    public Set<ResidentServiceModel> filter(String buildingId, String apartmentId) {
-
-        ResidentFilterSpecification residentFilterSpecification =
-                new ResidentFilterSpecification(buildingId, apartmentId);
-
-        return this.residentRepository
-                .findAll(residentFilterSpecification).stream()
-                .map(r -> this.modelMapper.map(r, ResidentServiceModel.class))
-                .collect(Collectors.toUnmodifiableSet());
     }
 
     private Set<Resident> getResidentsBy(String buildingId, String apartmentId) {

@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Pageable;
 
 import static com.syn.domo.common.ExceptionErrorMessages.BUILDING_NOT_FOUND;
 import static com.syn.domo.common.ValidationErrorMessages.*;
@@ -45,11 +46,14 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public Set<BuildingServiceModel> getAll() {
+    public Set<BuildingServiceModel> getAll(Pageable pageable) {
 
-        return this.buildingRepository.findAll().stream()
-                .map(building -> this.modelMapper.map(building, BuildingServiceModel.class))
-                .collect(Collectors.toUnmodifiableSet());
+        Set<BuildingServiceModel> buildings = this.buildingRepository
+                .findAll(pageable).getContent().stream()
+                .map(b -> this.modelMapper.map(b, BuildingServiceModel.class))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return Collections.unmodifiableSet(buildings);
     }
 
     @Override

@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Pageable;
 
 //@CrossOrigin("http://host")
 @RestController
@@ -33,9 +33,10 @@ public class BuildingsController implements BuildingsNamespace {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping
-    public ResponseEntity<Set<BuildingViewModel>> getAll() {
-        Set<BuildingViewModel> buildings = this.buildingService.getAll().stream()
+    @GetMapping("/all")
+    public ResponseEntity<Set<BuildingViewModel>> getAll(Pageable pageable) {
+
+        Set<BuildingViewModel> buildings = this.buildingService.getAll(pageable).stream()
                 .map(buildingServiceModel -> this.modelMapper
                         .map(buildingServiceModel, BuildingViewModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));

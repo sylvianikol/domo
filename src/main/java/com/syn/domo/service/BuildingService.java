@@ -6,10 +6,11 @@ import com.syn.domo.model.view.ResponseModel;
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.Set;
+import org.springframework.data.domain.Pageable;
 
 public interface BuildingService {
 
-    Set<BuildingServiceModel> getAll();
+    Set<BuildingServiceModel> getAll(Pageable pageable);
 
     Optional<BuildingServiceModel> get(String id);
 

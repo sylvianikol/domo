@@ -9,7 +9,6 @@ import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.repository.ChildRepository;
 import com.syn.domo.service.*;
 import com.syn.domo.specification.ChildFilterSpecification;
-import com.syn.domo.utils.UrlCheckerUtil;
 import com.syn.domo.utils.ValidationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,6 @@ public class ChildServiceImpl implements ChildService {
     private final ResidentService residentService;
     private final ModelMapper modelMapper;
     private final ValidationUtil validationUtil;
-    private final UrlCheckerUtil urlCheckerUtil;
 
     @Autowired
     public ChildServiceImpl(ChildRepository childRepository,
@@ -43,15 +41,13 @@ public class ChildServiceImpl implements ChildService {
                             ApartmentService apartmentService,
                             @Lazy ResidentService residentService,
                             ModelMapper modelMapper,
-                            ValidationUtil validationUtil,
-                            UrlCheckerUtil urlCheckerUtil) {
+                            ValidationUtil validationUtil) {
         this.childRepository = childRepository;
         this.buildingService = buildingService;
         this.apartmentService = apartmentService;
         this.residentService = residentService;
         this.modelMapper = modelMapper;
         this.validationUtil = validationUtil;
-        this.urlCheckerUtil = urlCheckerUtil;
     }
 
     @Override
@@ -179,26 +175,5 @@ public class ChildServiceImpl implements ChildService {
                 .findByFirstNameAndLastNameAndApartmentId(firstName, lastName, apartmentId);
 
         return child.isPresent() && parents.equals(child.get().getParents());
-    }
-
-    private boolean notValidRelations(String buildingId, String apartmentId, String parentId) {
-        return this.residentService.getOneByIdAndBuildingIdAndApartmentId(buildingId, apartmentId, parentId).isEmpty();
-    }
-
-    private boolean parentNotFoundIn(String buildingId, String apartmentId, String parentId) {
-
-        boolean result = false;
-
-        if (!this.urlCheckerUtil.areEmpty(buildingId, apartmentId)) {
-            result = notValidRelations(buildingId, apartmentId, parentId);
-        } else if (this.urlCheckerUtil.areEmpty(buildingId, apartmentId)) {
-            result = this.residentService.get(parentId).isEmpty();
-        } else if (this.urlCheckerUtil.areEmpty(buildingId)) {
-            result = this.residentService.getOneByIdAndApartmentId(parentId, apartmentId).isEmpty();
-        } else if (this.urlCheckerUtil.areEmpty(apartmentId)) {
-            result = this.residentService.getOneByIdAndBuildingId(parentId, buildingId).isEmpty();
-        }
-
-        return result;
     }
  }

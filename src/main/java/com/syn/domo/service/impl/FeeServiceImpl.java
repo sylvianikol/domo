@@ -132,30 +132,10 @@ public class FeeServiceImpl implements FeeService {
     @Override
     public void deleteAll(String buildingId, String apartmentId) {
 
-        Set<Fee> fees;
+        FeeFilterSpecification feeFilterSpecification =
+                new FeeFilterSpecification(buildingId, apartmentId);
 
-        if (this.urlCheckerUtil.areEmpty(buildingId, apartmentId)) {
-            fees = new HashSet<>(this.feeRepository.findAll());
-        } else if (this.urlCheckerUtil.areEmpty(apartmentId)){
-
-            if (this.buildingService.get(buildingId).isEmpty()) {
-                throw new EntityNotFoundException(BUILDING_NOT_FOUND);
-            }
-
-            fees = this.feeRepository.getAllByBuildingId(buildingId);
-
-        } else {
-            if (!this.urlCheckerUtil.areEmpty(buildingId)
-                    && this.buildingService.get(buildingId).isEmpty()) {
-                throw new EntityNotFoundException(BUILDING_NOT_FOUND);
-            }
-
-            if (this.apartmentService.get(apartmentId).isEmpty()) {
-                throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
-            }
-
-            fees = this.feeRepository.findAllByApartmentId(apartmentId);
-        }
+        List<Fee> fees = this.feeRepository.findAll(feeFilterSpecification);
 
         this.feeRepository.deleteAll(fees);
     }

@@ -6,23 +6,19 @@ import com.syn.domo.model.entity.Fee;
 import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.model.service.FeeServiceModel;
 import com.syn.domo.model.service.UserServiceModel;
-import com.syn.domo.model.view.FeeViewModel;
 import com.syn.domo.notification.service.NotificationService;
 import com.syn.domo.repository.FeeRepository;
 import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.FeeService;
 import com.syn.domo.service.UserService;
+import com.syn.domo.specification.FeeFilterSpecification;
 import com.syn.domo.utils.UrlCheckerUtil;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -33,7 +29,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.syn.domo.common.DefaultParamValues.*;
 import static com.syn.domo.common.ExceptionErrorMessages.*;
 
 @Service
@@ -68,54 +63,17 @@ public class FeeServiceImpl implements FeeService {
     }
 
     @Override
-    public Map<String, Object> getAll(String buildingId, String apartmentId,
-                                      int page, int size, String[] sort) {
+    public Set<FeeServiceModel> getAll(String buildingId, String apartmentId, Pageable pageable) {
 
-        List<Order> orders = this.createOrders(sort);
+        FeeFilterSpecification feeFilterSpecification =
+                new FeeFilterSpecification(buildingId, apartmentId);
 
-        Pageable pagingSort = PageRequest.of(page, size, Sort.by(orders));
+        Set<FeeServiceModel> fees = this.feeRepository
+                .findAll(feeFilterSpecification, pageable).getContent().stream()
+                .map(f -> this.modelMapper.map(f, FeeServiceModel.class))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
 
-        Page<Fee> pageFees;
-
-        if (this.urlCheckerUtil.areEmpty(buildingId, apartmentId)) {
-            pageFees = this.feeRepository.findAllBy(pagingSort);
-        } else if (this.urlCheckerUtil.areEmpty(apartmentId)){
-
-            if (this.buildingService.get(buildingId).isEmpty()) {
-                throw new EntityNotFoundException(BUILDING_NOT_FOUND);
-            }
-
-            pageFees = this.feeRepository
-                    .getAllByBuildingIdWithPagingSort(buildingId, pagingSort);
-
-        } else {
-            if (!this.urlCheckerUtil.areEmpty(buildingId) && this.buildingService.get(buildingId).isEmpty()) {
-                throw new EntityNotFoundException(BUILDING_NOT_FOUND);
-            }
-
-            if (this.apartmentService.get(apartmentId).isEmpty()) {
-                throw new EntityNotFoundException(APARTMENT_NOT_FOUND);
-            }
-
-            pageFees = this.feeRepository.findAllByApartmentId(apartmentId, pagingSort);
-        }
-
-        List<FeeViewModel> fees = pageFees.getContent().stream()
-                .map(fee -> this.modelMapper.map(fee, FeeViewModel.class))
-                .collect(Collectors.toUnmodifiableList());
-
-        Map<String, Object> response = new HashMap<>();
-
-        if (fees.isEmpty()) {
-            response.put(FEES_RESPONSE_KEY, null);
-        } else {
-            response.put(FEES_RESPONSE_KEY, fees);
-            response.put(CURRENT_PAGE, pageFees.getNumber());
-            response.put(TOTAL_ITEMS, pageFees.getTotalElements());
-            response.put(TOTAL_PAGES, pageFees.getTotalPages());
-        }
-
-        return response;
+        return Collections.unmodifiableSet(fees);
     }
 
     @Override
@@ -246,28 +204,4 @@ public class FeeServiceImpl implements FeeService {
         return total;
     }
 
-    private Sort.Direction getSortDirection(String direction) {
-        if (direction.equals("asc")) {
-            return Sort.Direction.ASC;
-        } else if (direction.equals("desc")) {
-            return Sort.Direction.DESC;
-        }
-
-        return Sort.Direction.ASC;
-    }
-
-    private List<Order> createOrders(String[] sort) {
-        List<Order> orders = new ArrayList<>();
-
-        if (sort[0].contains(",")) {
-            for (String sortOrder : sort) {
-                String[] _sort = sortOrder.split(",");
-                orders.add(new Order(this.getSortDirection(_sort[1]), _sort[0]));
-            }
-        } else {
-            orders.add(new Order(getSortDirection(sort[1]), sort[0]));
-        }
-
-        return orders;
-    }
 }

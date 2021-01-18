@@ -1,15 +1,16 @@
 package com.syn.domo.service;
 
 import com.syn.domo.model.service.FeeServiceModel;
+import org.springframework.data.domain.Pageable;
 
 import javax.mail.MessagingException;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public interface FeeService {
 
-    Map<String, Object> getAll(String buildingId, String apartmentId,
-                               int page, int size, String[] sort);
+    Set<FeeServiceModel> getAll(String buildingId, String apartmentId, Pageable pageable);
 
     Optional<FeeServiceModel> get(String feeId);
 
@@ -20,5 +21,4 @@ public interface FeeService {
     void generateMonthlyFees() throws MessagingException;
 
     void deleteAll(String buildingId, String apartmentId);
-
 }

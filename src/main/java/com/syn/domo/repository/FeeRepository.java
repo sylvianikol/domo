@@ -1,9 +1,8 @@
 package com.syn.domo.repository;
 
 import com.syn.domo.model.entity.Fee;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -12,18 +11,9 @@ import java.util.Optional;
 import java.util.Set;
 
 @Repository
-public interface FeeRepository extends JpaRepository<Fee, String> {
-
-    Page<Fee> findAllByApartmentId(String apartmentId, Pageable pagingSort);
+public interface FeeRepository extends JpaRepository<Fee, String>, JpaSpecificationExecutor<Fee> {
 
     Set<Fee> findAllByApartmentId(String apartmentId);
-
-    Page<Fee> findAllBy(Pageable pagingSort);
-
-    @Query("SELECT f FROM Fee f " +
-            "WHERE f.apartment.building.id = :buildingId ")
-    Page<Fee> getAllByBuildingIdWithPagingSort(@Param(value = "buildingId") String buildingId,
-                                               Pageable pagingSort);
 
     @Query("SELECT f FROM Fee f " +
             "WHERE f.apartment.building.id = :buildingId ")

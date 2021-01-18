@@ -13,6 +13,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.mail.MessagingException;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Pageable;
 
 import static com.syn.domo.common.DefaultParamValues.*;
 
@@ -29,20 +32,20 @@ public class FeesController implements FeesNamespace {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping
-    public ResponseEntity<Map<String, Object>> getAll(@RequestParam(required = false,
-                                                                 defaultValue = EMPTY_VALUE) String buildingId,
-                                                      @RequestParam(required = false,
-                                                              defaultValue = EMPTY_VALUE) String apartmentId,
-                                                      @RequestParam(defaultValue = DEFAULT_PAGE_NUMBER) int page,
-                                                      @RequestParam(defaultValue = DEFAULT_FEE_PAGE_SIZE) int size,
-                                                      @RequestParam(defaultValue = DEFAULT_FEE_PAGE_SORT) String[] sort) {
-        Map<String, Object> response =
-                this.feeService.getAll(buildingId, apartmentId, page, size, sort);
+    @GetMapping("/all")
+    public ResponseEntity<Set<FeeViewModel>> getAll(@RequestParam(required = false, name = "buildingId") String buildingId,
+                                                    @RequestParam(required = false, name = "apartmentId") String apartmentId,
+                                                    Pageable pageable) {
 
-        return response.get(FEES_RESPONSE_KEY) == null
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.ok(response);
+        Set<FeeViewModel> fees = this.feeService
+                .getAll(buildingId, apartmentId, pageable).stream()
+                .map(f -> this.modelMapper.map(f, FeeViewModel.class))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return fees.isEmpty()
+                ? ResponseEntity.notFound().build()
+                : ResponseEntity.ok(fees);
+
     }
 
     @GetMapping("/{feeId}")

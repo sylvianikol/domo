@@ -105,8 +105,8 @@ public class ApartmentsController implements ApartmentsNamespace {
                         .toUri()).build();
     }
 
-    @DeleteMapping
-    public ResponseEntity<?> deleteAll(@RequestParam(required = false, defaultValue = EMPTY_VALUE,
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteAll(@RequestParam(required = false,
                                                      name = "buildingId") String buildingId,
                                        UriComponentsBuilder uriComponentsBuilder) {
 

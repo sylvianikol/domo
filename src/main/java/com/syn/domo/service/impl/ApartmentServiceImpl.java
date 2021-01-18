@@ -157,7 +157,11 @@ public class ApartmentServiceImpl implements ApartmentService {
     @Transactional
     public void deleteAll(String buildingId) {
 
-        Set<Apartment> apartments = this.getApartmentsBy(buildingId);
+        ApartmentFilterSpecification apartmentFilterSpecification =
+                new ApartmentFilterSpecification(buildingId);
+
+        List<Apartment> apartments = this.apartmentRepository
+                .findAll(apartmentFilterSpecification);
 
         for (Apartment apartment : apartments) {
             this.childService.deleteAll(buildingId, apartment.getId(), EMPTY_VALUE);
@@ -205,19 +209,5 @@ public class ApartmentServiceImpl implements ApartmentService {
         return this.apartmentRepository
                 .findByNumberAndBuildingId(apartmentNumber, buildingId).isPresent();
 
-    }
-
-    private Set<Apartment> getApartmentsBy(String buildingId) {
-
-        if (buildingId.equals(EMPTY_VALUE)) {
-
-            return new HashSet<>(this.apartmentRepository.findAll());
-        }
-
-        if (this.buildingService.get(buildingId).isEmpty()) {
-            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
-        }
-
-        return new HashSet<>(this.apartmentRepository.getAllByBuildingId(buildingId));
     }
 }

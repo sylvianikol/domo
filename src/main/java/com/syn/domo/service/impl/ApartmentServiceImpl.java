@@ -184,7 +184,7 @@ public class ApartmentServiceImpl implements ApartmentService {
     @Override
     public void evacuateApartments(String buildingId) {
         Set<Apartment> apartments =
-                this.apartmentRepository.getAllByBuildingId(buildingId);
+                this.apartmentRepository.findAllByBuildingId(buildingId);
 
         for (Apartment apartment : apartments) {
             this.residentService.deleteAll(new ResidentFilter(buildingId, apartment.getId()));

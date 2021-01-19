@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -126,23 +127,23 @@ class ApartmentRepositoryTest {
     }
 
     @Test
-    void test_getAllByBuildingId_isNotEmpty() {
+    void test_getAllByBuildingId_isNotEmptyWhenValidBuildingId() {
         Set<Apartment> apartments = this.apartmentRepository
-                .getAllByBuildingId(building.getId());
+                .findAllByBuildingId(building.getId());
 
         assertThat(apartments).isNotEmpty();
     }
 
     @Test
-    void test_getAllByBuildingId_isEmpty() {
+    void test_getAllByBuildingId_isEmptyWhenInvalidBuildingId() {
         Set<Apartment> apartments = this.apartmentRepository
-                .getAllByBuildingId("0");
+                .findAllByBuildingId("0");
 
         assertThat(apartments).isEmpty();
     }
 
     @Test
-    void test_findByIdAndBuildingId_IsPresent() {
+    void test_findByIdAndBuildingId_IsPresentWhenValidParams() {
         Optional<Apartment> found = this.apartmentRepository
                 .findByIdAndBuildingId(apartment.getId(), building.getId());
 
@@ -150,9 +151,19 @@ class ApartmentRepositoryTest {
     }
 
     @Test
-    void test_findByIdAndBuildingId_IsEmpty() {
+    void test_findByIdAndBuildingId_IsEmptyWhenInvalidParams() {
         Optional<Apartment> found = this.apartmentRepository
                 .findByIdAndBuildingId("0", building.getId());
+
+        assertThat(found).isEmpty();
+
+        found = this.apartmentRepository
+                .findByIdAndBuildingId(apartment.getId(), "0");
+
+        assertThat(found).isEmpty();
+
+        found = this.apartmentRepository
+                .findByIdAndBuildingId("0", "0");
 
         assertThat(found).isEmpty();
     }

@@ -22,14 +22,15 @@ import static com.syn.domo.common.EmailTemplates.*;
 public class NotificationService {
 
     private static final Logger log =
-            LoggerFactory.getLogger(ScheduledFeesGenerator.class);
+            LoggerFactory.getLogger(NotificationService.class);
 
-    private JavaMailSender javaMailSender;
+    private final JavaMailSender javaMailSender;
 
     @Autowired
     public NotificationService(JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
     }
+
     public void sendNewFeeNotificationEmail(UserServiceModel user, Fee fee) throws MailException, MessagingException {
 
         MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();

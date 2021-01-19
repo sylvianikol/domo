@@ -124,7 +124,7 @@ public class ResidentServiceImpl implements ResidentService  {
         ResidentServiceModel addedResident =
                 this.modelMapper.map(resident, ResidentServiceModel.class);
 
-//        this.notificationService.sendActivationEmail(addedResident);
+        this.notificationService.sendActivationEmail(addedResident);
 
         return new ResponseModel<>(resident.getId(), addedResident);
     }

@@ -119,4 +119,8 @@ public class ValidationErrorMessages {
 
     public static final String ACTIVE_NOT_NULL =
             "Activation status can not be null!";
+
+    public static final String ID_NOT_NULL = "ID can not be null!";
+    public static final String ID_NOT_EMPTY = "ID can not be empty!";
+    public static final String IDS_NOT_EMPTY = "Set of parent ids can not be empty!";
 }

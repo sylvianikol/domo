@@ -10,6 +10,8 @@ import com.syn.domo.repository.ApartmentRepository;
 import com.syn.domo.service.*;
 import com.syn.domo.web.filter.ApartmentFilter;
 import com.syn.domo.utils.ValidationUtil;
+import com.syn.domo.web.filter.ChildFilter;
+import com.syn.domo.web.filter.ResidentFilter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -159,8 +161,8 @@ public class ApartmentServiceImpl implements ApartmentService {
 
         for (Apartment apartment : apartments) {
             String buildingId = apartment.getBuilding().getId();
-            this.childService.deleteAll(buildingId, apartment.getId(), NULL);
-            this.residentService.deleteAll(buildingId, apartment.getId());
+            this.childService.deleteAll(new ChildFilter(buildingId, apartment.getId(), NULL));
+            this.residentService.deleteAll(new ResidentFilter(buildingId, apartment.getId()));
         }
 
         this.apartmentRepository.deleteAll(apartments);
@@ -174,8 +176,8 @@ public class ApartmentServiceImpl implements ApartmentService {
 
         String buildingId = apartment.getBuilding().getId();
 
-        this.residentService.deleteAll(buildingId, apartment.getId());
-        this.childService.deleteAll(buildingId, apartment.getId(), NULL);
+        this.residentService.deleteAll(new ResidentFilter(buildingId, apartment.getId()));
+        this.childService.deleteAll(new ChildFilter(buildingId, apartment.getId(), NULL));
         this.apartmentRepository.delete(apartment);
     }
 
@@ -185,7 +187,7 @@ public class ApartmentServiceImpl implements ApartmentService {
                 this.apartmentRepository.getAllByBuildingId(buildingId);
 
         for (Apartment apartment : apartments) {
-            this.residentService.deleteAll(buildingId, apartment.getId());
+            this.residentService.deleteAll(new ResidentFilter(buildingId, apartment.getId()));
         }
     }
 

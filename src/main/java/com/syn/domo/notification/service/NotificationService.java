@@ -91,7 +91,7 @@ public class NotificationService {
         helper.setSubject(EMAIL_ACTIVATION_SUBJECT);
         helper.setFrom(System.getenv("MAIL_USER"));
 
-        this.javaMailSender.send(mimeMessage);
+//        this.javaMailSender.send(mimeMessage);
 
         log.info("========== EMAIL ACTIVATION SENT ============");
     }

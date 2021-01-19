@@ -3,6 +3,7 @@ package com.syn.domo.model.entity;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Set;
 
 import static com.syn.domo.common.RegexPatterns.APARTMENT_NUMBER_REGEX;
@@ -105,5 +106,23 @@ public class Apartment extends BaseEntity {
 
     public void setFees(Set<Fee> fees) {
         this.fees = fees;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Apartment)) return false;
+        if (!super.equals(o)) return false;
+        Apartment apartment = (Apartment) o;
+        return floor == apartment.floor &&
+                pets == apartment.pets &&
+                Objects.equals(number, apartment.number) &&
+                Objects.equals(building, apartment.building) &&
+                Objects.equals(addedOn, apartment.addedOn);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), number, floor, building, pets, addedOn);
     }
 }

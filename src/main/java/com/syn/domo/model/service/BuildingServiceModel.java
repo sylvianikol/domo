@@ -23,6 +23,16 @@ public class BuildingServiceModel extends BaseServiceModel {
     public BuildingServiceModel() {
     }
 
+    public BuildingServiceModel(String name, String address, String neighbourhood, int floors, BigDecimal budget, BigDecimal baseFee, LocalDate addedOn) {
+        this.name = name;
+        this.address = address;
+        this.neighbourhood = neighbourhood;
+        this.floors = floors;
+        this.budget = budget;
+        this.baseFee = baseFee;
+        this.addedOn = addedOn;
+    }
+
     @NotNull(message = BUILDING_NAME_NOT_NULL)
     @NotEmpty(message = BUILDING_NAME_NOT_EMPTY)
     @Size(max = 40, message = BUILDING_NAME_INVALID_LENGTH)

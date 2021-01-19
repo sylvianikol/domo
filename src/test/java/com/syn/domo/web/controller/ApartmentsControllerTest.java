@@ -5,25 +5,35 @@ import com.syn.domo.model.entity.Building;
 import com.syn.domo.repository.ApartmentRepository;
 import com.syn.domo.repository.BuildingRepository;
 import com.syn.domo.service.ApartmentService;
+import org.mockito.InjectMocks;
+import org.mockito.MockitoAnnotations;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.awt.print.Pageable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
 import static org.assertj.core.api.Assertions.assertThat;
+
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,21 +47,29 @@ class ApartmentsControllerTest {
     private ApartmentRepository apartmentRepository;
     @Autowired
     private BuildingRepository buildingRepository;
-    private Building building;
-    private Apartment apartment1;
-    private Apartment apartment2;
+
+    private String BUILDING_ID;
+    private String APARTMENT_1_ID;
+    private String APARTMENT_2_ID;
+    private final String URI = "/v1/apartments";
 
     @BeforeEach
     public void setUp() {
-        this.building = new Building("TestBuilding 1",
+        this.tearDown();
+
+        Building building = new Building("TestBuilding 1",
                 "Test neighbourhood", "TestAddress",3,
                 BigDecimal.valueOf(5), BigDecimal.valueOf(100), LocalDate.now());
         this.buildingRepository.saveAndFlush(building);
 
-        apartment1 = new Apartment("1", 1, building, 0, LocalDate.now());
-        apartment2 = new Apartment("2", 1, building, 1, LocalDate.now());
+        Apartment apartment1 = new Apartment("1", 1, building, 0, LocalDate.now());
         this.apartmentRepository.saveAndFlush(apartment1);
+        Apartment apartment2 = new Apartment("2", 1, building, 1, LocalDate.now());
         this.apartmentRepository.saveAndFlush(apartment2);
+
+        BUILDING_ID = building.getId();
+        APARTMENT_1_ID = apartment1.getId();
+        APARTMENT_2_ID = apartment2.getId();
     }
 
     @AfterEach
@@ -64,20 +82,35 @@ class ApartmentsControllerTest {
     void injectedComponentsAreNotNull() {
         assertThat(this.apartmentRepository).isNotNull();
         assertThat(this.buildingRepository).isNotNull();
-        assertThat(this.building).isNotNull();
-        assertThat(this.apartment1).isNotNull();
-        assertThat(this.apartment2).isNotNull();
     }
 
     @Test
-    void test_getAll() throws Exception {
-//        this.mvc.perform(MockMvcRequestBuilders.get("/all"))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.all[*]"))
+    void test_getAll_returnsCorrectResponse() throws Exception {
+        this.mvc.perform(MockMvcRequestBuilders
+                .get(URI + "/all?{buildingId}", ""))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$.[0].id", is(APARTMENT_1_ID)))
+                .andExpect(jsonPath("$.[1].id", is(APARTMENT_2_ID)));
     }
 
     @Test
-    void get() {
+    void test_get_isOK() throws Exception {
+
+        this.mvc.perform(MockMvcRequestBuilders
+                .get(URI + "/{apartmentId}", APARTMENT_1_ID))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void test_get_notFound() throws Exception {
+
+        this.mvc.perform(MockMvcRequestBuilders
+                .get(URI + "/{apartmentId}", "666"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
     @Test

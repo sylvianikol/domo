@@ -25,6 +25,14 @@ public class ApartmentServiceModel extends BaseServiceModel {
     public ApartmentServiceModel() {
     }
 
+    public ApartmentServiceModel(String number, int floor, BuildingServiceModel building, int pets, LocalDate addedOn) {
+        this.number = number;
+        this.floor = floor;
+        this.building = building;
+        this.pets = pets;
+        this.addedOn = addedOn;
+    }
+
     @NotNull(message = APARTMENT_NUMBER_NOT_NULL)
     @NotEmpty(message = APARTMENT_NUMBER_NOT_EMPTY)
     @Pattern(regexp = APARTMENT_NUMBER_REGEX, message = APARTMENT_INVALID_SYMBOLS)

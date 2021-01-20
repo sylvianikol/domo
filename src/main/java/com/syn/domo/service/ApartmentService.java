@@ -20,7 +20,7 @@ public interface ApartmentService {
 
     ResponseModel<ApartmentServiceModel> edit(ApartmentServiceModel apartmentServiceModel, String apartmentId);
 
-    void deleteAll(ApartmentFilter apartmentFilter);
+    int deleteAll(ApartmentFilter apartmentFilter);
 
     void delete(String apartmentId);
 

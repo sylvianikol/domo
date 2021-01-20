@@ -1,5 +1,6 @@
 package com.syn.domo.web.controller;
 
+import com.syn.domo.common.ExceptionErrorMessages;
 import com.syn.domo.model.binding.ApartmentBindingModel;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Building;
@@ -17,10 +18,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import static com.syn.domo.common.ResponseStatusMessages.DELETE_FAILED;
+import static com.syn.domo.common.ResponseStatusMessages.DELETE_SUCCESSFUL;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.hamcrest.Matchers.*;
@@ -271,20 +275,29 @@ class ApartmentsControllerTest extends AbstractTest {
     }
 
     @Test
-    void test_deleteAll_isNoContent() throws Exception {
+    void test_deleteAll_isOkWithCorrectMessage() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders.delete(URI + "/delete"))
                 .andDo(print())
-                .andExpect(status().isNoContent())
-                .andExpect(header().string(HttpHeaders.LOCATION, containsString(URI)));
+                .andExpect(status().isOk())
+                .andExpect(content().string(String.format(DELETE_SUCCESSFUL, 2, "apartments")));
     }
 
     @Test
-    void test_deleteAll_byBuildingId_isNoContent() throws Exception {
+    void test_deleteAll_isNotFound() throws Exception {
+        this.apartmentRepository.deleteAll();
+        this.mvc.perform(MockMvcRequestBuilders.delete(URI + "/delete"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(DELETE_FAILED));
+    }
+
+    @Test
+    void test_deleteAll_byBuildingId_isOkWithCorrectMessage() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders.delete(URI + "/delete")
                 .param("buildingId", BUILDING_ID))
                 .andDo(print())
-                .andExpect(status().isNoContent())
-                .andExpect(header().string(HttpHeaders.LOCATION, containsString(URI)));
+                .andExpect(status().isOk())
+                .andExpect(content().string(String.format(DELETE_SUCCESSFUL, 2, "apartments")));
     }
 
     @Test
@@ -292,11 +305,39 @@ class ApartmentsControllerTest extends AbstractTest {
         this.mvc.perform(MockMvcRequestBuilders.delete(URI + "/delete")
                 .param("buildingId", "0"))
                 .andDo(print())
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(DELETE_FAILED));
     }
 
     @Test
-    void delete() {
+    void test_deleteAll_byBuildingIdEmpty_isNotFound() throws Exception {
+        this.apartmentRepository.deleteAll();
+        this.mvc.perform(MockMvcRequestBuilders.delete(URI + "/delete")
+                .param("buildingId", BUILDING_ID))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(DELETE_FAILED));
+    }
+
+    @Test
+    void test_delete_success() throws Exception {
+
+        this.mvc.perform(MockMvcRequestBuilders
+                .delete(URI + "/{apartmentId}", APARTMENT_1_ID))
+                .andDo(print())
+                .andExpect(status().isNoContent())
+                .andExpect(header().string(HttpHeaders.LOCATION,
+                containsString(URI)));
+    }
+
+    @Test
+    void test_delete_isNotFound() throws Exception {
+
+        this.mvc.perform(MockMvcRequestBuilders
+                .delete(URI + "/{apartmentId}", "0"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(ExceptionErrorMessages.APARTMENT_NOT_FOUND));
     }
 
     private String getAHeaderLocation() {

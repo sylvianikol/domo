@@ -22,6 +22,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.syn.domo.common.ResponseStatusMessages.DELETE_FAILED;
+import static com.syn.domo.common.ResponseStatusMessages.DELETE_SUCCESSFUL;
+
 @RestController
 public class ApartmentsController implements ApartmentsNamespace {
 
@@ -106,14 +109,13 @@ public class ApartmentsController implements ApartmentsNamespace {
 
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteAll(@RequestParam(required = false,
-                                                     name = "buildingId") String buildingId,
-                                       UriComponentsBuilder uriComponentsBuilder) {
+                                                     name = "buildingId") String buildingId) {
 
-        this.apartmentService.deleteAll(new ApartmentFilter(buildingId));
+        int result = this.apartmentService.deleteAll(new ApartmentFilter(buildingId));
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder.path(URI_APARTMENTS).build().toUri())
-                .build();
+        return result == 0
+                ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(DELETE_FAILED)
+                : ResponseEntity.ok().body(String.format(DELETE_SUCCESSFUL, result, "apartments"));
     }
 
     @DeleteMapping("/{apartmentId}")

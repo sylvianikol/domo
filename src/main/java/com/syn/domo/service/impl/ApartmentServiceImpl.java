@@ -154,7 +154,7 @@ public class ApartmentServiceImpl implements ApartmentService {
 
     @Override
     @Transactional
-    public void deleteAll(ApartmentFilter apartmentFilter) {
+    public int deleteAll(ApartmentFilter apartmentFilter) {
 
         List<Apartment> apartments = this.apartmentRepository
                 .findAll(apartmentFilter);
@@ -166,6 +166,7 @@ public class ApartmentServiceImpl implements ApartmentService {
         }
 
         this.apartmentRepository.deleteAll(apartments);
+        return apartments.size();
     }
 
     @Override

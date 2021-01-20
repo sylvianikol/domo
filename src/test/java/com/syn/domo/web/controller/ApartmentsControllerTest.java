@@ -1,17 +1,11 @@
 package com.syn.domo.web.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import com.syn.domo.model.binding.ApartmentBindingModel;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Building;
-import com.syn.domo.model.service.ApartmentServiceModel;
-import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.repository.ApartmentRepository;
 import com.syn.domo.repository.BuildingRepository;
-import com.syn.domo.service.ApartmentService;
-import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
-import org.modelmapper.ModelMapper;
+import com.syn.domo.web.AbstractTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,31 +13,25 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.awt.print.Pageable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @AutoConfigureMockMvc
-class ApartmentsControllerTest {
+class ApartmentsControllerTest extends AbstractTest {
 
     @Autowired
     private MockMvc mvc;
@@ -89,9 +77,9 @@ class ApartmentsControllerTest {
     }
 
     @Test
-    void test_getAll_returnsCorrectResponse() throws Exception {
+    void test_getAll_isOK() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders
-                .get(URI + "/all?{buildingId}", ""))
+                .get(URI + "/all"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -100,9 +88,42 @@ class ApartmentsControllerTest {
     }
 
     @Test
-    void test_getAllByBuildingId_returnsCorrectResponse() throws Exception {
+    void test_getAll_isNotFound() throws Exception {
+        this.apartmentRepository.deleteAll();
         this.mvc.perform(MockMvcRequestBuilders
-                .get(URI + "/all?{buildingId}", BUILDING_ID))
+                .get(URI + "/all"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void test_getAll_withPageable_IsOK() throws Exception {
+
+        this.mvc.perform(MockMvcRequestBuilders
+                .get(URI + "/all")
+                .param("page", "0"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$.[0].id", is(APARTMENT_1_ID)))
+                .andExpect(jsonPath("$.[1].id", is(APARTMENT_2_ID)));
+    }
+
+    @Test
+    void test_getAll_withPageable_IsNotFound() throws Exception {
+
+        this.mvc.perform(MockMvcRequestBuilders
+                .get(URI + "/all")
+                .param("page", "100"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void test_getAll_byBuildingId_isOk() throws Exception {
+        this.mvc.perform(MockMvcRequestBuilders
+                .get(URI + "/all")
+                .param("buildingId", BUILDING_ID))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -110,6 +131,25 @@ class ApartmentsControllerTest {
                 .andExpect(jsonPath("$.[0].building.id", is(BUILDING_ID)))
                 .andExpect(jsonPath("$.[1].id", is(APARTMENT_2_ID)))
                 .andExpect(jsonPath("$.[1].building.id", is(BUILDING_ID)));
+    }
+
+    @Test
+    void test_getAll_byBuildingIdInvalid_isNotFound() throws Exception {
+        this.mvc.perform(MockMvcRequestBuilders
+                .get(URI + "/all")
+                .param("buildingId", "0"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void test_getAll_byBuildingIdEmpty_isNotFound() throws Exception {
+        this.apartmentRepository.deleteAll();
+        this.mvc.perform(MockMvcRequestBuilders
+                .get(URI + "/all")
+                .param("buildingId", BUILDING_ID))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -131,18 +171,140 @@ class ApartmentsControllerTest {
     }
 
     @Test
-    void add() {
+    void test_add_isCreated() throws Exception {
+
+        ApartmentBindingModel apartmentBindingModel = new ApartmentBindingModel();
+        apartmentBindingModel.setNumber("3");
+        apartmentBindingModel.setFloor(2);
+        apartmentBindingModel.setPets(0);
+
+        String inputJson = super.mapToJson(apartmentBindingModel);
+
+        this.mvc.perform(post(URI + "/add")
+                .param("buildingId", BUILDING_ID)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(header().string(HttpHeaders.LOCATION, containsString(getAHeaderLocation())));
     }
 
     @Test
-    void edit() {
+    void test_add_isUnprocessable() throws Exception {
+        ApartmentBindingModel apartmentBindingModel = new ApartmentBindingModel();
+        apartmentBindingModel.setNumber("");
+        apartmentBindingModel.setFloor(-1);
+        apartmentBindingModel.setPets(-1);
+
+        String inputJson = super.mapToJson(apartmentBindingModel);
+
+        this.mvc.perform(post(URI + "/add")
+                .param("buildingId", BUILDING_ID)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
-    void deleteAll() {
+    void test_add_withBuildingIdInvalid_isNotFound() throws Exception {
+        ApartmentBindingModel apartmentBindingModel = new ApartmentBindingModel();
+        apartmentBindingModel.setNumber("3");
+        apartmentBindingModel.setFloor(1);
+        apartmentBindingModel.setPets(1);
+
+        String inputJson = super.mapToJson(apartmentBindingModel);
+
+        this.mvc.perform(post(URI + "/add")
+                .param("buildingId", "0")
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void test_edit_isNoContent() throws Exception {
+        ApartmentBindingModel apartmentBindingModel = new ApartmentBindingModel();
+        apartmentBindingModel.setNumber("3");
+        apartmentBindingModel.setFloor(2);
+        apartmentBindingModel.setPets(0);
+
+        String inputJson = super.mapToJson(apartmentBindingModel);
+
+        this.mvc.perform(put(URI + "/{apartmentId}", APARTMENT_1_ID)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
+                .andDo(print())
+                .andExpect(status().isNoContent())
+                .andExpect(header().string(HttpHeaders.LOCATION,
+                        containsString(URI + "/" + APARTMENT_1_ID)));
+
+    }
+
+    @Test
+    void test_edit_isUnprocessable() throws Exception {
+        ApartmentBindingModel apartmentBindingModel = new ApartmentBindingModel();
+        apartmentBindingModel.setNumber("");
+        apartmentBindingModel.setFloor(-1);
+        apartmentBindingModel.setPets(-1);
+
+        String inputJson = super.mapToJson(apartmentBindingModel);
+
+        this.mvc.perform(put(URI + "/{apartmentId}", APARTMENT_1_ID)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+
+    }
+
+    @Test
+    void test_edit_apartmentIdInvalid_isNotFound() throws Exception {
+        ApartmentBindingModel apartmentBindingModel = new ApartmentBindingModel();
+        apartmentBindingModel.setNumber("3");
+        apartmentBindingModel.setFloor(2);
+        apartmentBindingModel.setPets(0);
+
+        String inputJson = super.mapToJson(apartmentBindingModel);
+
+        this.mvc.perform(put(URI + "/{apartmentId}", "0")
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+
+    }
+
+    @Test
+    void test_deleteAll_isNoContent() throws Exception {
+        this.mvc.perform(MockMvcRequestBuilders.delete(URI + "/delete"))
+                .andDo(print())
+                .andExpect(status().isNoContent())
+                .andExpect(header().string(HttpHeaders.LOCATION, containsString(URI)));
+    }
+
+    @Test
+    void test_deleteAll_byBuildingId_isNoContent() throws Exception {
+        this.mvc.perform(MockMvcRequestBuilders.delete(URI + "/delete")
+                .param("buildingId", BUILDING_ID))
+                .andDo(print())
+                .andExpect(status().isNoContent())
+                .andExpect(header().string(HttpHeaders.LOCATION, containsString(URI)));
+    }
+
+    @Test
+    void test_deleteAll_byBuildingIdInvalid_isNotFound() throws Exception {
+        this.mvc.perform(MockMvcRequestBuilders.delete(URI + "/delete")
+                .param("buildingId", "0"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
     @Test
     void delete() {
+    }
+
+    private String getAHeaderLocation() {
+        return URI + "/" +
+                this.apartmentRepository.findAll().stream()
+                        .filter(a -> !a.getId().equals(APARTMENT_1_ID) && !a.getId().equals(APARTMENT_2_ID))
+                        .findFirst()
+                        .map(Apartment::getId)
+                        .orElse("");
     }
 }

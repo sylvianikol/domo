@@ -1,5 +1,7 @@
 package com.syn.domo.model.view;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
@@ -11,6 +13,8 @@ public class ApartmentViewModel {
     private int floor;
     private int pets;
     private LocalDate addedOn;
+    @JsonIgnore
+    private BuildingViewModel building;
 
     Set<ResidentInnerViewModel> residents;
     Set<ChildInnerViewModel> children;
@@ -56,6 +60,14 @@ public class ApartmentViewModel {
 
     public void setAddedOn(LocalDate addedOn) {
         this.addedOn = addedOn;
+    }
+
+    public BuildingViewModel getBuilding() {
+        return building;
+    }
+
+    public void setBuilding(BuildingViewModel building) {
+        this.building = building;
     }
 
     public Set<ResidentInnerViewModel> getResidents() {

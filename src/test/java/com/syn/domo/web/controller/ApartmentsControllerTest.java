@@ -96,6 +96,19 @@ class ApartmentsControllerTest {
     }
 
     @Test
+    void test_getAllByBuildingId_returnsCorrectResponse() throws Exception {
+        this.mvc.perform(MockMvcRequestBuilders
+                .get(URI + "/all?{buildingId}", BUILDING_ID))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$.[0].id", is(APARTMENT_1_ID)))
+                .andExpect(jsonPath("$.[0].building.id", is(BUILDING_ID)))
+                .andExpect(jsonPath("$.[1].id", is(APARTMENT_2_ID)))
+                .andExpect(jsonPath("$.[1].building.id", is(BUILDING_ID)));
+    }
+
+    @Test
     void test_get_isOK() throws Exception {
 
         this.mvc.perform(MockMvcRequestBuilders

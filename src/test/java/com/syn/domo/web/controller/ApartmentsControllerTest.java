@@ -1,7 +1,11 @@
 package com.syn.domo.web.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Building;
+import com.syn.domo.model.service.ApartmentServiceModel;
+import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.repository.ApartmentRepository;
 import com.syn.domo.repository.BuildingRepository;
 import com.syn.domo.service.ApartmentService;

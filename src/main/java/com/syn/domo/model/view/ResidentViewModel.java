@@ -1,20 +1,25 @@
 package com.syn.domo.model.view;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import java.util.Set;
 
 public class ResidentViewModel extends UserViewModel {
 
-    private Set<ApartmentsInnerViewModel> apartments;
+    @JsonManagedReference
+    private Set<ApartmentViewModel> apartments;
+    @JsonBackReference
     private Set<ChildViewModel> children;
 
     public ResidentViewModel() {
     }
 
-    public Set<ApartmentsInnerViewModel> getApartments() {
+    public Set<ApartmentViewModel> getApartments() {
         return apartments;
     }
 
-    public void setApartments(Set<ApartmentsInnerViewModel> apartments) {
+    public void setApartments(Set<ApartmentViewModel> apartments) {
         this.apartments = apartments;
     }
 

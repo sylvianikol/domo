@@ -4,18 +4,18 @@ import java.util.Set;
 
 public class ChildServiceModel extends BaseUserServiceModel {
 
-    private Set<ApartmentServiceModel> apartments;
+    private ApartmentServiceModel apartment;
     private Set<ResidentServiceModel> parents;
 
     public ChildServiceModel() {
     }
 
-    public Set<ApartmentServiceModel> getApartments() {
-        return apartments;
+    public ApartmentServiceModel getApartment() {
+        return apartment;
     }
 
-    public void setApartments(Set<ApartmentServiceModel> apartments) {
-        this.apartments = apartments;
+    public void setApartment(ApartmentServiceModel apartment) {
+        this.apartment = apartment;
     }
 
     public Set<ResidentServiceModel> getParents() {

@@ -1,6 +1,8 @@
 package com.syn.domo.model.view;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -13,11 +15,13 @@ public class ApartmentViewModel {
     private int floor;
     private int pets;
     private LocalDate addedOn;
-    @JsonIgnore
+    @JsonManagedReference
     private BuildingViewModel building;
 
-    Set<ResidentInnerViewModel> residents;
-    Set<ChildInnerViewModel> children;
+    @JsonBackReference
+    Set<ResidentViewModel> residents;
+    @JsonBackReference
+    Set<ChildViewModel> children;
 
     public ApartmentViewModel() {
     }
@@ -70,19 +74,19 @@ public class ApartmentViewModel {
         this.building = building;
     }
 
-    public Set<ResidentInnerViewModel> getResidents() {
+    public Set<ResidentViewModel> getResidents() {
         return residents;
     }
 
-    public void setResidents(Set<ResidentInnerViewModel> residents) {
+    public void setResidents(Set<ResidentViewModel> residents) {
         this.residents = residents;
     }
 
-    public Set<ChildInnerViewModel> getChildren() {
+    public Set<ChildViewModel> getChildren() {
         return children;
     }
 
-    public void setChildren(Set<ChildInnerViewModel> children) {
+    public void setChildren(Set<ChildViewModel> children) {
         this.children = children;
     }
 

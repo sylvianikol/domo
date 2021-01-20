@@ -1,5 +1,7 @@
 package com.syn.domo.model.view;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import java.math.BigDecimal;
 import java.util.Set;
 
@@ -7,7 +9,8 @@ public class StaffViewModel extends UserViewModel {
 
     private String job;
     private BigDecimal salary;
-    private Set<BuildingInnerViewModel> buildings;
+    @JsonManagedReference
+    private Set<BuildingViewModel> buildings;
 
     public StaffViewModel() {
     }
@@ -29,11 +32,11 @@ public class StaffViewModel extends UserViewModel {
         this.salary = salary;
     }
 
-    public Set<BuildingInnerViewModel> getBuildings() {
+    public Set<BuildingViewModel> getBuildings() {
         return buildings;
     }
 
-    public void setBuildings(Set<BuildingInnerViewModel> buildings) {
+    public void setBuildings(Set<BuildingViewModel> buildings) {
         this.buildings = buildings;
     }
 }

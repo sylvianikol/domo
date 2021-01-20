@@ -1,5 +1,7 @@
 package com.syn.domo.model.view;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -16,7 +18,10 @@ public class BuildingViewModel {
     private BigDecimal baseFee;
     private LocalDate addedOn;
 
+    @JsonBackReference
     private Set<ApartmentViewModel> apartments;
+    @JsonBackReference
+    private Set<StaffViewModel> staff;
 
     public BuildingViewModel() {
     }
@@ -91,6 +96,14 @@ public class BuildingViewModel {
 
     public void setApartments(Set<ApartmentViewModel> apartments) {
         this.apartments = apartments;
+    }
+
+    public Set<StaffViewModel> getStaff() {
+        return staff;
+    }
+
+    public void setStaff(Set<StaffViewModel> staff) {
+        this.staff = staff;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.syn.domo.model.entity;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 
@@ -20,6 +21,15 @@ public class UserEntity extends BaseUserEntity {
     private Set<Role> roles;
 
     public UserEntity() {
+    }
+
+    public UserEntity(String firstName, String lastName, LocalDate addedOn, String email, String password, String phoneNumber, boolean isActive, Set<Role> roles) {
+        super(firstName, lastName, addedOn);
+        this.email = email;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.isActive = isActive;
+        this.roles = roles;
     }
 
     @Column(unique = true, nullable = false)

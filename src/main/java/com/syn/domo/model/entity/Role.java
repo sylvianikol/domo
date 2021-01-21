@@ -16,6 +16,10 @@ public class Role extends BaseEntity {
     public Role() {
     }
 
+    public Role(UserRole name) {
+        this.name = name;
+    }
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true)
     public UserRole getName() {

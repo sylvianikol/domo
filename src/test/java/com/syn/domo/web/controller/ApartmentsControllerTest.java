@@ -14,19 +14,19 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_FAILED;
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_SUCCESSFUL;
+import static com.syn.domo.common.ValidationErrorMessages.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -254,7 +254,18 @@ class ApartmentsControllerTest extends AbstractTest {
         this.mvc.perform(put(URI + "/{apartmentId}", APARTMENT_1_ID)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity());
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.object.number", is("")))
+                .andExpect(jsonPath("$.object.floor", is(-1)))
+                .andExpect(jsonPath("$.object.pets", is(-1)))
+                .andExpect(jsonPath("$.errorContainer.errors.pets[0]", is(PETS_MIN)))
+                .andExpect(jsonPath("$.errorContainer.errors.floor[0]", is(FLOOR_MIN_INVALID)))
+                .andExpect(jsonPath("$.errorContainer.errors.number[0]",
+                        is(APARTMENT_NUMBER_NOT_EMPTY)))
+                .andExpect(jsonPath("$.errorContainer.errors.number[1]",
+                        is(APARTMENT_LENGTH_INVALID)))
+                .andExpect(jsonPath("$.errorContainer.errors.number[2]",
+                        is(APARTMENT_INVALID_SYMBOLS)));
 
     }
 

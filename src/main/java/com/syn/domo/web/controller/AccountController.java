@@ -40,7 +40,7 @@ public class AccountController implements AccountNamespace {
                 : ResponseEntity.ok(this.modelMapper.map(user.get(), UserViewModel.class));
     }
 
-    @PostMapping("/create-password")
+    @PostMapping("/activate")
     public ResponseEntity<?> createPassword(@RequestParam(name = "userId") String userId,
                                             @Valid @RequestBody UserActivateBindingModel userActivateBindingModel,
                                             BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {

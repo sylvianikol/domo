@@ -14,6 +14,12 @@ public abstract class BaseUserEntity extends BaseEntity {
     public BaseUserEntity() {
     }
 
+    public BaseUserEntity(String firstName, String lastName, LocalDate addedOn) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.addedOn = addedOn;
+    }
+
     @Column(name = "first_name", nullable = false, length = 55)
     public String getFirstName() {
         return firstName;

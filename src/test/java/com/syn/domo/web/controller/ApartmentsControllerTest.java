@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import static com.syn.domo.common.ExceptionErrorMessages.APARTMENT_NOT_FOUND;
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_FAILED;
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_SUCCESSFUL;
 import static com.syn.domo.common.ValidationErrorMessages.*;
@@ -348,7 +349,7 @@ class ApartmentsControllerTest extends AbstractTest {
                 .delete(URI + "/{apartmentId}", "0"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(ExceptionErrorMessages.APARTMENT_NOT_FOUND));
+                .andExpect(content().string(APARTMENT_NOT_FOUND));
     }
 
     private String getAHeaderLocation() {

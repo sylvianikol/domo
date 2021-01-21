@@ -16,6 +16,11 @@ public abstract class BaseUserBindingModel {
     public BaseUserBindingModel() {
     }
 
+    public BaseUserBindingModel(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
     @NotNull(message = FIRST_NAME_NOT_NULL)
     @NotEmpty(message = FIRST_NAME_NOT_EMPTY)
     @Size(min = 2, max = 55, message = FIRST_NAME_INVALID)

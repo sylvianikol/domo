@@ -14,7 +14,15 @@ public class ChildViewModel extends BaseUserViewModel {
     public ChildViewModel() {
     }
 
-   public Set<ResidentInnerViewModel> getParents() {
+    public ApartmentViewModel getApartment() {
+        return apartment;
+    }
+
+    public void setApartment(ApartmentViewModel apartment) {
+        this.apartment = apartment;
+    }
+
+    public Set<ResidentInnerViewModel> getParents() {
         return parents;
     }
 

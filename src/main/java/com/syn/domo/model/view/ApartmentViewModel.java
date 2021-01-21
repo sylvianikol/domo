@@ -15,9 +15,9 @@ public class ApartmentViewModel {
     private int floor;
     private int pets;
     private LocalDate addedOn;
+
     @JsonManagedReference
     private BuildingViewModel building;
-
     @JsonBackReference
     Set<ResidentViewModel> residents;
     @JsonBackReference

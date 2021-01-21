@@ -144,7 +144,7 @@ public class ChildServiceImpl implements ChildService {
 
     @Override
     @Transactional
-    public void deleteAll(ChildFilter childFilter) {
+    public int deleteAll(ChildFilter childFilter) {
 
         List<Child> children = this.childRepository.findAll(childFilter);
 
@@ -153,6 +153,7 @@ public class ChildServiceImpl implements ChildService {
         }
 
         this.childRepository.deleteAll(children);
+        return children.size();
     }
 
     @Override

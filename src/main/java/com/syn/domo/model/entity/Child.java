@@ -1,6 +1,7 @@
 package com.syn.domo.model.entity;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 
@@ -15,6 +16,12 @@ public class Child extends BaseUserEntity {
     private Set<Resident> parents;
 
     public Child() {
+    }
+
+    public Child(String firstName, String lastName, LocalDate addedOn, Apartment apartment, Set<Resident> parents) {
+        super(firstName, lastName, addedOn);
+        this.apartment = apartment;
+        this.parents = parents;
     }
 
     @ManyToOne

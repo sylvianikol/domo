@@ -20,7 +20,7 @@ public interface ChildService {
 
     ResponseModel<ChildServiceModel> edit(ChildServiceModel childServiceModel, String childId);
 
-    void deleteAll(ChildFilter childFilter);
+    int deleteAll(ChildFilter childFilter);
 
     void delete(String childId);
 

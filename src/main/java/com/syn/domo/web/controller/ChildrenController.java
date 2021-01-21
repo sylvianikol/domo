@@ -20,11 +20,14 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Pageable;
 
+import static com.syn.domo.common.ResponseStatusMessages.DELETE_FAILED;
+import static com.syn.domo.common.ResponseStatusMessages.DELETE_SUCCESSFUL;
 import static com.syn.domo.common.ValidationErrorMessages.*;
 
 @RestController
@@ -52,7 +55,7 @@ public class ChildrenController implements ChildrenNamespace {
                 .getAll(new ChildFilter(buildingId, apartmentId, parentId), pageable)
                 .stream()
                 .map(c -> this.modelMapper.map(c, ChildViewModel.class))
-                .collect(Collectors.toUnmodifiableSet());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
 
         return children.isEmpty()
                 ? ResponseEntity.notFound().build()
@@ -122,11 +125,12 @@ public class ChildrenController implements ChildrenNamespace {
                                                name = "parentId") String parentId,
                                        UriComponentsBuilder uriComponentsBuilder) {
 
-        this.childService.deleteAll(new ChildFilter(buildingId, apartmentId, parentId));
+        int result = this.childService
+                .deleteAll(new ChildFilter(buildingId, apartmentId, parentId));
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder.path(URI_CHILDREN).build().toUri())
-                .build();
+        return result == 0
+                ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(DELETE_FAILED)
+                : ResponseEntity.ok().body(String.format(DELETE_SUCCESSFUL, result, "children"));
     }
 
     @DeleteMapping("/{childId}")

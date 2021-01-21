@@ -22,7 +22,7 @@ public interface ResidentService {
     ResponseModel<ResidentServiceModel> edit(ResidentServiceModel residentServiceModel,
                                              String residentId);
 
-    void deleteAll(ResidentFilter residentFilter);
+    int deleteAll(ResidentFilter residentFilter);
 
     void delete(String residentId);
 

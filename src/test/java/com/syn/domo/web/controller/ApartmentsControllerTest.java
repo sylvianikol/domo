@@ -83,8 +83,7 @@ class ApartmentsControllerTest extends AbstractTest {
 
     @Test
     void test_getAll_isOK() throws Exception {
-        this.mvc.perform(MockMvcRequestBuilders
-                .get(URI + "/all"))
+        this.mvc.perform(get(URI + "/all"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -95,8 +94,7 @@ class ApartmentsControllerTest extends AbstractTest {
     @Test
     void test_getAll_isNotFound() throws Exception {
         this.apartmentRepository.deleteAll();
-        this.mvc.perform(MockMvcRequestBuilders
-                .get(URI + "/all"))
+        this.mvc.perform(get(URI + "/all"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
@@ -104,8 +102,7 @@ class ApartmentsControllerTest extends AbstractTest {
     @Test
     void test_getAll_withPageable_IsOK() throws Exception {
 
-        this.mvc.perform(MockMvcRequestBuilders
-                .get(URI + "/all")
+        this.mvc.perform(get(URI + "/all")
                 .param("page", "0"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -117,8 +114,7 @@ class ApartmentsControllerTest extends AbstractTest {
     @Test
     void test_getAll_withPageable_IsNotFound() throws Exception {
 
-        this.mvc.perform(MockMvcRequestBuilders
-                .get(URI + "/all")
+        this.mvc.perform(get(URI + "/all")
                 .param("page", "100"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
@@ -126,8 +122,7 @@ class ApartmentsControllerTest extends AbstractTest {
 
     @Test
     void test_getAll_byBuildingId_isOk() throws Exception {
-        this.mvc.perform(MockMvcRequestBuilders
-                .get(URI + "/all")
+        this.mvc.perform(get(URI + "/all")
                 .param("buildingId", BUILDING_ID))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -140,8 +135,7 @@ class ApartmentsControllerTest extends AbstractTest {
 
     @Test
     void test_getAll_byBuildingIdInvalid_isNotFound() throws Exception {
-        this.mvc.perform(MockMvcRequestBuilders
-                .get(URI + "/all")
+        this.mvc.perform(get(URI + "/all")
                 .param("buildingId", "0"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
@@ -150,8 +144,7 @@ class ApartmentsControllerTest extends AbstractTest {
     @Test
     void test_getAll_byBuildingIdEmpty_isNotFound() throws Exception {
         this.apartmentRepository.deleteAll();
-        this.mvc.perform(MockMvcRequestBuilders
-                .get(URI + "/all")
+        this.mvc.perform(get(URI + "/all")
                 .param("buildingId", BUILDING_ID))
                 .andDo(print())
                 .andExpect(status().isNotFound());
@@ -160,8 +153,7 @@ class ApartmentsControllerTest extends AbstractTest {
     @Test
     void test_get_isOK() throws Exception {
 
-        this.mvc.perform(MockMvcRequestBuilders
-                .get(URI + "/{apartmentId}", APARTMENT_1_ID))
+        this.mvc.perform(get(URI + "/{apartmentId}", APARTMENT_1_ID))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -169,8 +161,7 @@ class ApartmentsControllerTest extends AbstractTest {
     @Test
     void test_get_notFound() throws Exception {
 
-        this.mvc.perform(MockMvcRequestBuilders
-                .get(URI + "/{apartmentId}", "666"))
+        this.mvc.perform(get(URI + "/{apartmentId}", "666"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
@@ -288,7 +279,7 @@ class ApartmentsControllerTest extends AbstractTest {
 
     @Test
     void test_deleteAll_isOkWithCorrectMessage() throws Exception {
-        this.mvc.perform(MockMvcRequestBuilders.delete(URI + "/delete"))
+        this.mvc.perform(delete(URI + "/delete"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(String.format(DELETE_SUCCESSFUL, 2, "apartments")));
@@ -297,7 +288,7 @@ class ApartmentsControllerTest extends AbstractTest {
     @Test
     void test_deleteAll_isNotFound() throws Exception {
         this.apartmentRepository.deleteAll();
-        this.mvc.perform(MockMvcRequestBuilders.delete(URI + "/delete"))
+        this.mvc.perform(delete(URI + "/delete"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(DELETE_FAILED));
@@ -305,7 +296,7 @@ class ApartmentsControllerTest extends AbstractTest {
 
     @Test
     void test_deleteAll_byBuildingId_isOkWithCorrectMessage() throws Exception {
-        this.mvc.perform(MockMvcRequestBuilders.delete(URI + "/delete")
+        this.mvc.perform(delete(URI + "/delete")
                 .param("buildingId", BUILDING_ID))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -314,7 +305,7 @@ class ApartmentsControllerTest extends AbstractTest {
 
     @Test
     void test_deleteAll_byBuildingIdInvalid_isNotFound() throws Exception {
-        this.mvc.perform(MockMvcRequestBuilders.delete(URI + "/delete")
+        this.mvc.perform(delete(URI + "/delete")
                 .param("buildingId", "0"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
@@ -324,7 +315,7 @@ class ApartmentsControllerTest extends AbstractTest {
     @Test
     void test_deleteAll_byBuildingIdEmpty_isNotFound() throws Exception {
         this.apartmentRepository.deleteAll();
-        this.mvc.perform(MockMvcRequestBuilders.delete(URI + "/delete")
+        this.mvc.perform(delete(URI + "/delete")
                 .param("buildingId", BUILDING_ID))
                 .andDo(print())
                 .andExpect(status().isNotFound())
@@ -334,8 +325,7 @@ class ApartmentsControllerTest extends AbstractTest {
     @Test
     void test_delete_success() throws Exception {
 
-        this.mvc.perform(MockMvcRequestBuilders
-                .delete(URI + "/{apartmentId}", APARTMENT_1_ID))
+        this.mvc.perform(delete(URI + "/{apartmentId}", APARTMENT_1_ID))
                 .andDo(print())
                 .andExpect(status().isNoContent())
                 .andExpect(header().string(HttpHeaders.LOCATION,
@@ -345,8 +335,7 @@ class ApartmentsControllerTest extends AbstractTest {
     @Test
     void test_delete_isNotFound() throws Exception {
 
-        this.mvc.perform(MockMvcRequestBuilders
-                .delete(URI + "/{apartmentId}", "0"))
+        this.mvc.perform(delete(URI + "/{apartmentId}", "0"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(APARTMENT_NOT_FOUND));

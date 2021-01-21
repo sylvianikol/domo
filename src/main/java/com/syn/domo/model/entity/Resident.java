@@ -43,4 +43,6 @@ public class Resident extends UserEntity {
     public void setChildren(Set<Child> children) {
         this.children = children;
     }
+
+
 }

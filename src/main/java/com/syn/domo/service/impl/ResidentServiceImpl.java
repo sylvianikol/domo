@@ -169,11 +169,13 @@ public class ResidentServiceImpl implements ResidentService  {
     }
 
     @Override
-    public void deleteAll(ResidentFilter residentFilter) {
+    public int deleteAll(ResidentFilter residentFilter) {
 
         List<Resident> residents = this.residentRepository.findAll(residentFilter);
 
         this.residentRepository.deleteAll(residents);
+
+        return residents.size();
     }
 
     @Override

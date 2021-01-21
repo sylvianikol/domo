@@ -13,6 +13,12 @@ public class ResidentBindingModel extends BaseUserBindingModel {
     public ResidentBindingModel() {
     }
 
+    public ResidentBindingModel(String firstName, String lastName, String email, String phoneNumber) {
+        super(firstName, lastName);
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+    }
+
     @NotNull(message = EMAIL_NOT_NULL)
     @NotEmpty(message = EMAIL_NOT_EMPTY)
     @Email(message = EMAIL_INVALID)

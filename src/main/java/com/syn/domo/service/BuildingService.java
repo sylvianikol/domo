@@ -19,7 +19,7 @@ public interface BuildingService {
     ResponseModel<BuildingServiceModel> edit(BuildingServiceModel buildingServiceModel,
                                              String buildingId);
 
-    void deleteAll();
+    int deleteAll();
 
     void delete(String buildingId);
 

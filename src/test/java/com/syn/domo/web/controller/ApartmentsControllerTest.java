@@ -270,7 +270,7 @@ class ApartmentsControllerTest extends AbstractTest {
     }
 
     @Test
-    void test_edit_apartmentIdInvalid_isNotFound() throws Exception {
+    void test_edit_IdInvalid_isNotFound() throws Exception {
         ApartmentBindingModel apartmentBindingModel = new ApartmentBindingModel();
         apartmentBindingModel.setNumber("3");
         apartmentBindingModel.setFloor(2);

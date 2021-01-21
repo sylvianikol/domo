@@ -18,6 +18,15 @@ public class BuildingBindingModel {
     public BuildingBindingModel() {
     }
 
+    public BuildingBindingModel(String name, String neighbourhood, String address, int floors, BigDecimal budget, BigDecimal baseFee) {
+        this.name = name;
+        this.neighbourhood = neighbourhood;
+        this.address = address;
+        this.floors = floors;
+        this.budget = budget;
+        this.baseFee = baseFee;
+    }
+
     @NotNull(message = BUILDING_NAME_NOT_NULL)
     @NotEmpty(message = BUILDING_NAME_NOT_EMPTY)
     @Size(max = 40, message = BUILDING_NAME_INVALID_LENGTH)

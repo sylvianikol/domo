@@ -133,7 +133,7 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public void deleteAll() {
+    public int deleteAll() {
         List<Building> buildings = this.buildingRepository.findAll();
 
         for (Building building : buildings) {
@@ -149,6 +149,7 @@ public class BuildingServiceImpl implements BuildingService {
         }
 
         this.buildingRepository.deleteAll(buildings);
+        return buildings.size();
     }
 
     @Override

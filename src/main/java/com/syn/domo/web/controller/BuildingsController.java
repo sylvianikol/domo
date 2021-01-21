@@ -19,6 +19,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Pageable;
 
+import static com.syn.domo.common.ResponseStatusMessages.DELETE_FAILED;
+import static com.syn.domo.common.ResponseStatusMessages.DELETE_SUCCESSFUL;
+
 //@CrossOrigin("http://host")
 @RestController
 public class BuildingsController implements BuildingsNamespace {
@@ -103,11 +106,11 @@ public class BuildingsController implements BuildingsNamespace {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteAll(UriComponentsBuilder uriComponentsBuilder) {
-        this.buildingService.deleteAll();
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder.path(URI_BUILDINGS).build().toUri())
-                .build();
+    public ResponseEntity<?> deleteAll() {
+        int result = this.buildingService.deleteAll();
+        return result == 0
+                ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(DELETE_FAILED)
+                : ResponseEntity.ok().body(String.format(DELETE_SUCCESSFUL, result, "buildings"));
     }
 
     @DeleteMapping("/{buildingId}")

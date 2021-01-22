@@ -27,6 +27,8 @@ class ApartmentRepositoryTest {
 
     @BeforeEach
     public void setUp() {
+        this.tearDown();
+
         this.building = new Building("TestBuilding 1",
                 "Test neighbourhood", "TestAddress",3,
                 BigDecimal.valueOf(5), BigDecimal.valueOf(100), LocalDate.now());
@@ -38,8 +40,8 @@ class ApartmentRepositoryTest {
 
     @AfterEach
     public void tearDown() {
-        this.buildingRepository.deleteAll();
         this.apartmentRepository.deleteAll();
+        this.buildingRepository.deleteAll();
     }
 
     @Test
@@ -51,16 +53,17 @@ class ApartmentRepositoryTest {
     }
 
     @Test
-    void test_findByNumberAndBuildingId_IsPresentWhenValidParams() {
+    void test_findByNumberAndBuildingId_IsPresent() {
 
         Optional<Apartment> found = this.apartmentRepository
                 .findByNumberAndBuildingId(apartment.getNumber(), building.getId());
 
         assertThat(found).isPresent();
+        assertThat(found.get().getId().equals(this.apartment.getId()));
     }
 
     @Test
-    void test_findByNumberAndBuildingId_IsEmptyWhenInvalidParams() {
+    void test_findByNumberAndBuildingId_IsEmpty() {
         Optional<Apartment> found = this.apartmentRepository
                 .findByNumberAndBuildingId("2", building.getId());
 
@@ -73,17 +76,7 @@ class ApartmentRepositoryTest {
     }
 
     @Test
-    void test_findByNumberAndBuildingId_returnsCorrectApartment() {
-
-        Optional<Apartment> found = this.apartmentRepository
-                .findByNumberAndBuildingId("1", building.getId());
-
-        assertThat(found).isPresent();
-        assertThat(found.get().equals(this.apartment));
-    }
-
-    @Test
-    void test_getDuplicateApartment_IsPresentWhenValidParams() {
+    void test_getDuplicateApartment_IsPresent() {
 
         Apartment apartment2 = new Apartment("1", 1, building, 0, LocalDate.now());
         this.apartmentRepository.saveAndFlush(apartment2);
@@ -95,7 +88,7 @@ class ApartmentRepositoryTest {
     }
 
     @Test
-    void test_getDuplicateApartment_IsEmptyWhenInvalidParams() {
+    void test_getDuplicateApartment_IsEmpty() {
 
         Apartment apartment2 = new Apartment("2", 1, building, 0, LocalDate.now());
         this.apartmentRepository.saveAndFlush(apartment2);
@@ -123,7 +116,7 @@ class ApartmentRepositoryTest {
     }
 
     @Test
-    void test_getAllByBuildingId_isNotEmptyWhenValidParam() {
+    void test_getAllByBuildingId_isNotEmpty() {
         Set<Apartment> apartments = this.apartmentRepository
                 .findAllByBuildingId(building.getId());
 
@@ -131,7 +124,7 @@ class ApartmentRepositoryTest {
     }
 
     @Test
-    void test_getAllByBuildingId_isEmptyWhenInvalidParam() {
+    void test_getAllByBuildingId_isEmpty() {
         Set<Apartment> apartments = this.apartmentRepository
                 .findAllByBuildingId("0");
 
@@ -147,7 +140,7 @@ class ApartmentRepositoryTest {
     }
 
     @Test
-    void test_findByIdAndBuildingId_IsPresentWhenValidParams() {
+    void test_findByIdAndBuildingId_IsPresent() {
         Optional<Apartment> found = this.apartmentRepository
                 .findByIdAndBuildingId(apartment.getId(), building.getId());
 
@@ -155,7 +148,7 @@ class ApartmentRepositoryTest {
     }
 
     @Test
-    void test_findByIdAndBuildingId_IsEmptyWhenInvalidParams() {
+    void test_findByIdAndBuildingId_IsEmpty() {
         Optional<Apartment> found = this.apartmentRepository
                 .findByIdAndBuildingId("0", building.getId());
 
@@ -178,6 +171,6 @@ class ApartmentRepositoryTest {
                 .findByIdAndBuildingId(apartment.getId(), building.getId());
 
         assertThat(found).isPresent();
-        assertThat(found.get().equals(this.apartment));
+        assertThat(found.get().getId().equals(this.apartment.getId()));
     }
 }

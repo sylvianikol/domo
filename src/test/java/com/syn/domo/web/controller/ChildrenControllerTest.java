@@ -1,7 +1,5 @@
 package com.syn.domo.web.controller;
 
-import com.syn.domo.common.ExceptionErrorMessages;
-import com.syn.domo.model.binding.ApartmentBindingModel;
 import com.syn.domo.model.binding.ChildBindingModel;
 import com.syn.domo.model.entity.*;
 import com.syn.domo.repository.*;
@@ -19,8 +17,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static com.syn.domo.common.ExceptionErrorMessages.*;

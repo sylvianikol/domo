@@ -16,7 +16,7 @@ public interface FeeService {
 
     FeeServiceModel pay(String userId, String feeId) throws MessagingException;
 
-    void deleteAll(FeeFilter feeFilter);
+    int deleteAll(FeeFilter feeFilter);
 
     void delete(String feeId);
 

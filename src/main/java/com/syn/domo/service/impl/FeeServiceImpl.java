@@ -111,6 +111,16 @@ public class FeeServiceImpl implements FeeService {
     }
 
     @Override
+    public int deleteAll(FeeFilter feeFilter) {
+
+        List<Fee> fees = this.feeRepository.findAll(feeFilter);
+
+        this.feeRepository.deleteAll(fees);
+
+        return fees.size();
+    }
+
+    @Override
     public void delete(String feeId) {
 
         Fee fee = this.feeRepository.findById(feeId).orElse(null);
@@ -120,14 +130,6 @@ public class FeeServiceImpl implements FeeService {
         }
 
         this.feeRepository.delete(fee);
-    }
-
-    @Override
-    public void deleteAll(FeeFilter feeFilter) {
-
-        List<Fee> fees = this.feeRepository.findAll(feeFilter);
-
-        this.feeRepository.deleteAll(fees);
     }
 
     @Override

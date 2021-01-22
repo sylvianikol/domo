@@ -19,9 +19,9 @@ public class ApartmentViewModel {
     @JsonManagedReference
     private BuildingViewModel building;
     @JsonBackReference
-    Set<ResidentViewModel> residents;
+    private Set<ResidentViewModel> residents;
     @JsonBackReference
-    Set<ChildViewModel> children;
+    private Set<ChildViewModel> children;
 
     public ApartmentViewModel() {
     }

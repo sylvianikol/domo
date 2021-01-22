@@ -9,6 +9,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailAuthenticationException;
+import org.springframework.mail.MailException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -17,6 +19,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Pageable;
+
+import static com.syn.domo.common.ResponseStatusMessages.DELETE_FAILED;
+import static com.syn.domo.common.ResponseStatusMessages.DELETE_SUCCESSFUL;
 
 @RestController
 public class FeesController implements FeesNamespace {
@@ -57,18 +62,33 @@ public class FeesController implements FeesNamespace {
                 : ResponseEntity.ok(this.modelMapper.map(fee.get(), FeeViewModel.class));
     }
 
-    @PostMapping("/pay")
-    public ResponseEntity<?> pay(@RequestParam(name = "userId") String userId,
-                                 @RequestParam(name = "feeId") String feeId,
-                                  UriComponentsBuilder uriComponentsBuilder) throws MessagingException {
+    @PostMapping("{feeId}/pay")
+    public ResponseEntity<?> pay(@PathVariable(value = "feeId") String feeId,
+                                 @RequestParam(name = "userId") String userId,
+                                 UriComponentsBuilder uriComponentsBuilder) {
 
-        this.feeService.pay(userId, feeId);
+        try {
+            this.feeService.pay(userId, feeId);
+        } catch (MailException | MessagingException ex) {
+            return ResponseEntity.unprocessableEntity().body(ex.getMessage());
+        }
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder
                         .path(URI_FEES + "/{feeId}")
                         .buildAndExpand(feeId)
                         .toUri()).build();
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteAll(@RequestParam(required = false) String buildingId,
+                                       @RequestParam(required = false) String apartmentId) {
+
+        int result = this.feeService.deleteAll(new FeeFilter(buildingId, apartmentId));
+
+        return result == 0
+                ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(DELETE_FAILED)
+                : ResponseEntity.ok().body(String.format(DELETE_SUCCESSFUL, result, "fees"));
     }
 
     @DeleteMapping("/{feeId}")
@@ -82,15 +102,5 @@ public class FeesController implements FeesNamespace {
                 .build();
     }
 
-    @DeleteMapping
-    public ResponseEntity<?> deleteAll(@RequestParam(required = false) String buildingId,
-                                       @RequestParam(required = false) String apartmentId,
-                                       UriComponentsBuilder uriComponentsBuilder) {
 
-        this.feeService.deleteAll(new FeeFilter(buildingId, apartmentId));
-
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder.path(URI_FEES).build().toUri())
-                .build();
-    }
 }

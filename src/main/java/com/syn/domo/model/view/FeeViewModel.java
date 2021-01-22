@@ -1,20 +1,32 @@
 package com.syn.domo.model.view;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class FeeViewModel {
 
+    private String id;
     private BigDecimal total;
     private LocalDate issueDate;
     private LocalDate dueDate;
     private LocalDateTime paidDate;
     private boolean isPaid;
     private String payerId;
-    private String apartmentNumber;
+    @JsonManagedReference
+    private ApartmentViewModel apartment;
 
     public FeeViewModel() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public BigDecimal getTotal() {
@@ -65,11 +77,11 @@ public class FeeViewModel {
         this.payerId = payerId;
     }
 
-    public String getApartmentNumber() {
-        return apartmentNumber;
+    public ApartmentViewModel getApartment() {
+        return apartment;
     }
 
-    public void setApartmentNumber(String apartmentNumber) {
-        this.apartmentNumber = apartmentNumber;
+    public void setApartment(ApartmentViewModel apartment) {
+        this.apartment = apartment;
     }
 }

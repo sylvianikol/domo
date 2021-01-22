@@ -122,8 +122,7 @@ public class ChildrenController implements ChildrenNamespace {
                                        @RequestParam(required = false,
                                                name = "apartmentId") String apartmentId,
                                        @RequestParam(required = false,
-                                               name = "parentId") String parentId,
-                                       UriComponentsBuilder uriComponentsBuilder) {
+                                               name = "parentId") String parentId) {
 
         int result = this.childService
                 .deleteAll(new ChildFilter(buildingId, apartmentId, parentId));

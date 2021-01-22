@@ -25,6 +25,16 @@ public class Fee extends BaseEntity {
     public Fee() {
     }
 
+    public Fee(BigDecimal total, LocalDate issueDate, LocalDate dueDate, LocalDateTime paidDate, boolean isPaid, String payerId, Apartment apartment) {
+        this.total = total;
+        this.issueDate = issueDate;
+        this.dueDate = dueDate;
+        this.paidDate = paidDate;
+        this.isPaid = isPaid;
+        this.payerId = payerId;
+        this.apartment = apartment;
+    }
+
     @ColumnDefault("0")
     public BigDecimal getTotal() {
         return total;

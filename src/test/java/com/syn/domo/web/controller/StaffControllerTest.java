@@ -1,6 +1,5 @@
 package com.syn.domo.web.controller;
 
-import com.syn.domo.model.binding.ApartmentBindingModel;
 import com.syn.domo.model.binding.StaffBindingModel;
 import com.syn.domo.model.entity.*;
 import com.syn.domo.repository.BuildingRepository;
@@ -21,7 +20,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Set;
 
-import static com.syn.domo.common.ExceptionErrorMessages.APARTMENT_NOT_FOUND;
 import static com.syn.domo.common.ExceptionErrorMessages.STAFF_NOT_FOUND;
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_FAILED;
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_SUCCESSFUL;

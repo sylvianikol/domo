@@ -16,6 +16,14 @@ public class StaffBindingModel extends BaseUserBindingModel {
     public StaffBindingModel() {
     }
 
+    public StaffBindingModel(String firstName, String lastName, String email, String phoneNumber, String job, BigDecimal salary) {
+        super(firstName, lastName);
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.job = job;
+        this.salary = salary;
+    }
+
     @NotNull(message = EMAIL_NOT_NULL)
     @NotEmpty(message = EMAIL_NOT_EMPTY)
     @Email(message = EMAIL_INVALID)

@@ -169,7 +169,7 @@ public class StaffServiceImpl implements StaffService {
 
     @Override
     @Transactional
-    public void deleteAll(StaffFilter staffFilter) {
+    public int deleteAll(StaffFilter staffFilter) {
 
         List<Staff> staff = this.staffRepository.findAll(staffFilter);
 
@@ -178,6 +178,8 @@ public class StaffServiceImpl implements StaffService {
         }
 
         this.staffRepository.deleteAll(staff);
+
+        return staff.size();
     }
 
     @Override
@@ -202,6 +204,10 @@ public class StaffServiceImpl implements StaffService {
                 .stream()
                 .map(b -> this.modelMapper.map(b, Building.class))
                 .collect(Collectors.toUnmodifiableSet());
+
+        if (buildings.isEmpty()) {
+            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
+        }
 
         staff.getBuildings().addAll(buildings);
 

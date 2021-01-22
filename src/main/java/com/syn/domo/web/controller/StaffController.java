@@ -23,6 +23,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Pageable;
 
+import static com.syn.domo.common.ResponseStatusMessages.DELETE_FAILED;
+import static com.syn.domo.common.ResponseStatusMessages.DELETE_SUCCESSFUL;
+
 @RestController
 public class StaffController implements StaffNamespace {
 
@@ -104,14 +107,13 @@ public class StaffController implements StaffNamespace {
 
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteAll(@RequestParam(required = false,
-                                                     name = "buildingId") String buildingId,
-                                       UriComponentsBuilder uriComponentsBuilder) {
+                                                     name = "buildingId") String buildingId) {
 
-        this.staffService.deleteAll(new StaffFilter(buildingId));
+        int result = this.staffService.deleteAll(new StaffFilter(buildingId));
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder.path(URI_STAFF).build().toUri())
-                .build();
+        return result == 0
+                ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(DELETE_FAILED)
+                : ResponseEntity.ok().body(String.format(DELETE_SUCCESSFUL, result, "staff"));
     }
 
     @DeleteMapping("/{staffId}")

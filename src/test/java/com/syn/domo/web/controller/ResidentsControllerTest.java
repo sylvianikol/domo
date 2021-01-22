@@ -181,7 +181,7 @@ class ResidentsControllerTest extends AbstractTest {
                 .andExpect(jsonPath("$.[0].apartments.[0].building.id", is(BUILDING_ID)))
                 .andExpect(jsonPath("$.[1].id", is(RESIDENT_2_ID)))
                 .andExpect(jsonPath("$.[1].apartments.[0].id", is(APARTMENT_ID)))
-                .andExpect(jsonPath("$.[1].apartments.[0].building.id", is(BUILDING_ID)));;
+                .andExpect(jsonPath("$.[1].apartments.[0].building.id", is(BUILDING_ID)));
     }
 
     @Test

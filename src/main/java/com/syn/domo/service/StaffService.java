@@ -19,7 +19,7 @@ public interface StaffService {
 
     ResponseModel<StaffServiceModel> edit(StaffServiceModel staffServiceModel, String staffId);
 
-    void deleteAll(StaffFilter staffFilter);
+    int deleteAll(StaffFilter staffFilter);
 
     void delete(String staffId);
 

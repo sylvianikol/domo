@@ -1,34 +1,34 @@
 package com.syn.domo.web.controller;
 
-import com.syn.domo.common.ExceptionErrorMessages;
 import com.syn.domo.model.binding.ApartmentBindingModel;
-import com.syn.domo.model.entity.Apartment;
-import com.syn.domo.model.entity.Building;
-import com.syn.domo.repository.ApartmentRepository;
+import com.syn.domo.model.binding.StaffBindingModel;
+import com.syn.domo.model.entity.*;
 import com.syn.domo.repository.BuildingRepository;
+import com.syn.domo.repository.RoleRepository;
+import com.syn.domo.repository.StaffRepository;
 import com.syn.domo.web.AbstractTest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Set;
 
 import static com.syn.domo.common.ExceptionErrorMessages.APARTMENT_NOT_FOUND;
+import static com.syn.domo.common.ExceptionErrorMessages.STAFF_NOT_FOUND;
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_FAILED;
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_SUCCESSFUL;
 import static com.syn.domo.common.ValidationErrorMessages.*;
 import static org.assertj.core.api.Assertions.assertThat;
-
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -36,19 +36,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class ApartmentsControllerTest extends AbstractTest {
+class StaffControllerTest extends AbstractTest {
 
     @Autowired
     private MockMvc mvc;
     @Autowired
-    private ApartmentRepository apartmentRepository;
-    @Autowired
     private BuildingRepository buildingRepository;
+    @Autowired
+    private StaffRepository staffRepository;
+    @Autowired
+    private RoleRepository roleRepository;
 
     private String BUILDING_ID;
-    private String APARTMENT_1_ID;
-    private String APARTMENT_2_ID;
-    private final String URI = "/v1/apartments";
+    private String STAFF_1_ID;
+    private String STAFF_2_ID;
+    private final String URI = "/v1/staff";
 
     @BeforeEach
     public void setUp() {
@@ -59,25 +61,36 @@ class ApartmentsControllerTest extends AbstractTest {
                 BigDecimal.valueOf(5), BigDecimal.valueOf(100), LocalDate.now());
         this.buildingRepository.saveAndFlush(building);
 
-        Apartment apartment1 = new Apartment("1", 1, building, 0, LocalDate.now());
-        this.apartmentRepository.saveAndFlush(apartment1);
-        Apartment apartment2 = new Apartment("2", 1, building, 1, LocalDate.now());
-        this.apartmentRepository.saveAndFlush(apartment2);
+        Role role = this.roleRepository.findByName(UserRole.STAFF).orElse(null);
+
+        if (role == null) {
+            role = new Role(UserRole.STAFF);
+            this.roleRepository.saveAndFlush(role);
+        }
+
+        Staff staff1 = new Staff("Staff 1", "Staff 1", LocalDate.now(),
+                "staff1@mail.com", null, "0383933", false, Set.of(role),
+                "Job 1", BigDecimal.valueOf(500), Set.of(building));
+        this.staffRepository.saveAndFlush(staff1);
+        Staff staff2 = new Staff("Staff 2", "Staff 2", LocalDate.now(),
+                "staff2@mail.com", null, "546464", false, Set.of(role),
+                "Job 2", BigDecimal.valueOf(500), Set.of(building));
+        this.staffRepository.saveAndFlush(staff2);
 
         BUILDING_ID = building.getId();
-        APARTMENT_1_ID = apartment1.getId();
-        APARTMENT_2_ID = apartment2.getId();
+        STAFF_1_ID = staff1.getId();
+        STAFF_2_ID = staff2.getId();
     }
 
     @AfterEach
     public void tearDown() {
-        this.apartmentRepository.deleteAll();
+        this.staffRepository.deleteAll();
         this.buildingRepository.deleteAll();
     }
 
     @Test
     void injectedComponentsAreNotNull() {
-        assertThat(this.apartmentRepository).isNotNull();
+        assertThat(this.staffRepository).isNotNull();
         assertThat(this.buildingRepository).isNotNull();
     }
 
@@ -87,13 +100,13 @@ class ApartmentsControllerTest extends AbstractTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$.[0].id", is(APARTMENT_1_ID)))
-                .andExpect(jsonPath("$.[1].id", is(APARTMENT_2_ID)));
+                .andExpect(jsonPath("$.[0].id", is(STAFF_1_ID)))
+                .andExpect(jsonPath("$.[1].id", is(STAFF_2_ID)));
     }
 
     @Test
     void test_getAll_isNotFound() throws Exception {
-        this.apartmentRepository.deleteAll();
+        this.staffRepository.deleteAll();
         this.mvc.perform(get(URI + "/all"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
@@ -107,8 +120,8 @@ class ApartmentsControllerTest extends AbstractTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$.[0].id", is(APARTMENT_1_ID)))
-                .andExpect(jsonPath("$.[1].id", is(APARTMENT_2_ID)));
+                .andExpect(jsonPath("$.[0].id", is(STAFF_1_ID)))
+                .andExpect(jsonPath("$.[1].id", is(STAFF_2_ID)));
     }
 
     @Test
@@ -127,10 +140,10 @@ class ApartmentsControllerTest extends AbstractTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$.[0].id", is(APARTMENT_1_ID)))
-                .andExpect(jsonPath("$.[0].building.id", is(BUILDING_ID)))
-                .andExpect(jsonPath("$.[1].id", is(APARTMENT_2_ID)))
-                .andExpect(jsonPath("$.[1].building.id", is(BUILDING_ID)));
+                .andExpect(jsonPath("$.[0].id", is(STAFF_1_ID)))
+                .andExpect(jsonPath("$.[0].buildings.[0].id", is(BUILDING_ID)))
+                .andExpect(jsonPath("$.[1].id", is(STAFF_2_ID)))
+                .andExpect(jsonPath("$.[1].buildings.[0].id", is(BUILDING_ID)));
     }
 
     @Test
@@ -143,7 +156,7 @@ class ApartmentsControllerTest extends AbstractTest {
 
     @Test
     void test_getAll_byBuildingIdEmpty_isNotFound() throws Exception {
-        this.apartmentRepository.deleteAll();
+        this.staffRepository.deleteAll();
         this.mvc.perform(get(URI + "/all")
                 .param("buildingId", BUILDING_ID))
                 .andDo(print())
@@ -153,7 +166,7 @@ class ApartmentsControllerTest extends AbstractTest {
     @Test
     void test_get_isOK() throws Exception {
 
-        this.mvc.perform(get(URI + "/{apartmentId}", APARTMENT_1_ID))
+        this.mvc.perform(get(URI + "/{staffId}", STAFF_1_ID))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -161,7 +174,7 @@ class ApartmentsControllerTest extends AbstractTest {
     @Test
     void test_get_notFound() throws Exception {
 
-        this.mvc.perform(get(URI + "/{apartmentId}", "0"))
+        this.mvc.perform(get(URI + "/{staffId}", "0"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
@@ -169,15 +182,13 @@ class ApartmentsControllerTest extends AbstractTest {
     @Test
     void test_add_isCreated() throws Exception {
 
-        ApartmentBindingModel apartmentBindingModel = new ApartmentBindingModel();
-        apartmentBindingModel.setNumber("3");
-        apartmentBindingModel.setFloor(2);
-        apartmentBindingModel.setPets(0);
+        StaffBindingModel staffBindingModel =
+                new StaffBindingModel("New Staff", "Staff", "new@mail.com",
+                        "224234", "Job", BigDecimal.valueOf(500));
 
-        String inputJson = super.mapToJson(apartmentBindingModel);
+        String inputJson = super.mapToJson(staffBindingModel);
 
         this.mvc.perform(post(URI + "/add")
-                .param("buildingId", BUILDING_ID)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
                 .andExpect(status().isCreated())
@@ -186,91 +197,63 @@ class ApartmentsControllerTest extends AbstractTest {
 
     @Test
     void test_add_isUnprocessable() throws Exception {
-        ApartmentBindingModel apartmentBindingModel = new ApartmentBindingModel();
-        apartmentBindingModel.setNumber("");
-        apartmentBindingModel.setFloor(-1);
-        apartmentBindingModel.setPets(-1);
+        StaffBindingModel staffBindingModel =
+                new StaffBindingModel("", "Staff", "new@mail.com",
+                        "224234", "Job", BigDecimal.valueOf(500));
 
-        String inputJson = super.mapToJson(apartmentBindingModel);
+        String inputJson = super.mapToJson(staffBindingModel);
 
         this.mvc.perform(post(URI + "/add")
-                .param("buildingId", BUILDING_ID)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
     }
 
-    @Test
-    void test_add_withBuildingIdInvalid_isNotFound() throws Exception {
-        ApartmentBindingModel apartmentBindingModel = new ApartmentBindingModel();
-        apartmentBindingModel.setNumber("3");
-        apartmentBindingModel.setFloor(1);
-        apartmentBindingModel.setPets(1);
-
-        String inputJson = super.mapToJson(apartmentBindingModel);
-
-        this.mvc.perform(post(URI + "/add")
-                .param("buildingId", "0")
-                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
-                .andDo(print())
-                .andExpect(status().isNotFound());
-    }
 
     @Test
     void test_edit_isNoContent() throws Exception {
-        ApartmentBindingModel apartmentBindingModel = new ApartmentBindingModel();
-        apartmentBindingModel.setNumber("3");
-        apartmentBindingModel.setFloor(2);
-        apartmentBindingModel.setPets(0);
+        StaffBindingModel staffBindingModel =
+                new StaffBindingModel("Edit Staff", "Staff", "new@mail.com",
+                        "224234", "Job", BigDecimal.valueOf(500));
 
-        String inputJson = super.mapToJson(apartmentBindingModel);
+        String inputJson = super.mapToJson(staffBindingModel);
 
-        this.mvc.perform(put(URI + "/{apartmentId}", APARTMENT_1_ID)
+        this.mvc.perform(put(URI + "/{staffId}", STAFF_1_ID)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
                 .andExpect(status().isNoContent())
                 .andExpect(header().string(HttpHeaders.LOCATION,
-                        containsString(URI + "/" + APARTMENT_1_ID)));
+                        containsString(URI + "/" + STAFF_1_ID)));
 
     }
 
     @Test
     void test_edit_isUnprocessable() throws Exception {
-        ApartmentBindingModel apartmentBindingModel = new ApartmentBindingModel();
-        apartmentBindingModel.setNumber("");
-        apartmentBindingModel.setFloor(-1);
-        apartmentBindingModel.setPets(-1);
+        StaffBindingModel staffBindingModel =
+                new StaffBindingModel("", "Staff", "new@mail.com",
+                        "224234", "Job", BigDecimal.valueOf(500));
 
-        String inputJson = super.mapToJson(apartmentBindingModel);
+        String inputJson = super.mapToJson(staffBindingModel);
 
-        this.mvc.perform(put(URI + "/{apartmentId}", APARTMENT_1_ID)
+        this.mvc.perform(put(URI + "/{staffId}", STAFF_1_ID)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(jsonPath("$.object.number", is("")))
-                .andExpect(jsonPath("$.object.floor", is(-1)))
-                .andExpect(jsonPath("$.object.pets", is(-1)))
-                .andExpect(jsonPath("$.errorContainer.errors.pets[0]", is(PETS_MIN)))
-                .andExpect(jsonPath("$.errorContainer.errors.floor[0]", is(FLOOR_MIN_INVALID)))
-                .andExpect(jsonPath("$.errorContainer.errors.number[0]",
-                        is(APARTMENT_NUMBER_NOT_EMPTY)))
-                .andExpect(jsonPath("$.errorContainer.errors.number[1]",
-                        is(APARTMENT_LENGTH_INVALID)))
-                .andExpect(jsonPath("$.errorContainer.errors.number[2]",
-                        is(APARTMENT_INVALID_SYMBOLS)));
+                .andExpect(jsonPath("$.object.firstName", is("")))
+                .andExpect(jsonPath("$.errorContainer.errors.firstName[0]", is(FIRST_NAME_INVALID)))
+                .andExpect(jsonPath("$.errorContainer.errors.firstName[1]", is(FIRST_NAME_NOT_EMPTY)));
 
     }
 
     @Test
     void test_edit_IdInvalid_isNotFound() throws Exception {
-        ApartmentBindingModel apartmentBindingModel = new ApartmentBindingModel();
-        apartmentBindingModel.setNumber("3");
-        apartmentBindingModel.setFloor(2);
-        apartmentBindingModel.setPets(0);
+        StaffBindingModel staffBindingModel =
+                new StaffBindingModel("Edit Staff", "Staff", "new@mail.com",
+                        "224234", "Job", BigDecimal.valueOf(500));
 
-        String inputJson = super.mapToJson(apartmentBindingModel);
+        String inputJson = super.mapToJson(staffBindingModel);
 
-        this.mvc.perform(put(URI + "/{apartmentId}", "0")
+        this.mvc.perform(put(URI + "/{staffId}", "0")
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
                 .andExpect(status().isNotFound());
@@ -282,12 +265,12 @@ class ApartmentsControllerTest extends AbstractTest {
         this.mvc.perform(delete(URI + "/delete"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(String.format(DELETE_SUCCESSFUL, 2, "apartments")));
+                .andExpect(content().string(String.format(DELETE_SUCCESSFUL, 2, "staff")));
     }
 
     @Test
     void test_deleteAll_isNotFound() throws Exception {
-        this.apartmentRepository.deleteAll();
+        this.staffRepository.deleteAll();
         this.mvc.perform(delete(URI + "/delete"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
@@ -300,7 +283,7 @@ class ApartmentsControllerTest extends AbstractTest {
                 .param("buildingId", BUILDING_ID))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(String.format(DELETE_SUCCESSFUL, 2, "apartments")));
+                .andExpect(content().string(String.format(DELETE_SUCCESSFUL, 2, "staff")));
     }
 
     @Test
@@ -314,7 +297,7 @@ class ApartmentsControllerTest extends AbstractTest {
 
     @Test
     void test_deleteAll_byBuildingIdEmpty_isNotFound() throws Exception {
-        this.apartmentRepository.deleteAll();
+        this.staffRepository.deleteAll();
         this.mvc.perform(delete(URI + "/delete")
                 .param("buildingId", BUILDING_ID))
                 .andDo(print())
@@ -325,28 +308,56 @@ class ApartmentsControllerTest extends AbstractTest {
     @Test
     void test_delete_success() throws Exception {
 
-        this.mvc.perform(delete(URI + "/{apartmentId}", APARTMENT_1_ID))
+        this.mvc.perform(delete(URI + "/{staffId}", STAFF_1_ID))
                 .andDo(print())
                 .andExpect(status().isNoContent())
-                .andExpect(header().string(HttpHeaders.LOCATION,
-                containsString(URI)));
+                .andExpect(header().string(HttpHeaders.LOCATION, containsString(URI)));
     }
 
     @Test
     void test_delete_isNotFound() throws Exception {
 
-        this.mvc.perform(delete(URI + "/{apartmentId}", "0"))
+        this.mvc.perform(delete(URI + "/{staffId}", "0"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(APARTMENT_NOT_FOUND));
+                .andExpect(content().string(STAFF_NOT_FOUND));
+    }
+
+    @Test
+    void test_assign_isNoContent() throws Exception {
+
+        this.mvc.perform(put(URI + "/{staffId}/assign", STAFF_1_ID)
+                .param("buildingIds", BUILDING_ID))
+                .andDo(print())
+                .andExpect(status().isNoContent())
+                .andExpect(header().string(HttpHeaders.LOCATION,
+                        containsString(URI + "/" + STAFF_1_ID)));
+    }
+
+    @Test
+    void test_assign_staffIdInvalid_isNotFound() throws Exception {
+
+        this.mvc.perform(put(URI + "/{staffId}/assign", "0")
+                .param("buildingIds", BUILDING_ID))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void test_assign_buildingIdInvalid_isNotFound() throws Exception {
+
+        this.mvc.perform(put(URI + "/{staffId}/assign", "0")
+                .param("buildingIds", "0"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
     private String getAHeaderLocation() {
         return URI + "/" +
-                this.apartmentRepository.findAll().stream()
-                        .filter(a -> !a.getId().equals(APARTMENT_1_ID) && !a.getId().equals(APARTMENT_2_ID))
+                this.staffRepository.findAll().stream()
+                        .filter(a -> !a.getId().equals(STAFF_1_ID) && !a.getId().equals(STAFF_2_ID))
                         .findFirst()
-                        .map(Apartment::getId)
+                        .map(Staff::getId)
                         .orElse("");
     }
 }

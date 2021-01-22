@@ -4,6 +4,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Set;
 
 import static javax.persistence.CascadeType.MERGE;
@@ -20,6 +21,13 @@ public class Staff extends UserEntity {
 
     public Staff() {
         this.salary = BigDecimal.ZERO;
+    }
+
+    public Staff(String firstName, String lastName, LocalDate addedOn, String email, String password, String phoneNumber, boolean isActive, Set<Role> roles, String job, BigDecimal salary, Set<Building> buildings) {
+        super(firstName, lastName, addedOn, email, password, phoneNumber, isActive, roles);
+        this.job = job;
+        this.salary = salary;
+        this.buildings = buildings;
     }
 
     @Column(nullable = false, columnDefinition = "varchar(40)")

@@ -25,7 +25,7 @@ class ResidentRepositoryTest {
     @Autowired
     private BuildingRepository buildingRepository;
 
-    private Set<String> residentIds;
+    private Set<String> RESIDENT_IDS;
 
     @BeforeEach
     void setUp() {
@@ -58,7 +58,7 @@ class ResidentRepositoryTest {
                 Set.of(role), Set.of(apartment));
         this.residentRepository.saveAndFlush(resident2);
 
-        residentIds = Set.of(resident1.getId(), resident2.getId());
+        RESIDENT_IDS = Set.of(resident1.getId(), resident2.getId());
     }
 
     @AfterEach
@@ -73,13 +73,13 @@ class ResidentRepositoryTest {
         assertThat(this.apartmentRepository).isNotNull();
         assertThat(this.roleRepository).isNotNull();
         assertThat(this.residentRepository).isNotNull();
-        assertThat(this.residentIds).isNotNull();
+        assertThat(this.RESIDENT_IDS).isNotNull();
     }
 
     @Test
     void test_findAllByIdIn_isNotEmpty() {
         Set<Resident> all = this.residentRepository
-                .findAllByIdIn(residentIds);
+                .findAllByIdIn(RESIDENT_IDS);
 
         assertThat(all).isNotEmpty();
     }

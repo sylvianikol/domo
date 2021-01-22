@@ -81,7 +81,7 @@ class ResidentRepositoryTest {
         Set<Resident> all = this.residentRepository
                 .findAllByIdIn(residentIds);
 
-        assertThat(!all.isEmpty());
+        assertThat(all).isNotEmpty();
     }
 
     @Test
@@ -89,6 +89,6 @@ class ResidentRepositoryTest {
         Set<Resident> all = this.residentRepository
                 .findAllByIdIn(Set.of("invalidId1", "invalidId2"));
 
-        assertThat(all.isEmpty());
+        assertThat(all).isEmpty();
     }
 }

@@ -20,11 +20,6 @@ public interface StaffRepository extends JpaRepository<Staff, String>, JpaSpecif
     @Modifying
     @Query(value = "DELETE FROM `staff_buildings` " +
             "WHERE `staff_id` = ?1 ", nativeQuery = true)
-    void cancelBuildingAssignments(String staffId);
-
-    @Query("SELECT s FROM Staff s " +
-            "JOIN s.buildings b " +
-            "WHERE b.id = :buildingId ")
-    Set<Staff> getAllByBuildingId(@Param(value = "buildingId") String buildingId);
+    int cancelBuildingAssignments(String staffId);
 
 }

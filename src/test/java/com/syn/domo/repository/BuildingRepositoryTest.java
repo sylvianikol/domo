@@ -13,20 +13,30 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class BuildingRepositoryTest {
 
     @Autowired
     private BuildingRepository buildingRepository;
-    private Building building;
+
+    private String BUILDING_ID;
+    private String BUILDING_ADDRESS;
+    private String BUILDING_NAME;
+    private String BUILDING_NEIGHBOURHOOD;
 
     @BeforeEach
     void setUp() {
-        this.building = new Building("TestBuilding 1",
+        Building building = new Building("TestBuilding 1",
                 "Test neighbourhood", "TestAddress",3,
                 BigDecimal.valueOf(5), BigDecimal.valueOf(100), LocalDate.now());
         this.buildingRepository.saveAndFlush(building);
+
+        BUILDING_ID = building.getId();
+        BUILDING_ADDRESS = building.getAddress();
+        BUILDING_NAME = building.getName();
+        BUILDING_NEIGHBOURHOOD = building.getNeighbourhood();
     }
 
     @AfterEach
@@ -37,43 +47,40 @@ class BuildingRepositoryTest {
     @Test
     void injectedComponentsAreNotNull() {
         assertThat(this.buildingRepository).isNotNull();
-        assertThat(this.building).isNotNull();
     }
 
     @Test
-    void test_findByAddress_isPresentWhenValidParam() {
-        Optional<Building> found = this.buildingRepository.findByAddress("TestAddress");
+    void test_findByAddress_isPresent() {
+        Optional<Building> found = this.buildingRepository
+                .findByAddress(BUILDING_ADDRESS);
         assertThat(found).isPresent();
+        assertEquals(found.get().getId(), BUILDING_ID);
+        assertEquals(found.get().getAddress(), BUILDING_ADDRESS);
     }
 
     @Test
-    void test_findByAddress_isEmptyWhenInvalidParam() {
+    void test_findByAddress_isEmpty() {
         Optional<Building> found = this.buildingRepository.findByAddress("invalid address");
         assertThat(found).isEmpty();
     }
 
     @Test
-    void test_findByAddress_returnsCorrectBuilding() {
-        Optional<Building> found = this.buildingRepository.findByAddress("TestAddress");
+    void test_findByIdAndAddress_isPresent() {
+        Optional<Building> found = this.buildingRepository
+                .findByIdAndAddress(BUILDING_ID, BUILDING_ADDRESS);
         assertThat(found).isPresent();
-        assertThat(found.get().equals(this.building));
+        assertEquals(found.get().getId(), BUILDING_ID);
+        assertEquals(found.get().getAddress(), BUILDING_ADDRESS);
     }
 
     @Test
-    void test_findByIdAndAddress_isPresentWhenValidParams() {
+    void test_findByIdAndAddress_isEmpty() {
         Optional<Building> found = this.buildingRepository
-                .findByIdAndAddress(this.building.getId(), "TestAddress");
-        assertThat(found).isPresent();
-    }
-
-    @Test
-    void test_findByIdAndAddress_isEmptyWhenInvalidParams() {
-        Optional<Building> found = this.buildingRepository
-                .findByIdAndAddress("0", "TestAddress");
+                .findByIdAndAddress("0", BUILDING_ADDRESS);
         assertThat(found).isEmpty();
 
         found = this.buildingRepository
-                .findByIdAndAddress(this.building.getId(), "invalid address");
+                .findByIdAndAddress(BUILDING_ID, "invalid address");
         assertThat(found).isEmpty();
 
         found = this.buildingRepository
@@ -83,28 +90,23 @@ class BuildingRepositoryTest {
     }
 
     @Test
-    void test_findByIdAndAddress_returnsCorrectBuilding() {
+    void test_findByNameAndNeighbourhood_isPresent() {
         Optional<Building> found = this.buildingRepository
-                .findByIdAndAddress(this.building.getId(), "TestAddress");
+                .findByNameAndNeighbourhood(BUILDING_NAME, BUILDING_NEIGHBOURHOOD);
         assertThat(found).isPresent();
-        assertThat(found.get().equals(this.building));
+        assertEquals(found.get().getId(), BUILDING_ID);
+        assertEquals(found.get().getName(), BUILDING_NAME);
+        assertEquals(found.get().getNeighbourhood(), BUILDING_NEIGHBOURHOOD);
     }
 
     @Test
-    void test_findByNameAndNeighbourhood_isPresentWhenValidParams() {
+    void test_findByNameAndNeighbourhood_isEmpty() {
         Optional<Building> found = this.buildingRepository
-                .findByNameAndNeighbourhood("TestBuilding 1", "Test neighbourhood");
-        assertThat(found).isPresent();
-    }
-
-    @Test
-    void test_findByNameAndNeighbourhood_isEmptyWhenInvalidParams() {
-        Optional<Building> found = this.buildingRepository
-                .findByNameAndNeighbourhood("invalid name", "Test neighbourhood");
+                .findByNameAndNeighbourhood("invalid name", BUILDING_NEIGHBOURHOOD);
         assertThat(found).isEmpty();
 
         found = this.buildingRepository
-                .findByNameAndNeighbourhood("TestBuilding 1", "invalid neighbourhood");
+                .findByNameAndNeighbourhood(BUILDING_NAME, "invalid neighbourhood");
         assertThat(found).isEmpty();
 
         found = this.buildingRepository
@@ -113,24 +115,16 @@ class BuildingRepositoryTest {
     }
 
     @Test
-    void test_findByNameAndNeighbourhood_returnsCorrectBuilding() {
-        Optional<Building> found = this.buildingRepository
-                .findByNameAndNeighbourhood("TestBuilding 1", "Test neighbourhood");
-        assertThat(found).isPresent();
-        assertThat(found.get().equals(this.building));
-    }
-
-    @Test
-    void test_findAllByIdIn_isNotEmptyWhenFound() {
+    void test_findAllByIdIn_isNotEmpty() {
         Set<Building> buildings = this.buildingRepository
-                .findAllByIdIn(Set.of(this.building.getId()));
+                .findAllByIdIn(Set.of(BUILDING_ID));
 
         assertThat(!buildings.isEmpty());
-        assertThat(buildings.size() == 1);
+        assertEquals(buildings.size(), 1);
     }
 
     @Test
-    void test_findAllByIdIn_isEmptyWhenNotFound() {
+    void test_findAllByIdIn_isEmpty() {
         Set<Building> buildings = this.buildingRepository
                 .findAllByIdIn(Set.of("0"));
 

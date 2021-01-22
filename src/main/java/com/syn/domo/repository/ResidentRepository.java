@@ -14,13 +14,4 @@ import java.util.Set;
 public interface ResidentRepository extends JpaRepository<Resident, String>, JpaSpecificationExecutor<Resident> {
 
     Set<Resident> findAllByIdIn(Set<String> ids);
-
-   // DELETE
-//    @Query("SELECT r FROM Resident r " +
-//            "JOIN r.apartments a " +
-//            "WHERE r.id = :residentId " +
-//            "AND a.building.id = :buildingId")
-//    Optional<Resident> getOneByIdAndBuildingId(@Param(value = "residentId") String residentId,
-//                                               @Param(value = "buildingId") String buildingId);
-//
 }

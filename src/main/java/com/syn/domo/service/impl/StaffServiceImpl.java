@@ -18,6 +18,8 @@ import com.syn.domo.service.UserService;
 import com.syn.domo.web.filter.StaffFilter;
 import com.syn.domo.utils.ValidationUtil;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,8 @@ import static com.syn.domo.common.ValidationErrorMessages.PHONE_ALREADY_USED;
 
 @Service
 public class StaffServiceImpl implements StaffService {
+
+    private static final Logger log = LoggerFactory.getLogger(StaffServiceImpl.class);
 
     private final StaffRepository staffRepository;
     private final UserService userService;
@@ -81,7 +85,7 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public ResponseModel<StaffServiceModel> add(StaffServiceModel staffServiceModel) throws MessagingException {
+    public ResponseModel<StaffServiceModel> add(StaffServiceModel staffServiceModel)  {
 
         if (!this.validationUtil.isValid(staffServiceModel)) {
             return new ResponseModel<>(staffServiceModel,
@@ -121,7 +125,11 @@ public class StaffServiceImpl implements StaffService {
 
         StaffServiceModel serviceModel = this.modelMapper.map(staff, StaffServiceModel.class);
 
-        this.notificationService.sendActivationEmail(serviceModel);
+        try {
+            this.notificationService.sendActivationEmail(serviceModel);
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+        }
 
         return new ResponseModel<>(staff.getId(), serviceModel);
     }

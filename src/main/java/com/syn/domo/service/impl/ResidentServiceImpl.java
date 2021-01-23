@@ -83,7 +83,7 @@ public class ResidentServiceImpl implements ResidentService  {
 
     @Override
     public ResponseModel<ResidentServiceModel> add(ResidentServiceModel residentToAdd,
-                                                   String buildingId, String apartmentId) throws MessagingException {
+                                                   String buildingId, String apartmentId) {
 
         if (!this.validationUtil.isValid(residentToAdd)) {
             return new ResponseModel<>(residentToAdd,

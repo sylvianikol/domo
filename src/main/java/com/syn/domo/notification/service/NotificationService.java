@@ -79,7 +79,11 @@ public class NotificationService {
         log.info("========== FEE RECEIPT SENT ============");
     }
 
-    public void sendActivationEmail(UserServiceModel user) throws MailException, MessagingException {
+    @Async
+    public void sendActivationEmail(UserServiceModel user) throws MailException, MessagingException, InterruptedException {
+
+        log.info("Sleeping...");
+        Thread.sleep(10000);
 
         MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
@@ -93,7 +97,8 @@ public class NotificationService {
         helper.setSubject(EMAIL_ACTIVATION_SUBJECT);
         helper.setFrom(System.getenv("MAIL_USER"));
 
-//        this.javaMailSender.send(mimeMessage);
+        log.info("Sending...");
+        this.javaMailSender.send(mimeMessage);
 
         log.info("========== EMAIL ACTIVATION SENT ============");
     }

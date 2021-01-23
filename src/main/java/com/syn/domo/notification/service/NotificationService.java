@@ -32,7 +32,11 @@ public class NotificationService {
         this.javaMailSender = javaMailSender;
     }
 
-    public void sendNewFeeNotificationEmail(UserServiceModel user, Fee fee) throws MailException, MessagingException {
+    @Async
+    public void sendNewFeeNotificationEmail(UserServiceModel user, Fee fee) throws MailException, MessagingException, InterruptedException {
+
+        log.info("Sleeping...");
+        Thread.sleep(10000);
 
         MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
@@ -48,6 +52,7 @@ public class NotificationService {
         helper.setSubject(NEW_FEE_SUBJECT);
         helper.setFrom(System.getenv("MAIL_USER"));
 
+        log.info("Sending...");
         this.javaMailSender.send(mimeMessage);
 
         log.info("========== NEW FEE NOTIFICATION SENT ============");

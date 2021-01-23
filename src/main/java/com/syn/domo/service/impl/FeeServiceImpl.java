@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -80,7 +79,7 @@ public class FeeServiceImpl implements FeeService {
     }
 
     @Override
-    public FeeServiceModel pay(String userId, String feeId) throws MessagingException {
+    public FeeServiceModel pay(String userId, String feeId) {
 
         Fee fee = this.feeRepository.findById(feeId).orElse(null);
 
@@ -139,7 +138,7 @@ public class FeeServiceImpl implements FeeService {
     }
 
     @Override
-    public void generateMonthlyFees() throws MessagingException {
+    public void generateMonthlyFees() {
 
         Set<ApartmentServiceModel> apartments = this.apartmentService.getAll();
 
@@ -157,7 +156,11 @@ public class FeeServiceImpl implements FeeService {
             this.feeRepository.saveAndFlush(fee);
 
             for (UserServiceModel resident : apartment.getResidents()) {
-                this.notificationService.sendNewFeeNotificationEmail(resident, fee);
+                try {
+                    this.notificationService.sendNewFeeNotificationEmail(resident, fee);
+                } catch (Exception ex) {
+                    log.error(ex.getMessage());
+                }
             }
         }
 

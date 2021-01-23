@@ -1,6 +1,7 @@
 package com.syn.domo.model.service;
 
 import javax.validation.constraints.*;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 
@@ -15,6 +16,14 @@ public class UserServiceModel extends BaseUserServiceModel {
     private Set<RoleServiceModel> roles;
 
     public UserServiceModel() {
+    }
+
+    public UserServiceModel(String id, String firstName, String lastName, LocalDate addedOn, String email, String phoneNumber, boolean isActive, Set<RoleServiceModel> roles) {
+        super(id, firstName, lastName, addedOn);
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.isActive = isActive;
+        this.roles = roles;
     }
 
     @NotNull(message = EMAIL_NOT_NULL)

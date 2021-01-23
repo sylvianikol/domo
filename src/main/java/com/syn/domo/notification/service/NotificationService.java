@@ -2,14 +2,11 @@ package com.syn.domo.notification.service;
 
 import com.syn.domo.model.entity.Fee;
 import com.syn.domo.model.service.UserServiceModel;
-import com.syn.domo.scheduled.ScheduledFeesGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -22,8 +19,7 @@ import static com.syn.domo.common.EmailTemplates.*;
 @Service
 public class NotificationService {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(NotificationService.class);
+    private static final Logger log = LoggerFactory.getLogger(NotificationService.class);
 
     private final JavaMailSender javaMailSender;
 

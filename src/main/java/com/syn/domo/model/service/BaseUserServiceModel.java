@@ -18,19 +18,6 @@ public abstract class BaseUserServiceModel extends BaseServiceModel {
     public BaseUserServiceModel() {
     }
 
-    public BaseUserServiceModel(String firstName, String lastName, LocalDate addedOn) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.addedOn = addedOn;
-    }
-
-    public BaseUserServiceModel(String id, String firstName, String lastName, LocalDate addedOn) {
-        super(id);
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.addedOn = addedOn;
-    }
-
     @NotNull(message = FIRST_NAME_NOT_NULL)
     @NotEmpty(message = FIRST_NAME_NOT_EMPTY)
     @Size(min = 2, max = 55, message = FIRST_NAME_INVALID)

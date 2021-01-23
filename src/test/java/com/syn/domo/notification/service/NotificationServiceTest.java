@@ -4,12 +4,6 @@ import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import com.syn.domo.config.ApplicationBeanConfiguration;
-import com.syn.domo.model.entity.Apartment;
-import com.syn.domo.model.entity.Fee;
-import com.syn.domo.model.entity.Role;
-import com.syn.domo.model.entity.UserRole;
-import com.syn.domo.model.service.RoleServiceModel;
-import com.syn.domo.model.service.UserServiceModel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +20,6 @@ import javax.mail.internet.MimeMessage;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Set;
 
 import static com.syn.domo.common.EmailTemplates.*;
 import static org.junit.jupiter.api.Assertions.*;

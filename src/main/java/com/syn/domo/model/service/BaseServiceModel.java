@@ -9,10 +9,6 @@ public abstract class BaseServiceModel {
     public BaseServiceModel() {
     }
 
-    public BaseServiceModel(String id) {
-        this.id = id;
-    }
-
     public String getId() {
         return id;
     }

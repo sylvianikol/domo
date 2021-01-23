@@ -1,6 +1,5 @@
 package com.syn.domo.web.controller;
 
-import com.syn.domo.model.binding.ChildBindingModel;
 import com.syn.domo.model.entity.*;
 import com.syn.domo.repository.*;
 import com.syn.domo.web.AbstractTest;
@@ -11,19 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Set;
 
 import static com.syn.domo.common.ExceptionErrorMessages.*;
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_FAILED;
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_SUCCESSFUL;
-import static com.syn.domo.common.ValidationErrorMessages.FIRST_NAME_INVALID;
-import static com.syn.domo.common.ValidationErrorMessages.FIRST_NAME_NOT_EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;

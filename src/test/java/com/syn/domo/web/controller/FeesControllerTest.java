@@ -286,28 +286,16 @@ class FeesControllerTest extends AbstractTest {
     }
 
 
-//    @Test
-//    void test_pay_isNoContent() throws Exception {
-//
-//        this.mvc.perform(post(URI + "/{feeId}/pay", FEE_1_ID)
-//                .param("userId", USER_ID))
-//                .andDo(print())
-//                .andExpect(status().isNoContent())
-//                .andExpect(header().string(HttpHeaders.LOCATION,
-//                        containsString(URI + "/" + FEE_1_ID)));
-//
-//    }
-
     @Test
-    void test_pay_isUnprocessable() throws Exception {
+    void test_pay_isNoContent() throws Exception {
 
         this.mvc.perform(post(URI + "/{feeId}/pay", FEE_1_ID)
                 .param("userId", USER_ID))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity());
+                .andExpect(status().isNoContent())
+                .andExpect(header().string(HttpHeaders.LOCATION, containsString(URI + "/" + FEE_1_ID)));
 
     }
-
 
     @Test
     void test_deleteAll_isOkWithCorrectMessage() throws Exception {
@@ -387,15 +375,6 @@ class FeesControllerTest extends AbstractTest {
     void test_deleteAll_byApartmentIdInvalid_isNotFound() throws Exception {
         this.mvc.perform(delete(URI + "/delete")
                 .param("apartmentId", "0"))
-                .andDo(print())
-                .andExpect(status().isNotFound())
-                .andExpect(content().string(DELETE_FAILED));
-    }
-
-    void test_deleteAll_byApartmentIdEmpty_isNotFound() throws Exception {
-        this.feeRepository.deleteAll();
-        this.mvc.perform(delete(URI + "/delete")
-                .param("apartmentId", APARTMENT_ID))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(DELETE_FAILED));

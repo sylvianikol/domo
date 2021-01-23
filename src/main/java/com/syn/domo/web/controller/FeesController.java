@@ -65,19 +65,13 @@ public class FeesController implements FeesNamespace {
     @PostMapping("{feeId}/pay")
     public ResponseEntity<?> pay(@PathVariable(value = "feeId") String feeId,
                                  @RequestParam(name = "userId") String userId,
-                                 UriComponentsBuilder uriComponentsBuilder) {
+                                 UriComponentsBuilder uriComponentsBuilder) throws MessagingException {
 
-        try {
-            this.feeService.pay(userId, feeId);
-        } catch (MailException | MessagingException ex) {
-            return ResponseEntity.unprocessableEntity().body(ex.getMessage());
-        }
+       this.feeService.pay(userId, feeId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder
-                        .path(URI_FEES + "/{feeId}")
-                        .buildAndExpand(feeId)
-                        .toUri()).build();
+                .location(uriComponentsBuilder.path(URI_FEES + "/{feeId}").buildAndExpand(feeId).toUri())
+                .build();
     }
 
     @DeleteMapping("/delete")

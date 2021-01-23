@@ -101,7 +101,13 @@ public class FeeServiceImpl implements FeeService {
         fee.setPaidDate(LocalDateTime.now());
         fee.setPaid(true);
         fee.setPayerId(userId);
-        this.notificationService.sendFeePaymentReceipt(userServiceModel, fee);
+
+        try {
+            this.notificationService.sendFeePaymentReceipt(userServiceModel, fee);
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+        }
+
         this.feeRepository.saveAndFlush(fee);
 
         this.buildingService.addToBudget(fee.getTotal(),

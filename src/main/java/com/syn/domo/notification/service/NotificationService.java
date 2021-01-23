@@ -11,6 +11,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -52,29 +53,30 @@ public class NotificationService {
         log.info("========== NEW FEE NOTIFICATION SENT ============");
     }
 
-    public void sendFeePaymentReceipt(UserServiceModel user, Fee fee) throws MessagingException {
-        try {
-            MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+    @Async
+    public void sendFeePaymentReceipt(UserServiceModel user, Fee fee) throws MessagingException, InterruptedException {
 
-            String emailTemplate = String.format(FEE_RECEIPT_TEMPLATE,
-                    user.getFirstName(), user.getLastName(),
-                    fee.getApartment().getNumber(),
-                    fee.getApartment().getBuilding().getName(),
-                    fee.getTotal(), fee.getIssueDate(), fee.getDueDate());
+        log.info("Sleeping...");
+        Thread.sleep(10000);
 
-            helper.setText(emailTemplate, true);
-            helper.setTo(user.getEmail());
-            helper.setSubject(FEE_RECEIPT_SUBJECT);
-            helper.setFrom(System.getenv("MAIL_USER"));
+        MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
 
-            this.javaMailSender.send(mimeMessage);
+        String emailTemplate = String.format(FEE_RECEIPT_TEMPLATE,
+                user.getFirstName(), user.getLastName(),
+                fee.getApartment().getNumber(),
+                fee.getApartment().getBuilding().getName(),
+                fee.getTotal(), fee.getIssueDate(), fee.getDueDate());
 
-            log.info("========== FEE RECEIPT SENT ============");
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
+        helper.setText(emailTemplate, true);
+        helper.setTo(user.getEmail());
+        helper.setSubject(FEE_RECEIPT_SUBJECT);
+        helper.setFrom(System.getenv("MAIL_USER"));
 
+        log.info("Sending...");
+        this.javaMailSender.send(mimeMessage);
+
+        log.info("========== FEE RECEIPT SENT ============");
     }
 
     public void sendActivationEmail(UserServiceModel user) throws MailException, MessagingException {

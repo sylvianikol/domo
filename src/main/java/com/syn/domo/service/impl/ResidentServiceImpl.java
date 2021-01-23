@@ -1,6 +1,7 @@
 package com.syn.domo.service.impl;
 
 import com.syn.domo.error.ErrorContainer;
+import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.*;
 import com.syn.domo.model.service.*;
 import com.syn.domo.model.view.ResponseModel;
@@ -10,6 +11,8 @@ import com.syn.domo.service.*;
 import com.syn.domo.web.filter.ResidentFilter;
 import com.syn.domo.utils.ValidationUtil;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -26,6 +29,8 @@ import static com.syn.domo.common.ValidationErrorMessages.PHONE_ALREADY_USED;
 
 @Service
 public class ResidentServiceImpl implements ResidentService  {
+
+    private static final Logger log = LoggerFactory.getLogger(ResidentServiceImpl.class);
 
     private final ResidentRepository residentRepository;
     private final UserService userService;
@@ -124,7 +129,12 @@ public class ResidentServiceImpl implements ResidentService  {
         ResidentServiceModel addedResident =
                 this.modelMapper.map(resident, ResidentServiceModel.class);
 
-        this.notificationService.sendActivationEmail(addedResident);
+        try {
+            this.notificationService.sendActivationEmail(addedResident);
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+        }
+
 
         return new ResponseModel<>(resident.getId(), addedResident);
     }

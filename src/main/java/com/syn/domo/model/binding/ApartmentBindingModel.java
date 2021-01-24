@@ -18,7 +18,7 @@ public class ApartmentBindingModel {
 
     @NotNull(message = APARTMENT_NUMBER_NOT_NULL)
     @NotEmpty(message = APARTMENT_NUMBER_NOT_EMPTY)
-    @Pattern(regexp = APARTMENT_NUMBER_REGEX, message = APARTMENT_INVALID_SYMBOLS)
+    @Pattern(regexp = APARTMENT_NUMBER_REGEX, message = APARTMENT_INVALID_NUMBER)
     @Length(min = 1, max = 10, message = APARTMENT_LENGTH_INVALID)
     public String getNumber() {
         return number;
@@ -29,7 +29,7 @@ public class ApartmentBindingModel {
     }
 
     @NotNull(message = FLOOR_NUMBER_NOT_NULL)
-    @Min(value = 0, message = FLOOR_MIN_INVALID)
+    @Min(value = 0, message = FLOOR_MIN)
     @Max(value = 100, message = FLOOR_MAX_INVALID)
     public int getFloor() {
         return floor;

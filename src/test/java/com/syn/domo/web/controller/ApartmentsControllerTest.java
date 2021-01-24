@@ -1,6 +1,5 @@
 package com.syn.domo.web.controller;
 
-import com.syn.domo.common.ExceptionErrorMessages;
 import com.syn.domo.model.binding.ApartmentBindingModel;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Building;
@@ -18,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import static com.syn.domo.common.ExceptionErrorMessages.APARTMENT_EXISTS;
 import static com.syn.domo.common.ExceptionErrorMessages.APARTMENT_NOT_FOUND;
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_FAILED;
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_SUCCESSFUL;
@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -46,6 +46,7 @@ class ApartmentsControllerTest extends AbstractTest {
     private BuildingRepository buildingRepository;
 
     private String BUILDING_ID;
+    private String BUILDING_NAME;
     private String APARTMENT_1_ID;
     private String APARTMENT_2_ID;
     private final String URI = "/v1/apartments";
@@ -65,6 +66,7 @@ class ApartmentsControllerTest extends AbstractTest {
         this.apartmentRepository.saveAndFlush(apartment2);
 
         BUILDING_ID = building.getId();
+        BUILDING_NAME = building.getName();
         APARTMENT_1_ID = apartment1.getId();
         APARTMENT_2_ID = apartment2.getId();
     }
@@ -217,6 +219,41 @@ class ApartmentsControllerTest extends AbstractTest {
     }
 
     @Test
+    void test_add_isConflictIfApartmentNumberExists() throws Exception {
+        ApartmentBindingModel apartmentBindingModel = new ApartmentBindingModel();
+        apartmentBindingModel.setNumber("1");
+        apartmentBindingModel.setFloor(1);
+        apartmentBindingModel.setPets(1);
+
+        String inputJson = super.mapToJson(apartmentBindingModel);
+
+        this.mvc.perform(post(URI + "/add")
+                .param("buildingId", BUILDING_ID)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.errorContainer.errors.number.[0]", is(String.format(APARTMENT_EXISTS,
+                        apartmentBindingModel.getNumber(), BUILDING_NAME))));
+    }
+
+    @Test
+    void test_add_isConflictIfFloorInvalid() throws Exception {
+        ApartmentBindingModel apartmentBindingModel = new ApartmentBindingModel();
+        apartmentBindingModel.setNumber("3");
+        apartmentBindingModel.setFloor(10);
+        apartmentBindingModel.setPets(1);
+
+        String inputJson = super.mapToJson(apartmentBindingModel);
+
+        this.mvc.perform(post(URI + "/add")
+                .param("buildingId", BUILDING_ID)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.errorContainer.errors.floor.[0]", is(FLOOR_INVALID)));
+    }
+
+    @Test
     void test_edit_isNoContent() throws Exception {
         ApartmentBindingModel apartmentBindingModel = new ApartmentBindingModel();
         apartmentBindingModel.setNumber("3");
@@ -251,13 +288,13 @@ class ApartmentsControllerTest extends AbstractTest {
                 .andExpect(jsonPath("$.object.floor", is(-1)))
                 .andExpect(jsonPath("$.object.pets", is(-1)))
                 .andExpect(jsonPath("$.errorContainer.errors.pets[0]", is(PETS_MIN)))
-                .andExpect(jsonPath("$.errorContainer.errors.floor[0]", is(FLOOR_MIN_INVALID)))
+                .andExpect(jsonPath("$.errorContainer.errors.floor[0]", is(FLOOR_MIN)))
                 .andExpect(jsonPath("$.errorContainer.errors.number[0]",
                         is(APARTMENT_NUMBER_NOT_EMPTY)))
                 .andExpect(jsonPath("$.errorContainer.errors.number[1]",
                         is(APARTMENT_LENGTH_INVALID)))
                 .andExpect(jsonPath("$.errorContainer.errors.number[2]",
-                        is(APARTMENT_INVALID_SYMBOLS)));
+                        is(APARTMENT_INVALID_NUMBER)));
 
     }
 
@@ -274,6 +311,40 @@ class ApartmentsControllerTest extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
                 .andExpect(status().isNotFound());
+
+    }
+
+    @Test
+    void test_edit_isConflictIfFloorInvalid() throws Exception {
+        ApartmentBindingModel apartmentBindingModel = new ApartmentBindingModel();
+        apartmentBindingModel.setNumber("1");
+        apartmentBindingModel.setFloor(100);
+        apartmentBindingModel.setPets(1);
+
+        String inputJson = super.mapToJson(apartmentBindingModel);
+
+        this.mvc.perform(put(URI + "/{apartmentId}", APARTMENT_1_ID)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.errorContainer.errors.floor.[0]", is(FLOOR_INVALID)));
+    }
+
+    @Test
+    void test_edit_isUnprocessableIfDuplicate() throws Exception {
+        ApartmentBindingModel apartmentBindingModel = new ApartmentBindingModel();
+        apartmentBindingModel.setNumber("2");
+        apartmentBindingModel.setFloor(1);
+        apartmentBindingModel.setPets(1);
+
+        String inputJson = super.mapToJson(apartmentBindingModel);
+
+        this.mvc.perform(put(URI + "/{apartmentId}", APARTMENT_1_ID)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.errorContainer.errors.duplicate.[0]", is(String.format(APARTMENT_EXISTS,
+                        apartmentBindingModel.getNumber(), BUILDING_NAME))));
 
     }
 

@@ -1,8 +1,11 @@
 package com.syn.domo.utils;
 
+import com.syn.domo.error.ErrorContainer;
+
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
+import java.util.HashSet;
 import java.util.Set;
 
 public class ValidationUtilImpl implements ValidationUtil {
@@ -23,5 +26,22 @@ public class ValidationUtilImpl implements ValidationUtil {
     @Override
     public <T> Set<ConstraintViolation<T>> violations(T entity) {
         return this.validator.validate(entity);
+    }
+
+    @Override
+    public <T> ErrorContainer getViolations(T entity) {
+        Set<ConstraintViolation<T>> violations = this.violations(entity);
+
+        ErrorContainer errorContainer = new ErrorContainer();
+
+        for (ConstraintViolation<T> violation : violations) {
+            String key = violation.getPropertyPath().toString();
+            String value = violation.getMessage();
+
+            errorContainer.getErrors().putIfAbsent(key, new HashSet<>());
+            errorContainer.getErrors().get(key).add(value);
+        }
+
+        return errorContainer;
     }
 }

@@ -57,6 +57,15 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
+    public Set<BuildingServiceModel> getAll() {
+        Set<BuildingServiceModel> buildings = this.buildingRepository.findAll().stream()
+                .map(b -> this.modelMapper.map(b, BuildingServiceModel.class))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return Collections.unmodifiableSet(buildings);
+    }
+
+    @Override
     public Optional<BuildingServiceModel> get(String id) {
         Optional<Building> building = this.buildingRepository.findById(id);
         return building.isEmpty()

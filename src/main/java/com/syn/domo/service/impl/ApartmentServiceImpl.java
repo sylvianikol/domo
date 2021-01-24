@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import javax.validation.ConstraintViolation;
+
 import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;
 import java.util.*;
@@ -87,7 +89,7 @@ public class ApartmentServiceImpl implements ApartmentService {
 
         if (!this.validationUtil.isValid(apartmentServiceModel)) {
             return new ResponseModel<>(apartmentServiceModel,
-                    this.validationUtil.violations(apartmentServiceModel));
+                    this.validationUtil.getViolations(apartmentServiceModel));
         }
 
         BuildingServiceModel buildingServiceModel = this.buildingService.get(buildingId)
@@ -95,8 +97,10 @@ public class ApartmentServiceImpl implements ApartmentService {
 
         String apartmentNumber = apartmentServiceModel.getNumber();
         if (this.alreadyExistsApartmentNumber(apartmentNumber, buildingId)) {
-            throw new EntityExistsException(String.format(APARTMENT_EXISTS,
-                     apartmentNumber, buildingServiceModel.getName()));
+            return new ResponseModel<>(apartmentServiceModel, new ErrorContainer(
+                    Map.of("number", Set.of(String.format(APARTMENT_EXISTS,
+                            apartmentNumber, buildingServiceModel.getName()))))
+            );
         }
 
         if (apartmentServiceModel.getFloor() > buildingServiceModel.getFloors()) {
@@ -138,8 +142,9 @@ public class ApartmentServiceImpl implements ApartmentService {
                 .getDuplicateApartment(newNumber, building.getId(), apartmentId);
 
         if (duplicateApartment.isPresent()) {
-            throw new EntityExistsException(String.format(APARTMENT_EXISTS,
-                    newNumber, building.getName()));
+            return new ResponseModel<>(apartmentServiceModel, new ErrorContainer(
+                    Map.of("duplicate", Set.of(String.format(APARTMENT_EXISTS,
+                            newNumber, building.getName())))));
         }
 
         apartment.setNumber(apartmentServiceModel.getNumber());

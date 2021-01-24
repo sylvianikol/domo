@@ -60,7 +60,7 @@ public class BuildingBindingModel {
     }
 
     @NotNull(message = FLOOR_NUMBER_NOT_NULL)
-    @Min(value = 0, message = FLOOR_MIN_INVALID)
+    @Min(value = 0, message = FLOOR_MIN)
     @Max(value = 100, message = FLOOR_MAX_INVALID)
     public int getFloors() {
         return floors;

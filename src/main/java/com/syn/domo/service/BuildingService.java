@@ -12,6 +12,8 @@ public interface BuildingService {
 
     Set<BuildingServiceModel> getAll(Pageable pageable);
 
+    Set<BuildingServiceModel> getAll();
+
     Optional<BuildingServiceModel> get(String id);
 
     ResponseModel<BuildingServiceModel> add(BuildingServiceModel buildingServiceModel);

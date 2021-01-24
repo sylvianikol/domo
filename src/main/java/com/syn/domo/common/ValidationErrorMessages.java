@@ -28,7 +28,7 @@ public class ValidationErrorMessages {
 
     public static final String FLOOR_NUMBER_NOT_NULL =
             "Floor number can not be null!";
-    public static final String FLOOR_MIN_INVALID =
+    public static final String FLOOR_MIN =
             "Floor can not be a negative number!";
     public static final String FLOOR_MAX_INVALID =
             "Floor number can not be more than 100!";
@@ -85,7 +85,7 @@ public class ValidationErrorMessages {
             "Apartment number can not be empty!";
     public static final String APARTMENT_LENGTH_INVALID =
             "Apartment number should be between 1 and 10 characters long!";
-    public static final String APARTMENT_INVALID_SYMBOLS =
+    public static final String APARTMENT_INVALID_NUMBER =
             "Apartment number should start with a digit and " +
                     "can contain only digits and letters! ex. (10a)";
 

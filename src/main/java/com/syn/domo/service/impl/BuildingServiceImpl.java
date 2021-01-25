@@ -92,7 +92,7 @@ public class BuildingServiceImpl implements BuildingService {
 
         if (this.buildingNameExistsInNeighbourhood(buildingName, neighbourhood, "")) {
             return new ResponseModel<>(buildingServiceModel, new ErrorContainer(
-                    Map.of("name", Set.of(String.format(BUILDING_NAME_EXISTS,
+                    Map.of("nameExists", Set.of(String.format(BUILDING_NAME_EXISTS,
                             buildingName, neighbourhood)))));
         }
 

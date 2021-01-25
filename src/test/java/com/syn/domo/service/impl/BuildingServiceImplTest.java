@@ -5,9 +5,11 @@ import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.repository.BuildingRepository;
 import com.syn.domo.service.ApartmentService;
+import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.StaffService;
 import com.syn.domo.utils.ValidationUtil;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -15,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -25,57 +28,58 @@ import java.util.Set;
 import static com.syn.domo.common.ValidationErrorMessages.BUILDING_NAME_NOT_EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-@ExtendWith(MockitoExtension.class)
 class BuildingServiceImplTest {
 
-    private BuildingServiceImpl buildingService;
+    @Autowired
+    private BuildingService buildingService;
 
-    @Mock
+    @MockBean
     private BuildingRepository buildingRepository;
-    @Autowired
-    private ApartmentService apartmentService;
-    @Autowired
-    private StaffService staffService;
-    @Autowired
-    private ModelMapper modelMapper;
-    @Autowired
-    private ValidationUtil validationUtil;
-
-    @BeforeEach
-    void setUp() {
-        this.buildingService = new BuildingServiceImpl(
-                buildingRepository, apartmentService, staffService,
-                modelMapper, validationUtil);
-    }
 
     @Test
     void test_getAll() {
+
         Building building = new Building("TestBuilding 1", "Test neighbourhood",
                 "TestAddress",3, BigDecimal.valueOf(5),
                 BigDecimal.valueOf(100), LocalDate.now());
-        when(this.buildingRepository.findAll()).thenReturn(List.of(building));
+        doReturn(List.of(building)).when(this.buildingRepository).findAll();
 
         Set<BuildingServiceModel> all = this.buildingService.getAll();
 
-        assertThat(all).isNotEmpty();
-        assertEquals(all.size(), 1);
+        assertEquals(1, all.size(), "getAll should return 1 building");
     }
 
     @Test
-    void test_add_serviceModelNotValid() {
+    void test_add_withInvalidData() {
         BuildingServiceModel buildingServiceModel = new BuildingServiceModel(
                 "", "Test neighbourhood",
                 "TestAddress",3, BigDecimal.valueOf(5),
                 BigDecimal.valueOf(100), null);
 
-        ResponseModel<BuildingServiceModel> responseModel = this.buildingService.add(buildingServiceModel);
+        ResponseModel<BuildingServiceModel> responseModel =
+                this.buildingService.add(buildingServiceModel);
 
         Map<String, Set<String>> errors = responseModel.getErrorContainer().getErrors();
 
         assertEquals(errors.get("name"), Set.of(BUILDING_NAME_NOT_EMPTY));
     }
 
+    @Test
+    void test_edit_withInvalidData() {
+        BuildingServiceModel buildingServiceModel = new BuildingServiceModel(
+                "", "Test neighbourhood",
+                "TestAddress",3, BigDecimal.valueOf(5),
+                BigDecimal.valueOf(100), null);
+
+        ResponseModel<BuildingServiceModel> responseModel =
+                this.buildingService.edit(buildingServiceModel, "");
+
+        Map<String, Set<String>> errors = responseModel.getErrorContainer().getErrors();
+
+        assertEquals(errors.get("name"), Set.of(BUILDING_NAME_NOT_EMPTY));
+    }
 }

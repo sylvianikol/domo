@@ -1,5 +1,6 @@
 package com.syn.domo.model.service;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 public class ResidentServiceModel extends UserServiceModel  {
@@ -8,6 +9,12 @@ public class ResidentServiceModel extends UserServiceModel  {
     private Set<ChildServiceModel> children;
 
     public ResidentServiceModel() {
+    }
+
+    public ResidentServiceModel(String id, String firstName, String lastName, LocalDate addedOn, String email, String phoneNumber, boolean isActive, Set<RoleServiceModel> roles, Set<ApartmentServiceModel> apartments, Set<ChildServiceModel> children) {
+        super(id, firstName, lastName, addedOn, email, phoneNumber, isActive, roles);
+        this.apartments = apartments;
+        this.children = children;
     }
 
     public Set<ApartmentServiceModel> getApartments() {

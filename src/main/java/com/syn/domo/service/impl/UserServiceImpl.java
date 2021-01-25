@@ -93,7 +93,7 @@ public class UserServiceImpl implements UserService {
         Optional<UserEntity> user = this.userRepository.findByEmail(email);
         return user.isEmpty()
                 ? Optional.empty()
-                : Optional.of(this.modelMapper.map(user, UserServiceModel.class));
+                : Optional.of(this.modelMapper.map(user.get(), UserServiceModel.class));
     }
 
     @Override
@@ -101,7 +101,7 @@ public class UserServiceImpl implements UserService {
         Optional<UserEntity> user = this.userRepository.findByPhoneNumber(phoneNumber);
         return user.isEmpty()
                 ? Optional.empty()
-                : Optional.of(this.modelMapper.map(user, UserServiceModel.class));
+                : Optional.of(this.modelMapper.map(user.get(), UserServiceModel.class));
     }
 
     @Override

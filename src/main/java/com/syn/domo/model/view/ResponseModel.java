@@ -71,6 +71,10 @@ public class ResponseModel<T> {
         }
     }
 
+    public void setErrorContainer(ErrorContainer errorContainer) {
+        this.errorContainer = errorContainer;
+    }
+
     public T getObject() {
         return object;
     }

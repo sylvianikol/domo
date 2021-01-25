@@ -3,15 +3,12 @@ package com.syn.domo.service.impl;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.service.ApartmentServiceModel;
-import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.repository.ApartmentRepository;
-import com.syn.domo.repository.BuildingRepository;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.ChildService;
 import com.syn.domo.service.ResidentService;
 import com.syn.domo.utils.ValidationUtil;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,10 +24,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static com.syn.domo.common.ValidationErrorMessages.*;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -114,22 +108,27 @@ class ApartmentServiceImplTest {
     }
 
     @Test
-    void edit() {
+    void test_edit_serviceModelNotValid() {
+        ApartmentServiceModel apartmentServiceModel =
+                new ApartmentServiceModel("invalid", -1, null, -1, null);
+
+        ResponseModel<ApartmentServiceModel> responseModel =
+                this.apartmentService.edit(apartmentServiceModel, "1");
+
+        Map<String, Set<String>> errors = responseModel.getErrorContainer().getErrors();
+
+        assertEquals(errors.get("pets"), Set.of(PETS_MIN));
+        assertEquals(errors.get("floor"), Set.of(FLOOR_MIN));
+        assertEquals(errors.get("number"), Set.of(APARTMENT_INVALID_NUMBER));
     }
 
     @Test
-    void deleteAll() {
+    void test_edit_throwsWhenInvalidBuildingId() {
+        ApartmentServiceModel apartmentServiceModel =
+                new ApartmentServiceModel("1", 1, null, 1, null);
+
+        assertThrows(EntityNotFoundException.class, () ->
+                this.apartmentService.edit(apartmentServiceModel, "1"));
     }
 
-    @Test
-    void delete() {
-    }
-
-    @Test
-    void evacuateApartments() {
-    }
-
-    @Test
-    void getByIdAndBuildingId() {
-    }
 }

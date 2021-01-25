@@ -23,8 +23,7 @@ import java.util.Set;
 import static com.syn.domo.common.ExceptionErrorMessages.*;
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_FAILED;
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_SUCCESSFUL;
-import static com.syn.domo.common.ValidationErrorMessages.FIRST_NAME_INVALID;
-import static com.syn.domo.common.ValidationErrorMessages.FIRST_NAME_NOT_EMPTY;
+import static com.syn.domo.common.ValidationErrorMessages.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
@@ -52,6 +51,8 @@ class ResidentsControllerTest extends AbstractTest {
     private String APARTMENT_ID;
     private String RESIDENT_1_ID;
     private String RESIDENT_2_ID;
+    private String RESIDENT_1_EMAIL;
+    private String RESIDENT_1_PHONE;
     private final String URI = "/v1/residents";
 
     @BeforeEach
@@ -91,6 +92,8 @@ class ResidentsControllerTest extends AbstractTest {
         List<Resident> all = this.residentRepository.findAll(Sort.by("id"));
         RESIDENT_1_ID = all.get(0).getId();
         RESIDENT_2_ID = all.get(1).getId();
+        RESIDENT_1_EMAIL = all.get(0).getEmail();
+        RESIDENT_1_PHONE = all.get(0).getPhoneNumber();
     }
 
     @AfterEach
@@ -299,7 +302,7 @@ class ResidentsControllerTest extends AbstractTest {
     }
 
     @Test
-    void test_add_isUnprocessable() throws Exception {
+    void test_add_bindingModelNotValid_isUnprocessable() throws Exception {
         ResidentBindingModel residentBindingModel = new ResidentBindingModel(
                 "", "Hope", "hope@mail.com", "044838383");
 
@@ -349,6 +352,40 @@ class ResidentsControllerTest extends AbstractTest {
     }
 
     @Test
+    void test_add_withEmailUsed_isUnprocessable() throws Exception {
+        ResidentBindingModel residentBindingModel = new ResidentBindingModel(
+                "Bob", "Hope", RESIDENT_1_EMAIL, "044838383");
+
+        String inputJson = super.mapToJson(residentBindingModel);
+
+        this.mvc.perform(post(URI + "/add")
+                .param("buildingId", BUILDING_ID)
+                .param("apartmentId", APARTMENT_ID)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.errorContainer.errors.email.[0]",
+                        is(String.format(EMAIL_ALREADY_USED, RESIDENT_1_EMAIL))));
+    }
+
+    @Test
+    void test_add_withPhoneUsed_isUnprocessable() throws Exception {
+        ResidentBindingModel residentBindingModel = new ResidentBindingModel(
+                "Bob", "Hope", "bob@test.mail", RESIDENT_1_PHONE);
+
+        String inputJson = super.mapToJson(residentBindingModel);
+
+        this.mvc.perform(post(URI + "/add")
+                .param("buildingId", BUILDING_ID)
+                .param("apartmentId", APARTMENT_ID)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.errorContainer.errors.phoneNumber.[0]",
+                        is(String.format(PHONE_ALREADY_USED, RESIDENT_1_PHONE))));
+    }
+
+    @Test
     void test_edit_isNoContent() throws Exception {
         ResidentBindingModel residentBindingModel = new ResidentBindingModel(
                 "Edit Name", "Hope", "hope@mail.com", "044838383");
@@ -365,7 +402,7 @@ class ResidentsControllerTest extends AbstractTest {
     }
 
     @Test
-    void test_edit_isUnprocessable() throws Exception {
+    void test_editWithBindingModelNotValid_isUnprocessable() throws Exception {
         ResidentBindingModel residentBindingModel = new ResidentBindingModel(
                 "", "Hope", "hope@mail.com", "044838383");
 
@@ -393,6 +430,36 @@ class ResidentsControllerTest extends AbstractTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(RESIDENT_NOT_FOUND));
 
+    }
+
+    @Test
+    void test_edit_withEmailUsed_isUnprocessable() throws Exception {
+        ResidentBindingModel residentBindingModel = new ResidentBindingModel(
+                "Ed", "Doe", RESIDENT_1_EMAIL, "32342");
+
+        String inputJson = super.mapToJson(residentBindingModel);
+
+        this.mvc.perform(put(URI + "/{residentId}", RESIDENT_2_ID)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.errorContainer.errors.email.[0]",
+                        is(String.format(EMAIL_ALREADY_USED, RESIDENT_1_EMAIL))));
+    }
+
+    @Test
+    void test_edit_withPhoneUsed_isUnprocessable() throws Exception {
+        ResidentBindingModel residentBindingModel = new ResidentBindingModel(
+                "Ed", "Doe", "ed@mail.com", RESIDENT_1_PHONE);
+
+        String inputJson = super.mapToJson(residentBindingModel);
+
+        this.mvc.perform(put(URI + "/{residentId}", RESIDENT_2_ID)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.errorContainer.errors.phoneNumber.[0]",
+                        is(String.format(PHONE_ALREADY_USED, RESIDENT_1_PHONE))));
     }
 
     @Test

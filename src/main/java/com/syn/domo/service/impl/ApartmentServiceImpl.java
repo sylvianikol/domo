@@ -84,31 +84,31 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
-    public ResponseModel<ApartmentServiceModel> add(ApartmentServiceModel apartmentServiceModel,
+    public ResponseModel<ApartmentServiceModel> add(ApartmentServiceModel apartmentToAdd,
                                      String buildingId) {
 
-        if (!this.validationUtil.isValid(apartmentServiceModel)) {
-            return new ResponseModel<>(apartmentServiceModel,
-                    this.validationUtil.getViolations(apartmentServiceModel));
+        if (!this.validationUtil.isValid(apartmentToAdd)) {
+            return new ResponseModel<>(apartmentToAdd,
+                    this.validationUtil.getViolations(apartmentToAdd));
         }
 
         BuildingServiceModel buildingServiceModel = this.buildingService.get(buildingId)
                 .orElseThrow(() -> { throw new EntityNotFoundException(BUILDING_NOT_FOUND); });
 
-        String apartmentNumber = apartmentServiceModel.getNumber();
+        String apartmentNumber = apartmentToAdd.getNumber();
         if (this.alreadyExistsApartmentNumber(apartmentNumber, buildingId)) {
-            return new ResponseModel<>(apartmentServiceModel, new ErrorContainer(
+            return new ResponseModel<>(apartmentToAdd, new ErrorContainer(
                     Map.of("number", Set.of(String.format(APARTMENT_EXISTS,
                             apartmentNumber, buildingServiceModel.getName()))))
             );
         }
 
-        if (apartmentServiceModel.getFloor() > buildingServiceModel.getFloors()) {
-            return new ResponseModel<>(apartmentServiceModel, new ErrorContainer(
+        if (apartmentToAdd.getFloor() > buildingServiceModel.getFloors()) {
+            return new ResponseModel<>(apartmentToAdd, new ErrorContainer(
                     Map.of("floor", Set.of(FLOOR_INVALID))));
         }
 
-        Apartment apartment = this.modelMapper.map(apartmentServiceModel, Apartment.class);
+        Apartment apartment = this.modelMapper.map(apartmentToAdd, Apartment.class);
         apartment.setAddedOn(LocalDate.now());
         apartment.setBuilding(this.modelMapper.map(buildingServiceModel, Building.class));
 

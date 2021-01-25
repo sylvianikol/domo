@@ -29,4 +29,6 @@ public class ExceptionErrorMessages {
     public static final String FEE_ALREADY_PAID = "Fee is already paid!";
 
     public static final String USER_NOT_FOUND = "User not found!";
+
+    public static final String ACTIVATION_EMAIL_FAIL = "Sending activation email failed.";
 }

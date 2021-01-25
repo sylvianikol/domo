@@ -19,6 +19,7 @@ import javax.mail.MessagingException;
 import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
 
+import java.net.URI;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -71,7 +72,7 @@ public class ResidentsController implements ResidentsNamespace {
                                  @RequestParam(value = "apartmentId") String apartmentId,
                                  @Valid @RequestBody ResidentBindingModel residentBindingModel,
                                  BindingResult bindingResult,
-                                 UriComponentsBuilder uriComponentsBuilder) throws MessagingException {
+                                 UriComponentsBuilder uriComponentsBuilder) throws MessagingException, InterruptedException {
 
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
@@ -82,12 +83,13 @@ public class ResidentsController implements ResidentsNamespace {
                 .add(this.modelMapper.map(residentBindingModel, ResidentServiceModel.class),
                 buildingId, apartmentId);
 
+        if (responseModel.getErrorContainer().getErrors().containsKey("activation")) {
+            return ResponseEntity.created(getLocation(uriComponentsBuilder, responseModel.getId())).body(responseModel);
+        }
+
         return responseModel.hasErrors()
                 ? ResponseEntity.unprocessableEntity().body(responseModel)
-                : ResponseEntity.created(uriComponentsBuilder
-                .path(URI_RESIDENTS + "/{residentId}")
-                .buildAndExpand(responseModel.getId())
-                .toUri()).build();
+                : ResponseEntity.created(getLocation(uriComponentsBuilder, responseModel.getId())).build();
     }
 
     @PutMapping("/{residentId}")
@@ -106,8 +108,7 @@ public class ResidentsController implements ResidentsNamespace {
         return responseModel.hasErrors()
                 ? ResponseEntity.unprocessableEntity().body(responseModel)
                 : ResponseEntity.status(HttpStatus.NO_CONTENT)
-                    .location(uriComponentsBuilder.path(URI_RESIDENTS + "/{residentId}")
-                    .buildAndExpand(residentId).toUri())
+                    .location(getLocation(uriComponentsBuilder, residentId))
                 .build();
     }
 
@@ -132,5 +133,9 @@ public class ResidentsController implements ResidentsNamespace {
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder.path(URI_RESIDENTS).build().toUri())
                 .build();
+    }
+
+    private URI getLocation(UriComponentsBuilder uriComponentsBuilder, String id) {
+        return uriComponentsBuilder.path(URI_RESIDENTS + "/{residentId}").buildAndExpand(id).toUri();
     }
 }

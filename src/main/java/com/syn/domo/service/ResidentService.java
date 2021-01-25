@@ -17,7 +17,7 @@ public interface ResidentService {
     Optional<ResidentServiceModel> get(String residentId);
 
     ResponseModel<ResidentServiceModel> add(ResidentServiceModel residentServiceModel,
-                                            String buildingId, String apartmentId) throws MessagingException;
+                                            String buildingId, String apartmentId) throws MessagingException, InterruptedException;
 
     ResponseModel<ResidentServiceModel> edit(ResidentServiceModel residentServiceModel,
                                              String residentId);

@@ -18,6 +18,14 @@ public class UserServiceModel extends BaseUserServiceModel {
     public UserServiceModel() {
     }
 
+    public UserServiceModel(String id, String firstName, String lastName, LocalDate addedOn, String email, String phoneNumber, boolean isActive, Set<RoleServiceModel> roles) {
+        super(id, firstName, lastName, addedOn);
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.isActive = isActive;
+        this.roles = roles;
+    }
+
     @NotNull(message = EMAIL_NOT_NULL)
     @NotEmpty(message = EMAIL_NOT_EMPTY)
     @Email(message = EMAIL_INVALID)

@@ -42,6 +42,7 @@ class BuildingsControllerTest extends AbstractTest {
 
     private String BUILDING_1_ID;
     private String BUILDING_2_ID;
+    private String BUILDING_1_ADDRESS;
     private final String URI = "/v1/buildings";
 
     @BeforeEach
@@ -60,6 +61,7 @@ class BuildingsControllerTest extends AbstractTest {
 
         BUILDING_1_ID = building1.getId();
         BUILDING_2_ID = building2.getId();
+        BUILDING_1_ADDRESS = building1.getAddress();
     }
 
     @AfterEach
@@ -166,6 +168,23 @@ class BuildingsControllerTest extends AbstractTest {
     }
 
     @Test
+    void test_add_isUnprocessableWhenAddressOccupied() throws Exception {
+        BuildingBindingModel buildingBindingModel =
+                new BuildingBindingModel("New Building", "Test Neighbourhood",
+                        BUILDING_1_ADDRESS, 4,
+                        BigDecimal.valueOf(0), BigDecimal.valueOf(5));
+
+        String inputJson = super.mapToJson(buildingBindingModel);
+
+        this.mvc.perform(post(URI + "/add")
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.errorContainer.errors.address.[0]",
+                        is(String.format(ADDRESS_OCCUPIED, BUILDING_1_ADDRESS))));
+    }
+
+    @Test
     void test_edit_isNoContent() throws Exception {
         BuildingBindingModel buildingBindingModel =
                 new BuildingBindingModel("Edit Name", "Test Neighbourhood",
@@ -198,10 +217,6 @@ class BuildingsControllerTest extends AbstractTest {
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.errorContainer.errors.name[0]",
                         is(BUILDING_NAME_NOT_EMPTY)));
-//                .andExpect(jsonPath("$.errorContainer.errors.number[1]",
-//                        is(APARTMENT_LENGTH_INVALID)))
-//                .andExpect(jsonPath("$.errorContainer.errors.number[2]",
-//                        is(APARTMENT_INVALID_SYMBOLS)));
 
     }
 

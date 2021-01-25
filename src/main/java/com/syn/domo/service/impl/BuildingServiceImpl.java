@@ -83,7 +83,7 @@ public class BuildingServiceImpl implements BuildingService {
 
         String address = buildingServiceModel.getAddress().trim();
         if (this.buildingRepository.findByAddress(address).isPresent()) {
-            new ResponseModel<>(buildingServiceModel, new ErrorContainer(
+            return new ResponseModel<>(buildingServiceModel, new ErrorContainer(
                     Map.of("address", Set.of(String.format(ADDRESS_OCCUPIED, address)))));
         }
 

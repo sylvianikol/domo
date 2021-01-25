@@ -1,7 +1,6 @@
 package com.syn.domo.service.impl;
 
-import com.syn.domo.model.entity.Apartment;
-import com.syn.domo.model.entity.Building;
+import com.syn.domo.model.entity.*;
 import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.repository.ApartmentRepository;
@@ -25,26 +24,26 @@ import java.util.*;
 
 import static com.syn.domo.common.ValidationErrorMessages.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 class ApartmentServiceImplTest {
 
-    ApartmentServiceImpl apartmentService;
+    private ApartmentServiceImpl apartmentService;
 
     @Mock
-    ApartmentRepository apartmentRepository;
-    @Mock
-    BuildingService buildingService;
+    private ApartmentRepository apartmentRepository;
     @Autowired
-    ResidentService residentService;
+    private BuildingService buildingService;
     @Autowired
-    ChildService childService;
+    private ResidentService residentService;
     @Autowired
-    ModelMapper modelMapper;
+    private ChildService childService;
     @Autowired
-    ValidationUtil validationUtil;
+    private ModelMapper modelMapper;
+    @Autowired
+    private ValidationUtil validationUtil;
 
     @BeforeEach
     void setUp() {
@@ -130,5 +129,4 @@ class ApartmentServiceImplTest {
         assertThrows(EntityNotFoundException.class, () ->
                 this.apartmentService.edit(apartmentServiceModel, "1"));
     }
-
 }

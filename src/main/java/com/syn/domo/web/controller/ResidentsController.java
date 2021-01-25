@@ -83,10 +83,6 @@ public class ResidentsController implements ResidentsNamespace {
                 .add(this.modelMapper.map(residentBindingModel, ResidentServiceModel.class),
                 buildingId, apartmentId);
 
-        if (responseModel.getErrorContainer().getErrors().containsKey("activation")) {
-            return ResponseEntity.created(getLocation(uriComponentsBuilder, responseModel.getId())).body(responseModel);
-        }
-
         return responseModel.hasErrors()
                 ? ResponseEntity.unprocessableEntity().body(responseModel)
                 : ResponseEntity.created(getLocation(uriComponentsBuilder, responseModel.getId())).build();

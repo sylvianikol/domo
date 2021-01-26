@@ -42,6 +42,7 @@ class BuildingsControllerTest extends AbstractTest {
     private String BUILDING_1_ID;
     private String BUILDING_2_ID;
     private String BUILDING_1_NAME;
+    private String BUILDING_2_NAME;
     private String NEIGHBOURHOOD;
     private String BUILDING_2_ADDRESS;
     private final String URI = "/v1/buildings";
@@ -63,6 +64,7 @@ class BuildingsControllerTest extends AbstractTest {
         BUILDING_1_ID = building1.getId();
         BUILDING_2_ID = building2.getId();
         BUILDING_1_NAME = building1.getName();
+        BUILDING_2_NAME = building2.getName();
         NEIGHBOURHOOD = building1.getNeighbourhood();
         BUILDING_2_ADDRESS = building2.getAddress();
     }
@@ -259,6 +261,28 @@ class BuildingsControllerTest extends AbstractTest {
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.errorContainer.errors.address[0]",
                         is(String.format(ADDRESS_OCCUPIED, BUILDING_2_ADDRESS))));
+
+    }
+
+    @Test
+    void test_edit_buildingNameExistsInNeighbourhood() throws Exception {
+
+        BuildingBindingModel buildingBindingModel = new BuildingBindingModel();
+        buildingBindingModel.setName(BUILDING_2_NAME);
+        buildingBindingModel.setNeighbourhood(NEIGHBOURHOOD);
+        buildingBindingModel.setAddress("New Address");
+        buildingBindingModel.setFloors(2);
+        buildingBindingModel.setBudget(BigDecimal.ZERO);
+        buildingBindingModel.setBaseFee(BigDecimal.ZERO);
+
+        String inputJson = super.mapToJson(buildingBindingModel);
+
+        this.mvc.perform(put(URI + "/" + BUILDING_1_ID)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.errorContainer.errors.name[0]",
+                        is(String.format(BUILDING_NAME_EXISTS, BUILDING_2_NAME, NEIGHBOURHOOD))));
 
     }
 

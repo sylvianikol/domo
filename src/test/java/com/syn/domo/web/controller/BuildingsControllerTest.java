@@ -3,7 +3,12 @@ package com.syn.domo.web.controller;
 import com.syn.domo.common.ExceptionErrorMessages;
 import com.syn.domo.model.binding.BuildingBindingModel;
 import com.syn.domo.model.entity.Building;
+import com.syn.domo.model.entity.Role;
+import com.syn.domo.model.entity.Staff;
+import com.syn.domo.model.entity.UserRole;
 import com.syn.domo.repository.BuildingRepository;
+import com.syn.domo.repository.RoleRepository;
+import com.syn.domo.repository.StaffRepository;
 import com.syn.domo.web.AbstractTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +23,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
+import static com.syn.domo.common.ExceptionErrorMessages.BUILDING_NOT_FOUND;
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_FAILED;
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_SUCCESSFUL;
 import static com.syn.domo.common.ValidationErrorMessages.*;
@@ -38,6 +46,10 @@ class BuildingsControllerTest extends AbstractTest {
     private MockMvc mvc;
     @Autowired
     private BuildingRepository buildingRepository;
+    @Autowired
+    private RoleRepository roleRepository;
+    @Autowired
+    private StaffRepository staffRepository;
 
     private String BUILDING_1_ID;
     private String BUILDING_2_ID;
@@ -45,6 +57,8 @@ class BuildingsControllerTest extends AbstractTest {
     private String BUILDING_2_NAME;
     private String NEIGHBOURHOOD;
     private String BUILDING_2_ADDRESS;
+    private String STAFF_1_ID;
+    private String STAFF_2_ID;
     private final String URI = "/v1/buildings";
 
     @BeforeEach
@@ -61,21 +75,41 @@ class BuildingsControllerTest extends AbstractTest {
                 BigDecimal.valueOf(5), BigDecimal.valueOf(100), LocalDate.now());
         this.buildingRepository.saveAndFlush(building2);
 
+        Role role = this.roleRepository.findByName(UserRole.STAFF).orElse(null);
+
+        if (role == null) {
+            role = new Role(UserRole.STAFF);
+            this.roleRepository.saveAndFlush(role);
+        }
+
+        Staff staff1 = new Staff("Staff 1", "Staff 1", LocalDate.now(),
+                "staff1@mail.com", null, "0383933", false, Set.of(role),
+                "Job 1", BigDecimal.valueOf(500), new HashSet<>());
+        this.staffRepository.saveAndFlush(staff1);
+        Staff staff2 = new Staff("Staff 2", "Staff 2", LocalDate.now(),
+                "staff2@mail.com", null, "546464", false, Set.of(role),
+                "Job 2", BigDecimal.valueOf(500), new HashSet<>());
+        this.staffRepository.saveAndFlush(staff2);
+
         BUILDING_1_ID = building1.getId();
         BUILDING_2_ID = building2.getId();
         BUILDING_1_NAME = building1.getName();
         BUILDING_2_NAME = building2.getName();
         NEIGHBOURHOOD = building1.getNeighbourhood();
         BUILDING_2_ADDRESS = building2.getAddress();
+        STAFF_1_ID = staff1.getId();
+        STAFF_2_ID = staff2.getId();
     }
 
     @AfterEach
     public void tearDown() {
+        this.staffRepository.deleteAll();
         this.buildingRepository.deleteAll();
     }
 
     @Test
     void injectedComponentsAreNotNull() {
+        assertThat(this.staffRepository).isNotNull();
         assertThat(this.buildingRepository).isNotNull();
     }
 
@@ -337,6 +371,26 @@ class BuildingsControllerTest extends AbstractTest {
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(ExceptionErrorMessages.BUILDING_NOT_FOUND));
+    }
+
+    @Test
+    void test_assignStaff() throws Exception {
+
+        this.mvc.perform(put(URI + "/{buildingId}/assign", BUILDING_1_ID)
+                .param("staffIds", STAFF_1_ID, STAFF_2_ID))
+                .andDo(print())
+                .andExpect(status().isNoContent())
+                .andExpect(header().string(HttpHeaders.LOCATION,
+                containsString(URI + "/" + BUILDING_1_ID)));;
+    }
+
+    @Test
+    void test_assignStaff_throwsWhenBuildingNotFound() throws Exception {
+        this.mvc.perform(put(URI + "/{buildingId}/assign", "0")
+                .param("staffIds", STAFF_1_ID, STAFF_2_ID))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(is(BUILDING_NOT_FOUND)));
     }
 
     private String getAHeaderLocation() {

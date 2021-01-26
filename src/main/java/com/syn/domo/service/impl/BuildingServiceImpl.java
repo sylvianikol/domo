@@ -116,7 +116,8 @@ public class BuildingServiceImpl implements BuildingService {
                 .orElseThrow(() -> { throw new EntityNotFoundException(BUILDING_NOT_FOUND); });
 
         String address = buildingServiceModel.getAddress().trim();
-        if (this.buildingRepository.findByIdAndAddress(buildingId, address).isPresent()) {
+
+        if (this.buildingRepository.findByIdIsNotAndAddress(buildingId, address).isPresent()) {
             return new ResponseModel<>(buildingServiceModel, new ErrorContainer(
                     Map.of("address", Set.of(String.format(ADDRESS_OCCUPIED, address)))));
         }

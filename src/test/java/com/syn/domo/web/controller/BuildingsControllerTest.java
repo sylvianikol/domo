@@ -26,8 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -44,7 +43,7 @@ class BuildingsControllerTest extends AbstractTest {
     private String BUILDING_2_ID;
     private String BUILDING_1_NAME;
     private String NEIGHBOURHOOD;
-    private String BUILDING_1_ADDRESS;
+    private String BUILDING_2_ADDRESS;
     private final String URI = "/v1/buildings";
 
     @BeforeEach
@@ -52,12 +51,12 @@ class BuildingsControllerTest extends AbstractTest {
         this.tearDown();
 
         Building building1 = new Building("TestBuilding 1",
-                "Test neighbourhood 1", "TestAddress 1",3,
+                "Test neighbourhood", "TestAddress 1",3,
                 BigDecimal.valueOf(5), BigDecimal.valueOf(100), LocalDate.now());
         this.buildingRepository.saveAndFlush(building1);
 
         Building building2 = new Building("TestBuilding 2",
-                "Test neighbourhood 2", "TestAddress 2",5,
+                "Test neighbourhood", "TestAddress 2",5,
                 BigDecimal.valueOf(5), BigDecimal.valueOf(100), LocalDate.now());
         this.buildingRepository.saveAndFlush(building2);
 
@@ -65,7 +64,7 @@ class BuildingsControllerTest extends AbstractTest {
         BUILDING_2_ID = building2.getId();
         BUILDING_1_NAME = building1.getName();
         NEIGHBOURHOOD = building1.getNeighbourhood();
-        BUILDING_1_ADDRESS = building1.getAddress();
+        BUILDING_2_ADDRESS = building2.getAddress();
     }
 
     @AfterEach
@@ -174,8 +173,8 @@ class BuildingsControllerTest extends AbstractTest {
     @Test
     void test_add_isUnprocessableWhenAddressOccupied() throws Exception {
         BuildingBindingModel buildingBindingModel =
-                new BuildingBindingModel("New Building", "Test Neighbourhood",
-                        BUILDING_1_ADDRESS, 4,
+                new BuildingBindingModel("New Building", NEIGHBOURHOOD,
+                        BUILDING_2_ADDRESS, 4,
                         BigDecimal.valueOf(0), BigDecimal.valueOf(5));
 
         String inputJson = super.mapToJson(buildingBindingModel);
@@ -185,7 +184,7 @@ class BuildingsControllerTest extends AbstractTest {
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.errorContainer.errors.address.[0]",
-                        is(String.format(ADDRESS_OCCUPIED, BUILDING_1_ADDRESS))));
+                        is(String.format(ADDRESS_OCCUPIED, BUILDING_2_ADDRESS))));
     }
 
     @Test
@@ -242,20 +241,24 @@ class BuildingsControllerTest extends AbstractTest {
     }
 
     @Test
-    void test_edit_isUnprocessableWhenAddressOccupied() throws Exception {
-        BuildingBindingModel buildingBindingModel =
-                new BuildingBindingModel("New name", "New Neighbourhood",
-                        BUILDING_1_ADDRESS, 2,
-                        BigDecimal.valueOf(0), BigDecimal.valueOf(5));
+    void test_edit_AddressOccupied() throws Exception {
+
+        BuildingBindingModel buildingBindingModel = new BuildingBindingModel();
+        buildingBindingModel.setName("New Name");
+        buildingBindingModel.setNeighbourhood(NEIGHBOURHOOD);
+        buildingBindingModel.setAddress(BUILDING_2_ADDRESS);
+        buildingBindingModel.setFloors(2);
+        buildingBindingModel.setBudget(BigDecimal.ZERO);
+        buildingBindingModel.setBaseFee(BigDecimal.ZERO);
 
         String inputJson = super.mapToJson(buildingBindingModel);
 
-        this.mvc.perform(put(URI + "/{buildingId}", BUILDING_2_ID)
+        this.mvc.perform(put(URI + "/" + BUILDING_1_ID)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(jsonPath("$.errorContainer.errors.address.[0]",
-                        is(String.format(ADDRESS_OCCUPIED, BUILDING_1_ADDRESS))));
+                .andExpect(jsonPath("$.errorContainer.errors.address[0]",
+                        is(String.format(ADDRESS_OCCUPIED, BUILDING_2_ADDRESS))));
 
     }
 

@@ -65,28 +65,10 @@ class BuildingRepositoryTest {
     }
 
     @Test
-    void test_findByIdAndAddress_isPresent() {
+    void test_findByIdIsNotAndAddress_isPresent() {
         Optional<Building> found = this.buildingRepository
-                .findByIdAndAddress(BUILDING_ID, BUILDING_ADDRESS);
+                .findByIdIsNotAndAddress("0", BUILDING_ADDRESS);
         assertThat(found).isPresent();
-        assertEquals(found.get().getId(), BUILDING_ID);
-        assertEquals(found.get().getAddress(), BUILDING_ADDRESS);
-    }
-
-    @Test
-    void test_findByIdAndAddress_isEmpty() {
-        Optional<Building> found = this.buildingRepository
-                .findByIdAndAddress("0", BUILDING_ADDRESS);
-        assertThat(found).isEmpty();
-
-        found = this.buildingRepository
-                .findByIdAndAddress(BUILDING_ID, "invalid address");
-        assertThat(found).isEmpty();
-
-        found = this.buildingRepository
-                .findByIdAndAddress("0", "invalid address");
-        assertThat(found).isEmpty();
-
     }
 
     @Test

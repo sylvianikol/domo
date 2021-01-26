@@ -1,6 +1,5 @@
 package com.syn.domo.web.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.syn.domo.model.binding.ChildBindingModel;
 import com.syn.domo.model.entity.*;
 import com.syn.domo.repository.*;
@@ -14,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

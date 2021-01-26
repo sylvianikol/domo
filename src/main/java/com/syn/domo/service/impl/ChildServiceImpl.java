@@ -73,13 +73,13 @@ public class ChildServiceImpl implements ChildService {
 
     @Override
     @Transactional
-    public ResponseModel<ChildServiceModel> add(ChildServiceModel childServiceModel,
+    public ResponseModel<ChildServiceModel> add(ChildServiceModel childToAdd,
                                                 String buildingId, String apartmentId,
                                                 Set<String> parentIds) {
 
-        if (!this.validationUtil.isValid(childServiceModel)) {
-            return new ResponseModel<>(childServiceModel,
-                    this.validationUtil.violations(childServiceModel));
+        if (!this.validationUtil.isValid(childToAdd)) {
+            return new ResponseModel<>(childToAdd,
+                    this.validationUtil.violations(childToAdd));
         }
 
         if (this.buildingService.get(buildingId).isEmpty()) {
@@ -98,15 +98,15 @@ public class ChildServiceImpl implements ChildService {
             throw new UnprocessableEntityException(PARENTS_NOT_FOUND);
         }
 
-        String firstName = childServiceModel.getFirstName().trim();
-        String lastName = childServiceModel.getLastName().trim();
+        String firstName = childToAdd.getFirstName().trim();
+        String lastName = childToAdd.getLastName().trim();
 
         if (this.childExistsInApartment(firstName, lastName, apartmentId, parents)) {
             throw new EntityExistsException(String.format(CHILD_ALREADY_EXISTS,
                     firstName, lastName, apartmentServiceModel.getNumber()));
         }
 
-        Child child = this.modelMapper.map(childServiceModel, Child.class);
+        Child child = this.modelMapper.map(childToAdd, Child.class);
         child.setAddedOn(LocalDate.now());
         child.setApartment(this.modelMapper.map(apartmentServiceModel, Apartment.class));
 

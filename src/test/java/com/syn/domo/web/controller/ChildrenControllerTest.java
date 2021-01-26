@@ -1,5 +1,6 @@
 package com.syn.domo.web.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.syn.domo.model.binding.ChildBindingModel;
 import com.syn.domo.model.entity.*;
 import com.syn.domo.repository.*;
@@ -56,6 +57,9 @@ class ChildrenControllerTest extends AbstractTest {
     private String PARENT_2_ID;
     private String CHILD_1_ID;
     private String CHILD_2_ID;
+    private String CHILD_1_FIRST_NAME;
+    private String CHILD_1_LAST_NAME;
+    private String APARTMENT_NUMBER;
     private final String URI = "/v1/children";
 
     @BeforeEach
@@ -103,6 +107,9 @@ class ChildrenControllerTest extends AbstractTest {
         PARENT_2_ID = parent2.getId();
         CHILD_1_ID = child1.getId();
         CHILD_2_ID = child2.getId();
+        CHILD_1_FIRST_NAME = child1.getFirstName();
+        CHILD_1_LAST_NAME = child1.getLastName();
+        APARTMENT_NUMBER = apartment.getNumber();
     }
 
     @AfterEach
@@ -403,6 +410,25 @@ class ChildrenControllerTest extends AbstractTest {
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().string(PARENTS_NOT_FOUND));
+    }
+
+    @Test
+    void test_add_throwsIfChildExistsInApartment() throws Exception {
+        ChildBindingModel childToAdd = new ChildBindingModel();
+        childToAdd.setFirstName(CHILD_1_FIRST_NAME);
+        childToAdd.setLastName(CHILD_1_LAST_NAME);
+
+        String inputJson = super.mapToJson(childToAdd);
+
+        this.mvc.perform(post(URI + "/add")
+                .param("buildingId", BUILDING_ID)
+                .param("apartmentId", APARTMENT_ID)
+                .param("parentIds", PARENT_1_ID, PARENT_2_ID)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
+                .andDo(print())
+                .andExpect(status().isConflict())
+                .andExpect(content().string(String.format(CHILD_ALREADY_EXISTS,
+                        CHILD_1_FIRST_NAME, CHILD_1_LAST_NAME, APARTMENT_NUMBER)));
     }
 
     @Test

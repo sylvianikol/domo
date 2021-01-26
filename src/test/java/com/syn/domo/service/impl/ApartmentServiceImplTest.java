@@ -4,6 +4,7 @@ import com.syn.domo.model.entity.*;
 import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.repository.ApartmentRepository;
+import com.syn.domo.service.ApartmentService;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.ChildService;
 import com.syn.domo.service.ResidentService;
@@ -16,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
@@ -27,32 +29,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-@ExtendWith(MockitoExtension.class)
 class ApartmentServiceImplTest {
 
-    private ApartmentServiceImpl apartmentService;
+    @Autowired
+    private ApartmentService apartmentService;
 
-    @Mock
+    @MockBean
     private ApartmentRepository apartmentRepository;
-    @Autowired
-    private BuildingService buildingService;
-    @Autowired
-    private ResidentService residentService;
-    @Autowired
-    private ChildService childService;
-    @Autowired
-    private ModelMapper modelMapper;
-    @Autowired
-    private ValidationUtil validationUtil;
-
-    @BeforeEach
-    void setUp() {
-        this.apartmentService = new ApartmentServiceImpl(
-                apartmentRepository, buildingService,
-                residentService, childService,
-                modelMapper, validationUtil
-        );
-    }
 
     @Test
     void test_getAll_returnsAll() {

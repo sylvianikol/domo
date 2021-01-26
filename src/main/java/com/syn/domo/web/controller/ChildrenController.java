@@ -1,6 +1,5 @@
 package com.syn.domo.web.controller;
 
-import com.syn.domo.common.ValidationErrorMessages;
 import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.model.binding.ChildBindingModel;
 import com.syn.domo.model.service.ChildServiceModel;
@@ -9,7 +8,6 @@ import com.syn.domo.service.ChildService;
 import com.syn.domo.web.controller.namespace.ChildrenNamespace;
 import com.syn.domo.web.filter.ChildFilter;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -28,7 +24,6 @@ import org.springframework.data.domain.Pageable;
 
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_FAILED;
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_SUCCESSFUL;
-import static com.syn.domo.common.ValidationErrorMessages.*;
 
 @RestController
 public class ChildrenController implements ChildrenNamespace {

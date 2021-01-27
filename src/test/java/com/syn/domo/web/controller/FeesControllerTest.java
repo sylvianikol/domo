@@ -391,7 +391,8 @@ class FeesControllerTest extends AbstractTest {
         this.mvc.perform(delete(URI + "/{feeId}", "0"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(FEE_NOT_FOUND));
+                .andExpect(jsonPath("$.statusCode", is(404)))
+                .andExpect(jsonPath("$.message", is(FEE_NOT_FOUND)));
     }
 
 }

@@ -365,7 +365,7 @@ class ResidentsControllerTest extends AbstractTest {
                 .andDo(print())
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.statusCode", is(409)))
-                .andExpect(jsonPath("$.message", is(ENTITY_EXISTS)))
+                .andExpect(jsonPath("$.message", is(DATA_CONFLICT)))
                 .andExpect(jsonPath("$.errorContainer.errors.email[0]",
                         is(String.format(EMAIL_ALREADY_USED, RESIDENT_1_EMAIL))));
     }
@@ -384,7 +384,7 @@ class ResidentsControllerTest extends AbstractTest {
                 .andDo(print())
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.statusCode", is(409)))
-                .andExpect(jsonPath("$.message", is(ENTITY_EXISTS)))
+                .andExpect(jsonPath("$.message", is(DATA_CONFLICT)))
                 .andExpect(jsonPath("$.errorContainer.errors.phoneNumber[0]",
                         is(String.format(PHONE_ALREADY_USED, RESIDENT_1_PHONE))));
     }
@@ -447,7 +447,7 @@ class ResidentsControllerTest extends AbstractTest {
                 .andDo(print())
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.statusCode", is(409)))
-                .andExpect(jsonPath("$.message", is(ENTITY_EXISTS)))
+                .andExpect(jsonPath("$.message", is(DATA_CONFLICT)))
                 .andExpect(jsonPath("$.errorContainer.errors.email[0]",
                         is(String.format(EMAIL_ALREADY_USED, RESIDENT_1_EMAIL))));
     }
@@ -464,7 +464,7 @@ class ResidentsControllerTest extends AbstractTest {
                 .andDo(print())
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.statusCode", is(409)))
-                .andExpect(jsonPath("$.message", is(ENTITY_EXISTS)))
+                .andExpect(jsonPath("$.message", is(DATA_CONFLICT)))
                 .andExpect(jsonPath("$.errorContainer.errors.phoneNumber[0]",
                         is(String.format(PHONE_ALREADY_USED, RESIDENT_1_PHONE))));
     }

@@ -2,16 +2,16 @@ package com.syn.domo.exception;
 
 import com.syn.domo.error.ErrorContainer;
 
-public class DomoEntityExistsException extends RuntimeException {
+public class DataConflictException extends RuntimeException {
 
     private ErrorContainer errorContainer;
 
-    public DomoEntityExistsException(String message) {
+    public DataConflictException(String message) {
         super(message);
         this.errorContainer = new ErrorContainer();
     }
 
-    public DomoEntityExistsException(String message, ErrorContainer errorContainer) {
+    public DataConflictException(String message, ErrorContainer errorContainer) {
         super(message);
         this.errorContainer = errorContainer;
     }

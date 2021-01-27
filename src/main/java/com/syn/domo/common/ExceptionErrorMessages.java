@@ -2,8 +2,7 @@ package com.syn.domo.common;
 
 public class ExceptionErrorMessages {
 
-    public static final String ENTITY_EXISTS =
-            "Entity Already Exists!";
+    public static final String DATA_CONFLICT = "Data processing conflict occurred!";
 
     public static final String APARTMENT_EXISTS =
             "Apartment No.%s already exists in %s!";

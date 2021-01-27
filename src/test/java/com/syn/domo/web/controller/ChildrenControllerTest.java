@@ -427,7 +427,7 @@ class ChildrenControllerTest extends AbstractTest {
                 .andDo(print())
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.statusCode", is(409)))
-                .andExpect(jsonPath("$.message", is(ENTITY_EXISTS)))
+                .andExpect(jsonPath("$.message", is(DATA_CONFLICT)))
                 .andExpect(jsonPath("$.errorContainer.errors.childExists[0]",
                         is(String.format(CHILD_ALREADY_EXISTS, childToAdd.getFirstName(),
                                 childToAdd.getLastName(), APARTMENT_NUMBER))));

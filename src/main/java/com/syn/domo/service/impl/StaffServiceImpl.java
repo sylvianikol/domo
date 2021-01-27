@@ -1,7 +1,7 @@
 package com.syn.domo.service.impl;
 
 import com.syn.domo.error.ErrorContainer;
-import com.syn.domo.exception.DomoEntityExistsException;
+import com.syn.domo.exception.DataConflictException;
 import com.syn.domo.exception.DomoEntityNotFoundException;
 import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.Building;
@@ -95,13 +95,13 @@ public class StaffServiceImpl implements StaffService {
 
         String email = staffToAdd.getEmail();
         if (this.userService.getByEmail(email).isPresent()) {
-            throw new DomoEntityExistsException(EMAIL_ALREADY_USED, new ErrorContainer(Map.of("email",
+            throw new DataConflictException(EMAIL_ALREADY_USED, new ErrorContainer(Map.of("email",
                     Set.of(String.format(EMAIL_ALREADY_USED, email)))));
         }
 
         String phoneNumber = staffToAdd.getPhoneNumber();
         if (this.userService.getByPhoneNumber(phoneNumber).isPresent()) {
-            throw new DomoEntityExistsException(PHONE_ALREADY_USED, new ErrorContainer(Map.of("phoneNumber",
+            throw new DataConflictException(PHONE_ALREADY_USED, new ErrorContainer(Map.of("phoneNumber",
                     Set.of(String.format(PHONE_ALREADY_USED, phoneNumber)))));
         }
 
@@ -135,13 +135,13 @@ public class StaffServiceImpl implements StaffService {
 
         String email = staffToEdit.getEmail();
         if (this.userService.notUniqueEmail(email, staffId)) {
-            throw new DomoEntityExistsException(EMAIL_ALREADY_USED, new ErrorContainer(Map.of("email",
+            throw new DataConflictException(EMAIL_ALREADY_USED, new ErrorContainer(Map.of("email",
                     Set.of(String.format(EMAIL_ALREADY_USED, email)))));
         }
 
         String phoneNumber = staffToEdit.getPhoneNumber();
         if (this.userService.notUniquePhoneNumber(phoneNumber, staffId)) {
-            throw new DomoEntityExistsException(PHONE_ALREADY_USED, new ErrorContainer(Map.of("phoneNumber",
+            throw new DataConflictException(PHONE_ALREADY_USED, new ErrorContainer(Map.of("phoneNumber",
                     Set.of(String.format(PHONE_ALREADY_USED, phoneNumber)))));
         }
 

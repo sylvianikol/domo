@@ -235,7 +235,7 @@ class ApartmentsControllerTest extends AbstractTest {
                 .andDo(print())
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.statusCode", is(409)))
-                .andExpect(jsonPath("$.message", is(ENTITY_EXISTS)))
+                .andExpect(jsonPath("$.message", is(DATA_CONFLICT)))
                 .andExpect(jsonPath("$.errorContainer.errors.number[0]",
                         is(String.format(APARTMENT_EXISTS, "1", BUILDING_NAME))));
     }
@@ -339,7 +339,7 @@ class ApartmentsControllerTest extends AbstractTest {
                 .andDo(print())
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.statusCode", is(409)))
-                .andExpect(jsonPath("$.message", is(ENTITY_EXISTS)))
+                .andExpect(jsonPath("$.message", is(DATA_CONFLICT)))
                 .andExpect(jsonPath("$.errorContainer.errors.duplicate[0]",
                         is(String.format(APARTMENT_EXISTS,apartment.getNumber(), BUILDING_NAME))));
 

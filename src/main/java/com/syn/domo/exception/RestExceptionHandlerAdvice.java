@@ -39,10 +39,10 @@ public class RestExceptionHandlerAdvice {
                 ex.getErrorContainer());
     }
 
-    @ExceptionHandler(DomoEntityExistsException.class)
+    @ExceptionHandler(DataConflictException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     @ResponseBody
-    public ErrorResponse handleEntityExistsException(DomoEntityExistsException ex, WebRequest request) {
+    public ErrorResponse handleEntityExistsException(DataConflictException ex, WebRequest request) {
         log.error(ex.getMessage());
         return new ErrorResponse(
                 HttpStatus.CONFLICT.value(),

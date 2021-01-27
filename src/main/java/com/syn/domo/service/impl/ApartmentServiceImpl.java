@@ -1,7 +1,7 @@
 package com.syn.domo.service.impl;
 
 import com.syn.domo.error.ErrorContainer;
-import com.syn.domo.exception.DomoEntityExistsException;
+import com.syn.domo.exception.DataConflictException;
 import com.syn.domo.exception.DomoEntityNotFoundException;
 import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.Apartment;
@@ -96,7 +96,7 @@ public class ApartmentServiceImpl implements ApartmentService {
 
         String apartmentNumber = apartmentToAdd.getNumber();
         if (this.alreadyExistsApartmentNumber(apartmentNumber, buildingId)) {
-            throw new DomoEntityExistsException(ENTITY_EXISTS,
+            throw new DataConflictException(DATA_CONFLICT,
                     new ErrorContainer(Map.of("number", Set.of(
                             String.format(APARTMENT_EXISTS, apartmentNumber, buildingServiceModel.getName())))));
 
@@ -139,7 +139,7 @@ public class ApartmentServiceImpl implements ApartmentService {
                 .getDuplicateApartment(newNumber, building.getId(), apartmentId);
 
         if (duplicateApartment.isPresent()) {
-            throw new DomoEntityExistsException(ENTITY_EXISTS, new ErrorContainer(Map.of("duplicate",
+            throw new DataConflictException(DATA_CONFLICT, new ErrorContainer(Map.of("duplicate",
                     Set.of(String.format(APARTMENT_EXISTS, newNumber, building.getName())))));
         }
 

@@ -1,7 +1,7 @@
 package com.syn.domo.service.impl;
 
 import com.syn.domo.error.ErrorContainer;
-import com.syn.domo.exception.DomoEntityExistsException;
+import com.syn.domo.exception.DataConflictException;
 import com.syn.domo.exception.DomoEntityNotFoundException;
 import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.Building;
@@ -126,7 +126,7 @@ public class BuildingServiceImpl implements BuildingService {
         String neighbourhood = buildingToEdit.getNeighbourhood().trim();
 
         if (this.buildingNameExistsInNeighbourhood(buildingName, neighbourhood, buildingId)) {
-            throw new DomoEntityExistsException(ENTITY_EXISTS, new ErrorContainer(Map.of("nameExists",
+            throw new DataConflictException(DATA_CONFLICT, new ErrorContainer(Map.of("nameExists",
                             Set.of(String.format(BUILDING_NAME_EXISTS, buildingName, neighbourhood)))));
         }
 

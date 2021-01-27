@@ -100,7 +100,7 @@ public class ChildServiceImpl implements ChildService {
         String lastName = childToAdd.getLastName().trim();
 
         if (this.childExistsInApartment(firstName, lastName, apartmentId, parents)) {
-            throw new DomoEntityExistsException(ENTITY_EXISTS,
+            throw new DataConflictException(DATA_CONFLICT,
                     new ErrorContainer(Map.of("childExists", Set.of(String.format(CHILD_ALREADY_EXISTS,
                             firstName, lastName, apartmentServiceModel.getNumber() )))));
 

@@ -26,7 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static com.syn.domo.common.ExceptionErrorMessages.BUILDING_NOT_FOUND;
-import static com.syn.domo.common.ExceptionErrorMessages.ENTITY_EXISTS;
+import static com.syn.domo.common.ExceptionErrorMessages.DATA_CONFLICT;
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_FAILED;
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_SUCCESSFUL;
 import static com.syn.domo.common.ValidationErrorMessages.*;
@@ -315,7 +315,7 @@ class BuildingsControllerTest extends AbstractTest {
                 .andDo(print())
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.statusCode", is(409)))
-                .andExpect(jsonPath("$.message", is(ENTITY_EXISTS)))
+                .andExpect(jsonPath("$.message", is(DATA_CONFLICT)))
                 .andExpect(jsonPath("$.errorContainer.errors.nameExists[0]",
                         is(String.format(BUILDING_NAME_EXISTS, BUILDING_2_NAME, NEIGHBOURHOOD))));
 

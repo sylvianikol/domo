@@ -115,18 +115,4 @@ class ChildRepositoryTest {
                 .findByFirstNameAndLastNameAndApartmentId(FIRST_NAME, "invalid", APARTMENT_ID);
         assertThat(found).isEmpty();
     }
-
-    @Test
-    void test_severParentRelations_success() {
-        int result = this.childRepository.severParentRelations(CHILD_ID);
-
-        assertTrue(result > 0);
-    }
-
-    @Test
-    void test_severParentRelations_fail() {
-        int result = this.childRepository.severParentRelations("invalidId");
-
-        assertEquals(result, 0);
-    }
 }

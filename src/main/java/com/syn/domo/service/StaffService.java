@@ -1,7 +1,6 @@
 package com.syn.domo.service;
 
 import com.syn.domo.model.service.StaffServiceModel;
-import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.web.filter.StaffFilter;
 import org.springframework.data.domain.Pageable;
 
@@ -15,9 +14,9 @@ public interface StaffService {
 
     Optional<StaffServiceModel> get(String staffId);
 
-    ResponseModel<StaffServiceModel> add(StaffServiceModel staffServiceModel) throws MessagingException;
+    StaffServiceModel add(StaffServiceModel staffServiceModel) throws MessagingException, InterruptedException;
 
-    ResponseModel<StaffServiceModel> edit(StaffServiceModel staffServiceModel, String staffId);
+    StaffServiceModel edit(StaffServiceModel staffServiceModel, String staffId);
 
     int deleteAll(StaffFilter staffFilter);
 

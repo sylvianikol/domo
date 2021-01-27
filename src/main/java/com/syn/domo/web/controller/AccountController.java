@@ -3,8 +3,6 @@ package com.syn.domo.web.controller;
 import com.syn.domo.model.binding.UserActivateBindingModel;
 import com.syn.domo.model.service.UserActivateServiceModel;
 import com.syn.domo.model.service.UserServiceModel;
-import com.syn.domo.model.view.BaseUserViewModel;
-import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.model.view.UserViewModel;
 import com.syn.domo.service.UserService;
 import com.syn.domo.web.controller.namespace.AccountNamespace;
@@ -46,17 +44,14 @@ public class AccountController implements AccountNamespace {
                                             BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
 
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.unprocessableEntity()
-                    .body(new ResponseModel<>(userActivateBindingModel, bindingResult));
+            return ResponseEntity.unprocessableEntity().body(userActivateBindingModel);
         }
 
-        ResponseModel<UserActivateServiceModel> responseModel = this.userService
+        UserActivateServiceModel userActivateServiceModel = this.userService
                 .createPassword(userId, this.modelMapper
                         .map(userActivateBindingModel, UserActivateServiceModel.class));
 
-        return responseModel.hasErrors()
-                ? ResponseEntity.unprocessableEntity().body(responseModel)
-                : ResponseEntity.status(HttpStatus.NO_CONTENT)
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .location(uriComponentsBuilder.path(BaseNamespace.BASE_URI).build().toUri())
                 .build();
     }

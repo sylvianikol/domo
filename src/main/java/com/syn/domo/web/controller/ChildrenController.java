@@ -1,6 +1,5 @@
 package com.syn.domo.web.controller;
 
-import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.model.binding.ChildBindingModel;
 import com.syn.domo.model.service.ChildServiceModel;
 import com.syn.domo.model.view.ChildViewModel;
@@ -75,18 +74,15 @@ public class ChildrenController implements ChildrenNamespace {
                                  BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
 
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.unprocessableEntity()
-                    .body(new ResponseModel<>(childBindingModel, bindingResult));
+            return ResponseEntity.unprocessableEntity().body(childBindingModel);
         }
 
-        ResponseModel<ChildServiceModel> responseModel = this.childService.add(
+        ChildServiceModel childServiceModel = this.childService.add(
                 this.modelMapper.map(childBindingModel, ChildServiceModel.class),
                 buildingId, apartmentId, parentIds);
 
-        return responseModel.hasErrors()
-                ? ResponseEntity.unprocessableEntity().body(responseModel)
-                : ResponseEntity.created(uriComponentsBuilder.path(URI_CHILDREN + "/{childId}")
-                .buildAndExpand(responseModel.getId())
+        return ResponseEntity.created(uriComponentsBuilder.path(URI_CHILDREN + "/{childId}")
+                .buildAndExpand(childServiceModel.getId())
                 .toUri()).build();
     }
 
@@ -96,19 +92,16 @@ public class ChildrenController implements ChildrenNamespace {
                                   BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
 
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.unprocessableEntity()
-                    .body(new ResponseModel<>(childBindingModel, bindingResult));
+            return ResponseEntity.unprocessableEntity().body(childBindingModel);
         }
 
-        ResponseModel<ChildServiceModel> responseModel = this.childService.edit(
+        ChildServiceModel childServiceModel = this.childService.edit(
                 this.modelMapper.map(childBindingModel, ChildServiceModel.class), childId);
 
-        return responseModel.hasErrors()
-                ? ResponseEntity.unprocessableEntity().body(responseModel)
-                : ResponseEntity.status(HttpStatus.NO_CONTENT)
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .location(uriComponentsBuilder.path(URI_CHILDREN + "/{childId}")
-                        .buildAndExpand(childId)
-                        .toUri()).build();
+                        .buildAndExpand(childId).toUri())
+                .build();
     }
 
     @DeleteMapping("/delete")

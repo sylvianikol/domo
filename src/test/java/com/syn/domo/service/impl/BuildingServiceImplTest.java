@@ -1,5 +1,6 @@
 package com.syn.domo.service.impl;
 
+import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.model.view.ResponseModel;
@@ -49,12 +50,7 @@ class BuildingServiceImplTest {
                 "TestAddress",3, BigDecimal.valueOf(5),
                 BigDecimal.valueOf(100), null);
 
-        ResponseModel<BuildingServiceModel> responseModel =
-                this.buildingService.add(buildingToAdd);
-
-        Map<String, Set<String>> errors = responseModel.getErrorContainer().getErrors();
-
-        assertEquals(errors.get("name"), Set.of(BUILDING_NAME_NOT_EMPTY));
+        assertThrows(UnprocessableEntityException.class, () -> this.buildingService.add(buildingToAdd));
     }
 
     @Test
@@ -64,11 +60,8 @@ class BuildingServiceImplTest {
                 "TestAddress",3, BigDecimal.valueOf(5),
                 BigDecimal.valueOf(100), null);
 
-        ResponseModel<BuildingServiceModel> responseModel =
-                this.buildingService.edit(buildingServiceModel, "");
+        assertThrows(UnprocessableEntityException.class, () ->
+                this.buildingService.edit(buildingServiceModel, ""));
 
-        Map<String, Set<String>> errors = responseModel.getErrorContainer().getErrors();
-
-        assertEquals(errors.get("name"), Set.of(BUILDING_NAME_NOT_EMPTY));
     }
 }

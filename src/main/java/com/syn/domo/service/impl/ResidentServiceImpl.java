@@ -1,9 +1,11 @@
 package com.syn.domo.service.impl;
 
 import com.syn.domo.error.ErrorContainer;
+import com.syn.domo.exception.DomoEntityExistsException;
+import com.syn.domo.exception.DomoEntityNotFoundException;
+import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.*;
 import com.syn.domo.model.service.*;
-import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.notification.service.NotificationService;
 import com.syn.domo.repository.ResidentRepository;
 import com.syn.domo.service.*;
@@ -13,7 +15,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
-import javax.persistence.EntityNotFoundException;
 
 import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;
@@ -21,8 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.syn.domo.common.ExceptionErrorMessages.*;
-import static com.syn.domo.common.ValidationErrorMessages.EMAIL_ALREADY_USED;
-import static com.syn.domo.common.ValidationErrorMessages.PHONE_ALREADY_USED;
+import static com.syn.domo.common.ValidationErrorMessages.*;
 
 @Service
 public class ResidentServiceImpl implements ResidentService  {
@@ -77,41 +77,37 @@ public class ResidentServiceImpl implements ResidentService  {
     }
 
     @Override
-    public ResponseModel<ResidentServiceModel> add(ResidentServiceModel residentToAdd,
+    public ResidentServiceModel add(ResidentServiceModel residentToAdd,
                                                    String buildingId, String apartmentId) throws MessagingException, InterruptedException {
 
         if (!this.validationUtil.isValid(residentToAdd)) {
-            return new ResponseModel<>(residentToAdd,
+            throw new UnprocessableEntityException(VALIDATION_FAILED,
                     this.validationUtil.getViolations(residentToAdd));
         }
 
         if (this.buildingService.get(buildingId).isEmpty()) {
-            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
+            throw new DomoEntityNotFoundException(BUILDING_NOT_FOUND);
         }
 
         ApartmentServiceModel apartmentServiceModel = this.apartmentService
                 .getByIdAndBuildingId(apartmentId, buildingId)
-                .orElseThrow(() -> { throw new EntityNotFoundException(APARTMENT_NOT_FOUND); });
+                .orElseThrow(() -> { throw new DomoEntityNotFoundException(APARTMENT_NOT_FOUND); });
 
         String email = residentToAdd.getEmail();
         if (this.userService.getByEmail(email).isPresent()) {
-            return new ResponseModel<>(residentToAdd,
-                    new ErrorContainer(Map.of("email",
-                            Set.of(String.format(EMAIL_ALREADY_USED, email)))
-            ));
+            throw new DomoEntityExistsException(EMAIL_ALREADY_USED, new ErrorContainer(Map.of("email",
+                    Set.of(String.format(EMAIL_ALREADY_USED, email)))));
         }
 
         String phoneNumber = residentToAdd.getPhoneNumber();
         if (this.userService.getByPhoneNumber(phoneNumber).isPresent()) {
-            return new ResponseModel<>(residentToAdd,
-                    new ErrorContainer(Map.of("phoneNumber",
-                            Set.of(String.format(PHONE_ALREADY_USED, phoneNumber)))
-                    ));
+            throw new DomoEntityExistsException(PHONE_ALREADY_USED, new ErrorContainer(Map.of("phoneNumber",
+                    Set.of(String.format(PHONE_ALREADY_USED, phoneNumber)))));
         }
 
         RoleServiceModel roleServiceModel = this.roleService
                 .getByName(UserRole.RESIDENT)
-                .orElseThrow(() -> { throw new EntityNotFoundException(ROLE_NOT_FOUND); });
+                .orElseThrow(() -> { throw new DomoEntityNotFoundException(ROLE_NOT_FOUND); });
 
         Resident resident = this.modelMapper.map(residentToAdd, Resident.class);
 
@@ -126,47 +122,41 @@ public class ResidentServiceImpl implements ResidentService  {
 
         this.notificationService.sendActivationEmail(addedResident);
 
-        return new ResponseModel<>(resident.getId(), addedResident);
+        return addedResident;
     }
 
     @Override
-    public ResponseModel<ResidentServiceModel> edit(ResidentServiceModel residentServiceModel,
+    public ResidentServiceModel edit(ResidentServiceModel residentToEdit,
                                                     String residentId) {
 
-        if (!this.validationUtil.isValid(residentServiceModel)) {
-            return new ResponseModel<>(residentServiceModel,
-                    this.validationUtil.getViolations(residentServiceModel));
+        if (!this.validationUtil.isValid(residentToEdit)) {
+            throw new UnprocessableEntityException(VALIDATION_FAILED,
+                    this.validationUtil.getViolations(residentToEdit));
         }
 
-        if (this.userService.notUniqueEmail(residentServiceModel.getEmail(), residentId)) {
-            System.out.println();
-            return new ResponseModel<>(residentServiceModel,
-                    new ErrorContainer(Map.of("email",
-                            Set.of(String.format(EMAIL_ALREADY_USED,
-                                    residentServiceModel.getEmail())))
-                    ));
+        String email = residentToEdit.getEmail();
+        if (this.userService.notUniqueEmail(email, residentId)) {
+            throw new DomoEntityExistsException(EMAIL_ALREADY_USED, new ErrorContainer(Map.of("email",
+                    Set.of(String.format(EMAIL_ALREADY_USED, email)))));
         }
 
-        if (this.userService.notUniquePhoneNumber(residentServiceModel.getPhoneNumber(), residentId)) {
-            return new ResponseModel<>(residentServiceModel,
-                    new ErrorContainer(Map.of("phoneNumber",
-                            Set.of(String.format(PHONE_ALREADY_USED,
-                                    residentServiceModel.getPhoneNumber())))
-                    ));
+        String phoneNumber = residentToEdit.getPhoneNumber();
+        if (this.userService.notUniquePhoneNumber(phoneNumber, residentId)) {
+            throw new DomoEntityExistsException(PHONE_ALREADY_USED, new ErrorContainer(Map.of("phoneNumber",
+                    Set.of(String.format(PHONE_ALREADY_USED, phoneNumber)))));
         }
 
         Resident resident = this.residentRepository.findById(residentId)
-                .orElseThrow(() -> { throw new EntityNotFoundException(RESIDENT_NOT_FOUND); });
+                .orElseThrow(() -> { throw new DomoEntityNotFoundException(RESIDENT_NOT_FOUND); });
 
-        resident.setFirstName(residentServiceModel.getFirstName());
-        resident.setLastName(residentServiceModel.getLastName());
-        resident.setEmail(residentServiceModel.getEmail());
-        resident.setPhoneNumber(residentServiceModel.getPhoneNumber());
+        resident.setFirstName(residentToEdit.getFirstName());
+        resident.setLastName(residentToEdit.getLastName());
+        resident.setEmail(residentToEdit.getEmail());
+        resident.setPhoneNumber(residentToEdit.getPhoneNumber());
 
         this.residentRepository.saveAndFlush(resident);
 
-        return new ResponseModel<>(resident.getId(),
-                this.modelMapper.map(resident, ResidentServiceModel.class));
+        return this.modelMapper.map(resident, ResidentServiceModel.class);
     }
 
     @Override
@@ -183,7 +173,7 @@ public class ResidentServiceImpl implements ResidentService  {
     public void delete(String residentId) {
 
         Resident resident = this.residentRepository.findById(residentId)
-                .orElseThrow(() -> { throw new EntityNotFoundException(RESIDENT_NOT_FOUND); });
+                .orElseThrow(() -> { throw new DomoEntityNotFoundException(RESIDENT_NOT_FOUND); });
 
         this.residentRepository.delete(resident);
     }

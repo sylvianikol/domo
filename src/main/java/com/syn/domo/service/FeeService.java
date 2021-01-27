@@ -14,11 +14,11 @@ public interface FeeService {
 
     Optional<FeeServiceModel> get(String feeId);
 
-    FeeServiceModel pay(String userId, String feeId) throws MessagingException;
+    FeeServiceModel pay(String userId, String feeId) throws MessagingException, InterruptedException;
 
     int deleteAll(FeeFilter feeFilter);
 
     void delete(String feeId);
 
-    void generateMonthlyFees() throws MessagingException;
+    int generateMonthlyFees() throws MessagingException, InterruptedException;
 }

@@ -1,6 +1,9 @@
 package com.syn.domo.service.impl;
 
 import com.syn.domo.error.ErrorContainer;
+import com.syn.domo.exception.DomoEntityExistsException;
+import com.syn.domo.exception.DomoEntityNotFoundException;
+import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.entity.Role;
 import com.syn.domo.model.entity.Staff;
@@ -8,7 +11,6 @@ import com.syn.domo.model.entity.UserRole;
 import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.model.service.RoleServiceModel;
 import com.syn.domo.model.service.StaffServiceModel;
-import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.notification.service.NotificationService;
 import com.syn.domo.repository.StaffRepository;
 import com.syn.domo.service.BuildingService;
@@ -32,8 +34,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.syn.domo.common.ExceptionErrorMessages.*;
-import static com.syn.domo.common.ValidationErrorMessages.EMAIL_ALREADY_USED;
-import static com.syn.domo.common.ValidationErrorMessages.PHONE_ALREADY_USED;
+import static com.syn.domo.common.ValidationErrorMessages.*;
 
 @Service
 public class StaffServiceImpl implements StaffService {
@@ -85,94 +86,79 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public ResponseModel<StaffServiceModel> add(StaffServiceModel staffServiceModel)  {
+    public StaffServiceModel add(StaffServiceModel staffToAdd) throws MessagingException, InterruptedException {
 
-        if (!this.validationUtil.isValid(staffServiceModel)) {
-            return new ResponseModel<>(staffServiceModel,
-                    this.validationUtil.violations(staffServiceModel));
+        if (!this.validationUtil.isValid(staffToAdd)) {
+            throw new UnprocessableEntityException(VALIDATION_FAILED,
+                    this.validationUtil.getViolations(staffToAdd));
         }
 
-        String email = staffServiceModel.getEmail();
+        String email = staffToAdd.getEmail();
         if (this.userService.getByEmail(email).isPresent()) {
-            return new ResponseModel<>(staffServiceModel,
-                    new ErrorContainer(Map.of("email",
-                            Set.of(String.format(EMAIL_ALREADY_USED,
-                                    staffServiceModel.getEmail())))
-                    ));
+            throw new DomoEntityExistsException(EMAIL_ALREADY_USED, new ErrorContainer(Map.of("email",
+                    Set.of(String.format(EMAIL_ALREADY_USED, email)))));
         }
 
-        String phoneNumber = staffServiceModel.getPhoneNumber();
+        String phoneNumber = staffToAdd.getPhoneNumber();
         if (this.userService.getByPhoneNumber(phoneNumber).isPresent()) {
-            return new ResponseModel<>(staffServiceModel,
-                    new ErrorContainer(Map.of("phoneNumber",
-                            Set.of(String.format(PHONE_ALREADY_USED,
-                                    staffServiceModel.getPhoneNumber())))
-                    ));
+            throw new DomoEntityExistsException(PHONE_ALREADY_USED, new ErrorContainer(Map.of("phoneNumber",
+                    Set.of(String.format(PHONE_ALREADY_USED, phoneNumber)))));
         }
 
         RoleServiceModel roleServiceModel = this.roleService
                 .getByName(UserRole.STAFF)
-                .orElseThrow(() -> { throw new EntityNotFoundException(ROLE_NOT_FOUND); });
+                .orElseThrow(() -> { throw new DomoEntityNotFoundException(ROLE_NOT_FOUND); });
 
-        Staff staff = this.modelMapper.map(staffServiceModel, Staff.class);
+        Staff staff = this.modelMapper.map(staffToAdd, Staff.class);
 
         staff.setRoles(Set.of(this.modelMapper.map(roleServiceModel, Role.class)));
         staff.setAddedOn(LocalDate.now());
-        staff.setSalary(staffServiceModel.getSalary());
-        staff.setJob(staffServiceModel.getJob());
+        staff.setSalary(staffToAdd.getSalary());
+        staff.setJob(staffToAdd.getJob());
 
         this.staffRepository.saveAndFlush(staff);
 
-        StaffServiceModel serviceModel = this.modelMapper.map(staff, StaffServiceModel.class);
+        StaffServiceModel addedStaff = this.modelMapper.map(staff, StaffServiceModel.class);
 
-        try {
-            this.notificationService.sendActivationEmail(serviceModel);
-        } catch (Exception ex) {
-            log.error(ex.getMessage());
-        }
+        this.notificationService.sendActivationEmail(addedStaff);
 
-        return new ResponseModel<>(staff.getId(), serviceModel);
+        return addedStaff;
     }
 
     @Override
-    public ResponseModel<StaffServiceModel> edit(StaffServiceModel staffServiceModel, String staffId) {
+    public StaffServiceModel edit(StaffServiceModel staffToEdit, String staffId) {
 
-        if (!this.validationUtil.isValid(staffServiceModel)) {
-            return new ResponseModel<>(staffServiceModel,
-                    this.validationUtil.violations(staffServiceModel));
+        if (!this.validationUtil.isValid(staffToEdit)) {
+            throw new UnprocessableEntityException(VALIDATION_FAILED,
+                    this.validationUtil.getViolations(staffToEdit));
         }
 
-        String email = staffServiceModel.getEmail();
+        String email = staffToEdit.getEmail();
         if (this.userService.notUniqueEmail(email, staffId)) {
-            return new ResponseModel<>(staffServiceModel,
-                    new ErrorContainer(Map.of("email",
-                            Set.of(String.format(EMAIL_ALREADY_USED, email)))
-                    ));
+            throw new DomoEntityExistsException(EMAIL_ALREADY_USED, new ErrorContainer(Map.of("email",
+                    Set.of(String.format(EMAIL_ALREADY_USED, email)))));
         }
 
-        String phoneNumber = staffServiceModel.getPhoneNumber();
+        String phoneNumber = staffToEdit.getPhoneNumber();
         if (this.userService.notUniquePhoneNumber(phoneNumber, staffId)) {
-            return new ResponseModel<>(staffServiceModel,
-                    new ErrorContainer(Map.of("phoneNumber",
-                            Set.of(String.format(PHONE_ALREADY_USED, phoneNumber)))
-                    ));
+            throw new DomoEntityExistsException(PHONE_ALREADY_USED, new ErrorContainer(Map.of("phoneNumber",
+                    Set.of(String.format(PHONE_ALREADY_USED, phoneNumber)))));
         }
 
         Staff staff = this.staffRepository.findById(staffId)
-                .orElseThrow(() -> { throw new EntityNotFoundException(STAFF_NOT_FOUND); });
+                .orElseThrow(() -> { throw new DomoEntityNotFoundException(STAFF_NOT_FOUND); });
 
 
-        staff.setFirstName(staffServiceModel.getFirstName());
-        staff.setLastName(staffServiceModel.getLastName());
-        staff.setEmail(staffServiceModel.getEmail());
-        staff.setPhoneNumber(staffServiceModel.getPhoneNumber());
-        staff.setSalary(staffServiceModel.getSalary());
-        staff.setJob(staffServiceModel.getJob());
+        staff.setFirstName(staffToEdit.getFirstName());
+        staff.setLastName(staffToEdit.getLastName());
+        staff.setEmail(staffToEdit.getEmail());
+        staff.setPhoneNumber(staffToEdit.getPhoneNumber());
+        staff.setSalary(staffToEdit.getSalary());
+        staff.setJob(staffToEdit.getJob());
 
         this.staffRepository.saveAndFlush(staff);
 
-        return new ResponseModel<>(staff.getId(),
-                this.modelMapper.map(staff, StaffServiceModel.class));
+        return this.modelMapper.map(staff, StaffServiceModel.class);
     }
 
     @Override
@@ -195,7 +181,7 @@ public class StaffServiceImpl implements StaffService {
     public void delete(String staffId) {
 
         Staff staff = this.staffRepository.findById(staffId)
-                .orElseThrow(() -> { throw new EntityNotFoundException(STAFF_NOT_FOUND); });
+                .orElseThrow(() -> { throw new DomoEntityNotFoundException(STAFF_NOT_FOUND); });
 
         this.staffRepository.cancelBuildingAssignments(staff.getId());
 
@@ -206,7 +192,7 @@ public class StaffServiceImpl implements StaffService {
     public void assignBuildings(String staffId, Set<String> buildingIds) {
 
         Staff staff = this.staffRepository.findById(staffId)
-                .orElseThrow(() -> { throw new EntityNotFoundException(STAFF_NOT_FOUND); });
+                .orElseThrow(() -> { throw new DomoEntityNotFoundException(STAFF_NOT_FOUND); });
 
         Set<Building> buildings = this.buildingService.getAllByIdIn(buildingIds)
                 .stream()
@@ -226,7 +212,7 @@ public class StaffServiceImpl implements StaffService {
     public void cancelBuildingAssignments(Set<String> staffIds, String buildingId) {
 
         BuildingServiceModel buildingServiceModel = this.buildingService.get(buildingId)
-                .orElseThrow(() -> { throw new EntityNotFoundException(BUILDING_NOT_FOUND); });
+                .orElseThrow(() -> { throw new DomoEntityNotFoundException(BUILDING_NOT_FOUND); });
 
         Building building = this.modelMapper.map(buildingServiceModel, Building.class);
         Set<Staff> staff = this.staffRepository.findAllByIdIn(staffIds);

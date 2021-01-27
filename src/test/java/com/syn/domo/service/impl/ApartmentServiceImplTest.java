@@ -1,20 +1,13 @@
 package com.syn.domo.service.impl;
 
+import com.syn.domo.exception.DomoEntityNotFoundException;
+import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.*;
 import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.repository.ApartmentRepository;
 import com.syn.domo.service.ApartmentService;
-import com.syn.domo.service.BuildingService;
-import com.syn.domo.service.ChildService;
-import com.syn.domo.service.ResidentService;
-import com.syn.domo.utils.ValidationUtil;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -70,14 +63,8 @@ class ApartmentServiceImplTest {
         ApartmentServiceModel apartmentServiceModel =
                 new ApartmentServiceModel("invalid", -1, null, -1, null);
 
-        ResponseModel<ApartmentServiceModel> responseModel =
-                this.apartmentService.add(apartmentServiceModel, "1");
-
-        Map<String, Set<String>> errors = responseModel.getErrorContainer().getErrors();
-
-        assertEquals(errors.get("pets"), Set.of(PETS_MIN));
-        assertEquals(errors.get("floor"), Set.of(FLOOR_MIN));
-        assertEquals(errors.get("number"), Set.of(APARTMENT_INVALID_NUMBER));
+        assertThrows(UnprocessableEntityException.class, () ->
+                this.apartmentService.add(apartmentServiceModel, "1"));
     }
 
     @Test
@@ -85,7 +72,7 @@ class ApartmentServiceImplTest {
         ApartmentServiceModel apartmentServiceModel =
                 new ApartmentServiceModel("1", 1, null, 1, null);
 
-        assertThrows(EntityNotFoundException.class, () ->
+        assertThrows(DomoEntityNotFoundException.class, () ->
                 this.apartmentService.add(apartmentServiceModel, "1"));
     }
 
@@ -94,14 +81,8 @@ class ApartmentServiceImplTest {
         ApartmentServiceModel apartmentServiceModel =
                 new ApartmentServiceModel("invalid", -1, null, -1, null);
 
-        ResponseModel<ApartmentServiceModel> responseModel =
-                this.apartmentService.edit(apartmentServiceModel, "1");
-
-        Map<String, Set<String>> errors = responseModel.getErrorContainer().getErrors();
-
-        assertEquals(errors.get("pets"), Set.of(PETS_MIN));
-        assertEquals(errors.get("floor"), Set.of(FLOOR_MIN));
-        assertEquals(errors.get("number"), Set.of(APARTMENT_INVALID_NUMBER));
+        assertThrows(UnprocessableEntityException.class, () ->
+                this.apartmentService.edit(apartmentServiceModel, "1"));
     }
 
     @Test

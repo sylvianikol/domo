@@ -1,9 +1,7 @@
 package com.syn.domo.service;
 
-import com.syn.domo.model.service.BaseUserServiceModel;
 import com.syn.domo.model.service.UserActivateServiceModel;
 import com.syn.domo.model.service.UserServiceModel;
-import com.syn.domo.model.view.ResponseModel;
 
 import java.util.Optional;
 
@@ -13,8 +11,7 @@ public interface UserService {
 
     Optional<UserServiceModel> get(String userId);
 
-    ResponseModel<UserActivateServiceModel> createPassword(String userId,
-                                                           UserActivateServiceModel userActivateServiceModel);
+    UserActivateServiceModel createPassword(String userId, UserActivateServiceModel userActivateServiceModel);
 
     Optional<UserServiceModel> getByEmail(String email);
 

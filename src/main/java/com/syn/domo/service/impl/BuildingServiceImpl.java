@@ -1,10 +1,12 @@
 package com.syn.domo.service.impl;
 
 import com.syn.domo.error.ErrorContainer;
+import com.syn.domo.exception.DomoEntityExistsException;
+import com.syn.domo.exception.DomoEntityNotFoundException;
+import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.entity.Staff;
 import com.syn.domo.model.service.BuildingServiceModel;
-import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.repository.BuildingRepository;
 import com.syn.domo.service.*;
 import com.syn.domo.utils.ValidationUtil;
@@ -13,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Pageable;
 
 import static com.syn.domo.common.ExceptionErrorMessages.BUILDING_NOT_FOUND;
+import static com.syn.domo.common.ExceptionErrorMessages.UNPROCESSABLE_ENTITY;
 import static com.syn.domo.common.ValidationErrorMessages.*;
 
 @Service
@@ -74,72 +76,70 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public ResponseModel<BuildingServiceModel> add(BuildingServiceModel buildingServiceModel) {
+    public BuildingServiceModel add(BuildingServiceModel buildingToAdd) {
 
-        if (!this.validationUtil.isValid(buildingServiceModel)) {
-            return new ResponseModel<>(buildingServiceModel,
-                    this.validationUtil.violations(buildingServiceModel));
+        if (!this.validationUtil.isValid(buildingToAdd)) {
+            throw new UnprocessableEntityException(VALIDATION_FAILED,
+                    this.validationUtil.getViolations(buildingToAdd));
         }
 
-        String address = buildingServiceModel.getAddress().trim();
+        String address = buildingToAdd.getAddress().trim();
         if (this.buildingRepository.findByAddress(address).isPresent()) {
-            return new ResponseModel<>(buildingServiceModel, new ErrorContainer(
-                    Map.of("address", Set.of(String.format(ADDRESS_OCCUPIED, address)))));
+            throw new UnprocessableEntityException(UNPROCESSABLE_ENTITY,
+                    new ErrorContainer(Map.of("address",
+                            Set.of(String.format(ADDRESS_OCCUPIED, address)))));
         }
 
-        String buildingName = buildingServiceModel.getName().trim();
-        String neighbourhood = buildingServiceModel.getNeighbourhood().trim();
+        String buildingName = buildingToAdd.getName().trim();
+        String neighbourhood = buildingToAdd.getNeighbourhood().trim();
 
         if (this.buildingNameExistsInNeighbourhood(buildingName, neighbourhood, "")) {
-            return new ResponseModel<>(buildingServiceModel, new ErrorContainer(
-                    Map.of("nameExists", Set.of(String.format(BUILDING_NAME_EXISTS,
-                            buildingName, neighbourhood)))));
+            throw new UnprocessableEntityException(UNPROCESSABLE_ENTITY,
+                    new ErrorContainer(Map.of("nameExists",
+                            Set.of(String.format(BUILDING_NAME_EXISTS,  buildingName, neighbourhood)))));
         }
 
-        Building building = this.modelMapper.map(buildingServiceModel, Building.class);
+        Building building = this.modelMapper.map(buildingToAdd, Building.class);
         building.setAddedOn(LocalDate.now());
         this.buildingRepository.saveAndFlush(building);
 
-        return new ResponseModel<>(building.getId(),
-                this.modelMapper.map(building, BuildingServiceModel.class));
+        return this.modelMapper.map(building, BuildingServiceModel.class);
     }
 
     @Override
-    public ResponseModel<BuildingServiceModel> edit(BuildingServiceModel buildingServiceModel, String buildingId) {
+    public BuildingServiceModel edit(BuildingServiceModel buildingToEdit, String buildingId) {
 
-        if (!this.validationUtil.isValid(buildingServiceModel)) {
-            return new ResponseModel<>(buildingServiceModel,
-                    this.validationUtil.violations(buildingServiceModel));
+        if (!this.validationUtil.isValid(buildingToEdit)) {
+            throw new UnprocessableEntityException(VALIDATION_FAILED,
+                    this.validationUtil.getViolations(buildingToEdit));
         }
 
         Building building = this.buildingRepository.findById(buildingId)
-                .orElseThrow(() -> { throw new EntityNotFoundException(BUILDING_NOT_FOUND); });
+                .orElseThrow(() -> { throw new DomoEntityNotFoundException(BUILDING_NOT_FOUND); });
 
-        String address = buildingServiceModel.getAddress().trim();
+        String address = buildingToEdit.getAddress().trim();
 
         if (this.buildingRepository.findByIdIsNotAndAddress(buildingId, address).isPresent()) {
-            return new ResponseModel<>(buildingServiceModel, new ErrorContainer(
-                    Map.of("address", Set.of(String.format(ADDRESS_OCCUPIED, address)))));
+            throw new UnprocessableEntityException(UNPROCESSABLE_ENTITY,
+                    new ErrorContainer(Map.of("address", Set.of(String.format(ADDRESS_OCCUPIED, address)))));
         }
 
-        String buildingName = buildingServiceModel.getName().trim();
-        String neighbourhood = buildingServiceModel.getNeighbourhood().trim();
+        String buildingName = buildingToEdit.getName().trim();
+        String neighbourhood = buildingToEdit.getNeighbourhood().trim();
 
         if (this.buildingNameExistsInNeighbourhood(buildingName, neighbourhood, buildingId)) {
-            return new ResponseModel<>(buildingServiceModel, new ErrorContainer(
-                    Map.of("name", Set.of(String.format(BUILDING_NAME_EXISTS,
-                            buildingName, neighbourhood)))));
+            throw new DomoEntityExistsException(BUILDING_NAME_EXISTS, new ErrorContainer(Map.of("nameExists",
+                            Set.of(String.format(BUILDING_NAME_EXISTS, buildingName, neighbourhood)))));
         }
 
-        building.setName(buildingServiceModel.getName());
-        building.setNeighbourhood(buildingServiceModel.getNeighbourhood());
-        building.setAddress(buildingServiceModel.getAddress());
-        building.setFloors(buildingServiceModel.getFloors());
+        building.setName(buildingToEdit.getName());
+        building.setNeighbourhood(buildingToEdit.getNeighbourhood());
+        building.setAddress(buildingToEdit.getAddress());
+        building.setFloors(buildingToEdit.getFloors());
 
         this.buildingRepository.saveAndFlush(building);
 
-        return new ResponseModel<>(building.getId(),
-                this.modelMapper.map(building, BuildingServiceModel.class));
+        return this.modelMapper.map(building, BuildingServiceModel.class);
     }
 
     @Override
@@ -167,7 +167,7 @@ public class BuildingServiceImpl implements BuildingService {
     public void delete(String buildingId) {
 
         Building building = this.buildingRepository.findById(buildingId)
-                .orElseThrow(() -> { throw new EntityNotFoundException(BUILDING_NOT_FOUND); });
+                .orElseThrow(() -> { throw new DomoEntityNotFoundException(BUILDING_NOT_FOUND); });
 
         Set<String> staffIds = getStaffIds(building.getStaff());
 
@@ -183,7 +183,7 @@ public class BuildingServiceImpl implements BuildingService {
     public void assignStaff(String buildingId, Set<String> staffIds) {
 
         if(this.buildingRepository.findById(buildingId).isEmpty()) {
-            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
+            throw new DomoEntityNotFoundException(BUILDING_NOT_FOUND);
         }
 
         Set<Staff> staff = this.staffService.getAllByIdIn(staffIds).stream()
@@ -207,7 +207,7 @@ public class BuildingServiceImpl implements BuildingService {
     public void addToBudget(BigDecimal total, String buildingId) {
         Building building = this.buildingRepository.findById(buildingId)
                 .orElseThrow(() -> {
-                    throw new EntityNotFoundException(BUILDING_NOT_FOUND);
+                    throw new DomoEntityNotFoundException(BUILDING_NOT_FOUND);
                 });
 
         building.setBudget(building.getBudget().add(total));

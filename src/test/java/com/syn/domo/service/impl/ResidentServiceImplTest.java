@@ -1,5 +1,6 @@
 package com.syn.domo.service.impl;
 
+import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.service.ResidentServiceModel;
 import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.notification.service.NotificationService;
@@ -30,16 +31,12 @@ class ResidentServiceImplTest {
     private ResidentService residentService;
 
     @Test
-    void test_add_withInvalidData() throws MessagingException, InterruptedException {
+    void test_add_withInvalidData() {
         ResidentServiceModel residentToAdd = new ResidentServiceModel(null, "", "Doe",
                 null, "john@mail.com", "334343", false, null, null, null);
 
-        ResponseModel<ResidentServiceModel> responseModel =
-                this.residentService.add(residentToAdd, "1", "1");
-
-        Map<String, Set<String>> errors = responseModel.getErrorContainer().getErrors();
-
-        assertEquals(errors.get("firstName"), Set.of(FIRST_NAME_INVALID, FIRST_NAME_NOT_EMPTY));
+        assertThrows(UnprocessableEntityException.class, () ->
+                this.residentService.add(residentToAdd, "1", "1"));
     }
 
     @Test
@@ -47,11 +44,7 @@ class ResidentServiceImplTest {
         ResidentServiceModel residentToAdd = new ResidentServiceModel(null, "", "Doe",
                 null, "john@mail.com", "334343", false, null, null, null);
 
-        ResponseModel<ResidentServiceModel> responseModel =
-                this.residentService.edit(residentToAdd, "1");
-
-        Map<String, Set<String>> errors = responseModel.getErrorContainer().getErrors();
-
-        assertEquals(errors.get("firstName"), Set.of(FIRST_NAME_INVALID, FIRST_NAME_NOT_EMPTY));
+        assertThrows(UnprocessableEntityException.class, () ->
+                this.residentService.edit(residentToAdd, "1"));
     }
 }

@@ -9,8 +9,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.MailAuthenticationException;
-import org.springframework.mail.MailException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -65,7 +63,7 @@ public class FeesController implements FeesNamespace {
     @PostMapping("{feeId}/pay")
     public ResponseEntity<?> pay(@PathVariable(value = "feeId") String feeId,
                                  @RequestParam(name = "userId") String userId,
-                                 UriComponentsBuilder uriComponentsBuilder) throws MessagingException {
+                                 UriComponentsBuilder uriComponentsBuilder) throws MessagingException, InterruptedException {
 
        this.feeService.pay(userId, feeId);
 

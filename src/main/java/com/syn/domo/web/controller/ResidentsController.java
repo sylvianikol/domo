@@ -1,6 +1,5 @@
 package com.syn.domo.web.controller;
 
-import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.model.binding.ResidentBindingModel;
 import com.syn.domo.model.service.ResidentServiceModel;
 import com.syn.domo.model.view.ResidentViewModel;
@@ -75,17 +74,13 @@ public class ResidentsController implements ResidentsNamespace {
                                  UriComponentsBuilder uriComponentsBuilder) throws MessagingException, InterruptedException {
 
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.unprocessableEntity()
-                    .body(new ResponseModel<>(residentBindingModel, bindingResult));
+            return ResponseEntity.unprocessableEntity().body(residentBindingModel);
         }
 
-        ResponseModel<ResidentServiceModel> responseModel = this.residentService
-                .add(this.modelMapper.map(residentBindingModel, ResidentServiceModel.class),
-                buildingId, apartmentId);
+        ResidentServiceModel residentServiceModel = this.residentService.add(
+                this.modelMapper.map(residentBindingModel, ResidentServiceModel.class), buildingId, apartmentId);
 
-        return responseModel.hasErrors()
-                ? ResponseEntity.unprocessableEntity().body(responseModel)
-                : ResponseEntity.created(getLocation(uriComponentsBuilder, responseModel.getId())).build();
+        return ResponseEntity.created(getLocation(uriComponentsBuilder, residentServiceModel.getId())).build();
     }
 
     @PutMapping("/{residentId}")
@@ -94,16 +89,13 @@ public class ResidentsController implements ResidentsNamespace {
                                   BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
 
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.unprocessableEntity()
-                    .body(new ResponseModel<>(residentBindingModel, bindingResult));
+            return ResponseEntity.unprocessableEntity().body(residentBindingModel);
         }
 
-        ResponseModel<ResidentServiceModel> responseModel = this.residentService
+        ResidentServiceModel residentServiceModel = this.residentService
                 .edit(this.modelMapper.map(residentBindingModel, ResidentServiceModel.class), residentId);
 
-        return responseModel.hasErrors()
-                ? ResponseEntity.unprocessableEntity().body(responseModel)
-                : ResponseEntity.status(HttpStatus.NO_CONTENT)
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .location(getLocation(uriComponentsBuilder, residentId))
                 .build();
     }

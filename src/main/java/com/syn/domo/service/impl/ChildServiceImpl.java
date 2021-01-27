@@ -5,7 +5,6 @@ import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Child;
 import com.syn.domo.model.entity.Resident;
 import com.syn.domo.model.service.*;
-import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.repository.ChildRepository;
 import com.syn.domo.service.*;
 import com.syn.domo.web.filter.ChildFilter;
@@ -16,14 +15,13 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.syn.domo.common.ExceptionErrorMessages.*;
+import static com.syn.domo.common.ValidationErrorMessages.VALIDATION_FAILED;
 
 @Service
 public class ChildServiceImpl implements ChildService {
@@ -73,22 +71,21 @@ public class ChildServiceImpl implements ChildService {
 
     @Override
     @Transactional
-    public ResponseModel<ChildServiceModel> add(ChildServiceModel childToAdd,
-                                                String buildingId, String apartmentId,
-                                                Set<String> parentIds) {
+    public ChildServiceModel add(ChildServiceModel childToAdd, String buildingId,
+                                 String apartmentId, Set<String> parentIds) {
 
         if (!this.validationUtil.isValid(childToAdd)) {
-            return new ResponseModel<>(childToAdd,
-                    this.validationUtil.violations(childToAdd));
+            throw new UnprocessableEntityException(VALIDATION_FAILED,
+                    this.validationUtil.getViolations(childToAdd));
         }
 
         if (this.buildingService.get(buildingId).isEmpty()) {
-            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
+            throw new DomoEntityNotFoundException(BUILDING_NOT_FOUND);
         }
 
         ApartmentServiceModel apartmentServiceModel =
                 this.apartmentService.getByIdAndBuildingId(apartmentId, buildingId)
-                .orElseThrow(() -> { throw new EntityNotFoundException(APARTMENT_NOT_FOUND); });
+                .orElseThrow(() -> { throw new DomoEntityNotFoundException(APARTMENT_NOT_FOUND); });
 
         Set<Resident> parents = this.residentService.getAllByIdIn(parentIds).stream()
                 .map(r -> this.modelMapper.map(r, Resident.class))
@@ -102,7 +99,7 @@ public class ChildServiceImpl implements ChildService {
         String lastName = childToAdd.getLastName().trim();
 
         if (this.childExistsInApartment(firstName, lastName, apartmentId, parents)) {
-            throw new EntityExistsException(String.format(CHILD_ALREADY_EXISTS,
+            throw new DomoEntityExistsException(String.format(CHILD_ALREADY_EXISTS,
                     firstName, lastName, apartmentServiceModel.getNumber()));
         }
 
@@ -114,32 +111,30 @@ public class ChildServiceImpl implements ChildService {
 
         childRepository.saveAndFlush(child);
 
-        return new ResponseModel<>(child.getId(),
-                this.modelMapper.map(child, ChildServiceModel.class));
+        return this.modelMapper.map(child, ChildServiceModel.class);
     }
 
     @Override
-    public ResponseModel<ChildServiceModel> edit(ChildServiceModel childServiceModel, String childId) {
+    public ChildServiceModel edit(ChildServiceModel childToEdit, String childId) {
 
-        if (!this.validationUtil.isValid(childServiceModel)) {
-            return new ResponseModel<>(childServiceModel,
-                    this.validationUtil.violations(childServiceModel));
+        if (!this.validationUtil.isValid(childToEdit)) {
+            throw new UnprocessableEntityException(VALIDATION_FAILED,
+                    this.validationUtil.getViolations(childToEdit));
         }
 
         Child child = this.childRepository.findById(childId).orElse(null);
 
         if (child != null) {
-            child.setFirstName(childServiceModel.getFirstName());
-            child.setLastName(childServiceModel.getLastName());
+            child.setFirstName(childToEdit.getFirstName());
+            child.setLastName(childToEdit.getLastName());
 
             this.childRepository.saveAndFlush(child);
 
         } else {
-            throw new EntityNotFoundException(CHILD_NOT_FOUND);
+            throw new DomoEntityNotFoundException(CHILD_NOT_FOUND);
         }
 
-        return new ResponseModel<>(child.getId(),
-                this.modelMapper.map(child, ChildServiceModel.class));
+        return this.modelMapper.map(child, ChildServiceModel.class);
     }
 
     @Override
@@ -160,7 +155,7 @@ public class ChildServiceImpl implements ChildService {
     public void delete(String childId) {
 
         Child child = this.childRepository.findById(childId)
-                .orElseThrow(() -> { throw new EntityNotFoundException(CHILD_NOT_FOUND); });
+                .orElseThrow(() -> { throw new DomoEntityNotFoundException(CHILD_NOT_FOUND); });
 
         this.childRepository.delete(child);
     }

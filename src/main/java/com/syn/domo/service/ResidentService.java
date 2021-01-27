@@ -1,7 +1,6 @@
 package com.syn.domo.service;
 
 import com.syn.domo.model.service.ResidentServiceModel;
-import com.syn.domo.model.view.ResponseModel;
 
 import javax.mail.MessagingException;
 
@@ -16,10 +15,10 @@ public interface ResidentService {
 
     Optional<ResidentServiceModel> get(String residentId);
 
-    ResponseModel<ResidentServiceModel> add(ResidentServiceModel residentServiceModel,
+    ResidentServiceModel add(ResidentServiceModel residentServiceModel,
                                             String buildingId, String apartmentId) throws MessagingException, InterruptedException;
 
-    ResponseModel<ResidentServiceModel> edit(ResidentServiceModel residentServiceModel,
+    ResidentServiceModel edit(ResidentServiceModel residentServiceModel,
                                              String residentId);
 
     int deleteAll(ResidentFilter residentFilter);

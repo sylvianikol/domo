@@ -70,18 +70,14 @@ public class ApartmentsController implements ApartmentsNamespace {
                                  BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
 
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.unprocessableEntity()
-                    .body(new ResponseModel<>(apartmentBindingModel, bindingResult));
+            return ResponseEntity.unprocessableEntity().body(apartmentBindingModel);
         }
 
-        ResponseModel<ApartmentServiceModel> responseModel =
-                this.apartmentService.add(this.modelMapper.map(apartmentBindingModel,
-                ApartmentServiceModel.class), buildingId);
+        ApartmentServiceModel apartmentServiceModel = this.apartmentService
+                .add(this.modelMapper.map(apartmentBindingModel, ApartmentServiceModel.class), buildingId);
 
-        return  responseModel.hasErrors()
-                ? ResponseEntity.unprocessableEntity().body(responseModel)
-                : ResponseEntity.created(uriComponentsBuilder.path(URI_APARTMENTS + "/{apartmentId}")
-                .buildAndExpand(responseModel.getId())
+        return  ResponseEntity.created(uriComponentsBuilder.path(URI_APARTMENTS + "/{apartmentId}")
+                .buildAndExpand(apartmentServiceModel.getId())
                 .toUri()).build();
     }
 
@@ -91,20 +87,16 @@ public class ApartmentsController implements ApartmentsNamespace {
                                   BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
 
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.unprocessableEntity()
-                    .body(new ResponseModel<>(apartmentBindingModel, bindingResult));
+            return ResponseEntity.unprocessableEntity().body(apartmentBindingModel);
         }
 
-        ResponseModel<ApartmentServiceModel> responseModel = this.apartmentService
-               .edit(this.modelMapper.map(apartmentBindingModel, ApartmentServiceModel.class),
-                       apartmentId);
+        ApartmentServiceModel apartmentServiceModel = this.apartmentService.edit(
+                this.modelMapper.map(apartmentBindingModel, ApartmentServiceModel.class), apartmentId);
 
-        return responseModel.hasErrors()
-                ? ResponseEntity.unprocessableEntity().body(responseModel)
-                : ResponseEntity.status(HttpStatus.NO_CONTENT)
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .location(uriComponentsBuilder.path(URI_APARTMENTS + "/{apartmentId}")
-                        .buildAndExpand(responseModel.getId())
-                        .toUri()).build();
+                        .buildAndExpand(apartmentServiceModel.getId()).toUri())
+                .build();
     }
 
     @DeleteMapping("/delete")

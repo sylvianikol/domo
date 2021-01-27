@@ -1,5 +1,6 @@
 package com.syn.domo.service.impl;
 
+import com.syn.domo.exception.DomoEntityNotFoundException;
 import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Fee;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -79,12 +81,12 @@ public class FeeServiceImpl implements FeeService {
     }
 
     @Override
-    public FeeServiceModel pay(String userId, String feeId) {
+    public FeeServiceModel pay(String userId, String feeId) throws MessagingException, InterruptedException {
 
         Fee fee = this.feeRepository.findById(feeId).orElse(null);
 
         if (fee == null) {
-            throw new EntityNotFoundException(FEE_NOT_FOUND);
+            throw new DomoEntityNotFoundException(FEE_NOT_FOUND);
         }
 
         if (fee.isPaid()) {
@@ -93,7 +95,7 @@ public class FeeServiceImpl implements FeeService {
 
         UserServiceModel userServiceModel = this.userService.get(userId)
                 .orElseThrow(() -> {
-                    throw new EntityNotFoundException(USER_NOT_FOUND);
+                    throw new DomoEntityNotFoundException(USER_NOT_FOUND);
                 });
 
         // TODO: make a mock payment
@@ -101,11 +103,7 @@ public class FeeServiceImpl implements FeeService {
         fee.setPaid(true);
         fee.setPayerId(userId);
 
-        try {
-            this.notificationService.sendFeePaymentReceipt(userServiceModel, fee);
-        } catch (Exception ex) {
-            log.error(ex.getMessage());
-        }
+       this.notificationService.sendFeePaymentReceipt(userServiceModel, fee);
 
         this.feeRepository.saveAndFlush(fee);
 
@@ -131,15 +129,15 @@ public class FeeServiceImpl implements FeeService {
         Fee fee = this.feeRepository.findById(feeId).orElse(null);
 
         if (fee == null) {
-            throw new EntityNotFoundException(FEE_NOT_FOUND);
+            throw new DomoEntityNotFoundException(FEE_NOT_FOUND);
         }
 
         this.feeRepository.delete(fee);
     }
 
     @Override
-    public void generateMonthlyFees() {
-
+    public int generateMonthlyFees() throws MessagingException, InterruptedException {
+        int count = 0;
         Set<ApartmentServiceModel> apartments = this.apartmentService.getAll();
 
         for (ApartmentServiceModel apartment : apartments) {
@@ -154,17 +152,14 @@ public class FeeServiceImpl implements FeeService {
             fee.setTotal(total);
 
             this.feeRepository.saveAndFlush(fee);
+            ++count;
 
             for (UserServiceModel resident : apartment.getResidents()) {
-                try {
-                    this.notificationService.sendNewFeeNotificationEmail(resident, fee);
-                } catch (Exception ex) {
-                    log.error(ex.getMessage());
-                }
+                this.notificationService.sendNewFeeNotificationEmail(resident, fee);
             }
         }
 
-        log.info("******* FEES GENERATED *******");
+        return count;
     }
 
     private BigDecimal calculateFeeTotal(ApartmentServiceModel apartment, BigDecimal baseFee) {

@@ -1,7 +1,6 @@
 package com.syn.domo.service;
 
 import com.syn.domo.model.service.BuildingServiceModel;
-import com.syn.domo.model.view.ResponseModel;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -16,10 +15,9 @@ public interface BuildingService {
 
     Optional<BuildingServiceModel> get(String id);
 
-    ResponseModel<BuildingServiceModel> add(BuildingServiceModel buildingServiceModel);
+    BuildingServiceModel add(BuildingServiceModel buildingServiceModel);
 
-    ResponseModel<BuildingServiceModel> edit(BuildingServiceModel buildingServiceModel,
-                                             String buildingId);
+    BuildingServiceModel edit(BuildingServiceModel buildingServiceModel, String buildingId);
 
     int deleteAll();
 

@@ -1,7 +1,9 @@
 package com.syn.domo.service.impl;
 
 import com.syn.domo.error.ErrorContainer;
-import com.syn.domo.model.view.ResponseModel;
+import com.syn.domo.exception.DomoEntityExistsException;
+import com.syn.domo.exception.DomoEntityNotFoundException;
+import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.service.ApartmentServiceModel;
@@ -17,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 import org.springframework.data.domain.Pageable;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 
 import static com.syn.domo.common.DefaultParamValues.NULL;
 import static com.syn.domo.common.ExceptionErrorMessages.*;
-import static com.syn.domo.common.ValidationErrorMessages.FLOOR_INVALID;
+import static com.syn.domo.common.ValidationErrorMessages.*;
 
 @Service
 public class ApartmentServiceImpl implements ApartmentService {
@@ -82,28 +83,28 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
-    public ResponseModel<ApartmentServiceModel> add(ApartmentServiceModel apartmentToAdd,
+    public ApartmentServiceModel add(ApartmentServiceModel apartmentToAdd,
                                      String buildingId) {
 
         if (!this.validationUtil.isValid(apartmentToAdd)) {
-            return new ResponseModel<>(apartmentToAdd,
+            throw new UnprocessableEntityException(VALIDATION_FAILED,
                     this.validationUtil.getViolations(apartmentToAdd));
         }
 
         BuildingServiceModel buildingServiceModel = this.buildingService.get(buildingId)
-                .orElseThrow(() -> { throw new EntityNotFoundException(BUILDING_NOT_FOUND); });
+                .orElseThrow(() -> { throw new DomoEntityNotFoundException(BUILDING_NOT_FOUND); });
 
         String apartmentNumber = apartmentToAdd.getNumber();
         if (this.alreadyExistsApartmentNumber(apartmentNumber, buildingId)) {
-            return new ResponseModel<>(apartmentToAdd, new ErrorContainer(
-                    Map.of("number", Set.of(String.format(APARTMENT_EXISTS,
-                            apartmentNumber, buildingServiceModel.getName()))))
-            );
+            throw new DomoEntityExistsException(ENTITY_EXISTS,
+                    new ErrorContainer(Map.of("number", Set.of(
+                            String.format(APARTMENT_EXISTS, apartmentNumber, buildingServiceModel.getName())))));
+
         }
 
         if (apartmentToAdd.getFloor() > buildingServiceModel.getFloors()) {
-            return new ResponseModel<>(apartmentToAdd, new ErrorContainer(
-                    Map.of("floor", Set.of(FLOOR_INVALID))));
+            throw new UnprocessableEntityException(UNPROCESSABLE_ENTITY,
+                    new ErrorContainer(Map.of("floor", Set.of(FLOOR_INVALID))));
         }
 
         Apartment apartment = this.modelMapper.map(apartmentToAdd, Apartment.class);
@@ -112,47 +113,43 @@ public class ApartmentServiceImpl implements ApartmentService {
 
         this.apartmentRepository.saveAndFlush(apartment);
 
-       return new ResponseModel<>(apartment.getId(),
-               this.modelMapper.map(apartment, ApartmentServiceModel.class));
+       return this.modelMapper.map(apartment, ApartmentServiceModel.class);
     }
 
     @Override
-    public ResponseModel<ApartmentServiceModel> edit(ApartmentServiceModel apartmentServiceModel,
-                                                     String apartmentId) {
+    public ApartmentServiceModel edit(ApartmentServiceModel apartmentToEdit, String apartmentId) {
 
-        if (!this.validationUtil.isValid(apartmentServiceModel)) {
-            return new ResponseModel<>(apartmentServiceModel,
-                    this.validationUtil.violations(apartmentServiceModel));
+        if (!this.validationUtil.isValid(apartmentToEdit)) {
+            throw new UnprocessableEntityException(VALIDATION_FAILED,
+                    this.validationUtil.getViolations(apartmentToEdit));
         }
 
         Apartment apartment = this.apartmentRepository.findById(apartmentId)
-                .orElseThrow(() -> { throw new EntityNotFoundException(APARTMENT_NOT_FOUND); });
+                .orElseThrow(() -> { throw new DomoEntityNotFoundException(APARTMENT_NOT_FOUND); });
 
         Building building = apartment.getBuilding();
 
-        if (apartmentServiceModel.getFloor() > building.getFloors()) {
-            return new ResponseModel<>(apartmentServiceModel, new ErrorContainer(
-                    Map.of("floor", Set.of(FLOOR_INVALID))));
+        if (apartmentToEdit.getFloor() > building.getFloors()) {
+            throw new UnprocessableEntityException(UNPROCESSABLE_ENTITY,
+                    new ErrorContainer(Map.of("floor", Set.of(FLOOR_INVALID))));
         }
 
-        String newNumber = apartmentServiceModel.getNumber();
+        String newNumber = apartmentToEdit.getNumber();
         Optional<Apartment> duplicateApartment = this.apartmentRepository
                 .getDuplicateApartment(newNumber, building.getId(), apartmentId);
 
         if (duplicateApartment.isPresent()) {
-            return new ResponseModel<>(apartmentServiceModel, new ErrorContainer(
-                    Map.of("duplicate", Set.of(String.format(APARTMENT_EXISTS,
-                            newNumber, building.getName())))));
+            throw new DomoEntityExistsException(ENTITY_EXISTS, new ErrorContainer(Map.of("duplicate",
+                    Set.of(String.format(APARTMENT_EXISTS, newNumber, building.getName())))));
         }
 
-        apartment.setNumber(apartmentServiceModel.getNumber());
-        apartment.setFloor(apartmentServiceModel.getFloor());
-        apartment.setPets(apartmentServiceModel.getPets());
+        apartment.setNumber(apartmentToEdit.getNumber());
+        apartment.setFloor(apartmentToEdit.getFloor());
+        apartment.setPets(apartmentToEdit.getPets());
 
         this.apartmentRepository.saveAndFlush(apartment);
 
-        return new ResponseModel<>(apartment.getId(),
-                this.modelMapper.map(apartment, ApartmentServiceModel.class));
+        return this.modelMapper.map(apartment, ApartmentServiceModel.class);
     }
 
     @Override
@@ -176,7 +173,7 @@ public class ApartmentServiceImpl implements ApartmentService {
     public void delete(String apartmentId) {
 
         Apartment apartment = this.apartmentRepository.findById(apartmentId)
-                .orElseThrow(() -> { throw new EntityNotFoundException(APARTMENT_NOT_FOUND); });
+                .orElseThrow(() -> { throw new DomoEntityNotFoundException(APARTMENT_NOT_FOUND); });
 
         String buildingId = apartment.getBuilding().getId();
 

@@ -203,7 +203,8 @@ class BuildingsControllerTest extends AbstractTest {
         this.mvc.perform(post(URI + "/add")
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity());
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.name", is("")));
     }
 
     @Test

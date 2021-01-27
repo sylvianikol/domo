@@ -1,7 +1,6 @@
 package com.syn.domo.service;
 
 import com.syn.domo.model.service.ApartmentServiceModel;
-import com.syn.domo.model.view.ResponseModel;
 
 import com.syn.domo.web.filter.ApartmentFilter;
 import org.springframework.data.domain.Pageable;
@@ -16,9 +15,9 @@ public interface ApartmentService {
 
     Optional<ApartmentServiceModel> get(String apartmentId);
 
-    ResponseModel<ApartmentServiceModel> add(ApartmentServiceModel addServiceModel, String buildingId);
+    ApartmentServiceModel add(ApartmentServiceModel addServiceModel, String buildingId);
 
-    ResponseModel<ApartmentServiceModel> edit(ApartmentServiceModel apartmentServiceModel, String apartmentId);
+    ApartmentServiceModel edit(ApartmentServiceModel apartmentServiceModel, String apartmentId);
 
     int deleteAll(ApartmentFilter apartmentFilter);
 

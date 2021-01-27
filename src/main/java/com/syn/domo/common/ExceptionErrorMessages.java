@@ -2,6 +2,9 @@ package com.syn.domo.common;
 
 public class ExceptionErrorMessages {
 
+    public static final String ENTITY_EXISTS =
+            "Entity Already Exists!";
+
     public static final String APARTMENT_EXISTS =
             "Apartment No.%s already exists in %s!";
 
@@ -31,4 +34,6 @@ public class ExceptionErrorMessages {
     public static final String USER_NOT_FOUND = "User not found!";
 
     public static final String ACTIVATION_EMAIL_FAIL = "Sending activation email failed.";
+
+    public static final String UNPROCESSABLE_ENTITY = "Entity could not be processed!";
 }

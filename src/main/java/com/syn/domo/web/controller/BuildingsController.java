@@ -1,6 +1,5 @@
 package com.syn.domo.web.controller;
 
-import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.model.binding.BuildingBindingModel;
 import com.syn.domo.model.service.BuildingServiceModel;
 import com.syn.domo.model.view.BuildingViewModel;
@@ -68,17 +67,14 @@ public class BuildingsController implements BuildingsNamespace {
                                  UriComponentsBuilder uriComponentsBuilder) {
 
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.unprocessableEntity()
-                    .body(new ResponseModel<>(buildingBindingModel, bindingResult));
+            return ResponseEntity.unprocessableEntity().body(buildingBindingModel);
         }
 
-        ResponseModel<BuildingServiceModel> responseModel = this.buildingService.add(
+        BuildingServiceModel buildingServiceModel = this.buildingService.add(
                 this.modelMapper.map(buildingBindingModel, BuildingServiceModel.class));
 
-        return responseModel.hasErrors()
-                ? ResponseEntity.unprocessableEntity().body(responseModel)
-                : ResponseEntity.created(uriComponentsBuilder.path(URI_BUILDINGS + "/{buildingId}")
-                .buildAndExpand(responseModel.getId())
+        return ResponseEntity.created(uriComponentsBuilder.path(URI_BUILDINGS + "/{buildingId}")
+                .buildAndExpand(buildingServiceModel.getId())
                 .toUri()).build();
     }
 
@@ -89,20 +85,15 @@ public class BuildingsController implements BuildingsNamespace {
                                   UriComponentsBuilder uriComponentsBuilder) {
 
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.unprocessableEntity()
-                    .body(new ResponseModel<>(buildingBindingModel, bindingResult));
+            return ResponseEntity.unprocessableEntity().body(buildingBindingModel);
         }
 
-        ResponseModel<BuildingServiceModel> responseModel =
-                this.buildingService.edit(this.modelMapper.map(
+        BuildingServiceModel buildingServiceModel = this.buildingService.edit(this.modelMapper.map(
                 buildingBindingModel, BuildingServiceModel.class), buildingId);
 
-        return responseModel.hasErrors()
-                ? ResponseEntity.unprocessableEntity().body(responseModel)
-                : ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder.path(URI_BUILDINGS + "/{buildingId}")
-                        .buildAndExpand(buildingId)
-                        .toUri()).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .location(uriComponentsBuilder.path(URI_BUILDINGS + "/{buildingId}").buildAndExpand(buildingId).toUri())
+                .build();
     }
 
     @DeleteMapping("/delete")

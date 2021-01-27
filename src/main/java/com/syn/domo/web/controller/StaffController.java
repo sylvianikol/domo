@@ -1,6 +1,5 @@
 package com.syn.domo.web.controller;
 
-import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.model.binding.*;
 import com.syn.domo.model.service.StaffServiceModel;
 import com.syn.domo.model.view.StaffViewModel;
@@ -66,20 +65,17 @@ public class StaffController implements StaffNamespace {
     @PostMapping("/add")
     public ResponseEntity<?> add(@Valid @RequestBody StaffBindingModel staffBindingModel,
                                  BindingResult bindingResult,
-                                 UriComponentsBuilder uriComponentsBuilder) throws MessagingException {
+                                 UriComponentsBuilder uriComponentsBuilder) throws MessagingException, InterruptedException {
 
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.unprocessableEntity()
-                    .body(new ResponseModel<>(staffBindingModel, bindingResult));
+            return ResponseEntity.unprocessableEntity().body(staffBindingModel);
         }
 
-        ResponseModel<StaffServiceModel> responseModel =
+        StaffServiceModel staffServiceModel =
                 this.staffService.add(this.modelMapper.map(staffBindingModel, StaffServiceModel.class));
 
-        return responseModel.hasErrors()
-                ? ResponseEntity.unprocessableEntity().body(responseModel)
-                : ResponseEntity.created(uriComponentsBuilder.path(URI_STAFF + "/{staffId}")
-                .buildAndExpand(responseModel.getId()).toUri())
+        return ResponseEntity.created(uriComponentsBuilder.path(URI_STAFF + "/{staffId}")
+                .buildAndExpand(staffServiceModel.getId()).toUri())
                 .build();
     }
 
@@ -90,16 +86,13 @@ public class StaffController implements StaffNamespace {
                                   UriComponentsBuilder uriComponentsBuilder) {
 
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.unprocessableEntity()
-                    .body(new ResponseModel<>(staffBindingModel, bindingResult));
+            return ResponseEntity.unprocessableEntity().body(staffBindingModel);
         }
 
-        ResponseModel<StaffServiceModel> responseModel = this.staffService
+        StaffServiceModel staffServiceModel = this.staffService
                 .edit(this.modelMapper.map(staffBindingModel, StaffServiceModel.class), staffId);
 
-        return responseModel.hasErrors()
-                ? ResponseEntity.unprocessableEntity().body(responseModel)
-                : ResponseEntity.status(HttpStatus.NO_CONTENT)
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .location(uriComponentsBuilder.path(URI_STAFF + "/{staffId}")
                     .buildAndExpand(staffId).toUri())
                 .build();

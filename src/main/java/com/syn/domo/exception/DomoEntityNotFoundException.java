@@ -2,16 +2,16 @@ package com.syn.domo.exception;
 
 import com.syn.domo.error.ErrorContainer;
 
-public class UnprocessableEntityException extends RuntimeException {
+public class DomoEntityNotFoundException extends RuntimeException {
 
     private ErrorContainer errorContainer;
 
-    public UnprocessableEntityException(String message) {
+    public DomoEntityNotFoundException(String message) {
         super(message);
         this.errorContainer = new ErrorContainer();
     }
 
-    public UnprocessableEntityException(String message, ErrorContainer errorContainer) {
+    public DomoEntityNotFoundException(String message, ErrorContainer errorContainer) {
         super(message);
         this.errorContainer = errorContainer;
     }

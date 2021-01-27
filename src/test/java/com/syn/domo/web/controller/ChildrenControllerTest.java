@@ -21,7 +21,6 @@ import java.util.Set;
 import static com.syn.domo.common.ExceptionErrorMessages.*;
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_FAILED;
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_SUCCESSFUL;
-import static com.syn.domo.common.ValidationErrorMessages.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
@@ -320,11 +319,11 @@ class ChildrenControllerTest extends AbstractTest {
 
     @Test
     void test_add_isUnprocessable() throws Exception {
-        ChildBindingModel childBindingModel = new ChildBindingModel();
-        childBindingModel.setFirstName("");
-        childBindingModel.setLastName("Doll");
+        ChildBindingModel child = new ChildBindingModel();
+        child.setFirstName("");
+        child.setLastName("Doll");
 
-        String inputJson = super.mapToJson(childBindingModel);
+        String inputJson = super.mapToJson(child);
 
         this.mvc.perform(post(URI + "/add")
                 .param("buildingId", BUILDING_ID)
@@ -333,13 +332,11 @@ class ChildrenControllerTest extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(jsonPath("$.object.firstName", is("")))
-                .andExpect(jsonPath("$.errorContainer.errors.firstName[0]", is(FIRST_NAME_INVALID)))
-                .andExpect(jsonPath("$.errorContainer.errors.firstName[1]", is(FIRST_NAME_NOT_EMPTY)));
+                .andExpect(jsonPath("$.firstName", is("")));
     }
 
     @Test
-    void test_add_withBuildingIdInvalid_isNotFound() throws Exception {
+    void test_add_isNotFound_ifBuildingIdInvalid() throws Exception {
         ChildBindingModel childBindingModel = new ChildBindingModel();
         childBindingModel.setFirstName("Chucky");
         childBindingModel.setLastName("Doll");
@@ -353,11 +350,12 @@ class ChildrenControllerTest extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(BUILDING_NOT_FOUND));
+                .andExpect(jsonPath("$.statusCode", is(404)))
+                .andExpect(jsonPath("$.message", is(BUILDING_NOT_FOUND)));
     }
 
     @Test
-    void test_add_withApartmentIdInvalid_isNotFound() throws Exception {
+    void test_add_isNotFound_ifApartmentIdInvalid() throws Exception {
         ChildBindingModel childBindingModel = new ChildBindingModel();
         childBindingModel.setFirstName("Chucky");
         childBindingModel.setLastName("Doll");
@@ -371,11 +369,12 @@ class ChildrenControllerTest extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(APARTMENT_NOT_FOUND));
+                .andExpect(jsonPath("$.statusCode", is(404)))
+                .andExpect(jsonPath("$.message", is(APARTMENT_NOT_FOUND)));
     }
 
     @Test
-    void test_add_withNoParents_isUnprocessable() throws Exception {
+    void test_add_isUnprocessable_ifNoParents() throws Exception {
         ChildBindingModel childBindingModel = new ChildBindingModel();
         childBindingModel.setFirstName("Chucky");
         childBindingModel.setLastName("Doll");
@@ -389,11 +388,12 @@ class ChildrenControllerTest extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(content().string(PARENTS_NOT_FOUND));
+                .andExpect(jsonPath("$.statusCode", is(422)))
+                .andExpect(jsonPath("$.message", is(PARENTS_NOT_FOUND)));
     }
 
     @Test
-    void test_add_withParentIdsInvalid_isUnprocessable() throws Exception {
+    void test_add_isUnprocessable_ifParentIdsInvalid() throws Exception {
         ChildBindingModel childBindingModel = new ChildBindingModel();
         childBindingModel.setFirstName("Chucky");
         childBindingModel.setLastName("Doll");
@@ -407,11 +407,12 @@ class ChildrenControllerTest extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(content().string(PARENTS_NOT_FOUND));
+                .andExpect(jsonPath("$.statusCode", is(422)))
+                .andExpect(jsonPath("$.message", is(PARENTS_NOT_FOUND)));
     }
 
     @Test
-    void test_add_throwsIfChildExistsInApartment() throws Exception {
+    void test_add_isConflict_ifChildExistsInApartment() throws Exception {
         ChildBindingModel childToAdd = new ChildBindingModel();
         childToAdd.setFirstName(CHILD_1_FIRST_NAME);
         childToAdd.setLastName(CHILD_1_LAST_NAME);
@@ -425,8 +426,11 @@ class ChildrenControllerTest extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
                 .andExpect(status().isConflict())
-                .andExpect(content().string(String.format(CHILD_ALREADY_EXISTS,
-                        CHILD_1_FIRST_NAME, CHILD_1_LAST_NAME, APARTMENT_NUMBER)));
+                .andExpect(jsonPath("$.statusCode", is(409)))
+                .andExpect(jsonPath("$.message", is(ENTITY_EXISTS)))
+                .andExpect(jsonPath("$.errorContainer.errors.childExists[0]",
+                        is(String.format(CHILD_ALREADY_EXISTS, childToAdd.getFirstName(),
+                                childToAdd.getLastName(), APARTMENT_NUMBER))));
     }
 
     @Test
@@ -458,13 +462,12 @@ class ChildrenControllerTest extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(jsonPath("$.errorContainer.errors.firstName[0]", is(FIRST_NAME_INVALID)))
-                .andExpect(jsonPath("$.errorContainer.errors.firstName[1]", is(FIRST_NAME_NOT_EMPTY)));
+                .andExpect(jsonPath("$.firstName", is("")));
 
     }
 
     @Test
-    void test_edit_IdInvalid_isNotFound() throws Exception {
+    void test_edit_isNotFound_ifChildIdInvalid() throws Exception {
         ChildBindingModel childBindingModel = new ChildBindingModel();
         childBindingModel.setFirstName("Chucky");
         childBindingModel.setLastName("Doll");
@@ -475,7 +478,8 @@ class ChildrenControllerTest extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(CHILD_NOT_FOUND));
+                .andExpect(jsonPath("$.statusCode", is(404)))
+                .andExpect(jsonPath("$.message", is(CHILD_NOT_FOUND)));
 
     }
 
@@ -540,7 +544,8 @@ class ChildrenControllerTest extends AbstractTest {
         this.mvc.perform(delete(URI + "/{childId}", "0"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(CHILD_NOT_FOUND));
+                .andExpect(jsonPath("$.statusCode", is(404)))
+                .andExpect(jsonPath("$.message", is(CHILD_NOT_FOUND)));
     }
 
     private String getAHeaderLocation() {

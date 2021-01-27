@@ -1,6 +1,5 @@
 package com.syn.domo.web.controller;
 
-import com.syn.domo.common.ExceptionErrorMessages;
 import com.syn.domo.model.binding.BuildingBindingModel;
 import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.entity.Role;
@@ -27,6 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static com.syn.domo.common.ExceptionErrorMessages.BUILDING_NOT_FOUND;
+import static com.syn.domo.common.ExceptionErrorMessages.ENTITY_EXISTS;
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_FAILED;
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_SUCCESSFUL;
 import static com.syn.domo.common.ValidationErrorMessages.*;
@@ -272,8 +272,7 @@ class BuildingsControllerTest extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(jsonPath("$.errorContainer.errors.name[0]",
-                        is(BUILDING_NAME_NOT_EMPTY)));
+                .andExpect(jsonPath("$.name", is("")));
 
     }
 
@@ -300,23 +299,24 @@ class BuildingsControllerTest extends AbstractTest {
     }
 
     @Test
-    void test_edit_buildingNameExistsInNeighbourhood() throws Exception {
+    void test_edit_isConflict_whenBuildingNameExistsInNeighbourhood() throws Exception {
+        BuildingBindingModel building = new BuildingBindingModel();
+        building.setName(BUILDING_2_NAME);
+        building.setNeighbourhood(NEIGHBOURHOOD);
+        building.setAddress("New Address");
+        building.setFloors(2);
+        building.setBudget(BigDecimal.ZERO);
+        building.setBaseFee(BigDecimal.ZERO);
 
-        BuildingBindingModel buildingBindingModel = new BuildingBindingModel();
-        buildingBindingModel.setName(BUILDING_2_NAME);
-        buildingBindingModel.setNeighbourhood(NEIGHBOURHOOD);
-        buildingBindingModel.setAddress("New Address");
-        buildingBindingModel.setFloors(2);
-        buildingBindingModel.setBudget(BigDecimal.ZERO);
-        buildingBindingModel.setBaseFee(BigDecimal.ZERO);
-
-        String inputJson = super.mapToJson(buildingBindingModel);
+        String inputJson = super.mapToJson(building);
 
         this.mvc.perform(put(URI + "/" + BUILDING_1_ID)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(jsonPath("$.errorContainer.errors.name[0]",
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.statusCode", is(409)))
+                .andExpect(jsonPath("$.message", is(ENTITY_EXISTS)))
+                .andExpect(jsonPath("$.errorContainer.errors.nameExists[0]",
                         is(String.format(BUILDING_NAME_EXISTS, BUILDING_2_NAME, NEIGHBOURHOOD))));
 
     }
@@ -365,13 +365,14 @@ class BuildingsControllerTest extends AbstractTest {
     }
 
     @Test
-    void test_delete_isNotFound() throws Exception {
+    void test_delete_isNotFoundIfBuildingIdInvalid() throws Exception {
 
         this.mvc.perform(MockMvcRequestBuilders
                 .delete(URI + "/{buildingId}", "0"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(ExceptionErrorMessages.BUILDING_NOT_FOUND));
+                .andExpect(jsonPath("$.statusCode", is(404)))
+                .andExpect(jsonPath("$.message", is(BUILDING_NOT_FOUND)));
     }
 
     @Test
@@ -382,7 +383,7 @@ class BuildingsControllerTest extends AbstractTest {
                 .andDo(print())
                 .andExpect(status().isNoContent())
                 .andExpect(header().string(HttpHeaders.LOCATION,
-                containsString(URI + "/" + BUILDING_1_ID)));;
+                containsString(URI + "/" + BUILDING_1_ID)));
     }
 
     @Test
@@ -391,7 +392,8 @@ class BuildingsControllerTest extends AbstractTest {
                 .param("staffIds", STAFF_1_ID, STAFF_2_ID))
                 .andDo(print())
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(is(BUILDING_NOT_FOUND)));
+                .andExpect(jsonPath("$.statusCode", is(404)))
+                .andExpect(jsonPath("$.message", is(BUILDING_NOT_FOUND)));
     }
 
     private String getAHeaderLocation() {

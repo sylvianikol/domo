@@ -1,5 +1,6 @@
 package com.syn.domo.service.impl;
 
+import com.syn.domo.error.ErrorContainer;
 import com.syn.domo.exception.*;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Child;
@@ -99,8 +100,10 @@ public class ChildServiceImpl implements ChildService {
         String lastName = childToAdd.getLastName().trim();
 
         if (this.childExistsInApartment(firstName, lastName, apartmentId, parents)) {
-            throw new DomoEntityExistsException(String.format(CHILD_ALREADY_EXISTS,
-                    firstName, lastName, apartmentServiceModel.getNumber()));
+            throw new DomoEntityExistsException(ENTITY_EXISTS,
+                    new ErrorContainer(Map.of("childExists", Set.of(String.format(CHILD_ALREADY_EXISTS,
+                            firstName, lastName, apartmentServiceModel.getNumber() )))));
+
         }
 
         Child child = this.modelMapper.map(childToAdd, Child.class);

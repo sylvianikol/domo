@@ -22,8 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Pageable;
 
-import static com.syn.domo.common.ExceptionErrorMessages.BUILDING_NOT_FOUND;
-import static com.syn.domo.common.ExceptionErrorMessages.UNPROCESSABLE_ENTITY;
+import static com.syn.domo.common.ExceptionErrorMessages.*;
 import static com.syn.domo.common.ValidationErrorMessages.*;
 
 @Service
@@ -118,7 +117,6 @@ public class BuildingServiceImpl implements BuildingService {
                 .orElseThrow(() -> { throw new DomoEntityNotFoundException(BUILDING_NOT_FOUND); });
 
         String address = buildingToEdit.getAddress().trim();
-
         if (this.buildingRepository.findByIdIsNotAndAddress(buildingId, address).isPresent()) {
             throw new UnprocessableEntityException(UNPROCESSABLE_ENTITY,
                     new ErrorContainer(Map.of("address", Set.of(String.format(ADDRESS_OCCUPIED, address)))));
@@ -128,7 +126,7 @@ public class BuildingServiceImpl implements BuildingService {
         String neighbourhood = buildingToEdit.getNeighbourhood().trim();
 
         if (this.buildingNameExistsInNeighbourhood(buildingName, neighbourhood, buildingId)) {
-            throw new DomoEntityExistsException(BUILDING_NAME_EXISTS, new ErrorContainer(Map.of("nameExists",
+            throw new DomoEntityExistsException(ENTITY_EXISTS, new ErrorContainer(Map.of("nameExists",
                             Set.of(String.format(BUILDING_NAME_EXISTS, buildingName, neighbourhood)))));
         }
 

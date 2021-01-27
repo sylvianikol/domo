@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
 @RestControllerAdvice
-public class RestExceptionHandlerAdvice {
+public class ExceptionHandlerAdvice {
 
     private static final Logger log =
-            LoggerFactory.getLogger(RestExceptionHandlerAdvice.class);
+            LoggerFactory.getLogger(ExceptionHandlerAdvice.class);
 
     @ExceptionHandler(DomoEntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)

@@ -18,6 +18,8 @@ import org.springframework.http.MediaType;
 import java.time.LocalDate;
 import java.util.Set;
 
+import static com.syn.domo.common.ExceptionErrorMessages.UNPROCESSABLE_ENTITY;
+import static com.syn.domo.common.ExceptionErrorMessages.USER_NOT_FOUND;
 import static com.syn.domo.common.ValidationErrorMessages.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -102,7 +104,7 @@ class AccountControllerTest extends AbstractTest {
     }
 
     @Test
-    void test_createPassword_fail() throws Exception {
+    void test_createPassword_isUnprocessableIfInvalidData() throws Exception {
         UserActivateBindingModel bindingModel = new UserActivateBindingModel();
         bindingModel.setPassword("");
         bindingModel.setConfirmPassword("123");
@@ -114,9 +116,42 @@ class AccountControllerTest extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(jsonPath("$.object.password", is("")))
-                .andExpect(jsonPath("$.object.confirmPassword", is("123")))
-                .andExpect(jsonPath("$.errorContainer.errors.password[0]", is(PASSWORD_INVALID_LENGTH)))
-                .andExpect(jsonPath("$.errorContainer.errors.password[1]", is(PASSWORD_NOT_EMPTY)));
+                .andExpect(jsonPath("$.password", is("")))
+                .andExpect(jsonPath("$.confirmPassword", is("123")));
+      }
+
+    @Test
+    void test_createPassword_isUnprocessableIfPasswordsMismatch() throws Exception {
+        UserActivateBindingModel bindingModel = new UserActivateBindingModel();
+        bindingModel.setPassword("124");
+        bindingModel.setConfirmPassword("123");
+
+        String inputJson = super.mapToJson(bindingModel);
+
+        this.mvc.perform(post(URI + "/activate")
+                .param("userId", USER_ID)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.statusCode", is(422)))
+                .andExpect(jsonPath("$.message", is(UNPROCESSABLE_ENTITY)))
+                .andExpect(jsonPath("$.errorContainer.errors.password[0]", is(PASSWORDS_DONT_MATCH)));
+    }
+
+    @Test
+    void test_createPassword_userIdNotFound() throws Exception {
+        UserActivateBindingModel bindingModel = new UserActivateBindingModel();
+        bindingModel.setPassword("123");
+        bindingModel.setConfirmPassword("123");
+
+        String inputJson = super.mapToJson(bindingModel);
+
+        this.mvc.perform(post(URI + "/activate")
+                .param("userId", "0")
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.statusCode", is(404)))
+                .andExpect(jsonPath("$.message", is(USER_NOT_FOUND)));
     }
 }

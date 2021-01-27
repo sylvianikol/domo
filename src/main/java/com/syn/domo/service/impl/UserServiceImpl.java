@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.syn.domo.common.ExceptionErrorMessages.UNPROCESSABLE_ENTITY;
 import static com.syn.domo.common.ExceptionErrorMessages.USER_NOT_FOUND;
 import static com.syn.domo.common.ValidationErrorMessages.PASSWORDS_DONT_MATCH;
 
@@ -65,14 +66,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserActivateServiceModel createPassword(String userId,
-                                                                  UserActivateServiceModel userActivateServiceModel) {
+    public UserActivateServiceModel createPassword(String userId, UserActivateServiceModel userActivateServiceModel) {
         String password = userActivateServiceModel.getPassword().trim();
         String confirmPassword = userActivateServiceModel.getConfirmPassword().trim();
 
         if (!password.equals(confirmPassword)) {
-            throw new UnprocessableEntityException(PASSWORDS_DONT_MATCH, new ErrorContainer(Map.of("password",
-                    Set.of(PASSWORDS_DONT_MATCH))));
+            throw new UnprocessableEntityException(UNPROCESSABLE_ENTITY,
+                    new ErrorContainer(Map.of("password", Set.of(PASSWORDS_DONT_MATCH))));
         }
 
         UserEntity user = this.userRepository.findById(userId).orElseThrow(() -> {

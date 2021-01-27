@@ -4,7 +4,6 @@ import com.syn.domo.exception.DomoEntityNotFoundException;
 import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.*;
 import com.syn.domo.model.service.ApartmentServiceModel;
-import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.repository.ApartmentRepository;
 import com.syn.domo.service.ApartmentService;
 import org.junit.jupiter.api.Test;
@@ -12,12 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 
-import static com.syn.domo.common.ValidationErrorMessages.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -90,7 +87,7 @@ class ApartmentServiceImplTest {
         ApartmentServiceModel apartmentServiceModel =
                 new ApartmentServiceModel("1", 1, null, 1, null);
 
-        assertThrows(EntityNotFoundException.class, () ->
+        assertThrows(DomoEntityNotFoundException.class, () ->
                 this.apartmentService.edit(apartmentServiceModel, "1"));
     }
 }

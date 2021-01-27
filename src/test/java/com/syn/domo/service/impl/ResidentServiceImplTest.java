@@ -2,7 +2,6 @@ package com.syn.domo.service.impl;
 
 import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.service.ResidentServiceModel;
-import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.notification.service.NotificationService;
 import com.syn.domo.repository.ResidentRepository;
 import com.syn.domo.service.*;

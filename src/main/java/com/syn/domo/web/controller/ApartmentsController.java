@@ -4,7 +4,6 @@ import com.syn.domo.model.binding.ApartmentBindingModel;
 import com.syn.domo.model.service.ApartmentServiceModel;
 import com.syn.domo.model.view.ApartmentViewModel;
 import com.syn.domo.service.ApartmentService;
-import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.web.filter.ApartmentFilter;
 import com.syn.domo.web.controller.namespace.ApartmentsNamespace;
 import org.modelmapper.ModelMapper;

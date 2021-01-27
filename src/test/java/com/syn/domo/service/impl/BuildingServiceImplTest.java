@@ -3,7 +3,6 @@ package com.syn.domo.service.impl;
 import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.service.BuildingServiceModel;
-import com.syn.domo.model.view.ResponseModel;
 import com.syn.domo.repository.BuildingRepository;
 import com.syn.domo.service.BuildingService;
 import org.junit.jupiter.api.Test;
@@ -14,10 +13,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import static com.syn.domo.common.ValidationErrorMessages.BUILDING_NAME_NOT_EMPTY;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doReturn;
 

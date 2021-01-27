@@ -95,13 +95,13 @@ public class ResidentServiceImpl implements ResidentService  {
 
         String email = residentToAdd.getEmail();
         if (this.userService.getByEmail(email).isPresent()) {
-            throw new DomoEntityExistsException(EMAIL_ALREADY_USED, new ErrorContainer(Map.of("email",
+            throw new DomoEntityExistsException(ENTITY_EXISTS, new ErrorContainer(Map.of("email",
                     Set.of(String.format(EMAIL_ALREADY_USED, email)))));
         }
 
         String phoneNumber = residentToAdd.getPhoneNumber();
         if (this.userService.getByPhoneNumber(phoneNumber).isPresent()) {
-            throw new DomoEntityExistsException(PHONE_ALREADY_USED, new ErrorContainer(Map.of("phoneNumber",
+            throw new DomoEntityExistsException(ENTITY_EXISTS, new ErrorContainer(Map.of("phoneNumber",
                     Set.of(String.format(PHONE_ALREADY_USED, phoneNumber)))));
         }
 
@@ -136,13 +136,13 @@ public class ResidentServiceImpl implements ResidentService  {
 
         String email = residentToEdit.getEmail();
         if (this.userService.notUniqueEmail(email, residentId)) {
-            throw new DomoEntityExistsException(EMAIL_ALREADY_USED, new ErrorContainer(Map.of("email",
+            throw new DomoEntityExistsException(ENTITY_EXISTS, new ErrorContainer(Map.of("email",
                     Set.of(String.format(EMAIL_ALREADY_USED, email)))));
         }
 
         String phoneNumber = residentToEdit.getPhoneNumber();
         if (this.userService.notUniquePhoneNumber(phoneNumber, residentId)) {
-            throw new DomoEntityExistsException(PHONE_ALREADY_USED, new ErrorContainer(Map.of("phoneNumber",
+            throw new DomoEntityExistsException(ENTITY_EXISTS, new ErrorContainer(Map.of("phoneNumber",
                     Set.of(String.format(PHONE_ALREADY_USED, phoneNumber)))));
         }
 

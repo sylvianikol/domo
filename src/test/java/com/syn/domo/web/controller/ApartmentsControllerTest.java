@@ -186,7 +186,7 @@ class ApartmentsControllerTest extends AbstractTest {
     }
 
     @Test
-    void test_add_isUnprocessable() throws Exception {
+    void test_add_isUnprocessable_ifInvalidData() throws Exception {
         ApartmentBindingModel apartmentBindingModel = new ApartmentBindingModel();
         apartmentBindingModel.setNumber("");
         apartmentBindingModel.setFloor(-1);
@@ -203,7 +203,7 @@ class ApartmentsControllerTest extends AbstractTest {
     }
 
     @Test
-    void test_add_withBuildingIdInvalid_isNotFound() throws Exception {
+    void test_add_isNotFound_ifBuildingIdInvalid() throws Exception {
         ApartmentBindingModel apartmentBindingModel = new ApartmentBindingModel();
         apartmentBindingModel.setNumber("3");
         apartmentBindingModel.setFloor(1);
@@ -294,7 +294,7 @@ class ApartmentsControllerTest extends AbstractTest {
     }
 
     @Test
-    void test_edit_IdInvalid_isNotFound() throws Exception {
+    void test_edit_isNotFound_ifIdInvalid() throws Exception {
         ApartmentBindingModel apartmentBindingModel = new ApartmentBindingModel();
         apartmentBindingModel.setNumber("3");
         apartmentBindingModel.setFloor(2);
@@ -310,7 +310,7 @@ class ApartmentsControllerTest extends AbstractTest {
     }
 
     @Test
-    void test_edit_isUnprocessableIfFloorInvalid() throws Exception {
+    void test_edit_isUnprocessable_ifFloorInvalid() throws Exception {
         ApartmentBindingModel apartmentBindingModel = new ApartmentBindingModel();
         apartmentBindingModel.setNumber("1");
         apartmentBindingModel.setFloor(100);
@@ -326,7 +326,7 @@ class ApartmentsControllerTest extends AbstractTest {
     }
 
     @Test
-    void test_edit_isConflictIfDuplicate() throws Exception {
+    void test_edit_isConflict_ifDuplicate() throws Exception {
         ApartmentBindingModel apartment = new ApartmentBindingModel();
         apartment.setNumber("2");
         apartment.setFloor(1);

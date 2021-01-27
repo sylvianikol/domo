@@ -302,7 +302,7 @@ class ResidentsControllerTest extends AbstractTest {
     }
 
     @Test
-    void test_add_bindingModelNotValid_isUnprocessable() throws Exception {
+    void test_add_isUnprocessable_ifInvalidData() throws Exception {
         ResidentBindingModel residentBindingModel = new ResidentBindingModel(
                 "", "Hope", "hope@mail.com", "044838383");
 
@@ -314,13 +314,11 @@ class ResidentsControllerTest extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(jsonPath("$.object.firstName", is("")))
-                .andExpect(jsonPath("$.errorContainer.errors.firstName[0]", is(FIRST_NAME_INVALID)))
-                .andExpect(jsonPath("$.errorContainer.errors.firstName[1]", is(FIRST_NAME_NOT_EMPTY)));
-    }
+                .andExpect(jsonPath("$.firstName", is("")));
+     }
 
     @Test
-    void test_add_withBuildingIdInvalid_isNotFound() throws Exception {
+    void test_add_isNotFound_ifBuildingIdInvalid() throws Exception {
         ResidentBindingModel residentBindingModel = new ResidentBindingModel(
                 "Bob", "Hope", "hope@mail.com", "044838383");
 
@@ -332,11 +330,12 @@ class ResidentsControllerTest extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(BUILDING_NOT_FOUND));
+                .andExpect(jsonPath("$.statusCode", is(404)))
+                .andExpect(jsonPath("$.message", is(BUILDING_NOT_FOUND)));
     }
 
     @Test
-    void test_add_withApartmentIdInvalid_isNotFound() throws Exception {
+    void test_add_isNotFound_ifApartmentIdInvalid() throws Exception {
         ResidentBindingModel residentBindingModel = new ResidentBindingModel(
                 "Bob", "Hope", "hope@mail.com", "044838383");
 
@@ -348,11 +347,12 @@ class ResidentsControllerTest extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(APARTMENT_NOT_FOUND));
+                .andExpect(jsonPath("$.statusCode", is(404)))
+                .andExpect(jsonPath("$.message", is(APARTMENT_NOT_FOUND)));
     }
 
     @Test
-    void test_add_withEmailUsed_isUnprocessable() throws Exception {
+    void test_add_isConflict_ifEmailUsed() throws Exception {
         ResidentBindingModel residentBindingModel = new ResidentBindingModel(
                 "Bob", "Hope", RESIDENT_1_EMAIL, "044838383");
 
@@ -363,13 +363,15 @@ class ResidentsControllerTest extends AbstractTest {
                 .param("apartmentId", APARTMENT_ID)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(jsonPath("$.errorContainer.errors.email.[0]",
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.statusCode", is(409)))
+                .andExpect(jsonPath("$.message", is(ENTITY_EXISTS)))
+                .andExpect(jsonPath("$.errorContainer.errors.email[0]",
                         is(String.format(EMAIL_ALREADY_USED, RESIDENT_1_EMAIL))));
     }
 
     @Test
-    void test_add_withPhoneUsed_isUnprocessable() throws Exception {
+    void test_add_isConflict_ifPhoneUsed() throws Exception {
         ResidentBindingModel residentBindingModel = new ResidentBindingModel(
                 "Bob", "Hope", "bob@test.mail", RESIDENT_1_PHONE);
 
@@ -380,8 +382,10 @@ class ResidentsControllerTest extends AbstractTest {
                 .param("apartmentId", APARTMENT_ID)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(jsonPath("$.errorContainer.errors.phoneNumber.[0]",
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.statusCode", is(409)))
+                .andExpect(jsonPath("$.message", is(ENTITY_EXISTS)))
+                .andExpect(jsonPath("$.errorContainer.errors.phoneNumber[0]",
                         is(String.format(PHONE_ALREADY_USED, RESIDENT_1_PHONE))));
     }
 
@@ -402,7 +406,7 @@ class ResidentsControllerTest extends AbstractTest {
     }
 
     @Test
-    void test_editWithBindingModelNotValid_isUnprocessable() throws Exception {
+    void test_edit_isUnprocessable_ifInvalidData() throws Exception {
         ResidentBindingModel residentBindingModel = new ResidentBindingModel(
                 "", "Hope", "hope@mail.com", "044838383");
 
@@ -412,13 +416,11 @@ class ResidentsControllerTest extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(jsonPath("$.errorContainer.errors.firstName[0]", is(FIRST_NAME_INVALID)))
-                .andExpect(jsonPath("$.errorContainer.errors.firstName[1]", is(FIRST_NAME_NOT_EMPTY)));
-
+                .andExpect(jsonPath("$.firstName", is("")));
     }
 
     @Test
-    void test_edit_IdInvalid_isNotFound() throws Exception {
+    void test_edit_isNotFound_ifIdInvalid() throws Exception {
         ResidentBindingModel residentBindingModel = new ResidentBindingModel(
                 "Edit Name", "Hope", "hope@mail.com", "044838383");
 
@@ -428,12 +430,13 @@ class ResidentsControllerTest extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(RESIDENT_NOT_FOUND));
+                .andExpect(jsonPath("$.statusCode", is(404)))
+                .andExpect(jsonPath("$.message", is(RESIDENT_NOT_FOUND)));
 
     }
 
     @Test
-    void test_edit_withEmailUsed_isUnprocessable() throws Exception {
+    void test_edit_isConflict_ifEmailUsed() throws Exception {
         ResidentBindingModel residentBindingModel = new ResidentBindingModel(
                 "Ed", "Doe", RESIDENT_1_EMAIL, "32342");
 
@@ -442,13 +445,15 @@ class ResidentsControllerTest extends AbstractTest {
         this.mvc.perform(put(URI + "/{residentId}", RESIDENT_2_ID)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(jsonPath("$.errorContainer.errors.email.[0]",
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.statusCode", is(409)))
+                .andExpect(jsonPath("$.message", is(ENTITY_EXISTS)))
+                .andExpect(jsonPath("$.errorContainer.errors.email[0]",
                         is(String.format(EMAIL_ALREADY_USED, RESIDENT_1_EMAIL))));
     }
 
     @Test
-    void test_edit_withPhoneUsed_isUnprocessable() throws Exception {
+    void test_edit_isConflict_ifPhoneUsed() throws Exception {
         ResidentBindingModel residentBindingModel = new ResidentBindingModel(
                 "Ed", "Doe", "ed@mail.com", RESIDENT_1_PHONE);
 
@@ -457,8 +462,10 @@ class ResidentsControllerTest extends AbstractTest {
         this.mvc.perform(put(URI + "/{residentId}", RESIDENT_2_ID)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(jsonPath("$.errorContainer.errors.phoneNumber.[0]",
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.statusCode", is(409)))
+                .andExpect(jsonPath("$.message", is(ENTITY_EXISTS)))
+                .andExpect(jsonPath("$.errorContainer.errors.phoneNumber[0]",
                         is(String.format(PHONE_ALREADY_USED, RESIDENT_1_PHONE))));
     }
 
@@ -522,7 +529,8 @@ class ResidentsControllerTest extends AbstractTest {
         this.mvc.perform(delete(URI + "/{residentId}", "0"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(RESIDENT_NOT_FOUND));
+                .andExpect(jsonPath("$.statusCode", is(404)))
+                .andExpect(jsonPath("$.message", is(RESIDENT_NOT_FOUND)));
     }
 
     private String getAHeaderLocation() {

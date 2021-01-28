@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import static com.syn.domo.common.ExceptionErrorMessages.*;
@@ -49,6 +50,7 @@ class FeesControllerTest extends AbstractTest {
     private String USER_ID;
     private String FEE_1_ID;
     private String FEE_2_ID;
+    private Fee paidFee;
     private final String URI = "/v1/fees";
 
     @BeforeEach
@@ -84,6 +86,11 @@ class FeesControllerTest extends AbstractTest {
                 null, false, null, apartment);
         this.feeRepository.saveAndFlush(fee2);
 
+
+        this.paidFee = new Fee(BigDecimal.valueOf(20), LocalDate.now(), LocalDate.now().plusMonths(1),
+                LocalDateTime.now(), true, resident.getId(), apartment);
+        this.feeRepository.saveAndFlush(paidFee);
+
         BUILDING_ID = building.getId();
         APARTMENT_ID = apartment.getId();
         USER_ID = resident.getId();
@@ -113,7 +120,7 @@ class FeesControllerTest extends AbstractTest {
         this.mvc.perform(get(URI + "/all"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$.[0].id", is(FEE_1_ID)))
                 .andExpect(jsonPath("$.[1].id", is(FEE_2_ID)));
     }
@@ -133,7 +140,7 @@ class FeesControllerTest extends AbstractTest {
                 .param("page", "0"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$.[0].id", is(FEE_1_ID)))
                 .andExpect(jsonPath("$.[1].id", is(FEE_2_ID)));
     }
@@ -153,7 +160,7 @@ class FeesControllerTest extends AbstractTest {
                 .param("buildingId", BUILDING_ID))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$.[0].id", is(FEE_1_ID)))
                 .andExpect(jsonPath("$.[0].apartment.building.id", is(BUILDING_ID)))
                 .andExpect(jsonPath("$.[1].id", is(FEE_2_ID)))
@@ -167,7 +174,7 @@ class FeesControllerTest extends AbstractTest {
                 .param("apartmentId", APARTMENT_ID))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$.[0].id", is(FEE_1_ID)))
                 .andExpect(jsonPath("$.[0].apartment.building.id", is(BUILDING_ID)))
                 .andExpect(jsonPath("$.[0].apartment.id", is(APARTMENT_ID)))
@@ -182,7 +189,7 @@ class FeesControllerTest extends AbstractTest {
                 .param("apartmentId", APARTMENT_ID))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$.[0].id", is(FEE_1_ID)))
                 .andExpect(jsonPath("$.[0].apartment.id", is(APARTMENT_ID)))
                 .andExpect(jsonPath("$.[1].id", is(FEE_2_ID)))
@@ -222,7 +229,7 @@ class FeesControllerTest extends AbstractTest {
                 .param("page", "0"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$.[0].id", is(FEE_1_ID)))
                 .andExpect(jsonPath("$.[0].apartment.building.id", is(BUILDING_ID)))
                 .andExpect(jsonPath("$.[1].id", is(FEE_2_ID)))
@@ -247,7 +254,7 @@ class FeesControllerTest extends AbstractTest {
                 .param("page", "0"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$.[0].id", is(FEE_1_ID)))
                 .andExpect(jsonPath("$.[0].apartment.id", is(APARTMENT_ID)))
                 .andExpect(jsonPath("$.[1].id", is(FEE_2_ID)))
@@ -282,7 +289,7 @@ class FeesControllerTest extends AbstractTest {
 
 
     @Test
-    void test_pay_isNoContent() throws Exception {
+    void test_pay_isNoContent_whenSuccess() throws Exception {
 
         this.mvc.perform(post(URI + "/{feeId}/pay", FEE_1_ID)
                 .param("userId", USER_ID))
@@ -293,11 +300,43 @@ class FeesControllerTest extends AbstractTest {
     }
 
     @Test
+    void test_pay_feeIdNotFound() throws Exception {
+
+        this.mvc.perform(post(URI + "/{feeId}/pay", "0")
+                .param("userId", USER_ID))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.statusCode", is(404)))
+                .andExpect(jsonPath("$.message", is(FEE_NOT_FOUND)));
+    }
+
+    @Test
+    void test_pay_isUnprocessable_ifFeeIsPaid() throws Exception {
+
+        this.mvc.perform(post(URI + "/{feeId}/pay", this.paidFee.getId())
+                .param("userId", USER_ID))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.statusCode", is(422)))
+                .andExpect(jsonPath("$.message", is(FEE_ALREADY_PAID)));
+    }
+
+    @Test
+    void test_pay_userIsNotFound() throws Exception {
+        this.mvc.perform(post(URI + "/{feeId}/pay", FEE_1_ID)
+                .param("userId", "0"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.statusCode", is(404)))
+                .andExpect(jsonPath("$.message", is(USER_NOT_FOUND)));
+    }
+
+    @Test
     void test_deleteAll_isOkWithCorrectMessage() throws Exception {
         this.mvc.perform(delete(URI + "/delete"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(String.format(DELETE_SUCCESSFUL, 2, "fees")));
+                .andExpect(content().string(String.format(DELETE_SUCCESSFUL, 3, "fees")));
     }
 
     @Test
@@ -315,7 +354,7 @@ class FeesControllerTest extends AbstractTest {
                 .param("buildingId", BUILDING_ID))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(String.format(DELETE_SUCCESSFUL, 2, "fees")));
+                .andExpect(content().string(String.format(DELETE_SUCCESSFUL, 3, "fees")));
     }
 
     @Test
@@ -344,7 +383,7 @@ class FeesControllerTest extends AbstractTest {
                 .param("apartmentId", APARTMENT_ID))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(String.format(DELETE_SUCCESSFUL, 2, "fees")));
+                .andExpect(content().string(String.format(DELETE_SUCCESSFUL, 3, "fees")));
     }
 
     @Test
@@ -363,7 +402,7 @@ class FeesControllerTest extends AbstractTest {
                 .param("apartmentId", APARTMENT_ID))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(String.format(DELETE_SUCCESSFUL, 2, "fees")));
+                .andExpect(content().string(String.format(DELETE_SUCCESSFUL, 3, "fees")));
     }
 
     @Test

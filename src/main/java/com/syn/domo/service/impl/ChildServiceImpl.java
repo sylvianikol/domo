@@ -1,6 +1,6 @@
 package com.syn.domo.service.impl;
 
-import com.syn.domo.error.ErrorContainer;
+import com.syn.domo.exception.error.ErrorContainer;
 import com.syn.domo.exception.*;
 import com.syn.domo.model.entity.Apartment;
 import com.syn.domo.model.entity.Child;

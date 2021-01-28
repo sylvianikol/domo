@@ -1,6 +1,6 @@
 package com.syn.domo.utils;
 
-import com.syn.domo.error.ErrorContainer;
+import com.syn.domo.exception.error.ErrorContainer;
 
 import javax.validation.ConstraintViolation;
 import java.util.Set;

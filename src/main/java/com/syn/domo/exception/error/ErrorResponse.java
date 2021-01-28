@@ -1,6 +1,4 @@
-package com.syn.domo.exception;
-
-import com.syn.domo.error.ErrorContainer;
+package com.syn.domo.exception.error;
 
 public class ErrorResponse {
 

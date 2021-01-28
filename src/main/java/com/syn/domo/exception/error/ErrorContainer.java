@@ -1,4 +1,4 @@
-package com.syn.domo.error;
+package com.syn.domo.exception.error;
 
 import java.util.HashMap;
 import java.util.Map;

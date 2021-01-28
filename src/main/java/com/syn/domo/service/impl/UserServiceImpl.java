@@ -1,6 +1,6 @@
 package com.syn.domo.service.impl;
 
-import com.syn.domo.error.ErrorContainer;
+import com.syn.domo.exception.error.ErrorContainer;
 import com.syn.domo.exception.DomoEntityNotFoundException;
 import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.*;

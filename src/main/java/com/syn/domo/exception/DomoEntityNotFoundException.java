@@ -1,6 +1,6 @@
 package com.syn.domo.exception;
 
-import com.syn.domo.error.ErrorContainer;
+import com.syn.domo.exception.error.ErrorContainer;
 
 public class DomoEntityNotFoundException extends RuntimeException {
 

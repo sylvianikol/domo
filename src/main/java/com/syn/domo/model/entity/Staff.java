@@ -49,7 +49,7 @@ public class Staff extends UserEntity {
         this.wage = wage;
     }
 
-    @ManyToMany(cascade = { MERGE, REFRESH }, fetch = EAGER)
+    @ManyToMany(cascade = { REFRESH }, fetch = EAGER)
     @JoinTable(name = "staff_buildings",
             joinColumns = @JoinColumn(name = "staff_id"),
             inverseJoinColumns = @JoinColumn(name = "building_id"))

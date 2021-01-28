@@ -1,7 +1,5 @@
 package com.syn.domo.model.entity;
 
-import org.hibernate.annotations.ColumnDefault;
-
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -12,13 +10,8 @@ import static javax.persistence.CascadeType.REFRESH;
 
 @Entity
 @Table(name = "fees")
-public class Fee extends BaseEntity {
+public class Fee extends BasePaymentEntity {
 
-    private BigDecimal total;
-    private LocalDate issueDate;
-    private LocalDate dueDate;
-    private LocalDateTime paidDate;
-    private boolean isPaid;
     private String payerId;
     private Apartment apartment;
 
@@ -26,58 +19,9 @@ public class Fee extends BaseEntity {
     }
 
     public Fee(BigDecimal total, LocalDate issueDate, LocalDate dueDate, LocalDateTime paidDate, boolean isPaid, String payerId, Apartment apartment) {
-        this.total = total;
-        this.issueDate = issueDate;
-        this.dueDate = dueDate;
-        this.paidDate = paidDate;
-        this.isPaid = isPaid;
+        super(total, issueDate, dueDate, paidDate, isPaid);
         this.payerId = payerId;
         this.apartment = apartment;
-    }
-
-    @ColumnDefault("0")
-    public BigDecimal getTotal() {
-        return total;
-    }
-
-    public void setTotal(BigDecimal total) {
-        this.total = total;
-    }
-
-    @Column(name = "issue_date", nullable = false)
-    public LocalDate getIssueDate() {
-        return issueDate;
-    }
-
-    public void setIssueDate(LocalDate issueDate) {
-        this.issueDate = issueDate;
-    }
-
-    @Column(name = "due_date")
-    public LocalDate getDueDate() {
-        return dueDate;
-    }
-
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
-    }
-
-    @Column(name = "paid_date")
-    public LocalDateTime getPaidDate() {
-        return paidDate;
-    }
-
-    public void setPaidDate(LocalDateTime paidOn) {
-        this.paidDate = paidOn;
-    }
-
-    @Column(name = "paid")
-    public boolean isPaid() {
-        return isPaid;
-    }
-
-    public void setPaid(boolean paid) {
-        isPaid = paid;
     }
 
     @Column(name = "payer_id")

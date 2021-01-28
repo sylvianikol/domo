@@ -27,4 +27,6 @@ public interface StaffService {
     void cancelBuildingAssignments(Set<String> staffIds, String buildingId);
 
     Set<StaffServiceModel> getAllByIdIn(Set<String> staffIds);
+
+    void paySalaries();
 }

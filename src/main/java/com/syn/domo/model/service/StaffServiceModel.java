@@ -3,17 +3,16 @@ package com.syn.domo.model.service;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
 import java.util.Set;
 
 import static com.syn.domo.common.ValidationErrorMessages.*;
-import static com.syn.domo.common.ValidationErrorMessages.SALARY_MIN;
 
 public class StaffServiceModel extends UserServiceModel {
 
     private String job;
-    private BigDecimal salary;
+    private String wage;
     private Set<BuildingServiceModel> buildings;
+    private Set<SalaryServiceModel> salaries;
 
     public StaffServiceModel() {
     }
@@ -28,14 +27,14 @@ public class StaffServiceModel extends UserServiceModel {
         this.job = job;
     }
 
-    @NotNull(message = SALARY_NOT_NULL)
-    @DecimalMin(value = "0", message = SALARY_MIN)
-    public BigDecimal getSalary() {
-        return salary;
+    @NotNull(message = WAGE_NOT_NULL)
+    @DecimalMin(value = "0", message = WAGE_MIN)
+    public String getWage() {
+        return wage;
     }
 
-    public void setSalary(BigDecimal salary) {
-        this.salary = salary;
+    public void setWage(String wage) {
+        this.wage = wage;
     }
 
     public Set<BuildingServiceModel> getBuildings() {
@@ -44,5 +43,13 @@ public class StaffServiceModel extends UserServiceModel {
 
     public void setBuildings(Set<BuildingServiceModel> buildings) {
         this.buildings = buildings;
+    }
+
+    public Set<SalaryServiceModel> getSalaries() {
+        return salaries;
+    }
+
+    public void setSalaries(Set<SalaryServiceModel> salaries) {
+        this.salaries = salaries;
     }
 }

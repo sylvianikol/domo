@@ -84,11 +84,11 @@ class BuildingsControllerTest extends AbstractTest {
 
         Staff staff1 = new Staff("Staff 1", "Staff 1", LocalDate.now(),
                 "staff1@mail.com", null, "0383933", false, Set.of(role),
-                "Job 1", BigDecimal.valueOf(500), new HashSet<>());
+                "Job 1", BigDecimal.valueOf(50), new HashSet<>(), new HashSet<>());
         this.staffRepository.saveAndFlush(staff1);
         Staff staff2 = new Staff("Staff 2", "Staff 2", LocalDate.now(),
                 "staff2@mail.com", null, "546464", false, Set.of(role),
-                "Job 2", BigDecimal.valueOf(500), new HashSet<>());
+                "Job 2", BigDecimal.valueOf(50), new HashSet<>(), new HashSet<>());
         this.staffRepository.saveAndFlush(staff2);
 
         BUILDING_1_ID = building1.getId();

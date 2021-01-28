@@ -7,8 +7,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Set;
 
-import static javax.persistence.CascadeType.MERGE;
-import static javax.persistence.CascadeType.REFRESH;
+import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.EAGER;
 
 @Entity
@@ -16,18 +15,20 @@ import static javax.persistence.FetchType.EAGER;
 public class Staff extends UserEntity {
 
     private String job;
-    private BigDecimal salary;
+    private BigDecimal wage;
+
     private Set<Building> buildings;
+    private Set<Salary> salaries;
 
     public Staff() {
-        this.salary = BigDecimal.ZERO;
     }
 
-    public Staff(String firstName, String lastName, LocalDate addedOn, String email, String password, String phoneNumber, boolean isActive, Set<Role> roles, String job, BigDecimal salary, Set<Building> buildings) {
+    public Staff(String firstName, String lastName, LocalDate addedOn, String email, String password, String phoneNumber, boolean isActive, Set<Role> roles, String job, BigDecimal wage, Set<Building> buildings, Set<Salary> salaries) {
         super(firstName, lastName, addedOn, email, password, phoneNumber, isActive, roles);
         this.job = job;
-        this.salary = salary;
+        this.wage = wage;
         this.buildings = buildings;
+        this.salaries = salaries;
     }
 
     @Column(nullable = false, columnDefinition = "varchar(40)")
@@ -40,12 +41,12 @@ public class Staff extends UserEntity {
     }
 
     @ColumnDefault("0")
-    public BigDecimal getSalary() {
-        return salary;
+    public BigDecimal getWage() {
+        return wage;
     }
 
-    public void setSalary(BigDecimal salary) {
-        this.salary = salary;
+    public void setWage(BigDecimal wage) {
+        this.wage = wage;
     }
 
     @ManyToMany(cascade = { MERGE, REFRESH }, fetch = EAGER)
@@ -58,5 +59,14 @@ public class Staff extends UserEntity {
 
     public void setBuildings(Set<Building> buildings) {
         this.buildings = buildings;
+    }
+
+    @OneToMany(mappedBy = "staff", cascade = REMOVE, fetch = EAGER)
+    public Set<Salary> getSalaries() {
+        return salaries;
+    }
+
+    public void setSalaries(Set<Salary> salaries) {
+        this.salaries = salaries;
     }
 }

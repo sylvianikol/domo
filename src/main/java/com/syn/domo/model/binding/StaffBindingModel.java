@@ -11,17 +11,17 @@ public class StaffBindingModel extends BaseUserBindingModel {
     private String email;
     private String phoneNumber;
     private String job;
-    private BigDecimal salary;
+    private BigDecimal wage;
 
     public StaffBindingModel() {
     }
 
-    public StaffBindingModel(String firstName, String lastName, String email, String phoneNumber, String job, BigDecimal salary) {
+    public StaffBindingModel(String firstName, String lastName, String email, String phoneNumber, String job, BigDecimal wage) {
         super(firstName, lastName);
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.job = job;
-        this.salary = salary;
+        this.wage = wage;
     }
 
     @NotNull(message = EMAIL_NOT_NULL)
@@ -57,13 +57,13 @@ public class StaffBindingModel extends BaseUserBindingModel {
         this.job = job;
     }
 
-    @NotNull(message = SALARY_NOT_NULL)
-    @DecimalMin(value = "0", message = SALARY_MIN)
-    public BigDecimal getSalary() {
-        return salary;
+    @NotNull(message = WAGE_NOT_NULL)
+    @DecimalMin(value = "0", message = WAGE_MIN)
+    public BigDecimal getWage() {
+        return wage;
     }
 
-    public void setSalary(BigDecimal salary) {
-        this.salary = salary;
+    public void setWage(BigDecimal wage) {
+        this.wage = wage;
     }
 }

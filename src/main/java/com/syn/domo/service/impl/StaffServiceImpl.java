@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -113,7 +114,7 @@ public class StaffServiceImpl implements StaffService {
 
         staff.setRoles(Set.of(this.modelMapper.map(roleServiceModel, Role.class)));
         staff.setAddedOn(LocalDate.now());
-        staff.setSalary(staffToAdd.getSalary());
+
         staff.setJob(staffToAdd.getJob());
 
         this.staffRepository.saveAndFlush(staff);
@@ -153,7 +154,6 @@ public class StaffServiceImpl implements StaffService {
         staff.setLastName(staffToEdit.getLastName());
         staff.setEmail(staffToEdit.getEmail());
         staff.setPhoneNumber(staffToEdit.getPhoneNumber());
-        staff.setSalary(staffToEdit.getSalary());
         staff.setJob(staffToEdit.getJob());
 
         this.staffRepository.saveAndFlush(staff);
@@ -229,5 +229,20 @@ public class StaffServiceImpl implements StaffService {
                 .map(staff -> this.modelMapper.map(staff, StaffServiceModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         return Collections.unmodifiableSet(staffServiceModels);
+    }
+
+    @Override
+    public void paySalaries() {
+        List<Staff> staff = this.staffRepository.findAll();
+
+        for (Staff employee : staff) {
+            Set<Building> buildings = employee.getBuildings();
+            BigDecimal wage = employee.getWage();
+
+            for (Building building : buildings) {
+                BigDecimal budget = building.getBudget().subtract(wage);
+                // TODO:
+            }
+        }
     }
 }

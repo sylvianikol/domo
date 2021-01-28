@@ -22,4 +22,9 @@ public interface StaffRepository extends JpaRepository<Staff, String>, JpaSpecif
             "WHERE `staff_id` = ?1 ", nativeQuery = true)
     int cancelBuildingAssignments(String staffId);
 
+    @Query("SELECT s FROM Staff s " +
+            "JOIN s.buildings b " +
+            "WHERE s.id = :staffId AND b.id IN :buildingId ")
+    Optional<Staff> getByIdAndBuildingId(@Param(value = "staffId") String staffId,
+                                           @Param(value = "buildingId") String buildingId);
 }

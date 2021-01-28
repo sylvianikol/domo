@@ -35,4 +35,6 @@ public class ExceptionErrorMessages {
     public static final String ACTIVATION_EMAIL_FAIL = "Sending activation email failed.";
 
     public static final String UNPROCESSABLE_ENTITY = "Entity could not be processed!";
+
+    public static final String STAFF_ALREADY_ASSIGNED = "%s %s %s is already assigned to %s";
 }

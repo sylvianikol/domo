@@ -19,6 +19,7 @@ public class BuildingServiceModel extends BaseServiceModel {
     private LocalDate addedOn;
 
     Set<ApartmentServiceModel> apartments;
+    Set<StaffServiceModel> staff;
 
     public BuildingServiceModel() {
     }
@@ -111,6 +112,14 @@ public class BuildingServiceModel extends BaseServiceModel {
 
     public void setApartments(Set<ApartmentServiceModel> apartments) {
         this.apartments = apartments;
+    }
+
+    public Set<StaffServiceModel> getStaff() {
+        return staff;
+    }
+
+    public void setStaff(Set<StaffServiceModel> staff) {
+        this.staff = staff;
     }
 
     @Override

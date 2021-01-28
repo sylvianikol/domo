@@ -194,16 +194,21 @@ public class StaffServiceImpl implements StaffService {
         Staff staff = this.staffRepository.findById(staffId)
                 .orElseThrow(() -> { throw new DomoEntityNotFoundException(STAFF_NOT_FOUND); });
 
-        Set<Building> buildings = this.buildingService.getAllByIdIn(buildingIds)
-                .stream()
-                .map(b -> this.modelMapper.map(b, Building.class))
-                .collect(Collectors.toUnmodifiableSet());
+        for (String buildingId : buildingIds) {
+            BuildingServiceModel buildingServiceModel = this.buildingService.get(buildingId)
+                    .orElseThrow(() -> { throw new DomoEntityNotFoundException(BUILDING_NOT_FOUND); });
 
-        if (buildings.isEmpty()) {
-            throw new EntityNotFoundException(BUILDING_NOT_FOUND);
+            if (this.staffRepository.getByIdAndBuildingId(staffId, buildingId).isPresent()) {
+                throw new DataConflictException(DATA_CONFLICT, new ErrorContainer(Map.of("alreadyAssigned",
+                        Set.of(String.format(STAFF_ALREADY_ASSIGNED,
+                                staff.getJob(), staff.getFirstName(),
+                                staff.getLastName(), buildingServiceModel.getName())))));
+            }
+
+            Building building = this.modelMapper.map(buildingServiceModel, Building.class);
+            building.getStaff().add(staff);
+            staff.getBuildings().add(building);
         }
-
-        staff.getBuildings().addAll(buildings);
 
         this.staffRepository.saveAndFlush(staff);
     }

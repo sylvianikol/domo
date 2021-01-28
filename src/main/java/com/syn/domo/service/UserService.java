@@ -11,7 +11,7 @@ public interface UserService {
 
     Optional<UserServiceModel> get(String userId);
 
-    UserActivateServiceModel createPassword(String userId, UserActivateServiceModel userActivateServiceModel);
+    void createPassword(String userId, UserActivateServiceModel userActivateServiceModel);
 
     Optional<UserServiceModel> getByEmail(String email);
 

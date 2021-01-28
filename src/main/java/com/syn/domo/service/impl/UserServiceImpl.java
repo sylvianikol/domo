@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserActivateServiceModel createPassword(String userId, UserActivateServiceModel userActivateServiceModel) {
+    public void createPassword(String userId, UserActivateServiceModel userActivateServiceModel) {
         String password = userActivateServiceModel.getPassword().trim();
         String confirmPassword = userActivateServiceModel.getConfirmPassword().trim();
 
@@ -83,8 +83,6 @@ public class UserServiceImpl implements UserService {
         user.setPassword(password);
         user.setActive(true);
         this.userRepository.saveAndFlush(user);
-
-        return this.modelMapper.map(user, UserActivateServiceModel.class);
     }
 
     @Override

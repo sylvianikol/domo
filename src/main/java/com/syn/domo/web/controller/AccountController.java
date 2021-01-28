@@ -39,16 +39,15 @@ public class AccountController implements AccountNamespace {
     }
 
     @PostMapping("/activate")
-    public ResponseEntity<?> createPassword(@RequestParam(name = "userId") String userId,
+    public ResponseEntity<?> activate(@RequestParam(name = "userId") String userId,
                                             @Valid @RequestBody UserActivateBindingModel userActivateBindingModel,
                                             BindingResult bindingResult, UriComponentsBuilder uriComponentsBuilder) {
 
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.unprocessableEntity().body(userActivateBindingModel);
+            return ResponseEntity.unprocessableEntity().build();
         }
 
-        UserActivateServiceModel userActivateServiceModel = this.userService
-                .createPassword(userId, this.modelMapper
+        this.userService.createPassword(userId, this.modelMapper
                         .map(userActivateBindingModel, UserActivateServiceModel.class));
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)

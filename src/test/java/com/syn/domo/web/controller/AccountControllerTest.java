@@ -104,7 +104,7 @@ class AccountControllerTest extends AbstractTest {
     }
 
     @Test
-    void test_createPassword_isUnprocessableIfInvalidData() throws Exception {
+    void test_createPassword_isUnprocessable_IfInvalidData() throws Exception {
         UserActivateBindingModel bindingModel = new UserActivateBindingModel();
         bindingModel.setPassword("");
         bindingModel.setConfirmPassword("123");
@@ -115,13 +115,11 @@ class AccountControllerTest extends AbstractTest {
                 .param("userId", USER_ID)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(jsonPath("$.password", is("")))
-                .andExpect(jsonPath("$.confirmPassword", is("123")));
+                .andExpect(status().isUnprocessableEntity());
       }
 
     @Test
-    void test_createPassword_isUnprocessableIfPasswordsMismatch() throws Exception {
+    void test_createPassword_isUnprocessable_ifPasswordsMismatch() throws Exception {
         UserActivateBindingModel bindingModel = new UserActivateBindingModel();
         bindingModel.setPassword("124");
         bindingModel.setConfirmPassword("123");

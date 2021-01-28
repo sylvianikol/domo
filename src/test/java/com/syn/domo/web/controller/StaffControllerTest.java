@@ -237,14 +237,11 @@ class StaffControllerTest extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(jsonPath("$.object.firstName", is("")))
-                .andExpect(jsonPath("$.errorContainer.errors.firstName[0]", is(FIRST_NAME_INVALID)))
-                .andExpect(jsonPath("$.errorContainer.errors.firstName[1]", is(FIRST_NAME_NOT_EMPTY)));
-
-    }
+                .andExpect(jsonPath("$.firstName", is("")));
+   }
 
     @Test
-    void test_edit_IdInvalid_isNotFound() throws Exception {
+    void test_edit_isNotFound_ifIdInvalid_isNotFound() throws Exception {
         StaffBindingModel staffBindingModel =
                 new StaffBindingModel("Edit Staff", "Staff", "new@mail.com",
                         "224234", "Job", BigDecimal.valueOf(500));
@@ -318,7 +315,8 @@ class StaffControllerTest extends AbstractTest {
         this.mvc.perform(delete(URI + "/{staffId}", "0"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(STAFF_NOT_FOUND));
+                .andExpect(jsonPath("$.statusCode", is(404)))
+                .andExpect(jsonPath("$.message", is(STAFF_NOT_FOUND)));
     }
 
     @Test

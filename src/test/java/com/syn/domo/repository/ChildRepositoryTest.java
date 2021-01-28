@@ -1,11 +1,13 @@
 package com.syn.domo.repository;
 
+import com.syn.domo.config.ApplicationBeanConfigurationTest;
 import com.syn.domo.model.entity.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -16,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+@Import(ApplicationBeanConfigurationTest.class)
 class ChildRepositoryTest {
 
     @Autowired
@@ -114,5 +117,19 @@ class ChildRepositoryTest {
         found = this.childRepository
                 .findByFirstNameAndLastNameAndApartmentId(FIRST_NAME, "invalid", APARTMENT_ID);
         assertThat(found).isEmpty();
+    }
+
+    @Test
+    void test_severParentRelations_success() {
+        int result = this.childRepository.severParentRelations(CHILD_ID);
+
+        assertTrue(result > 0);
+    }
+
+    @Test
+    void test_severParentRelations_fail() {
+        int result = this.childRepository.severParentRelations("invalidId");
+
+        assertEquals(result, 0);
     }
 }

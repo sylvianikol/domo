@@ -7,13 +7,14 @@ import java.util.Set;
 
 public class SalaryServiceModel extends BaseServiceModel {
 
-    private BigDecimal total;
-    private LocalDate issueDate;
-    private LocalDate dueDate;
-    private LocalDateTime paidDate;
-    private boolean isPaid;
-
-    StaffServiceModel staff;
+    private BigDecimal                total;
+    private BigDecimal                unpaidTotal;
+    private LocalDate                 issueDate;
+    private LocalDate                 dueDate;
+    private LocalDateTime             paidDate;
+    private boolean                   isPaid;
+    private StaffServiceModel         staff;
+    private Set<BuildingServiceModel> debtors;
 
     public SalaryServiceModel() {
     }
@@ -24,6 +25,14 @@ public class SalaryServiceModel extends BaseServiceModel {
 
     public void setTotal(BigDecimal total) {
         this.total = total;
+    }
+
+    public BigDecimal getUnpaidTotal() {
+        return unpaidTotal;
+    }
+
+    public void setUnpaidTotal(BigDecimal unpaidTotal) {
+        this.unpaidTotal = unpaidTotal;
     }
 
     public LocalDate getIssueDate() {
@@ -64,5 +73,13 @@ public class SalaryServiceModel extends BaseServiceModel {
 
     public void setStaff(StaffServiceModel staff) {
         this.staff = staff;
+    }
+
+    public Set<BuildingServiceModel> getDebtors() {
+        return debtors;
+    }
+
+    public void setDebtors(Set<BuildingServiceModel> debtors) {
+        this.debtors = debtors;
     }
 }

@@ -17,8 +17,8 @@ import static javax.persistence.FetchType.LAZY;
 @Table(name = "salaries")
 public class Salary extends BasePaymentEntity {
 
-    private BigDecimal unpaidTotal;
-    private Staff staff;
+    private BigDecimal    unpaidTotal;
+    private Staff         staff;
     private Set<Building> debtors;
 
     public Salary() {

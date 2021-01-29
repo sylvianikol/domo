@@ -20,10 +20,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.syn.domo.common.ExceptionErrorMessages.*;
@@ -56,22 +53,13 @@ public class SalaryServiceImpl implements SalaryService {
     }
 
     @Override
-    public int deleteAll(SalaryFilter salaryFilter) {
+    public Optional<SalaryServiceModel> get(String salaryId) {
 
-        List<Salary> salaries = this.salaryRepository.findAll(salaryFilter);
+        Optional<Salary> salary = this.salaryRepository.findById(salaryId);
 
-        this.salaryRepository.deleteAll(salaries);
-
-        return salaries.size();
-    }
-
-    @Override
-    public void delete(String salaryId) {
-
-        Salary salary = this.salaryRepository.findById(salaryId)
-                .orElseThrow(() -> { throw new DomoEntityNotFoundException(SALARY_NOT_FOUND); });
-
-        this.salaryRepository.delete(salary);
+        return salary.isEmpty()
+                ? Optional.empty()
+                : Optional.of(this.modelMapper.map(salary.get(), SalaryServiceModel.class));
     }
 
     @Override
@@ -103,7 +91,27 @@ public class SalaryServiceImpl implements SalaryService {
             salary.setPaid(true);
         }
 
+        //TODO: send notification
         this.salaryRepository.saveAndFlush(salary);
+    }
+
+    @Override
+    public int deleteAll(SalaryFilter salaryFilter) {
+
+        List<Salary> salaries = this.salaryRepository.findAll(salaryFilter);
+
+        this.salaryRepository.deleteAll(salaries);
+
+        return salaries.size();
+    }
+
+    @Override
+    public void delete(String salaryId) {
+
+        Salary salary = this.salaryRepository.findById(salaryId)
+                .orElseThrow(() -> { throw new DomoEntityNotFoundException(SALARY_NOT_FOUND); });
+
+        this.salaryRepository.delete(salary);
     }
 
     @Override

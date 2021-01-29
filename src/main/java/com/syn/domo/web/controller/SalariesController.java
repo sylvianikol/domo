@@ -1,5 +1,6 @@
 package com.syn.domo.web.controller;
 
+import com.syn.domo.model.service.SalaryServiceModel;
 import com.syn.domo.model.view.SalaryViewModel;
 import com.syn.domo.service.SalaryService;
 import com.syn.domo.web.controller.namespace.SalariesNamespace;
@@ -14,6 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.mail.MessagingException;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -49,7 +51,12 @@ public class SalariesController implements SalariesNamespace {
 
     @GetMapping("/{salaryId}")
     public ResponseEntity<SalaryViewModel> get(@PathVariable(value = "salaryId") String salaryId) {
-        return null;
+
+        Optional<SalaryServiceModel> salary = this.salaryService.get(salaryId);
+
+        return salary.isEmpty()
+                ? ResponseEntity.notFound().build()
+                : ResponseEntity.ok(this.modelMapper.map(salary.get(), SalaryViewModel.class));
     }
 
     @PostMapping("{salaryId}/pay")

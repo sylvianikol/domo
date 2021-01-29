@@ -22,9 +22,9 @@ public class Building extends BaseEntity{
     private BigDecimal     baseFee;
     private BigDecimal     budget;
     private LocalDate      addedOn;
-
     private Set<Apartment> apartments;
     private Set<Staff>     staff;
+    private Set<Salary>    unpaidSalaries;
 
     public Building() {
     }
@@ -118,6 +118,15 @@ public class Building extends BaseEntity{
 
     public void setStaff(Set<Staff> staff) {
         this.staff = staff;
+    }
+
+    @ManyToMany(mappedBy = "buildings", fetch = EAGER)
+    public Set<Salary> getUnpaidSalaries() {
+        return unpaidSalaries;
+    }
+
+    public void setUnpaidSalaries(Set<Salary> unpaidSalaries) {
+        this.unpaidSalaries = unpaidSalaries;
     }
 
     @Override

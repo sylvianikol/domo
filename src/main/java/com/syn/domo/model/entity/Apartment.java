@@ -15,15 +15,14 @@ import static javax.persistence.FetchType.EAGER;
 @Table(name = "apartments")
 public class Apartment extends BaseEntity {
 
-    private String number;
-    private int floor;
-    private Building building;
-    private int pets;
-    private LocalDate addedOn;
-
+    private String        number;
+    private int           floor;
+    private Building      building;
+    private int           pets;
+    private LocalDate     addedOn;
     private Set<Resident> residents;
-    private Set<Child> children;
-    private Set<Fee> fees;
+    private Set<Child>    children;
+    private Set<Fee>      fees;
 
     public Apartment() {
     }

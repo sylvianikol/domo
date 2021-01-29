@@ -8,9 +8,9 @@ import static com.syn.domo.common.ValidationErrorMessages.*;
 
 public class StaffBindingModel extends BaseUserBindingModel {
 
-    private String email;
-    private String phoneNumber;
-    private String job;
+    private String     email;
+    private String     phoneNumber;
+    private String     job;
     private BigDecimal wage;
 
     public StaffBindingModel() {

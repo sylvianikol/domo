@@ -14,11 +14,10 @@ import static javax.persistence.FetchType.EAGER;
 @Table(name = "staff")
 public class Staff extends UserEntity {
 
-    private String job;
-    private BigDecimal wage;
-
+    private String        job;
+    private BigDecimal    wage;
     private Set<Building> buildings;
-    private Set<Salary> salaries;
+    private Set<Salary>   salaries;
 
     public Staff() {
     }

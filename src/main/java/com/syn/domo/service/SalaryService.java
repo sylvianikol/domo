@@ -13,4 +13,6 @@ public interface SalaryService {
     void paySalaries();
 
     Set<SalaryServiceModel> getAll(SalaryFilter salaryFilter, Pageable pageable);
+
+    int deleteAll(SalaryFilter salaryFilter);
 }

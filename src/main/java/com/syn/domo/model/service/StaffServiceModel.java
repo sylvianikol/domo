@@ -12,7 +12,7 @@ public class StaffServiceModel extends UserServiceModel {
     private String job;
     private String wage;
     private Set<BuildingServiceModel> buildings;
-    private Set<SalaryServiceModel> salaries;
+    private Set<SalaryServiceModel>   salaries;
 
     public StaffServiceModel() {
     }

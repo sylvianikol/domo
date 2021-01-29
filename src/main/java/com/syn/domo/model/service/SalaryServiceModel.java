@@ -14,7 +14,7 @@ public class SalaryServiceModel extends BaseServiceModel {
     private LocalDateTime             paidDate;
     private boolean                   isPaid;
     private StaffServiceModel         staff;
-    private Set<BuildingServiceModel> debtors;
+    private Set<BuildingServiceModel> buildings;
 
     public SalaryServiceModel() {
     }
@@ -75,11 +75,11 @@ public class SalaryServiceModel extends BaseServiceModel {
         this.staff = staff;
     }
 
-    public Set<BuildingServiceModel> getDebtors() {
-        return debtors;
+    public Set<BuildingServiceModel> getBuildings() {
+        return buildings;
     }
 
-    public void setDebtors(Set<BuildingServiceModel> debtors) {
-        this.debtors = debtors;
+    public void setBuildings(Set<BuildingServiceModel> buildings) {
+        this.buildings = buildings;
     }
 }

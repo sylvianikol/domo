@@ -16,10 +16,11 @@ public class SalaryViewModel {
     private LocalDate              dueDate;
     private LocalDateTime          paidDate;
     private boolean                isPaid;
-    private Set<BuildingViewModel> debtors;
 
     @JsonManagedReference
-    private StaffViewModel staff;
+    private Set<BuildingViewModel> buildings;
+    @JsonManagedReference
+    private StaffViewModel         staff;
 
     public SalaryViewModel() {
     }
@@ -88,11 +89,11 @@ public class SalaryViewModel {
         this.staff = staff;
     }
 
-    public Set<BuildingViewModel> getDebtors() {
-        return debtors;
+    public Set<BuildingViewModel> getBuildings() {
+        return buildings;
     }
 
-    public void setDebtors(Set<BuildingViewModel> debtors) {
-        this.debtors = debtors;
+    public void setBuildings(Set<BuildingViewModel> buildings) {
+        this.buildings = buildings;
     }
 }

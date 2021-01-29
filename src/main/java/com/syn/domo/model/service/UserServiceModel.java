@@ -10,8 +10,8 @@ import static com.syn.domo.common.ValidationErrorMessages.*;
 
 public class UserServiceModel extends BaseUserServiceModel {
 
-    private String email;
-    private String phoneNumber;
+    private String  email;
+    private String  phoneNumber;
     private boolean isActive;
     private Set<RoleServiceModel> roles;
 

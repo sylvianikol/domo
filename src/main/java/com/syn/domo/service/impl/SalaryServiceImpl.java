@@ -4,7 +4,6 @@ import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.entity.Salary;
 import com.syn.domo.model.entity.Staff;
 import com.syn.domo.model.service.SalaryServiceModel;
-import com.syn.domo.model.view.SalaryViewModel;
 import com.syn.domo.repository.SalaryRepository;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.SalaryService;
@@ -21,6 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,6 +42,26 @@ public class SalaryServiceImpl implements SalaryService {
     }
 
     @Override
+    public Set<SalaryServiceModel> getAll(SalaryFilter salaryFilter, Pageable pageable) {
+
+        Set<SalaryServiceModel> salaries = this.salaryRepository.findAll(salaryFilter, pageable).getContent().stream()
+                .map(s -> this.modelMapper.map(s, SalaryServiceModel.class))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return Collections.unmodifiableSet(salaries);
+    }
+
+    @Override
+    public int deleteAll(SalaryFilter salaryFilter) {
+
+        List<Salary> salaries = this.salaryRepository.findAll(salaryFilter);
+
+        this.salaryRepository.deleteAll(salaries);
+
+        return salaries.size();
+    }
+
+    @Override
     public void generateSalaries() {
         Set<Staff> staff = this.staffService.getAll().stream()
                 .map(s -> this.modelMapper.map(s, Staff.class))
@@ -51,7 +71,7 @@ public class SalaryServiceImpl implements SalaryService {
             Salary salary = new Salary();
             salary.setIssueDate(LocalDate.now());
             salary.setDueDate(LocalDate.now().plusMonths(1));
-            salary.setDebtors(employee.getBuildings());
+            salary.setBuildings(employee.getBuildings());
             salary.setStaff(employee);
 
             salary.setTotal(employee.getWage()
@@ -72,7 +92,7 @@ public class SalaryServiceImpl implements SalaryService {
 
         for (Salary salary : unpaidSalaries) {
 
-            Set<Building> buildings = salary.getDebtors();
+            Set<Building> buildings = salary.getBuildings();
             BigDecimal wage = salary.getStaff().getWage();
 
             for (Building building : buildings) {
@@ -81,12 +101,12 @@ public class SalaryServiceImpl implements SalaryService {
 
                 if (newBudget.compareTo(BigDecimal.ZERO) >= 0) {
                     salary.setUnpaidTotal(salary.getUnpaidTotal().subtract(wage));
-                    salary.getDebtors().remove(building);
+                    salary.getBuildings().remove(building);
                     this.buildingService.updateBudget(building.getId(), newBudget);
                 }
             }
 
-            if (salary.getDebtors().isEmpty()) {
+            if (salary.getBuildings().isEmpty()) {
                 salary.setPaidDate(LocalDateTime.now());
                 salary.setPaid(true);
             }
@@ -95,13 +115,5 @@ public class SalaryServiceImpl implements SalaryService {
         }
     }
 
-    @Override
-    public Set<SalaryServiceModel> getAll(SalaryFilter salaryFilter, Pageable pageable) {
 
-        Set<SalaryServiceModel> salaries = this.salaryRepository.findAll(salaryFilter, pageable).getContent().stream()
-                .map(s -> this.modelMapper.map(s, SalaryServiceModel.class))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-
-        return Collections.unmodifiableSet(salaries);
-    }
 }

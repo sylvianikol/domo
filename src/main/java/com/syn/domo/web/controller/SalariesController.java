@@ -7,6 +7,7 @@ import com.syn.domo.web.filter.SalaryFilter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -15,6 +16,9 @@ import javax.mail.MessagingException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.syn.domo.common.ResponseStatusMessages.DELETE_FAILED;
+import static com.syn.domo.common.ResponseStatusMessages.DELETE_SUCCESSFUL;
 
 @RestController
 public class SalariesController implements SalariesNamespace {
@@ -56,8 +60,15 @@ public class SalariesController implements SalariesNamespace {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteAll() {
-        return null;
+    public ResponseEntity<?> deleteAll(@RequestParam(required = false, name = "buildingId") String buildingId,
+                                       @RequestParam(required = false, name = "staffId") String staffId,
+                                       @RequestParam(required = false, name = "isPaid") Boolean isPaid) {
+
+        int result = this.salaryService.deleteAll(new SalaryFilter(buildingId, staffId, isPaid));
+
+        return result == 0
+                ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(DELETE_FAILED)
+                : ResponseEntity.ok().body(String.format(DELETE_SUCCESSFUL, result, "salaries"));
     }
 
     @DeleteMapping("/{salaryId}")

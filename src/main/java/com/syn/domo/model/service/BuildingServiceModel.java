@@ -10,16 +10,17 @@ import static com.syn.domo.common.ValidationErrorMessages.*;
 
 public class BuildingServiceModel extends BaseServiceModel {
 
-    private String name;
-    private String address;
-    private String neighbourhood;
-    private int floors;
+    private String     name;
+    private String     address;
+    private String     neighbourhood;
+    private int        floors;
     private BigDecimal budget;
     private BigDecimal baseFee;
-    private LocalDate addedOn;
+    private LocalDate  addedOn;
 
-    Set<ApartmentServiceModel> apartments;
-    Set<StaffServiceModel> staff;
+    private Set<ApartmentServiceModel> apartments;
+    private Set<StaffServiceModel>     staff;
+    private Set<SalaryServiceModel>    salaries;
 
     public BuildingServiceModel() {
     }
@@ -120,6 +121,14 @@ public class BuildingServiceModel extends BaseServiceModel {
 
     public void setStaff(Set<StaffServiceModel> staff) {
         this.staff = staff;
+    }
+
+    public Set<SalaryServiceModel> getSalaries() {
+        return salaries;
+    }
+
+    public void setSalaries(Set<SalaryServiceModel> salaries) {
+        this.salaries = salaries;
     }
 
     @Override

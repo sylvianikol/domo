@@ -9,19 +9,21 @@ import java.util.Set;
 
 public class BuildingViewModel {
 
-    private String id;
-    private String name;
-    private String neighbourhood;
-    private String address;
-    private int floors;
+    private String     id;
+    private String     name;
+    private String     neighbourhood;
+    private String     address;
+    private int        floors;
     private BigDecimal budget;
     private BigDecimal baseFee;
-    private LocalDate addedOn;
+    private LocalDate  addedOn;
 
     @JsonBackReference
     private Set<ApartmentViewModel> apartments;
     @JsonBackReference
-    private Set<StaffViewModel> staff;
+    private Set<StaffViewModel>     staff;
+    @JsonBackReference
+    private Set<SalaryViewModel>    salaries;
 
     public BuildingViewModel() {
     }
@@ -104,6 +106,14 @@ public class BuildingViewModel {
 
     public void setStaff(Set<StaffViewModel> staff) {
         this.staff = staff;
+    }
+
+    public Set<SalaryViewModel> getSalaries() {
+        return salaries;
+    }
+
+    public void setSalaries(Set<SalaryViewModel> salaries) {
+        this.salaries = salaries;
     }
 
     @Override

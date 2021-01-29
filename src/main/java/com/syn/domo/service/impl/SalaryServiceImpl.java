@@ -72,21 +72,25 @@ public class SalaryServiceImpl implements SalaryService {
             throw new UnprocessableEntityException(SALARY_ALREADY_PAID);
         }
 
-        Set<Building> buildings = salary.getBuildings();
+        Set<Building> debtors = salary.getBuildings();
+        Set<Building> payers = new HashSet<>();
+
         BigDecimal wage = salary.getStaff().getWage();
 
-        for (Building building : buildings) {
+        for (Building building : debtors) {
 
             BigDecimal newBudget = building.getBudget().subtract(wage);
 
             if (newBudget.compareTo(BigDecimal.ZERO) >= 0) {
                 salary.setUnpaidTotal(salary.getUnpaidTotal().subtract(wage));
-                salary.getBuildings().remove(building);
+                payers.add(building);
                 this.buildingService.updateBudget(building.getId(), newBudget);
             }
         }
 
-        if (salary.getBuildings().isEmpty()) {
+        debtors.removeAll(payers);
+
+        if (debtors.isEmpty()) {
             salary.setPaidDate(LocalDateTime.now());
             salary.setPaid(true);
         }

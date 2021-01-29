@@ -28,7 +28,7 @@ public class ScheduledPaymentsGenerator {
     }
 
 //    @Scheduled(cron = "0 0 10 5 * ?") // generate salaries on the 5th date each month
-    @Scheduled(initialDelay = 5000, fixedDelay=Long.MAX_VALUE) // for testing
+//    @Scheduled(initialDelay = 5000, fixedDelay=Long.MAX_VALUE) // for testing
     public void generateSalaries() throws MessagingException, InterruptedException {
         this.salaryService.generateSalaries();
     }

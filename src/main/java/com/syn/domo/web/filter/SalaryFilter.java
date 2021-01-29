@@ -24,7 +24,7 @@ public class SalaryFilter implements Specification<Salary> {
         Predicate predicate = cb.conjunction();
 
         if (buildingId != null) {
-            Join<Salary, Building> buildings = root.join("debtors", JoinType.LEFT);
+            Join<Salary, Building> buildings = root.join("buildings", JoinType.LEFT);
 
             predicate.getExpressions().add(
                     cb.and(cb.equal(buildings.get("id"), this.buildingId))

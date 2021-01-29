@@ -36,5 +36,8 @@ public class ExceptionErrorMessages {
 
     public static final String UNPROCESSABLE_ENTITY = "Entity could not be processed!";
 
-    public static final String STAFF_ALREADY_ASSIGNED = "%s %s %s is already assigned to %s";
+    public static final String STAFF_ALREADY_ASSIGNED =
+            "%s %s %s is already assigned to %s";
+
+    public static final String SALARY_NOT_FOUND = "Salary not found!";
 }

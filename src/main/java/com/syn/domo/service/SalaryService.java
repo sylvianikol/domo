@@ -15,4 +15,6 @@ public interface SalaryService {
     Set<SalaryServiceModel> getAll(SalaryFilter salaryFilter, Pageable pageable);
 
     int deleteAll(SalaryFilter salaryFilter);
+
+    void delete(String salaryId);
 }

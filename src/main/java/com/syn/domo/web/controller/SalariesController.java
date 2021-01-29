@@ -75,6 +75,10 @@ public class SalariesController implements SalariesNamespace {
     public ResponseEntity<?> delete(@PathVariable(value = "salaryId") String salaryId,
                                     UriComponentsBuilder uriComponentsBuilder) {
 
-        return null;
+        this.salaryService.delete(salaryId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .location(uriComponentsBuilder.path(URI_SALARIES).build().toUri())
+                .build();
     }
 }

@@ -1,5 +1,6 @@
 package com.syn.domo.service.impl;
 
+import com.syn.domo.exception.DomoEntityNotFoundException;
 import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.entity.Salary;
 import com.syn.domo.model.entity.Staff;
@@ -23,6 +24,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.syn.domo.common.ExceptionErrorMessages.SALARY_NOT_FOUND;
 
 @Service
 public class SalaryServiceImpl implements SalaryService {
@@ -59,6 +62,15 @@ public class SalaryServiceImpl implements SalaryService {
         this.salaryRepository.deleteAll(salaries);
 
         return salaries.size();
+    }
+
+    @Override
+    public void delete(String salaryId) {
+
+        Salary salary = this.salaryRepository.findById(salaryId)
+                .orElseThrow(() -> { throw new DomoEntityNotFoundException(SALARY_NOT_FOUND); });
+
+        this.salaryRepository.delete(salary);
     }
 
     @Override

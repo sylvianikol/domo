@@ -125,11 +125,8 @@ public class FeeServiceImpl implements FeeService {
     @Override
     public void delete(String feeId) {
 
-        Fee fee = this.feeRepository.findById(feeId).orElse(null);
-
-        if (fee == null) {
-            throw new DomoEntityNotFoundException(FEE_NOT_FOUND);
-        }
+        Fee fee = this.feeRepository.findById(feeId)
+                .orElseThrow(() -> {  throw new DomoEntityNotFoundException(FEE_NOT_FOUND); });
 
         this.feeRepository.delete(fee);
     }

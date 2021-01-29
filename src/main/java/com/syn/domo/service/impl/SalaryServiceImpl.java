@@ -1,6 +1,7 @@
 package com.syn.domo.service.impl;
 
 import com.syn.domo.exception.DomoEntityNotFoundException;
+import com.syn.domo.exception.UnprocessableEntityException;
 import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.entity.Salary;
 import com.syn.domo.model.entity.Staff;
@@ -25,7 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.syn.domo.common.ExceptionErrorMessages.SALARY_NOT_FOUND;
+import static com.syn.domo.common.ExceptionErrorMessages.*;
 
 @Service
 public class SalaryServiceImpl implements SalaryService {
@@ -74,6 +75,38 @@ public class SalaryServiceImpl implements SalaryService {
     }
 
     @Override
+    public void pay(String salaryId) {
+
+        Salary salary = this.salaryRepository.findById(salaryId)
+                .orElseThrow(() -> { throw new DomoEntityNotFoundException(SALARY_NOT_FOUND); });
+
+        if (salary.isPaid()) {
+            throw new UnprocessableEntityException(SALARY_ALREADY_PAID);
+        }
+
+        Set<Building> buildings = salary.getBuildings();
+        BigDecimal wage = salary.getStaff().getWage();
+
+        for (Building building : buildings) {
+
+            BigDecimal newBudget = building.getBudget().subtract(wage);
+
+            if (newBudget.compareTo(BigDecimal.ZERO) >= 0) {
+                salary.setUnpaidTotal(salary.getUnpaidTotal().subtract(wage));
+                salary.getBuildings().remove(building);
+                this.buildingService.updateBudget(building.getId(), newBudget);
+            }
+        }
+
+        if (salary.getBuildings().isEmpty()) {
+            salary.setPaidDate(LocalDateTime.now());
+            salary.setPaid(true);
+        }
+
+        this.salaryRepository.saveAndFlush(salary);
+    }
+
+    @Override
     public void generateSalaries() {
         Set<Staff> staff = this.staffService.getAll().stream()
                 .map(s -> this.modelMapper.map(s, Staff.class))
@@ -103,29 +136,8 @@ public class SalaryServiceImpl implements SalaryService {
         Set<Salary> unpaidSalaries = this.salaryRepository.findAllByPaidFalse();
 
         for (Salary salary : unpaidSalaries) {
-
-            Set<Building> buildings = salary.getBuildings();
-            BigDecimal wage = salary.getStaff().getWage();
-
-            for (Building building : buildings) {
-
-                BigDecimal newBudget = building.getBudget().subtract(wage);
-
-                if (newBudget.compareTo(BigDecimal.ZERO) >= 0) {
-                    salary.setUnpaidTotal(salary.getUnpaidTotal().subtract(wage));
-                    salary.getBuildings().remove(building);
-                    this.buildingService.updateBudget(building.getId(), newBudget);
-                }
-            }
-
-            if (salary.getBuildings().isEmpty()) {
-                salary.setPaidDate(LocalDateTime.now());
-                salary.setPaid(true);
-            }
-
-            this.salaryRepository.saveAndFlush(salary);
+           this.pay(salary.getId());
         }
     }
-
 
 }

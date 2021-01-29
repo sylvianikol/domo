@@ -17,4 +17,6 @@ public interface SalaryService {
     int deleteAll(SalaryFilter salaryFilter);
 
     void delete(String salaryId);
+
+    void pay(String salaryId);
 }

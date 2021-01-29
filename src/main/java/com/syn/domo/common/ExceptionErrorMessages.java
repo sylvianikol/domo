@@ -40,4 +40,6 @@ public class ExceptionErrorMessages {
             "%s %s %s is already assigned to %s";
 
     public static final String SALARY_NOT_FOUND = "Salary not found!";
+
+    public static final String SALARY_ALREADY_PAID = "Salary is already paid!";
 }

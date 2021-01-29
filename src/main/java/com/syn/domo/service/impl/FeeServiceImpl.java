@@ -82,20 +82,15 @@ public class FeeServiceImpl implements FeeService {
     @Override
     public FeeServiceModel pay(String userId, String feeId) throws MessagingException, InterruptedException {
 
-        Fee fee = this.feeRepository.findById(feeId).orElse(null);
-
-        if (fee == null) {
-            throw new DomoEntityNotFoundException(FEE_NOT_FOUND);
-        }
+        Fee fee = this.feeRepository.findById(feeId)
+                .orElseThrow(() -> { throw new DomoEntityNotFoundException(FEE_NOT_FOUND); });
 
         if (fee.isPaid()) {
             throw new UnprocessableEntityException(FEE_ALREADY_PAID);
         }
 
         UserServiceModel userServiceModel = this.userService.get(userId)
-                .orElseThrow(() -> {
-                    throw new DomoEntityNotFoundException(USER_NOT_FOUND);
-                });
+                .orElseThrow(() -> { throw new DomoEntityNotFoundException(USER_NOT_FOUND); });
 
         // TODO: make a mock payment
         fee.setPaidDate(LocalDateTime.now());

@@ -56,7 +56,11 @@ public class SalariesController implements SalariesNamespace {
     public ResponseEntity<?> pay(@PathVariable(value = "salaryId") String salaryId,
                                  UriComponentsBuilder uriComponentsBuilder) throws MessagingException, InterruptedException {
 
-        return null;
+        this.salaryService.pay(salaryId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .location(uriComponentsBuilder.path(URI_SALARIES + "/{salaryId}").buildAndExpand(salaryId).toUri())
+                .build();
     }
 
     @DeleteMapping("/delete")

@@ -93,6 +93,4 @@ public class FeesController implements FeesNamespace {
                 .location(uriComponentsBuilder.path(URI_FEES).build().toUri())
                 .build();
     }
-
-
 }

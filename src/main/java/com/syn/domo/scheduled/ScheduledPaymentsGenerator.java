@@ -12,7 +12,7 @@ import javax.mail.MessagingException;
 @Component
 public class ScheduledPaymentsGenerator {
 
-    private final FeeService feeService;
+    private final FeeService    feeService;
     private final SalaryService salaryService;
 
     @Autowired

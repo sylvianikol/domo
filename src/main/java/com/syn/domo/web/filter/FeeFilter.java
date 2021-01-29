@@ -19,8 +19,7 @@ public class FeeFilter implements Specification<Fee> {
     }
 
     @Override
-    public Predicate toPredicate(Root<Fee> root, CriteriaQuery<?> query,
-                                 CriteriaBuilder cb) {
+    public Predicate toPredicate(Root<Fee> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         Predicate predicate = cb.conjunction();
 
         if (this.buildingId != null) {

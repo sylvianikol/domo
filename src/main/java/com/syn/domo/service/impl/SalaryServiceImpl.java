@@ -3,18 +3,24 @@ package com.syn.domo.service.impl;
 import com.syn.domo.model.entity.Building;
 import com.syn.domo.model.entity.Salary;
 import com.syn.domo.model.entity.Staff;
+import com.syn.domo.model.service.SalaryServiceModel;
+import com.syn.domo.model.view.SalaryViewModel;
 import com.syn.domo.repository.SalaryRepository;
 import com.syn.domo.service.BuildingService;
 import com.syn.domo.service.SalaryService;
 import com.syn.domo.service.StaffService;
+import com.syn.domo.web.filter.SalaryFilter;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,9 +29,9 @@ public class SalaryServiceImpl implements SalaryService {
     private static final Logger log = LoggerFactory.getLogger(SalaryServiceImpl.class);
 
     private final SalaryRepository salaryRepository;
-    private final StaffService staffService;
-    private final BuildingService buildingService;
-    private final ModelMapper modelMapper;
+    private final StaffService     staffService;
+    private final BuildingService  buildingService;
+    private final ModelMapper      modelMapper;
 
     public SalaryServiceImpl(SalaryRepository salaryRepository,
                              StaffService staffService, BuildingService buildingService, ModelMapper modelMapper) {
@@ -87,5 +93,15 @@ public class SalaryServiceImpl implements SalaryService {
 
             this.salaryRepository.saveAndFlush(salary);
         }
+    }
+
+    @Override
+    public Set<SalaryServiceModel> getAll(SalaryFilter salaryFilter, Pageable pageable) {
+
+        Set<SalaryServiceModel> salaries = this.salaryRepository.findAll(salaryFilter, pageable).getContent().stream()
+                .map(s -> this.modelMapper.map(s, SalaryServiceModel.class))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return Collections.unmodifiableSet(salaries);
     }
 }

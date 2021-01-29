@@ -34,15 +34,14 @@ import static com.syn.domo.common.ExceptionErrorMessages.*;
 @Service
 public class FeeServiceImpl implements FeeService {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(FeeServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(FeeServiceImpl.class);
 
-    private final FeeRepository feeRepository;
-    private final BuildingService buildingService;
-    private final ApartmentService apartmentService;
-    private final UserService userService;
+    private final FeeRepository       feeRepository;
+    private final BuildingService     buildingService;
+    private final ApartmentService    apartmentService;
+    private final UserService         userService;
     private final NotificationService notificationService;
-    private final ModelMapper modelMapper;
+    private final ModelMapper         modelMapper;
 
     @Autowired
     public FeeServiceImpl(FeeRepository feeRepository,

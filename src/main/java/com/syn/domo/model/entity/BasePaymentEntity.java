@@ -11,11 +11,11 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 public abstract class BasePaymentEntity extends BaseEntity  {
 
-    private BigDecimal total;
-    private LocalDate issueDate;
-    private LocalDate dueDate;
+    private BigDecimal    total;
+    private LocalDate     issueDate;
+    private LocalDate     dueDate;
     private LocalDateTime paidDate;
-    private boolean isPaid;
+    private boolean       isPaid;
 
     public BasePaymentEntity() {
     }

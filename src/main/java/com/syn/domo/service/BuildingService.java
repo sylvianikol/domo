@@ -28,4 +28,6 @@ public interface BuildingService {
     Set<BuildingServiceModel> getAllByIdIn(Set<String> ids);
 
     void addToBudget(BigDecimal total, String buildingId);
+
+    void updateBudget(String buildingId, BigDecimal budget);
 }

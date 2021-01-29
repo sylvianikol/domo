@@ -79,6 +79,13 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
+    public Set<StaffServiceModel> getAll() {
+        return this.staffRepository.findAll().stream()
+                .map(s -> this.modelMapper.map(s, StaffServiceModel.class))
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    @Override
     public Optional<StaffServiceModel> get(String staffId) {
         Optional<Staff> staff = this.staffRepository.findById(staffId);
         return staff.isEmpty()
@@ -239,14 +246,17 @@ public class StaffServiceImpl implements StaffService {
     @Override
     public void paySalaries() {
         List<Staff> staff = this.staffRepository.findAll();
-
         for (Staff employee : staff) {
             Set<Building> buildings = employee.getBuildings();
             BigDecimal wage = employee.getWage();
 
             for (Building building : buildings) {
                 BigDecimal budget = building.getBudget().subtract(wage);
-                // TODO:
+                if (budget.compareTo(BigDecimal.ZERO) < 0) {
+
+                } else {
+
+                }
             }
         }
     }

@@ -12,6 +12,8 @@ public interface StaffService {
 
     Set<StaffServiceModel> getAll(StaffFilter staffFilter, Pageable pageable);
 
+    Set<StaffServiceModel> getAll();
+
     Optional<StaffServiceModel> get(String staffId);
 
     StaffServiceModel add(StaffServiceModel staffServiceModel) throws MessagingException, InterruptedException;

@@ -212,6 +212,17 @@ public class BuildingServiceImpl implements BuildingService {
         this.buildingRepository.saveAndFlush(building);
     }
 
+    @Override
+    public void updateBudget(String buildingId, BigDecimal budget) {
+        Building building = this.buildingRepository.findById(buildingId)
+                .orElseThrow(() -> { throw new DomoEntityNotFoundException(BUILDING_NOT_FOUND); });
+
+        if (budget.compareTo(BigDecimal.ZERO) >= 0) {
+            building.setBudget(budget);
+            this.buildingRepository.saveAndFlush(building);
+        }
+    }
+
     private Set<String> getStaffIds(Set<Staff> staff) {
         return staff.stream().map(Staff::getId).collect(Collectors.toUnmodifiableSet());
     }

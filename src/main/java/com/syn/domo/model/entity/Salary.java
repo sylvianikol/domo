@@ -5,6 +5,8 @@ import org.hibernate.annotations.ColumnDefault;
 import javax.persistence.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import static javax.persistence.CascadeType.MERGE;
@@ -20,6 +22,13 @@ public class Salary extends BasePaymentEntity {
     private Set<Building> buildings;
 
     public Salary() {
+    }
+
+    public Salary(BigDecimal total, LocalDate issueDate, LocalDate dueDate, LocalDateTime paidDate, boolean isPaid, BigDecimal unpaidTotal, Staff staff, Set<Building> buildings) {
+        super(total, issueDate, dueDate, paidDate, isPaid);
+        this.unpaidTotal = unpaidTotal;
+        this.staff = staff;
+        this.buildings = buildings;
     }
 
     @Column(name = "unpaid_total")

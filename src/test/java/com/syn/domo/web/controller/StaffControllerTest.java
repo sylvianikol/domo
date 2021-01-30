@@ -24,7 +24,6 @@ import java.util.Set;
 import static com.syn.domo.common.ExceptionErrorMessages.STAFF_NOT_FOUND;
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_FAILED;
 import static com.syn.domo.common.ResponseStatusMessages.DELETE_SUCCESSFUL;
-import static com.syn.domo.common.ValidationErrorMessages.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
@@ -46,7 +45,8 @@ class StaffControllerTest extends AbstractTest {
     @Autowired
     private RoleRepository roleRepository;
 
-    private String BUILDING_ID;
+    private String BUILDING_1_ID;
+    private String BUILDING_2_ID;
     private String STAFF_1_ID;
     private String STAFF_2_ID;
     private final String URI = "/v1/staff";
@@ -55,10 +55,15 @@ class StaffControllerTest extends AbstractTest {
     public void setUp() {
         this.tearDown();
 
-        Building building = new Building("TestBuilding 1",
+        Building building1 = new Building("TestBuilding 1",
                 "Test neighbourhood", "TestAddress",3,
                 BigDecimal.valueOf(5), BigDecimal.valueOf(100), LocalDate.now());
-        this.buildingRepository.saveAndFlush(building);
+        this.buildingRepository.saveAndFlush(building1);
+
+        Building building2 = new Building("TestBuilding 2",
+                "Test neighbourhood 2", "TestAddress 2",3,
+                BigDecimal.valueOf(5), BigDecimal.valueOf(100), LocalDate.now());
+        this.buildingRepository.saveAndFlush(building2);
 
         Role role = this.roleRepository.findByName(UserRole.STAFF).orElse(null);
 
@@ -69,14 +74,15 @@ class StaffControllerTest extends AbstractTest {
 
         Staff staff1 = new Staff("Staff 1", "Staff 1", LocalDate.now(),
                 "staff1@mail.com", null, "0383933", false, Set.of(role),
-                "Job 1", BigDecimal.valueOf(50), Set.of(building), new HashSet<>());
+                "Job 1", BigDecimal.valueOf(50), Set.of(building2), new HashSet<>());
         this.staffRepository.saveAndFlush(staff1);
         Staff staff2 = new Staff("Staff 2", "Staff 2", LocalDate.now(),
                 "staff2@mail.com", null, "546464", false, Set.of(role),
-                "Job 2", BigDecimal.valueOf(50), Set.of(building), new HashSet<>());
+                "Job 2", BigDecimal.valueOf(50), Set.of(building2), new HashSet<>());
         this.staffRepository.saveAndFlush(staff2);
 
-        BUILDING_ID = building.getId();
+        BUILDING_1_ID = building1.getId();
+        BUILDING_2_ID = building2.getId();
         STAFF_1_ID = staff1.getId();
         STAFF_2_ID = staff2.getId();
     }
@@ -135,14 +141,14 @@ class StaffControllerTest extends AbstractTest {
     @Test
     void test_getAll_byBuildingId_isOk() throws Exception {
         this.mvc.perform(get(URI + "/all")
-                .param("buildingId", BUILDING_ID))
+                .param("buildingId", BUILDING_2_ID))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$.[0].id", is(STAFF_1_ID)))
-                .andExpect(jsonPath("$.[0].buildings.[0].id", is(BUILDING_ID)))
+                .andExpect(jsonPath("$.[0].buildings.[0].id", is(BUILDING_2_ID)))
                 .andExpect(jsonPath("$.[1].id", is(STAFF_2_ID)))
-                .andExpect(jsonPath("$.[1].buildings.[0].id", is(BUILDING_ID)));
+                .andExpect(jsonPath("$.[1].buildings.[0].id", is(BUILDING_2_ID)));
     }
 
     @Test
@@ -157,7 +163,7 @@ class StaffControllerTest extends AbstractTest {
     void test_getAll_byBuildingIdEmpty_isNotFound() throws Exception {
         this.staffRepository.deleteAll();
         this.mvc.perform(get(URI + "/all")
-                .param("buildingId", BUILDING_ID))
+                .param("buildingId", BUILDING_1_ID))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
@@ -275,8 +281,9 @@ class StaffControllerTest extends AbstractTest {
 
     @Test
     void test_deleteAll_byBuildingId_isOkWithCorrectMessage() throws Exception {
+
         this.mvc.perform(delete(URI + "/delete")
-                .param("buildingId", BUILDING_ID))
+                .param("buildingId", BUILDING_2_ID))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(String.format(DELETE_SUCCESSFUL, 2, "staff")));
@@ -295,7 +302,7 @@ class StaffControllerTest extends AbstractTest {
     void test_deleteAll_byBuildingIdEmpty_isNotFound() throws Exception {
         this.staffRepository.deleteAll();
         this.mvc.perform(delete(URI + "/delete")
-                .param("buildingId", BUILDING_ID))
+                .param("buildingId", BUILDING_1_ID))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(DELETE_FAILED));
@@ -324,7 +331,7 @@ class StaffControllerTest extends AbstractTest {
     void test_assign_isNoContent() throws Exception {
 
         this.mvc.perform(put(URI + "/{staffId}/assign", STAFF_1_ID)
-                .param("buildingIds", BUILDING_ID))
+                .param("buildingIds", BUILDING_1_ID))
                 .andDo(print())
                 .andExpect(status().isNoContent())
                 .andExpect(header().string(HttpHeaders.LOCATION,
@@ -335,7 +342,7 @@ class StaffControllerTest extends AbstractTest {
     void test_assign_staffIdInvalid_isNotFound() throws Exception {
 
         this.mvc.perform(put(URI + "/{staffId}/assign", "0")
-                .param("buildingIds", BUILDING_ID))
+                .param("buildingIds", BUILDING_1_ID))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }

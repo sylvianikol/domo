@@ -21,11 +21,12 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.syn.domo.common.ExceptionErrorMessages.SALARY_NOT_FOUND;
+import static com.syn.domo.common.ExceptionErrorMessages.*;
+import static com.syn.domo.common.ResponseStatusMessages.DELETE_FAILED;
+import static com.syn.domo.common.ResponseStatusMessages.DELETE_SUCCESSFUL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -44,9 +45,11 @@ class SalariesControllerTest extends AbstractTest {
     @Autowired
     private StaffRepository staffRepository;
 
+    private Salary paidSalary;
     private String BUILDING_ID;
     private String STAFF_ID;
     private String SALARY_ID;
+    private boolean PAID;
     private final String URI = "/v1/salaries";
 
     @BeforeEach
@@ -73,6 +76,10 @@ class SalariesControllerTest extends AbstractTest {
                 null, false, BigDecimal.valueOf(100), staff, Set.of(building));
         this.salaryRepository.saveAndFlush(salary);
 
+        this.paidSalary = new Salary(BigDecimal.valueOf(100), LocalDate.now(), LocalDate.now().plusMonths(1),
+                null, true, BigDecimal.valueOf(100), staff, Set.of(building));
+        this.salaryRepository.saveAndFlush(paidSalary);
+
         BUILDING_ID = building.getId();
         STAFF_ID = staff.getId();
         SALARY_ID = salary.getId();
@@ -98,7 +105,7 @@ class SalariesControllerTest extends AbstractTest {
         this.mvc.perform(get(URI + "/all"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$.[0].id", is(SALARY_ID)));
     }
 
@@ -143,10 +150,47 @@ class SalariesControllerTest extends AbstractTest {
     }
 
     @Test
-    void deleteAll() {
+    void test_pay_isUnprocessable_ifSalaryIsPaid() throws Exception {
+
+        this.mvc.perform(post(URI + "/{salaryId}/pay", this.paidSalary.getId()))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.statusCode", is(422)))
+                .andExpect(jsonPath("$.message", is(SALARY_ALREADY_PAID)));
     }
 
     @Test
-    void delete() {
+    void test_deleteAll_isOkWithCorrectMessage() throws Exception {
+        this.mvc.perform(delete(URI + "/delete"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string(String.format(DELETE_SUCCESSFUL, 2, "salaries")));
+    }
+
+    @Test
+    void test_deleteAll_isNotFound() throws Exception {
+        this.salaryRepository.deleteAll();
+        this.mvc.perform(delete(URI + "/delete"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(DELETE_FAILED));
+    }
+
+    @Test
+    void test_delete_success() throws Exception {
+        this.mvc.perform(delete(URI + "/{salaryId}", SALARY_ID))
+                .andDo(print())
+                .andExpect(status().isNoContent())
+                .andExpect(header().string(HttpHeaders.LOCATION, containsString(URI)));
+    }
+
+    @Test
+    void test_delete_isNotFound() throws Exception {
+
+        this.mvc.perform(delete(URI + "/{salaryId}", "0"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.statusCode", is(404)))
+                .andExpect(jsonPath("$.message", is(SALARY_NOT_FOUND)));
     }
 }

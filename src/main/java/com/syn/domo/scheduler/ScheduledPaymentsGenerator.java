@@ -1,4 +1,4 @@
-package com.syn.domo.scheduled;
+package com.syn.domo.scheduler;
 
 import com.syn.domo.service.FeeService;
 import com.syn.domo.service.SalaryService;
@@ -27,7 +27,7 @@ public class ScheduledPaymentsGenerator {
         this.feeService.generateMonthlyFees();
     }
 
-//    @Scheduled(cron = "0 0 10 5 * ?") // generate salaries on the 5th date each month
+    @Scheduled(cron = "0 0 10 5 * ?") // generate salaries on the 5th date each month
 //    @Scheduled(initialDelay = 5000, fixedDelay=Long.MAX_VALUE) // for testing
     public void generateSalaries() throws MessagingException, InterruptedException {
         this.salaryService.generateSalaries();
